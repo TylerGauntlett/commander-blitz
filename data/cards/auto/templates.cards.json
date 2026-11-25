@@ -41063,6 +41063,207 @@
       ]
     },
     {
+      "color_identity": [
+        "G",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "U",
+        "W"
+      ],
+      "id": "brokers_charm",
+      "mana_cost": "{G}{W}{U}",
+      "name": "Brokers Charm",
+      "oracle_text": "Choose one —\n• Target creature you control gets +1/+0 until end of turn. It deals damage equal to its power to target creature or planeswalker an opponent controls.\n• Destroy target enchantment.\n• Draw two cards.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "duration": "until_end_of_turn",
+                  "objects": {
+                    "target": "pumped"
+                  },
+                  "op": "pump",
+                  "power": {
+                    "const": 1
+                  },
+                  "toughness": {
+                    "const": 0
+                  }
+                },
+                {
+                  "amount": {
+                    "power_of": {
+                      "target": "pumped"
+                    }
+                  },
+                  "objects": {
+                    "target": "struck"
+                  },
+                  "op": "damage",
+                  "source_object": {
+                    "target": "pumped"
+                  }
+                }
+              ],
+              "label": "Target creature you control gets +1/+0 until end of turn. It deals damage equal to its power to target creature or planeswalker an opponent controls."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "razed"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target enchantment."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "label": "Draw two cards."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "pumped",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "struck",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker"
+            ],
+            "controller": "opponent",
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "razed",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "types": [
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "G",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "U",
+        "W"
+      ],
+      "id": "brokers_confluence",
+      "mana_cost": "{2}{G}{W}{U}",
+      "name": "Brokers Confluence",
+      "oracle_text": "Choose three. You may choose the same mode more than once.\n• Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)\n• Target creature phases out. (Treat it and anything attached to it as though they don't exist until its controller's next turn.)\n• Counter target activated or triggered ability.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 3,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "op": "proliferate"
+                }
+              ],
+              "label": "Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "phased"
+                  },
+                  "op": "phase_out"
+                }
+              ],
+              "label": "Target creature phases out. (Treat it and anything attached to it as though they don't exist until its controller's next turn.)"
+            },
+            {
+              "effects": [
+                {
+                  "op": "counter",
+                  "target": "countered"
+                }
+              ],
+              "label": "Counter target activated or triggered ability."
+            }
+          ],
+          "op": "choose_mode",
+          "repeatable": true
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "phased",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "countered",
+          "kind": "ability_on_stack",
+          "mode": 2
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -76447,6 +76648,81 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "declaration_in_stone",
+      "mana_cost": "{1}{W}",
+      "name": "Declaration in Stone",
+      "oracle_text": "Exile target creature and all other creatures its controller controls with the same name as that creature. That player investigates for each nontoken creature exiled this way.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "victim",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "as": "exiled",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        },
+        {
+          "as": "exiled",
+          "objects": {
+            "controller": {
+              "controller_of": "victim"
+            },
+            "count": "all",
+            "exclude_binding": "victim",
+            "shares_a_name_with": "victim",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "exile"
+        },
+        {
+          "amount": {
+            "count": {
+              "binding": "exiled",
+              "controller": "any",
+              "is_token": false,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "op": "investigate",
+          "player": {
+            "controller_of": "victim"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -104514,6 +104790,110 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "shield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            },
+            {
+              "ability": 0,
+              "duration": "until_end_of_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_ability"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "attacking": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever you attack, put a shield counter on target attacking creature. Until end of turn, it gains \"Whenever this creature deals combat damage to a player, remove a shield counter from it. If you do, draw a card.\"",
+          "trigger": {
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "removed",
+              "counter": "shield",
+              "objects": {
+                "self_only": true
+              },
+              "op": "remove_counters"
+            },
+            {
+              "condition": {
+                "cmp": ">",
+                "left": {
+                  "binding": "removed"
+                },
+                "right": {
+                  "const": 0
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, remove a shield counter from it. If you do, draw a card.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "family_s_favor",
+      "mana_cost": "{2}{G}",
+      "name": "Family's Favor",
+      "oracle_text": "Whenever you attack, put a shield counter on target attacking creature. Until end of turn, it gains \"Whenever this creature deals combat damage to a player, remove a shield counter from it. If you do, draw a card.\" (If a creature with a shield counter on it would be dealt damage or destroyed, remove a shield counter from it instead.)",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -160502,6 +160882,59 @@
     {
       "abilities": [
         {
+          "cost": {
+            "mana": "{1}{W}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{W}: Put a +1/+1 counter on Jenara."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "U",
+        "W"
+      ],
+      "id": "jenara_asura_of_war",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{G}{W}{U}",
+      "name": "Jenara, Asura of War",
+      "oracle_text": "Flying\n{1}{W}: Put a +1/+1 counter on Jenara.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Angel"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "objects": {
@@ -174014,6 +174447,109 @@
         "Legendary"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "shield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of your upkeep, put a shield counter on target creature an opponent controls.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "tap"
+            },
+            {
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "goad"
+            },
+            {
+              "duration": "until_your_next_turn",
+              "keywords": [
+                "trample"
+              ],
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you put one or more counters on a creature you don't control, tap that creature and goad it. It gains trample until your next turn.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "counter_placed",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            },
+            "put_by": "you"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "U",
+        "W"
+      ],
+      "id": "kros_defense_contractor",
+      "mana_cost": "{1}{G}{W}{U}",
+      "name": "Kros, Defense Contractor",
+      "oracle_text": "At the beginning of your upkeep, put a shield counter on target creature an opponent controls.\nWhenever you put one or more counters on a creature you don't control, tap that creature and goad it. It gains trample until your next turn. (Until your next turn, that creature attacks each combat if able and attacks a player other than you if able.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Cat",
+        "Advisor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]

@@ -1,0 +1,18 @@
+{
+  "card_id": "contractual_safeguard",
+  "name": "Contractual Safeguard",
+  "oracle_text": "Addendum — If you cast this spell during your main phase, put a shield counter on a creature you control. (If it would be dealt damage or destroyed, remove a shield counter from it instead.)\nChoose a kind of counter on a creature you control. Put a counter of that kind on each other creature you control.",
+  "blocked_sentences": [
+    "Choose a kind of counter on a creature you control. Put a counter of that kind on each other creature you control."
+  ],
+  "needs": [
+    {
+      "capability": "choose_counter_kind",
+      "kind": "decision",
+      "what": "an op that has the controller choose a creature they control and one kind of counter present on it, binding both the kind (as a string usable by add_counters' `counter: {\"binding\": ...}`) and the chosen creature (so the follow-up add_counters can exclude it as \"each other creature you control\")",
+      "why_existing_wont_do": "add_counters takes a printed counter kind, and its `counter: {binding}` form is only filled by a counter_placed trigger's event bindings; choose_permanents binds a permanent but no counter kind; choose_mode would need one mode per kind and cannot be restricted to kinds actually on a creature you control; proliferate/move_counters any_kind act on existing counters rather than putting a new one of a chosen kind on other creatures"
+    }
+  ],
+  "closest_existing": ["add_counters", "choose_permanents", "proliferate", "move_counters"],
+  "confidence": "high"
+}

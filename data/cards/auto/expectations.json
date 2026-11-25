@@ -3419,6 +3419,23 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "brokers_charm": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
+  "brokers_confluence": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "bronze_guardian": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6295,6 +6312,15 @@
   "decisive_denial": {
     "zone": "graveyard"
   },
+  "declaration_in_stone": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6,
+    "tokens": {
+      "count": 2,
+      "id": "clue_token"
+    },
+    "zone": "graveyard"
+  },
   "decoction_module": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -8809,6 +8835,10 @@
   "false_floor": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "family_s_favor": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "fanatic_of_rhonas": {
@@ -13448,6 +13478,10 @@
       "0": 44
     }
   },
+  "jenara_asura_of_war": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "jenny_generated_anomaly": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -14518,6 +14552,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "kros_defense_contractor": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "krosan_cloudscraper": {

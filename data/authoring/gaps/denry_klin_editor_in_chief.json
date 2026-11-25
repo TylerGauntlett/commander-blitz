@@ -1,0 +1,18 @@
+{
+  "card_id": "denry_klin_editor_in_chief",
+  "name": "Denry Klin, Editor in Chief",
+  "oracle_text": "Denry Klin enters with your choice of a +1/+1, first strike, or vigilance counter on it.\nWhenever a nontoken creature you control enters, if Denry Klin has counters on it, put the same number of each kind of counter on that creature.",
+  "blocked_sentences": [
+    "Whenever a nontoken creature you control enters, if Denry Klin has counters on it, put the same number of each kind of counter on that creature."
+  ],
+  "needs": [
+    {
+      "capability": "copy_counters",
+      "kind": "op",
+      "what": "an op that, for every kind of counter on a source object (self), puts that many counters of the same kind on another object (the entering creature bound by the trigger), without removing them from the source -- any kind, keyword counters included",
+      "why_existing_wont_do": "add_counters takes one named `counter` kind, so three add_counters reading counters_on self for +1/+1, first strike and vigilance would miss any other kind Denry later gains (proliferate onto -1/-1, shield, etc.); move_counters with all_kinds removes the counters from the source; double_counters only doubles counters on the same object"
+    }
+  ],
+  "closest_existing": ["move_counters", "add_counters", "double_counters"],
+  "confidence": "high"
+}

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**546 cards** blocked by **457** capabilities.
+**552 cards** blocked by **462** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -24,12 +24,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [the-ring-tempts-you](#the-ring-tempts-you) | 6 | 1136 | engine, op |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 6 | 2672 | selector, trigger_event |
+| [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 5 | 714 | engine |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
 | [face-down-characteristics](#face-down-characteristics) | 4 | 5733 | op |
-| [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 4 | 714 | engine |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
+| [choose-counter-kind](#choose-counter-kind) | 3 | 4274 | decision, op |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
 | [crime](#crime) | 3 | 2244 | trigger_event |
 | [escape](#escape) | 3 | 1514 | engine, op |
@@ -49,7 +50,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
 | [casualty](#casualty) | 2 | 11576 | static_effect |
-| [choose-counter-kind](#choose-counter-kind) | 2 | 4274 | op |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 2 | 8216 | op |
 | [creatures-died-this-turn-filtered](#creatures-died-this-turn-filtered) | 2 | 7488 | value |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 2 | 15516 | selector |
@@ -162,6 +162,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [conspire](#conspire) | 1 | 17639 | static_effect |
 | [control-while-has-counter](#control-while-has-counter) | 1 | 10319 | op |
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
+| [copy-counters](#copy-counters) | 1 | 9492 | op |
 | [copy-from-last-known-information](#copy-from-last-known-information) | 1 | 15208 | op |
 | [copy-spell-except-nonlegendary](#copy-spell-except-nonlegendary) | 1 | 6462 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
@@ -174,6 +175,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cost-reduction-targeting-damaged](#cost-reduction-targeting-damaged) | 1 | 10619 | selector |
 | [cost-reduction-targeting-stack-object-targets](#cost-reduction-targeting-stack-object-targets) | 1 | 2461 | value |
 | [counter-all-spells](#counter-all-spells) | 1 | 4984 | op |
+| [counter-kind-copy](#counter-kind-copy) | 1 | 16753 | op |
 | [counters-persist-across-zones](#counters-persist-across-zones) | 1 | 15120 | engine |
 | [coven](#coven) | 1 | 1129 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
@@ -250,6 +252,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [first-mate-ragavan](#first-mate-ragavan) | 1 | 7016 | token |
 | [first-spell-cast-from-zone-each-turn](#first-spell-cast-from-zone-each-turn) | 1 | 7254 | engine |
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
+| [fish-token-unblockable](#fish-token-unblockable) | 1 | 16753 | token |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
 | [flashback](#flashback) | 1 | 14595 | op |
 | [flashback-x](#flashback-x) | 1 | 5811 | cost |
@@ -385,6 +388,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
 | [put-into-combat-attacking](#put-into-combat-attacking) | 1 | 8091 | op |
 | [put-into-exile-trigger](#put-into-exile-trigger) | 1 | 7780 | trigger_event |
+| [random-counter-kind](#random-counter-kind) | 1 | 6446 | op |
 | [rate-limited-free-cast-by-counters](#rate-limited-free-cast-by-counters) | 1 | 1837 | static_effect |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-counter-of-kinds-cost](#remove-counter-of-kinds-cost) | 1 | 20169 | cost |
@@ -446,6 +450,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
 | [token-bird-3-3-w-flying](#token-bird-3-3-w-flying) | 1 | 5992 | token |
 | [token-copy-attached](#token-copy-attached) | 1 | 11547 | op |
+| [token-copy-enters-with-counters](#token-copy-enters-with-counters) | 1 | 7050 | op |
 | [total-mana-value-x](#total-mana-value-x) | 1 | 3066 | selector |
 | [total-toughness-cost-reduction](#total-toughness-cost-reduction) | 1 | 5188 | value |
 | [toughness-greater-than-power-filter](#toughness-greater-than-power-filter) | 1 | 3557 | selector |
@@ -986,6 +991,28 @@ Blocks **6** cards.
 
 </details>
 
+## self-sacrificing-permanent-gate
+
+Blocks **5** cards.
+
+- **(engine)** authoring gate 4 accepting a permanent whose own printed enters trigger sacrifices it, so the card ends in the graveyard as printed; the card is expressible today (a self_enters sacrifice of self_only, then a reflexive_trigger that fetches a basic and gains 1 life) and the DSL needs nothing new
+  <br>Why the existing vocabulary won't do: verify._play_once allows a permanent to end only on the battlefield (an Aura also in the graveyard), and tests/cards/test_authoring.py::TestASelfLegalTriggerIsExercisedAgainstTheBoard::test_a_permanent_that_genuinely_vanishes_is_still_rejected pins that a creature whose text is 'When this creature enters, sacrifice it.' must still fail, so widening the gate is a decision for the owner rather than a card fix
+
+<details><summary>Cards waiting on this</summary>
+
+- **Riveteers Overlook** (rank 714) — `riveteers_overlook`
+  - When this land enters, sacrifice it. When you do, search your library for a basic Swamp, Mountain, or Forest card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
+- **Cabaretti Courtyard** (rank 963) — `cabaretti_courtyard`
+  - When this land enters, sacrifice it. When you do, search your library for a basic Mountain, Forest, or Plains card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
+- **Maestros Theater** (rank 1257) — `maestros_theater`
+  - When this land enters, sacrifice it. When you do, search your library for a basic Island, Swamp, or Mountain card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
+- **Brokers Hideout** (rank 1297) — `brokers_hideout`
+  - When this land enters, sacrifice it. When you do, search your library for a basic Forest, Plains, or Island card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
+- **Obscura Storefront** (rank 1616) — `obscura_storefront`
+  - When this land enters, sacrifice it. When you do, search your library for a basic Plains, Island, or Swamp card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
+
+</details>
+
 ## unlock-door
 
 Blocks **5** cards.
@@ -1075,26 +1102,6 @@ Blocks **4** cards.
 
 </details>
 
-## self-sacrificing-permanent-gate
-
-Blocks **4** cards.
-
-- **(engine)** authoring gate 4 accepting a permanent whose own printed enters trigger sacrifices it, so the card ends in the graveyard as printed; the card is expressible today (a self_enters sacrifice of self_only, then a reflexive_trigger that fetches a basic and gains 1 life) and the DSL needs nothing new
-  <br>Why the existing vocabulary won't do: verify._play_once allows a permanent to end only on the battlefield (an Aura also in the graveyard), and tests/cards/test_authoring.py::TestASelfLegalTriggerIsExercisedAgainstTheBoard::test_a_permanent_that_genuinely_vanishes_is_still_rejected pins that a creature whose text is 'When this creature enters, sacrifice it.' must still fail, so widening the gate is a decision for the owner rather than a card fix
-
-<details><summary>Cards waiting on this</summary>
-
-- **Riveteers Overlook** (rank 714) — `riveteers_overlook`
-  - When this land enters, sacrifice it. When you do, search your library for a basic Swamp, Mountain, or Forest card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
-- **Cabaretti Courtyard** (rank 963) — `cabaretti_courtyard`
-  - When this land enters, sacrifice it. When you do, search your library for a basic Mountain, Forest, or Plains card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
-- **Maestros Theater** (rank 1257) — `maestros_theater`
-  - When this land enters, sacrifice it. When you do, search your library for a basic Island, Swamp, or Mountain card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
-- **Obscura Storefront** (rank 1616) — `obscura_storefront`
-  - When this land enters, sacrifice it. When you do, search your library for a basic Plains, Island, or Swamp card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
-
-</details>
-
 ## station
 
 Blocks **4** cards.
@@ -1152,6 +1159,28 @@ Blocks **4** cards.
   - Create X tapped 2/2 black Zombie Druid creature tokens, where X is the number of cards that were put into your graveyard from your hand or library this turn.
 - **Essence Anchor** (rank 8833) — `essence_anchor`
   - {T}: Create a 2/2 black Zombie Druid creature token. Activate only during your turn and only if a card left your graveyard this turn.
+
+</details>
+
+## choose-counter-kind
+
+Blocks **3** cards.
+
+- **(op)** an op that has the controller choose one counter kind from among the kinds currently on permanents they control, binding it (e.g. `as: "kind"`) so a later `add_counters` can take `counter: {"binding": "kind"}` and a condition/selector can test `has_counters: {"binding": "kind"}` on the target ("if it doesn't have a counter of that kind on it")
+  <br>Why the existing vocabulary won't do: `add_counters` takes only a fixed printed `counter` kind; `move_counters`/`remove_counters` have `any_kind` but move or remove existing counters from a source rather than naming a kind and putting a fresh one elsewhere; `proliferate` adds to every kind already present on chosen objects, not one chosen kind onto a permanent lacking it; `choose_type`/`choose_color`/`choose_card_name` choose other vocabularies, not counter kinds
+- **(op)** an op (or an `as` binding on a counter-kind choice) that has the controller choose one kind of counter already on the target and binds it, so a following `choose_mode` can either remove one counter of that kind or put one more of that same kind on it -- add_counters reading `counter: {"binding": <as>}` from an effect-made choice rather than from a counter_placed trigger
+  <br>Why the existing vocabulary won't do: add_counters needs a printed kind; its `{"binding": "counter"}` form is allowed only on a counter_placed trigger (`_counter_kind` reads the trigger's event binding). remove_counters with any_kind can remove a chosen kind but binds nothing usable to add the same kind, and proliferate touches every permanent and player rather than the one target
+- **(decision)** an op that has the controller choose a creature they control and one kind of counter present on it, binding both the kind (as a string usable by add_counters' `counter: {"binding": ...}`) and the chosen creature (so the follow-up add_counters can exclude it as "each other creature you control")
+  <br>Why the existing vocabulary won't do: add_counters takes a printed counter kind, and its `counter: {binding}` form is only filled by a counter_placed trigger's event bindings; choose_permanents binds a permanent but no counter kind; choose_mode would need one mode per kind and cannot be restricted to kinds actually on a creature you control; proliferate/move_counters any_kind act on existing counters rather than putting a new one of a chosen kind on other creatures
+
+<details><summary>Cards waiting on this</summary>
+
+- **Clockspinning** (rank 4274) — `clockspinning`
+  - Choose a counter on target permanent or suspended card. Remove that counter from that permanent or card or put another of those counters on it.
+- **Aven Courier** (rank 8469) — `aven_courier`
+  - Whenever this creature attacks, choose a counter on a permanent you control. Put a counter of that kind on target permanent you control if it doesn't have a counter of that kind on it.
+- **Contractual Safeguard** (rank 9404) — `contractual_safeguard`
+  - Choose a kind of counter on a creature you control. Put a counter of that kind on each other creature you control.
 
 </details>
 
@@ -1549,24 +1578,6 @@ Blocks **2** cards.
   - The first instant or sorcery spell you cast each turn has casualty 2. (As you cast that spell, you may sacrifice a creature with power 2 or greater. When you do, copy the spell and you may choose new targets for the copy.)
 - **Ashad, the Lone Cyberman** (rank 12943) — `ashad_the_lone_cyberman`
   - The first nonlegendary artifact spell you cast each turn has casualty 2. (As you cast it, you may sacrifice a creature with power 2 or greater. When you do, copy it. A copy of an artifact spell becomes a token.)
-
-</details>
-
-## choose-counter-kind
-
-Blocks **2** cards.
-
-- **(op)** an op that has the controller choose one counter kind from among the kinds currently on permanents they control, binding it (e.g. `as: "kind"`) so a later `add_counters` can take `counter: {"binding": "kind"}` and a condition/selector can test `has_counters: {"binding": "kind"}` on the target ("if it doesn't have a counter of that kind on it")
-  <br>Why the existing vocabulary won't do: `add_counters` takes only a fixed printed `counter` kind; `move_counters`/`remove_counters` have `any_kind` but move or remove existing counters from a source rather than naming a kind and putting a fresh one elsewhere; `proliferate` adds to every kind already present on chosen objects, not one chosen kind onto a permanent lacking it; `choose_type`/`choose_color`/`choose_card_name` choose other vocabularies, not counter kinds
-- **(op)** an op (or an `as` binding on a counter-kind choice) that has the controller choose one kind of counter already on the target and binds it, so a following `choose_mode` can either remove one counter of that kind or put one more of that same kind on it -- add_counters reading `counter: {"binding": <as>}` from an effect-made choice rather than from a counter_placed trigger
-  <br>Why the existing vocabulary won't do: add_counters needs a printed kind; its `{"binding": "counter"}` form is allowed only on a counter_placed trigger (`_counter_kind` reads the trigger's event binding). remove_counters with any_kind can remove a chosen kind but binds nothing usable to add the same kind, and proliferate touches every permanent and player rather than the one target
-
-<details><summary>Cards waiting on this</summary>
-
-- **Clockspinning** (rank 4274) — `clockspinning`
-  - Choose a counter on target permanent or suspended card. Remove that counter from that permanent or card or put another of those counters on it.
-- **Aven Courier** (rank 8469) — `aven_courier`
-  - Whenever this creature attacks, choose a counter on a permanent you control. Put a counter of that kind on target permanent you control if it doesn't have a counter of that kind on it.
 
 </details>
 
@@ -3324,6 +3335,20 @@ Blocks **1** card.
 
 </details>
 
+## copy-counters
+
+Blocks **1** card.
+
+- **(op)** an op that, for every kind of counter on a source object (self), puts that many counters of the same kind on another object (the entering creature bound by the trigger), without removing them from the source -- any kind, keyword counters included
+  <br>Why the existing vocabulary won't do: add_counters takes one named `counter` kind, so three add_counters reading counters_on self for +1/+1, first strike and vigilance would miss any other kind Denry later gains (proliferate onto -1/-1, shield, etc.); move_counters with all_kinds removes the counters from the source; double_counters only doubles counters on the same object
+
+<details><summary>Cards waiting on this</summary>
+
+- **Denry Klin, Editor in Chief** (rank 9492) — `denry_klin_editor_in_chief`
+  - Whenever a nontoken creature you control enters, if Denry Klin has counters on it, put the same number of each kind of counter on that creature.
+
+</details>
+
 ## copy-from-last-known-information
 
 Blocks **1** card.
@@ -3491,6 +3516,21 @@ Blocks **1** card.
 - **Reverse the Polarity** (rank 4984) — `reverse_the_polarity`
   - • Switch each creature's power and toughness until end of turn.
   - • Counter all other spells.
+
+</details>
+
+## counter-kind-copy
+
+Blocks **1** card.
+
+- **(op)** an op that collects the distinct counter kinds among a selector's objects (creatures you control, including the just-created tokens) and, for each kind, puts one counter of that kind on a chosen one of a bound set of objects (the two tokens created via create_token `as`)
+  <br>Why the existing vocabulary won't do: add_counters takes one fixed `counter` kind; move_counters/remove_counters have any_kind/all_kinds but move or remove existing counters rather than adding a fresh one per distinct kind; proliferate adds to permanents that already have counters, not to a chosen token; no value or for_each iterates over counter kinds
+
+<details><summary>Cards waiting on this</summary>
+
+- **Exotic Pets** (rank 16753) — `exotic_pets`
+  - Create two 1/1 blue Fish creature tokens with "This token can't be blocked."
+  - Then for each kind of counter among creatures you control, put a counter of that kind on either of those tokens.
 
 </details>
 
@@ -4569,6 +4609,21 @@ Blocks **1** card.
 - **Zimone, Infinite Analyst** (rank 8360) — `zimone_infinite_analyst`
   - The first spell you cast with {X} in its mana cost each turn costs {1} less to cast for each +1/+1 counter on Zimone.
   - Whenever you cast your first spell with {X} in its mana cost each turn, put two +1/+1 counters on Zimone.
+
+</details>
+
+## fish-token-unblockable
+
+Blocks **1** card.
+
+- **(token)** a 1/1 blue Fish creature token with "This token can't be blocked."
+  <br>Why the existing vocabulary won't do: token_ids has only fish_1_1_u, a plain 1/1 blue Fish with no evasion; substituting it would drop the unblockable clause
+
+<details><summary>Cards waiting on this</summary>
+
+- **Exotic Pets** (rank 16753) — `exotic_pets`
+  - Create two 1/1 blue Fish creature tokens with "This token can't be blocked."
+  - Then for each kind of counter among creatures you control, put a counter of that kind on either of those tokens.
 
 </details>
 
@@ -6500,6 +6555,20 @@ Blocks **1** card.
 
 </details>
 
+## random-counter-kind
+
+Blocks **1** card.
+
+- **(op)** a random choice among a printed list of counter kinds, restricted at resolution to the kinds the source does not currently have a counter of, then add_counters of the chosen kind on the source (e.g. a choose_mode with random: true whose modes may carry an availability condition such as {not: {cmp counters_on self > 0}}, or an add_counters option `random_kind_from: [...]` with `exclude_present: true`)
+  <br>Why the existing vocabulary won't do: choose_mode has random: true but no per-mode availability condition; once_each strikes off modes already chosen, which diverges whenever a counter is removed or was placed by another source (and never re-offers a kind whose counter was lost); a random pick over all ten followed by an `if` that does nothing when the counter is present changes the distribution and can place nothing
+
+<details><summary>Cards waiting on this</summary>
+
+- **Crystalline Giant** (rank 6446) — `crystalline_giant`
+  - At the beginning of combat on your turn, choose a kind of counter at random that this creature doesn't have on it from among flying, first strike, deathtouch, hexproof, lifelink, menace, reach, trample, vigilance, and +1/+1. Put a counter of that kind on this creature.
+
+</details>
+
 ## rate-limited-free-cast-by-counters
 
 Blocks **1** card.
@@ -7373,6 +7442,20 @@ Blocks **1** card.
 
 - **Three Dog, Galaxy News DJ** (rank 11547) — `three_dog_galaxy_news_dj`
   - Whenever you attack, you may pay {2} and sacrifice an Aura attached to Three Dog. When you sacrifice an Aura this way, for each other attacking creature you control, create a token that's a copy of that Aura attached to that creature.
+
+</details>
+
+## token-copy-enters-with-counters
+
+Blocks **1** card.
+
+- **(op)** a `counters` option on `copy_permanent` (map of counter kind to value expression, e.g. {"+1/+1": {"const": 1}}) passed through to primitives.create_token's `enters_with`, so each token copy enters the battlefield with the counters already on it (122.6, 614.1c) rather than having them put on afterwards
+  <br>Why the existing vocabulary won't do: copy_permanent's options (amount, as, attacking, controller, embalm, except/except_, objects, or_planeswalker, tapped) have no counters key, and its except_ overrides only copiable values (power, toughness, types, subtypes, keywords, name, colors, mana cost), not counters. create_token has `counters` (enters_with) but names a fixed token id and cannot copy a target. copy_permanent with `as` followed by add_counters on the binding puts the counter on after the token has entered, which differs from 'enters with' for its enters-triggers and anything that reads how it entered
+
+<details><summary>Cards waiting on this</summary>
+
+- **Littjara Mirrorlake** (rank 7050) — `littjara_mirrorlake`
+  - {2}{G}{G}{U}, {T}, Sacrifice this land: Create a token that's a copy of target creature you control, except it enters with an additional +1/+1 counter on it. Activate only as a sorcery.
 
 </details>
 

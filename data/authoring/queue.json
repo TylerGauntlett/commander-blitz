@@ -35022,32 +35022,32 @@
     },
     "Brokers Charm": {
       "edhrec_rank": 6110,
-      "gate": "template",
+      "gate": null,
       "name": "Brokers Charm",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "0aac0943-6c9a-4c65-9d17-3ca0f2ba2340",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brokers Confluence": {
       "edhrec_rank": 9799,
-      "gate": "template",
+      "gate": null,
       "name": "Brokers Confluence",
-      "reason": "no template for: Choose three. You may choose the same mode more than once",
+      "reason": "",
       "scryfall_id": "657ff5fc-1a95-46f9-85f7-fc1ad757c8c4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brokers Hideout": {
       "edhrec_rank": 1297,
-      "gate": "template",
+      "gate": "playable",
       "name": "Brokers Hideout",
-      "reason": "no template for: When this land enters, sacrifice it. When you do, search your library for a basic Forest, ",
+      "reason": "brokers_hideout is a permanent but ended in graveyard",
       "scryfall_id": "989b299b-daa9-4bda-94e2-9a2f0e8f2bce",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Brokers Initiate": {
@@ -64362,12 +64362,12 @@
     },
     "Declaration in Stone": {
       "edhrec_rank": 14949,
-      "gate": "template",
+      "gate": null,
       "name": "Declaration in Stone",
-      "reason": "no template for: Exile target creature and all other creatures its controller controls with the same name a",
+      "reason": "",
       "scryfall_id": "6f5513a2-e63d-44df-b8a5-37c298e38e3c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Declaration of Naught": {
@@ -90982,12 +90982,12 @@
     },
     "Family's Favor": {
       "edhrec_rank": 8296,
-      "gate": "template",
+      "gate": null,
       "name": "Family's Favor",
-      "reason": "no template for: Whenever you attack, put a shield counter on target attacking creature. Until end of turn,",
+      "reason": "",
       "scryfall_id": "26f752cb-6be7-45a7-9096-8ebf82395be6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Famine": {
@@ -142482,12 +142482,12 @@
     },
     "Jenara, Asura of War": {
       "edhrec_rank": 18394,
-      "gate": "template",
+      "gate": null,
       "name": "Jenara, Asura of War",
-      "reason": "no template for: {1}{W}: Put a +1/+1 counter on Jenara",
+      "reason": "",
       "scryfall_id": "4bcf5b5f-b908-4975-91f7-c4c6f819e0a6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jennifer Walters // The Sensational She-Hulk": {
@@ -152572,12 +152572,12 @@
     },
     "Kros, Defense Contractor": {
       "edhrec_rank": 11167,
-      "gate": "template",
+      "gate": null,
       "name": "Kros, Defense Contractor",
-      "reason": "no template for: At the beginning of your upkeep, put a shield counter on target creature an opponent contr",
+      "reason": "",
       "scryfall_id": "12e71d52-5c75-4798-9fe7-8a34a2bf0c9a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Krosan Archer": {
