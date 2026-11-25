@@ -577,7 +577,16 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         # every kind summed -- Ferrafor's "the number of counters among
         # creatures target player controls".
         spec = expr["counters_on"]
-        kind = str(spec.get("counter", PLUS_ONE))
+        counter = spec.get("counter", PLUS_ONE)
+        if isinstance(counter, Mapping):
+            # A kind `choose_counter_kind` bound -- Aven Courier's "if it
+            # doesn't have a counter of that kind on it". Nothing chosen is
+            # nothing to count.
+            bound = ctx.bindings.get(str(counter.get("binding", "")))
+            if not (isinstance(bound, str) and bound):
+                return 0
+            counter = bound
+        kind = str(counter)
 
         objects = spec.get("objects") or {"self_only": True}
         snap = ctx.bindings.get(str(objects["binding"])) if "binding" in objects else None
@@ -1588,7 +1597,9 @@ def validate_counter_kind(kind: Any, where: str) -> None:
         )
 
 
-def validate_counters_on(spec: Any, where: str, *, validate_objects: Any = None) -> None:
+def validate_counters_on(
+    spec: Any, where: str, *, validate_objects: Any = None, bound_kind: bool = False
+) -> None:
     """Shared by the effect-side and static-side value validators.
 
     Both languages accept ``counters_on`` -- "double the number of +1/+1
@@ -1625,8 +1636,20 @@ def validate_counters_on(spec: Any, where: str, *, validate_objects: Any = None)
             f"to '{PLUS_ONE}' in the evaluator and so would read 0 for ever on a "
             f"permanent that carries some other kind"
         )
-    if spec["counter"] != ANY_COUNTER_KIND:
-        validate_counter_kind(spec["counter"], f"{where}.counter")
+    counter = spec["counter"]
+    if isinstance(counter, Mapping):
+        # ``{"binding": …}``, a kind `choose_counter_kind` bound. Only an
+        # effect's value reads bindings (``bound_kind``); a static binds
+        # nothing, so there it would count nothing for ever.
+        if not bound_kind or set(counter) != {"binding"} or not (
+            isinstance(counter["binding"], str) and counter["binding"]
+        ):
+            raise DslError(
+                f"{where}.counter: a counter kind, 'any', or (in an effect) "
+                f"{{'binding': …}} naming a kind choose_counter_kind bound; got {counter!r}"
+            )
+    elif counter != ANY_COUNTER_KIND:
+        validate_counter_kind(counter, f"{where}.counter")
     if not spec.get("objects"):
         raise DslError(
             f"{where}: needs 'objects' -- an empty selector is not "
@@ -2145,7 +2168,7 @@ def validate_value(expr: Any, where: str) -> None:
     if "mana_symbols" in expr:
         validate_mana_symbols(expr["mana_symbols"], f"{where}.mana_symbols")
     if "counters_on" in expr:
-        validate_counters_on(expr["counters_on"], f"{where}.counters_on")
+        validate_counters_on(expr["counters_on"], f"{where}.counters_on", bound_kind=True)
     if "auras_had" in expr:
         validate_auras_had(expr["auras_had"], f"{where}.auras_had")
     if "targets_of_spell" in expr:

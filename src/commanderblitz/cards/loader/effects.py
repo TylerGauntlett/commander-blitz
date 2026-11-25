@@ -300,6 +300,59 @@ def _validate_any_kind_counters(effect: Mapping[str, Any], op: str, where: str) 
 _OBJECT_POOL_KEYS = ("count", "exists", "objects", "per", "from", "attacker", "source_object")
 
 
+def _refuse_unbound_counter_kinds(model: CardModel, where: str) -> None:
+    """A counter kind read from a binding nothing in reach writes.
+
+    ``counter: {"binding": name}`` on `add_counters` or `counters_on` reads a
+    kind out of the bindings, and an absent one puts or counts nothing. So
+    "a counter of that kind" whose choice is missing, or spelled under another
+    name, loads clean and does nothing. Two ops write one: `choose_counter_kind`
+    for the rest of its resolution, and `for_each_counter_kind` for its own
+    body only -- the loop restores the binding as it ends, so a read after it
+    is refused too. ``counter`` itself is the kind a counter_placed trigger
+    binds, held by `reads_placed_kind` instead.
+    """
+    written: set[str] = set()
+    reads: dict[int, str] = {}
+    in_loop: set[int] = set()
+
+    def kind_reads(tree: Any, name: str) -> None:
+        # Every ``counter`` mapping under a loop's body that reads its name.
+        if isinstance(tree, Mapping):
+            counter = tree.get("counter")
+            if isinstance(counter, Mapping) and counter.get("binding") == name:
+                in_loop.add(id(counter))
+            for value in tree.values():
+                kind_reads(value, name)
+        elif isinstance(tree, (list, tuple)):
+            for value in tree:
+                kind_reads(value, name)
+
+    def collect(node: Mapping[str, Any]) -> bool:
+        if node.get("op") == "choose_counter_kind" and isinstance(node.get("as"), str):
+            written.add(node["as"])
+        if node.get("op") == "for_each_counter_kind" and isinstance(node.get("as"), str):
+            kind_reads(node.get("effects"), node["as"])
+        counter = node.get("counter")
+        if isinstance(counter, Mapping) and isinstance(counter.get("binding"), str):
+            reads[id(counter)] = counter["binding"]
+        return False
+
+    _mentions(model, collect)
+    unbound = {
+        name
+        for key, name in reads.items()
+        if name not in written and name != PLACED_COUNTER_KIND["binding"] and key not in in_loop
+    }
+    if unbound:
+        raise DslError(
+            f"{where}: a counter kind is a string, {PLACED_COUNTER_KIND} on a "
+            f"counter_placed trigger, a binding a choose_counter_kind on this card "
+            f"writes, or a for_each_counter_kind's 'as' read inside its 'effects'; "
+            f"{sorted(unbound)} is none of them, so it would put or count nothing"
+        )
+
+
 def _refuse_seats_read_as_objects(model: CardModel, where: str) -> None:
     """A seat binding read as a pool of objects counts the wrong thing.
 
@@ -1129,14 +1182,23 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # than per op, and the next op to grow one is covered before it is written.
     if "counter" in effect and isinstance(effect["counter"], Mapping):
         # "The same number and kind of counters": the kind the triggering
-        # placement put, read off the bindings. Only `add_counters` reads the
-        # mapping, and only this one; that it sits on a `counter_placed`
-        # trigger is checked where the trigger is in view (`reads_placed_kind`).
-        if op != "add_counters" or dict(effect["counter"]) != PLACED_COUNTER_KIND:
+        # placement put, read off the bindings -- or "a counter of that kind",
+        # one `choose_counter_kind` bound. Only `add_counters` reads the
+        # mapping. That ``counter`` sits on a `counter_placed` trigger is
+        # checked where the trigger is in view (`reads_placed_kind`), and that
+        # any other name has a `choose_counter_kind` writing it is checked over
+        # the whole card (`_refuse_unbound_counter_kinds`).
+        bound = effect["counter"]
+        if (
+            op != "add_counters"
+            or set(bound) != {"binding"}
+            or not (isinstance(bound["binding"], str) and bound["binding"])
+        ):
             raise DslError(
                 f"{where}.counter: a counter kind is a string, or "
                 f"{PLACED_COUNTER_KIND} on add_counters for the kind a "
-                f"counter_placed trigger's placement put; got {effect['counter']!r} "
+                f"counter_placed trigger's placement put, or {{'binding': …}} "
+                f"naming a kind choose_counter_kind bound; got {effect['counter']!r} "
                 f"on {op!r}"
             )
     elif "counter" in effect:
@@ -1945,6 +2007,89 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             for name in names:
                 if name not in KNOWN_TYPES:
                     raise DslError(f"{where}: unknown card type {name!r} in {key!r}")
+    if op == "choose_counter_kind":
+        # The kind exists only as its binding, read by `add_counters`' and
+        # `counters_on`'s ``counter: {"binding": …}`` -- without 'as' it is a
+        # question whose answer is thrown away. ``counter`` is the name a
+        # counter_placed trigger binds, so it is refused here rather than read
+        # by two writers.
+        name = effect.get("as")
+        if not name:
+            raise DslError(
+                f"{where}: choose_counter_kind needs an 'as' -- the chosen kind is "
+                f"only reachable through the binding it is stored under"
+            )
+        if name == PLACED_COUNTER_KIND["binding"]:
+            raise DslError(
+                f"{where}: choose_counter_kind's 'as' may not be 'counter', the "
+                f"kind a counter_placed trigger binds -- choose another name"
+            )
+        if not isinstance(effect.get("from"), Mapping) or not effect["from"]:
+            raise DslError(
+                f"{where}: choose_counter_kind needs 'from' -- the permanents whose "
+                f"counters may be chosen, e.g. creatures you control"
+            )
+        validate_selector(effect["from"], f"{where}.from")
+        holder = effect.get("holder_as")
+        if holder is not None and not (isinstance(holder, str) and holder and holder != name):
+            raise DslError(
+                f"{where}: choose_counter_kind 'holder_as' is a binding name of its "
+                f"own, for the permanent the chosen counter is on; got {holder!r}"
+            )
+    elif "holder_as" in effect:
+        raise DslError(f"{where}: 'holder_as' only means anything on choose_counter_kind")
+    if op == "for_each_counter_kind":
+        # "For each kind of counter on …": the domain is the kinds on the
+        # permanents `objects` finds and the players `players` names, read
+        # once before the body runs. Without either there is no domain; without
+        # 'as' or a body the kind is a loop variable nothing can read.
+        if not effect.get("objects") and "players" not in effect:
+            raise DslError(
+                f"{where}: for_each_counter_kind needs 'objects' (the permanents "
+                f"whose counters' kinds are walked), 'players', or both"
+            )
+        if "players" in effect:
+            _validate_player_spec(effect["players"], f"{where}.players", target_kinds)
+        name = effect.get("as")
+        if not name:
+            raise DslError(
+                f"{where}: for_each_counter_kind needs an 'as' -- each kind is only "
+                f"reachable through the binding it is stored under"
+            )
+        if name == PLACED_COUNTER_KIND["binding"]:
+            raise DslError(
+                f"{where}: for_each_counter_kind's 'as' may not be 'counter', the "
+                f"kind a counter_placed trigger binds -- choose another name"
+            )
+        count_as = effect.get("count_as")
+        if count_as is not None and not (
+            isinstance(count_as, str) and count_as and count_as not in (name, "counter")
+        ):
+            raise DslError(
+                f"{where}: for_each_counter_kind 'count_as' is a binding name of "
+                f"its own, for the number of counters of the kind; got {count_as!r}"
+            )
+        if not effect.get("effects"):
+            raise DslError(f"{where}: for_each_counter_kind needs 'effects' to run per kind")
+    elif "count_as" in effect:
+        raise DslError(f"{where}: 'count_as' only means anything on for_each_counter_kind")
+    if op == "add_counters" and "player" in effect:
+        # A player's kind named only at resolution -- "give that permanent or
+        # player another counter of that kind". A printed kind on a player has
+        # its own op (`add_poison`, `add_energy`), and a player is not an
+        # object, so 'objects' beside it would be a second recipient list.
+        if not isinstance(effect.get("counter"), Mapping) or effect["counter"] == PLACED_COUNTER_KIND:
+            raise DslError(
+                f"{where}: add_counters with 'player' puts a bound kind -- "
+                f"counter: {{'binding': …}} from for_each_counter_kind or "
+                f"choose_counter_kind; a printed poison or energy counter is "
+                f"add_poison or add_energy"
+            )
+        if "objects" in effect:
+            raise DslError(
+                f"{where}: add_counters puts on 'objects' or on a 'player', not both "
+                f"-- write two add_counters"
+            )
     if op == "choose_number":
         # The number exists only as its binding, read by a value expression's
         # `{"binding": …}` -- without 'as' the answer is thrown away and the

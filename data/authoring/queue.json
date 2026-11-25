@@ -4012,12 +4012,12 @@
     },
     "Agent's Toolkit": {
       "edhrec_rank": 8332,
-      "gate": "template",
+      "gate": null,
       "name": "Agent's Toolkit",
-      "reason": "no template for: This artifact enters with a +1/+1 counter, a flying counter, a deathtouch counter, and a s",
+      "reason": "",
       "scryfall_id": "4958486a-0f02-4312-8b3f-fb90e54d332c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Agents of HYDRA": {
@@ -17332,12 +17332,12 @@
     },
     "Aven Courier": {
       "edhrec_rank": 8469,
-      "gate": "template",
+      "gate": null,
       "name": "Aven Courier",
-      "reason": "no template for: Whenever this creature attacks, choose a counter on a permanent you control. Put a counter",
+      "reason": "",
       "scryfall_id": "7bb0e478-c359-4523-a1e1-ba711a8cb8e0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aven Envoy": {
@@ -17802,12 +17802,12 @@
     },
     "Avenging Huntbonder": {
       "edhrec_rank": 13428,
-      "gate": "template",
+      "gate": null,
       "name": "Avenging Huntbonder",
-      "reason": "no template for: Whenever this creature attacks, put a double strike counter on another target attacking cr",
+      "reason": "",
       "scryfall_id": "05e201fa-fdd3-45bf-89a2-dae8c896aa28",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Avenging Hunter": {
@@ -20182,12 +20182,12 @@
     },
     "Bant Charm": {
       "edhrec_rank": 4902,
-      "gate": "template",
+      "gate": null,
       "name": "Bant Charm",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "7906b1e8-3049-4f4e-b1fd-b2547e7079f0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bant Panorama": {
@@ -34132,12 +34132,12 @@
     },
     "Bribe Taker": {
       "edhrec_rank": 20085,
-      "gate": "template",
+      "gate": null,
       "name": "Bribe Taker",
-      "reason": "no template for: When this creature enters, for each kind of counter on permanents you control, you may put",
+      "reason": "",
       "scryfall_id": "08d8a568-196e-4865-b2df-858152e3aece",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Briber's Purse": {
@@ -35022,32 +35022,32 @@
     },
     "Brokers Charm": {
       "edhrec_rank": 6110,
-      "gate": "template",
+      "gate": null,
       "name": "Brokers Charm",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "0aac0943-6c9a-4c65-9d17-3ca0f2ba2340",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brokers Confluence": {
       "edhrec_rank": 9799,
-      "gate": "template",
+      "gate": null,
       "name": "Brokers Confluence",
-      "reason": "no template for: Choose three. You may choose the same mode more than once",
+      "reason": "",
       "scryfall_id": "657ff5fc-1a95-46f9-85f7-fc1ad757c8c4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brokers Hideout": {
       "edhrec_rank": 1297,
-      "gate": "template",
+      "gate": "playable",
       "name": "Brokers Hideout",
-      "reason": "no template for: When this land enters, sacrifice it. When you do, search your library for a basic Forest, ",
+      "reason": "brokers_hideout is a permanent but ended in graveyard",
       "scryfall_id": "989b299b-daa9-4bda-94e2-9a2f0e8f2bce",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Brokers Initiate": {
@@ -52762,12 +52762,12 @@
     },
     "Contractual Safeguard": {
       "edhrec_rank": 9404,
-      "gate": "template",
+      "gate": null,
       "name": "Contractual Safeguard",
-      "reason": "no template for: Addendum — If you cast this spell during your main phase, put a shield counter on a creatu",
+      "reason": "",
       "scryfall_id": "c2511fcf-f394-4b0c-8ed6-db0826cb296c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Contradict": {
@@ -64362,12 +64362,12 @@
     },
     "Declaration in Stone": {
       "edhrec_rank": 14949,
-      "gate": "template",
+      "gate": null,
       "name": "Declaration in Stone",
-      "reason": "no template for: Exile target creature and all other creatures its controller controls with the same name a",
+      "reason": "",
       "scryfall_id": "6f5513a2-e63d-44df-b8a5-37c298e38e3c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Declaration of Naught": {
@@ -88162,12 +88162,12 @@
     },
     "Exotic Pets": {
       "edhrec_rank": 16753,
-      "gate": "template",
+      "gate": null,
       "name": "Exotic Pets",
-      "reason": "no template for: Create two 1/1 blue Fish creature tokens with \"This token can't be blocked.\" Then for each",
+      "reason": "",
       "scryfall_id": "902f1ed8-5c10-45e4-8f2f-182e800faab4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Expand the Sphere": {
@@ -88362,12 +88362,12 @@
     },
     "Expendable Lackey": {
       "edhrec_rank": 21427,
-      "gate": "template",
+      "gate": null,
       "name": "Expendable Lackey",
-      "reason": "no template for: {1}{U}, Exile this card from your graveyard: Create a 1/1 blue Fish creature token with \"T",
+      "reason": "",
       "scryfall_id": "9e671b0f-55b9-4bff-b02a-0be1f6db193f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Expendable Troops": {
@@ -90982,12 +90982,12 @@
     },
     "Family's Favor": {
       "edhrec_rank": 8296,
-      "gate": "template",
+      "gate": null,
       "name": "Family's Favor",
-      "reason": "no template for: Whenever you attack, put a shield counter on target attacking creature. Until end of turn,",
+      "reason": "",
       "scryfall_id": "26f752cb-6be7-45a7-9096-8ebf82395be6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Famine": {
@@ -133192,12 +133192,12 @@
     },
     "Ichormoon Gauntlet": {
       "edhrec_rank": 2948,
-      "gate": "template",
+      "gate": null,
       "name": "Ichormoon Gauntlet",
-      "reason": "no template for: Planeswalkers you control have \"[0]: Proliferate\" and \"[−12]: Take an extra turn after thi",
+      "reason": "",
       "scryfall_id": "2c093ce0-2561-4847-ab58-f6f1650d743e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ichorplate Golem": {
@@ -142482,12 +142482,12 @@
     },
     "Jenara, Asura of War": {
       "edhrec_rank": 18394,
-      "gate": "template",
+      "gate": null,
       "name": "Jenara, Asura of War",
-      "reason": "no template for: {1}{W}: Put a +1/+1 counter on Jenara",
+      "reason": "",
       "scryfall_id": "4bcf5b5f-b908-4975-91f7-c4c6f819e0a6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jennifer Walters // The Sensational She-Hulk": {
@@ -152572,12 +152572,12 @@
     },
     "Kros, Defense Contractor": {
       "edhrec_rank": 11167,
-      "gate": "template",
+      "gate": null,
       "name": "Kros, Defense Contractor",
-      "reason": "no template for: At the beginning of your upkeep, put a shield counter on target creature an opponent contr",
+      "reason": "",
       "scryfall_id": "12e71d52-5c75-4798-9fe7-8a34a2bf0c9a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Krosan Archer": {
@@ -162862,12 +162862,12 @@
     },
     "Luminarch Aspirant": {
       "edhrec_rank": 3761,
-      "gate": "template",
+      "gate": null,
       "name": "Luminarch Aspirant",
-      "reason": "no template for: At the beginning of combat on your turn, put a +1/+1 counter on target creature you contro",
+      "reason": "",
       "scryfall_id": "dcd27fa3-f6b6-4137-9b6c-4cba7187664c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Luminate Primordial": {
@@ -169622,12 +169622,12 @@
     },
     "Maulfist Revolutionary": {
       "edhrec_rank": 25574,
-      "gate": "template",
+      "gate": null,
       "name": "Maulfist Revolutionary",
-      "reason": "no template for: When this creature enters or dies, for each kind of counter on target permanent or player,",
+      "reason": "",
       "scryfall_id": "a83dcdba-419b-41e1-8c9d-8bca6fe2752b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Maulfist Squad": {
@@ -193662,12 +193662,12 @@
     },
     "Oracle's Vault": {
       "edhrec_rank": 12820,
-      "gate": "template",
+      "gate": null,
       "name": "Oracle's Vault",
-      "reason": "no template for: {2}, {T}: Exile the top card of your library. Until end of turn, you may play that card. P",
+      "reason": "",
       "scryfall_id": "0314bea5-4e04-4e74-9832-3e935eb90ee1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Orah, Skyclave Hierophant": {
@@ -200072,12 +200072,12 @@
     },
     "Perrie, the Pulverizer": {
       "edhrec_rank": 16166,
-      "gate": "template",
+      "gate": null,
       "name": "Perrie, the Pulverizer",
-      "reason": "no template for: When Perrie enters, put a shield counter on target creature",
+      "reason": "",
       "scryfall_id": "2c91da53-4233-4802-8a72-240b0b46d459",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Persecute": {
@@ -205562,12 +205562,12 @@
     },
     "Power Conduit": {
       "edhrec_rank": 3092,
-      "gate": "template",
+      "gate": null,
       "name": "Power Conduit",
-      "reason": "no template for: {T}, Remove a counter from a permanent you control: Choose one —",
+      "reason": "",
       "scryfall_id": "a1bde782-3ef3-4a7d-9c44-67b78c65efa8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Power Depot": {
@@ -205712,12 +205712,12 @@
     },
     "Powerful Broker": {
       "edhrec_rank": 21748,
-      "gate": "template",
+      "gate": null,
       "name": "Powerful Broker",
-      "reason": "no template for: {T}: For each kind of counter on target permanent or player, give that permanent or player",
+      "reason": "",
       "scryfall_id": "801f0417-b663-4e28-9a61-9570061654d7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Powerleech": {
@@ -206972,12 +206972,12 @@
     },
     "Primal Empathy": {
       "edhrec_rank": 7594,
-      "gate": "template",
+      "gate": null,
       "name": "Primal Empathy",
-      "reason": "no template for: At the beginning of your upkeep, draw a card if you control a creature with the greatest p",
+      "reason": "",
       "scryfall_id": "b8099a93-c59d-40a9-96e2-f3dd2a6dd8b8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Primal Forcemage": {
@@ -221132,12 +221132,12 @@
     },
     "Reservoir Kraken": {
       "edhrec_rank": 10227,
-      "gate": "template",
+      "gate": null,
       "name": "Reservoir Kraken",
-      "reason": "no template for: Trample, ward {2}",
+      "reason": "",
       "scryfall_id": "01479b8a-b5a4-4d45-9073-5d24becad45b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Reservoir Walker": {
@@ -225932,12 +225932,12 @@
     },
     "Roalesk, Apex Hybrid": {
       "edhrec_rank": 10541,
-      "gate": "template",
+      "gate": null,
       "name": "Roalesk, Apex Hybrid",
-      "reason": "no template for: When Roalesk enters, put two +1/+1 counters on another target creature you control",
+      "reason": "",
       "scryfall_id": "a52a5f4b-d2e1-405e-82b4-ea35ab851c42",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Roamer's Routine": {
@@ -250362,12 +250362,12 @@
     },
     "Skyboon Evangelist": {
       "edhrec_rank": 11459,
-      "gate": "template",
+      "gate": null,
       "name": "Skyboon Evangelist",
-      "reason": "no template for: When this creature enters, support 6",
+      "reason": "",
       "scryfall_id": "a776f162-5ac4-444a-8254-ff6915932358",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skybox Ferry": {
@@ -250902,12 +250902,12 @@
     },
     "Skyship Plunderer": {
       "edhrec_rank": 16105,
-      "gate": "template",
+      "gate": null,
       "name": "Skyship Plunderer",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, for each kind of counter on target",
+      "reason": "",
       "scryfall_id": "113ebd1b-380d-42a1-accb-9889c40478f6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skyship Stalker": {
@@ -251742,12 +251742,12 @@
     },
     "Sleep with the Fishes": {
       "edhrec_rank": 19332,
-      "gate": "template",
+      "gate": null,
       "name": "Sleep with the Fishes",
-      "reason": "no template for: When this Aura enters, tap enchanted creature and you create a 1/1 blue Fish creature toke",
+      "reason": "",
       "scryfall_id": "3742a0fb-4b86-49d6-b6fb-bd6a42fa1bcb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sleep-Cursed Faerie": {
@@ -252122,12 +252122,12 @@
     },
     "Slippery Bogbonder": {
       "edhrec_rank": 3839,
-      "gate": "template",
+      "gate": null,
       "name": "Slippery Bogbonder",
-      "reason": "no template for: When this creature enters, put a hexproof counter on target creature. Then move any number",
+      "reason": "",
       "scryfall_id": "f9fc4f93-398c-4d11-a393-dd35e16ac1cc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Slippery Bogle": {
@@ -265982,12 +265982,12 @@
     },
     "Storm of Forms": {
       "edhrec_rank": 15754,
-      "gate": "template",
+      "gate": null,
       "name": "Storm of Forms",
-      "reason": "no template for: When you cast this spell, copy it for each kind of counter among permanents you control. Y",
+      "reason": "",
       "scryfall_id": "5fab4f0d-006d-4a94-80ba-924f19b42f63",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Storm of Memories": {
@@ -306202,12 +306202,12 @@
     },
     "Vivid Meadow": {
       "edhrec_rank": 5893,
-      "gate": "template",
+      "gate": null,
       "name": "Vivid Meadow",
-      "reason": "no template for: {T}, Remove a charge counter from this land: Add one mana of any color",
+      "reason": "",
       "scryfall_id": "625a42b4-d88c-48e0-96b1-77388ca48810",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vivid Revival": {
@@ -316672,12 +316672,12 @@
     },
     "Wingspan Mentor": {
       "edhrec_rank": 16457,
-      "gate": "template",
+      "gate": null,
       "name": "Wingspan Mentor",
-      "reason": "no template for: When this creature enters, put a flying counter on target non-Human creature you control",
+      "reason": "",
       "scryfall_id": "225701da-1e6d-479c-aecc-3a13e0698524",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wingspan Stride": {

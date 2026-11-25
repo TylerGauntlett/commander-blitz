@@ -95,6 +95,7 @@ from .effects import (
     _reads_announced_x,
     _refuse_protection_sentinels,
     _refuse_seats_read_as_objects,
+    _refuse_unbound_counter_kinds,
     _validate_attach_to_player,
     _validate_cast_lock_zones,
     _validate_effect,
@@ -2894,6 +2895,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         )
 
     _refuse_seats_read_as_objects(model, where)
+    _refuse_unbound_counter_kinds(model, where)
 
     # `of` names a *different* permanent to ask about -- Celes, Rune Knight's
     # "…or was cast from a graveyard", which is about the creature that just

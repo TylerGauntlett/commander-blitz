@@ -1,0 +1,23 @@
+{
+  "card_id": "denry_klin_editor_in_chief",
+  "name": "Denry Klin, Editor in Chief",
+  "oracle_text": "Denry Klin enters with your choice of a +1/+1, first strike, or vigilance counter on it.\nWhenever a nontoken creature you control enters, if Denry Klin has counters on it, put the same number of each kind of counter on that creature.",
+  "blocked_sentences": [
+    "Denry Klin enters with your choice of a +1/+1, first strike, or vigilance counter on it."
+  ],
+  "needs": [
+    {
+      "capability": "enters_with_counter_of_choice",
+      "kind": "replacement",
+      "what": "a self_enters_with_counters replacement whose kind is chosen by the controller as the permanent enters, from a printed list of kinds (+1/+1, first_strike, vigilance), the choice offered by kind name and the one counter placed in the arrival's single placement (122.6, 614.1c)",
+      "why_existing_wont_do": "self_enters_with_counters takes one printed `counter`, or a `modify.counters` map of printed kinds; its `as_enters` effects can run a choice, but no op binds a chosen printed kind (choose_counter_kind chooses among counters already on a permanent, and choose_mode binds nothing), so the only spelling is a choose_number 1-3 decoded by arithmetic per kind, which offers the player bare numbers; riot's choice is fixed to +1/+1 or haste. The second sentence is expressible with for_each_counter_kind (objects self_only, count_as) over a permanent_enters trigger on nontoken creatures you control, with an add_counters of the bound kind and amount onto the subject"
+    }
+  ],
+  "closest_existing": [
+    "self_enters_with_counters",
+    "choose_counter_kind",
+    "choose_mode",
+    "for_each_counter_kind"
+  ],
+  "confidence": "high"
+}

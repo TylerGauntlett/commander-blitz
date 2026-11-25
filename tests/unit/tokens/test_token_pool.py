@@ -488,6 +488,36 @@ class TestChasmSkulkersSquidsHaveIslandwalk:
         assert not other.keywords
 
 
+class TestExoticPetsFishCantBeBlocked:
+    """Exotic Pets: *"Create two 1/1 blue Fish creature tokens with **"This
+    token can't be blocked."**"*
+
+    `fish_1_1_u` is the same body with no evasion. The pets are there to carry
+    the counters Exotic Pets hands out through, so a blockable Fish would be a
+    weaker card than the printed one.
+    """
+
+    TOKEN = "fish_1_1_u_unblockable"
+
+    def test_it_exists(self, pool):
+        assert pool.get(self.TOKEN) is not None
+
+    def test_it_is_a_one_one_blue_fish_that_cant_be_blocked(self, pool):
+        fish = pool.get(self.TOKEN)
+        assert (fish.power, fish.toughness) == (1, 1)
+        assert sorted(fish.colors) == ["U"]
+        assert list(fish.subtypes) == ["Fish"]
+        assert fish.is_creature and fish.is_token
+        [static] = fish.abilities
+        assert static.text == "This token can't be blocked."
+        assert static.static.get("effect") == "block_restriction"
+
+    def test_the_vanilla_blue_fish_is_still_a_separate_token(self, pool):
+        other = pool.get("fish_1_1_u")
+        assert other is not None
+        assert not other.abilities
+
+
 class TestEmeriasCallsAngelsAreWarriorsToo:
     """Emeria's Call: *"Create two 4/4 white **Angel Warrior** creature tokens
     with flying."*

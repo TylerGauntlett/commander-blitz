@@ -1,0 +1,16 @@
+{
+  "card_id": "animation_module",
+  "name": "Animation Module",
+  "oracle_text": "Whenever one or more +1/+1 counters are put on a permanent you control, you may pay {1}. If you do, create a 1/1 colorless Servo artifact creature token.\n{3}, {T}: Choose a counter on target permanent or player. Give that permanent or player another counter of that kind.",
+  "blocked_sentences": [
+    "{3}, {T}: Choose a counter on target permanent or player. Give that permanent or player another counter of that kind."
+  ],
+  "needs": [{
+    "capability": "choose_counter_kind_on_player",
+    "kind": "op",
+    "what": "choose_counter_kind able to choose a counter on a PLAYER as well as a permanent: a `players` key (beside `from`) naming the target player, offering each kind in PLAYER_COUNTER_KINDS that player has, binding the kind under `as` so add_counters with `player` and counter {binding} gives that player another of it",
+    "why_existing_wont_do": "choose_counter_kind takes only `from`, a permanent selector (resolve_pool, ask_objects over permanents carrying counters), so a targeted player's poison or energy counters can never be chosen; for_each_counter_kind does accept `players` but adds one of EVERY kind (Skyship Plunderer), not one chosen kind, so it is a stronger card; a printed +1/+1 add_counters drops the choice"
+  }],
+  "closest_existing": ["choose_counter_kind", "for_each_counter_kind", "add_counters"],
+  "confidence": "high"
+}

@@ -17228,6 +17228,92 @@ the spell modal (700.2) and announces the number on the stack. No new
 being `min + i`. Not `ask_x` — every seat answers `CHOOSE_X` with its maximum,
 and the largest number is the one that destroys nothing.
 
+## "Choose a kind of counter" — `choose_counter_kind`
+
+    Contractual Safeguard — "Choose a kind of counter on a creature you
+    control. Put a counter of that kind on each other creature you control."
+
+```jsonc
+{ "op": "choose_counter_kind", "as": "kind", "holder_as": "holder",
+  "from": { "zone": "battlefield", "controller": "you", "types": ["Creature"] } },
+{ "op": "add_counters", "counter": { "binding": "kind" },
+  "objects": { "zone": "battlefield", "controller": "you", "types": ["Creature"],
+               "count": "all", "exclude_binding": "holder" } }
+```
+
+The controller chooses, on resolution, a counter on a permanent `from` finds:
+which permanent (only those carrying a counter are offered), then which kind
+on it, each asked only when there is more than one answer, the harmful kinds
+offered last. `as` (required) binds the **kind**, a string; `holder_as`
+(optional) binds the permanent it is on as a set of one, which is the creature
+"each other creature" leaves out. `from` is required. Nothing carrying a
+counter binds nothing, and every reader then puts or counts none.
+
+Two readers take the bound kind as `counter: {"binding": …}`: `add_counters`,
+and the effect-side value leaf `counters_on`, which is how Aven Courier says
+"if it doesn't have a counter of that kind on it":
+
+```jsonc
+{ "op": "if",
+  "condition": { "cmp": "==", "right": { "const": 0 },
+    "left": { "counters_on": { "counter": { "binding": "kind" },
+                               "objects": { "target": "t1" } } } },
+  "then": [ { "op": "add_counters", "counter": { "binding": "kind" },
+              "objects": { "target": "t1" } } ] }
+```
+
+The loader refuses a kind binding no `choose_counter_kind` on the card writes,
+`as: "counter"` (the name a `counter_placed` trigger binds for "the same
+kind"), the mapping on any op but `add_counters`, a
+static's `counters_on` reading one, and `holder_as` on any other op. The near
+misses are a printed `+1/+1`, which is a weaker card on a board of shield or
+keyword counters, and a `choose_mode` with one mode per kind, which cannot be
+narrowed to the kinds actually present. No new `DecisionKind`: `ask_objects`,
+then the `ask_mode` that `move_counters`' `any_kind` already asks.
+
+## "For each kind of counter on…" — `for_each_counter_kind`
+
+    Skyship Plunderer — "Whenever this creature deals combat damage to a
+    player, for each kind of counter on target permanent or player, give that
+    permanent or player another counter of that kind."
+
+```jsonc
+"targets": [ { "id": "t1", "kind": "any", "selector": {} } ],
+"effects": [
+  { "op": "for_each_counter_kind", "as": "kind",
+    "objects": { "target": "t1" }, "players": { "target": "t1" },
+    "effects": [
+      { "op": "add_counters", "counter": { "binding": "kind" }, "objects": { "target": "t1" } },
+      { "op": "add_counters", "counter": { "binding": "kind" }, "player": { "target": "t1" } } ] } ]
+```
+
+The body runs once per **kind** (122.1) carried by the permanents `objects`
+finds and the players `players` names — a player's kinds are the ones in
+`player.PLAYER_COUNTER_KINDS` they have — either key or both. `as` (required)
+binds the kind, a string, read the way a `choose_counter_kind` kind is read:
+`counter: {"binding": …}` on `add_counters` and on an effect's `counters_on`.
+`count_as` (optional) binds how many counters of that kind the whole domain
+carries, read as a `{"binding": …}` value: Denry Klin's "the same number of
+each kind of counter" is `objects: {"self_only": true}`, `count_as: "n"` and an
+`add_counters` with `amount: {"binding": "n"}`. The kinds and counts are read
+once, before the first iteration, so a kind the body puts on is not walked and
+a count does not grow with its own placement. Both bindings exist only inside
+`effects`, and nothing carrying a counter runs it zero times.
+
+`add_counters` puts a bound kind on players with `player` in place of
+`objects`; a kind no player carries (one read off a permanent) puts nothing
+there, which is why the Plunderer can name both recipients. "Target permanent
+or player" is an `any` target with an empty selector.
+
+The loader refuses a loop with no domain, no `as`, no `effects`, `as:
+"counter"`, a `count_as` naming the kind or written on another op, a read of the
+kind after the loop, and `player` on `add_counters` with a printed kind (a
+printed poison counter is `add_poison`) or beside `objects`. The near misses:
+`proliferate` chooses any number of recipients rather than the one targeted,
+and one printed `add_counters` per kind drops every kind the author did not
+list. Bribe Taker's "your choice of a +1/+1 counter or a counter of that kind"
+is a `may` around a two-mode `choose_mode` in the body, asked once per kind.
+
 ## "Choose a color"
 
 Heraldic Banner, and the colour twin of the section above. It reads back as

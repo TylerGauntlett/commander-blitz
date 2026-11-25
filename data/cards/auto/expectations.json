@@ -374,6 +374,14 @@
   "agent_of_atlas": {
     "zone": "battlefield"
   },
+  "agent_s_toolkit": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "agility_bobblehead": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -1802,6 +1810,9 @@
       "0": 43
     }
   },
+  "aven_courier": {
+    "zone": "battlefield"
+  },
   "aven_envoy": {
     "zone": "battlefield"
   },
@@ -1852,6 +1863,10 @@
     "zone": "battlefield"
   },
   "avengers_tower": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "avenging_huntbonder": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -2020,6 +2035,14 @@
   "banquet_guests": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "bant_charm": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "bant_panorama": {
     "zone": "battlefield"
@@ -3347,6 +3370,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "bribe_taker": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bridgeworks_battle_tanglespan_bridgeworks": {
     "hand_size": {
       "0": 1
@@ -3398,6 +3425,23 @@
   "brokers_ascendancy": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "brokers_charm": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
+  "brokers_confluence": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
   },
   "bronze_guardian": {
     "battlefield_count": 33,
@@ -5129,6 +5173,12 @@
   "contingency_plan": {
     "zone": "graveyard"
   },
+  "contractual_safeguard": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "control_magic": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
@@ -6273,6 +6323,15 @@
     "zone": "graveyard"
   },
   "decisive_denial": {
+    "zone": "graveyard"
+  },
+  "declaration_in_stone": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6,
+    "tokens": {
+      "count": 2,
+      "id": "clue_token"
+    },
     "zone": "graveyard"
   },
   "decoction_module": {
@@ -8481,6 +8540,17 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "exotic_pets": {
+    "battlefield_count": 34,
+    "hand_size": {
+      "0": 1
+    },
+    "tokens": {
+      "count": 2,
+      "id": "fish_1_1_u_unblockable"
+    },
+    "zone": "graveyard"
+  },
   "expand_the_sphere": {
     "battlefield_count": 34,
     "library_size": {
@@ -8530,6 +8600,10 @@
       "0": 3
     },
     "zone": "graveyard"
+  },
+  "expendable_lackey": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "experiment_twelve": {
     "battlefield_count": 33,
@@ -8789,6 +8863,10 @@
   "false_floor": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "family_s_favor": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "fanatic_of_rhonas": {
@@ -12627,6 +12705,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ichormoon_gauntlet": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "icon_of_ancestry": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -13427,6 +13509,10 @@
     "life": {
       "0": 44
     }
+  },
+  "jenara_asura_of_war": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "jenny_generated_anomaly": {
     "battlefield_count": 33,
@@ -14500,6 +14586,10 @@
     },
     "zone": "battlefield"
   },
+  "kros_defense_contractor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "krosan_cloudscraper": {
     "battlefield_count": 33,
     "hand_size": {
@@ -15526,6 +15616,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "luminarch_aspirant": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "luminous_broodmoth": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -16290,6 +16387,10 @@
         "first_strike"
       ]
     },
+    "zone": "battlefield"
+  },
+  "maulfist_revolutionary": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "mawloc": {
@@ -18554,6 +18655,13 @@
   "oracle_of_mul_daya": {
     "zone": "battlefield"
   },
+  "oracle_s_vault": {
+    "battlefield_count": 33,
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "oran_rief_the_vastwood": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -19139,6 +19247,11 @@
     "opponent_battlefield_count": 6,
     "zone": "graveyard"
   },
+  "perrie_the_pulverizer": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "persist": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -19640,12 +19753,23 @@
     "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
+  "power_conduit": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "power_fist": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
   "power_pack": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "powerful_broker": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "poxwalkers": {
@@ -19738,6 +19862,13 @@
     "zone": "battlefield"
   },
   "primal_beyond": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "primal_empathy": {
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
@@ -21055,6 +21186,10 @@
     },
     "zone": "battlefield"
   },
+  "reservoir_kraken": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "reshape_the_earth": {
     "battlefield_count": 42,
     "graveyard_size": {
@@ -21537,6 +21672,10 @@
     "zone": "battlefield"
   },
   "roadside_reliquary": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "roalesk_apex_hybrid": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -23797,6 +23936,10 @@
   "skyblade_of_the_legion": {
     "zone": "battlefield"
   },
+  "skyboon_evangelist": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "skycat_sovereign": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -23860,6 +24003,10 @@
       "0": 2
     }
   },
+  "skyship_plunderer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "skyshroud_falcon": {
     "zone": "battlefield"
   },
@@ -23909,6 +24056,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "sleep_with_the_fishes": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "fish_1_1_u_unblockable"
+    },
+    "zone": "battlefield"
+  },
   "slimebind": {
     "zone": [
       "battlefield",
@@ -23924,6 +24079,11 @@
       "0": 3
     },
     "opponent_battlefield_count": 4,
+    "zone": "battlefield"
+  },
+  "slippery_bogbonder": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "slippery_bogle": {
@@ -24982,6 +25142,9 @@
       "0": 1
     },
     "zone": "battlefield"
+  },
+  "storm_of_forms": {
+    "zone": "graveyard"
   },
   "storm_of_souls": {
     "battlefield_count": 34,
@@ -29353,6 +29516,14 @@
       "kind": "charge"
     }
   },
+  "vivid_meadow": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 2,
+      "kind": "charge"
+    },
+    "zone": "battlefield"
+  },
   "vivien_reid": {
     "battlefield_count": 33,
     "hand_size": {
@@ -30417,6 +30588,10 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "wingspan_mentor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "winter_orb": {
     "battlefield_count": 33,

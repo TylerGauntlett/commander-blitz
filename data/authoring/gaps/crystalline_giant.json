@@ -1,0 +1,22 @@
+{
+  "card_id": "crystalline_giant",
+  "name": "Crystalline Giant",
+  "oracle_text": "At the beginning of combat on your turn, choose a kind of counter at random that this creature doesn't have on it from among flying, first strike, deathtouch, hexproof, lifelink, menace, reach, trample, vigilance, and +1/+1. Put a counter of that kind on this creature.",
+  "blocked_sentences": [
+    "At the beginning of combat on your turn, choose a kind of counter at random that this creature doesn't have on it from among flying, first strike, deathtouch, hexproof, lifelink, menace, reach, trample, vigilance, and +1/+1. Put a counter of that kind on this creature."
+  ],
+  "needs": [
+    {
+      "capability": "random_counter_kind",
+      "kind": "op",
+      "what": "a random choice among a printed list of counter kinds, restricted at resolution to the kinds the source does not currently have a counter of, then add_counters of the chosen kind on the source (e.g. a choose_mode with random: true whose modes may carry an availability condition such as {not: {cmp counters_on self > 0}}, or an add_counters option `random_kind_from: [...]` with `exclude_present: true`)",
+      "why_existing_wont_do": "choose_mode has random: true but no per-mode availability condition; once_each strikes off modes already chosen, which diverges whenever a counter is removed or was placed by another source (and never re-offers a kind whose counter was lost); a random pick over all ten followed by an `if` that does nothing when the counter is present changes the distribution and can place nothing"
+    }
+  ],
+  "closest_existing": [
+    "choose_mode.random",
+    "choose_mode.once_each",
+    "add_counters"
+  ],
+  "confidence": "high"
+}
