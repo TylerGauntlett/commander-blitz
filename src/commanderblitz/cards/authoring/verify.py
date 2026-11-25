@@ -2241,14 +2241,24 @@ _ESCAPE_LINE = re.compile(
 
 
 def _declares_printed_escape(card: CardDef, match: re.Match[str]) -> bool:
-    """Whether ``card``'s graveyard cost is the escape cost ``match`` prints."""
+    """Whether ``card``'s graveyard cost is the escape cost ``match`` prints.
+
+    ``link`` may ride on the exile: it changes nothing the Escape line prints,
+    only records the cards as exiled with the permanent the spell becomes
+    (607.2a), which a later line reads -- Skyway Robber's "cards exiled with
+    this creature". Any other key would be a price the line does not print.
+    """
     cost = card.flashback
     if cost is None or card.graveyard_cast_exiles or card.mayhem:
         return False
     if not _declares_printed_cost(match.group("mana"), cost.mana):
         return False
     exile = cost.exile_from_graveyard
-    if not exile or set(exile) - {"count", "exclude_self"} or not exile.get("exclude_self"):
+    if (
+        not exile
+        or set(exile) - {"count", "exclude_self", "link"}
+        or not exile.get("exclude_self")
+    ):
         return False
     if _NUMBER_WORDS.get(match.group("count").lower(), -1) != int(exile.get("count", 1)):
         return False

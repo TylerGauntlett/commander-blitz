@@ -7912,6 +7912,11 @@ The mana half **replaces** the printed cost and everything else is charged on
 top, so a jump-start card repeats its own mana cost rather than leaving it out.
 `exclude_self` matters on escape: the printed line says "exile N **other**
 cards", and without it a card in an otherwise-empty graveyard pays with itself.
+`link: true` on the exile records the cards as exiled with the permanent the
+spell becomes (607.2a), for a card whose escaped ability reads them back with
+`exiled_with: "self"` (Skyway Robber's "cast a spell from among cards exiled
+with this creature"). Unlinked, nothing is exiled *with* the creature and that
+ability finds nothing. The Escape line is claimed either way.
 
 `flashback` is also accepted, and means exactly `graveyard_cost`. A card giving
 both is refused rather than
