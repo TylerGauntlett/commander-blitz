@@ -1061,7 +1061,9 @@ _SPELL_TYPES = frozenset({"Instant", "Sorcery"})
 _CREATURE_TYPES = frozenset({"Creature"})
 
 
-def _graveyard_target_specs(card: CardDef | None, seat: int, kinds: frozenset[str]) -> list[Any]:
+def _graveyard_target_specs(
+    card: CardDef | None, seat: int, kinds: frozenset[str], *, any_of: bool = False
+) -> list[Any]:
     """``card``'s required spell targets that want a card of ``kinds`` in ``seat``'s graveyard.
 
     Only the spell's own ``targets``: an ability's are the activated-ability
@@ -1070,6 +1072,12 @@ def _graveyard_target_specs(card: CardDef | None, seat: int, kinds: frozenset[st
     "Selects ``kinds``" means its ``types`` or ``any_types`` name nothing
     else. Seat 0 is "your graveyard", the default; seat 1 is a selector whose
     ``controller`` or ``owner`` is ``opponent``.
+
+    With ``any_of``, a wider ``any_types`` also counts when it names one of
+    ``kinds`` and ``types`` asks nothing outside them, since a card of
+    ``kinds`` then satisfies the selector too: Jailbreak's "target permanent
+    card in an opponent's graveyard" is any of the permanent types, and a
+    creature card is one.
     """
     if card is None:
         return []
@@ -1080,10 +1088,12 @@ def _graveyard_target_specs(card: CardDef | None, seat: int, kinds: frozenset[st
         if not isinstance(spec.count, int) or spec.count < 1:
             continue
         selector = spec.selector
-        named = {str(t) for t in selector.get("types") or ()} | {
-            str(t) for t in selector.get("any_types") or ()
-        }
-        if not named or not named <= kinds:
+        every = {str(t) for t in selector.get("types") or ()}
+        either = {str(t) for t in selector.get("any_types") or ()}
+        named = every | either
+        if not named:
+            continue
+        if not named <= kinds and not (any_of and every <= kinds and either & kinds):
             continue
         whose = selector.get("controller", selector.get("owner", "you"))
         if {"you": 0, "opponent": 1}.get(str(whose)) == seat:
@@ -1187,7 +1197,7 @@ def graveyard_target_props(registry: CardRegistry, card: CardDef | None, seat: i
         if pick is not None:
             out.extend([pick] * spec.count)
     if seat == 1:
-        for spec in _graveyard_target_specs(card, seat, _CREATURE_TYPES):
+        for spec in _graveyard_target_specs(card, seat, _CREATURE_TYPES, any_of=True):
             pick = quiet_graveyard_creature(registry, spec.selector)
             if pick is not None:
                 out.extend([pick] * spec.count)
