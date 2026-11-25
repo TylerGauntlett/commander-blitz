@@ -162862,12 +162862,12 @@
     },
     "Luminarch Aspirant": {
       "edhrec_rank": 3761,
-      "gate": "template",
+      "gate": null,
       "name": "Luminarch Aspirant",
-      "reason": "no template for: At the beginning of combat on your turn, put a +1/+1 counter on target creature you contro",
+      "reason": "",
       "scryfall_id": "dcd27fa3-f6b6-4137-9b6c-4cba7187664c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Luminate Primordial": {
@@ -193662,12 +193662,12 @@
     },
     "Oracle's Vault": {
       "edhrec_rank": 12820,
-      "gate": "template",
+      "gate": null,
       "name": "Oracle's Vault",
-      "reason": "no template for: {2}, {T}: Exile the top card of your library. Until end of turn, you may play that card. P",
+      "reason": "",
       "scryfall_id": "0314bea5-4e04-4e74-9832-3e935eb90ee1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Orah, Skyclave Hierophant": {
@@ -200072,12 +200072,12 @@
     },
     "Perrie, the Pulverizer": {
       "edhrec_rank": 16166,
-      "gate": "template",
+      "gate": null,
       "name": "Perrie, the Pulverizer",
-      "reason": "no template for: When Perrie enters, put a shield counter on target creature",
+      "reason": "",
       "scryfall_id": "2c91da53-4233-4802-8a72-240b0b46d459",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Persecute": {
@@ -205562,12 +205562,12 @@
     },
     "Power Conduit": {
       "edhrec_rank": 3092,
-      "gate": "template",
+      "gate": null,
       "name": "Power Conduit",
-      "reason": "no template for: {T}, Remove a counter from a permanent you control: Choose one —",
+      "reason": "",
       "scryfall_id": "a1bde782-3ef3-4a7d-9c44-67b78c65efa8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Power Depot": {
@@ -206972,12 +206972,12 @@
     },
     "Primal Empathy": {
       "edhrec_rank": 7594,
-      "gate": "template",
+      "gate": null,
       "name": "Primal Empathy",
-      "reason": "no template for: At the beginning of your upkeep, draw a card if you control a creature with the greatest p",
+      "reason": "",
       "scryfall_id": "b8099a93-c59d-40a9-96e2-f3dd2a6dd8b8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Primal Forcemage": {
@@ -306202,12 +306202,12 @@
     },
     "Vivid Meadow": {
       "edhrec_rank": 5893,
-      "gate": "template",
+      "gate": null,
       "name": "Vivid Meadow",
-      "reason": "no template for: {T}, Remove a charge counter from this land: Add one mana of any color",
+      "reason": "",
       "scryfall_id": "625a42b4-d88c-48e0-96b1-77388ca48810",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vivid Revival": {
@@ -316672,12 +316672,12 @@
     },
     "Wingspan Mentor": {
       "edhrec_rank": 16457,
-      "gate": "template",
+      "gate": null,
       "name": "Wingspan Mentor",
-      "reason": "no template for: When this creature enters, put a flying counter on target non-Human creature you control",
+      "reason": "",
       "scryfall_id": "225701da-1e6d-479c-aecc-3a13e0698524",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wingspan Stride": {

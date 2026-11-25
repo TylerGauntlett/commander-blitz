@@ -1,0 +1,18 @@
+{
+  "card_id": "planar_outburst",
+  "name": "Planar Outburst",
+  "oracle_text": "Destroy all nonland creatures.\nAwaken 4—{5}{W}{W}{W} (If you cast this spell for {5}{W}{W}{W}, also put four +1/+1 counters on target land you control and it becomes a 0/0 Elemental creature with haste. It's still a land.)",
+  "blocked_sentences": [
+    "Awaken 4—{5}{W}{W}{W} (If you cast this spell for {5}{W}{W}{W}, also put four +1/+1 counters on target land you control and it becomes a 0/0 Elemental creature with haste. It's still a land.)"
+  ],
+  "needs": [
+    {
+      "capability": "awaken",
+      "kind": "cost",
+      "what": "an alternative mana cost (702.113a) whose cast line, and only that line, declares an extra required target (\"target land you control\"), read on resolution by the `evoked`-style condition to put N +1/+1 counters on it and animate it as a 0/0 Elemental creature with haste that is still a land",
+      "why_existing_wont_do": "`evoke` gives the alternative price and the `evoked` condition, but every evoke line shares the printed target tuples (casting._cast_actions passes the same `tuples` to the evoked _cast_variant), so the land target would either be required on the normal {3}{W}{W} cast too or be `optional` on the awakened cast, where it is mandatory. The only line-specific targets are kicker's `count_if_kicked`/`selector_if_kicked`, and kicker {2}{W} would be an additional cost rather than an alternative one (wrong with free/alternative-cost casts and cost interactions). `cost_option` on a target only reads `additional_cost_options`."
+    }
+  ],
+  "closest_existing": ["evoke", "kicker", "count_if_kicked", "animate", "add_counters"],
+  "confidence": "high"
+}

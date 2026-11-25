@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**552 cards** blocked by **462** capabilities.
+**554 cards** blocked by **464** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -111,6 +111,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attacked-this-turn-static-condition](#attacked-this-turn-static-condition) | 1 | 3425 | static_effect |
 | [attacker-limit](#attacker-limit) | 1 | 12302 | static_effect |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
+| [awaken](#awaken) | 1 | 10122 | cost |
 | [base-power](#base-power) | 1 | 8936 | value |
 | [base-power-had](#base-power-had) | 1 | 8762 | value |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
@@ -423,6 +424,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [shares-card-type-with](#shares-card-type-with) | 1 | 12729 | selector |
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [shares-mana-value-with](#shares-mana-value-with) | 1 | 11266 | selector |
+| [single-target-proliferate](#single-target-proliferate) | 1 | 16105 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [soulbond-paired-trigger](#soulbond-paired-trigger) | 1 | 10852 | selector |
 | [source-bound-cant-attack-or-block](#source-bound-cant-attack-or-block) | 1 | 8222 | engine |
@@ -2604,6 +2606,20 @@ Blocks **1** card.
 
 - **Curse of Opulence** (rank 705) — `curse_of_opulence`
   - Whenever enchanted player is attacked, create a Gold token. Each opponent attacking that player does the same.
+
+</details>
+
+## awaken
+
+Blocks **1** card.
+
+- **(cost)** an alternative mana cost (702.113a) whose cast line, and only that line, declares an extra required target ("target land you control"), read on resolution by the `evoked`-style condition to put N +1/+1 counters on it and animate it as a 0/0 Elemental creature with haste that is still a land
+  <br>Why the existing vocabulary won't do: `evoke` gives the alternative price and the `evoked` condition, but every evoke line shares the printed target tuples (casting._cast_actions passes the same `tuples` to the evoked _cast_variant), so the land target would either be required on the normal {3}{W}{W} cast too or be `optional` on the awakened cast, where it is mandatory. The only line-specific targets are kicker's `count_if_kicked`/`selector_if_kicked`, and kicker {2}{W} would be an additional cost rather than an alternative one (wrong with free/alternative-cost casts and cost interactions). `cost_option` on a target only reads `additional_cost_options`.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Planar Outburst** (rank 10122) — `planar_outburst`
+  - Awaken 4—{5}{W}{W}{W} (If you cast this spell for {5}{W}{W}{W}, also put four +1/+1 counters on target land you control and it becomes a 0/0 Elemental creature with haste. It's still a land.)
 
 </details>
 
@@ -7058,6 +7074,20 @@ Blocks **1** card.
 
 - **Vault 21: House Gambit** (rank 11266) — `vault_21_house_gambit`
   - III — Reveal up to five nonland cards from your hand. For each of those cards that has the same mana value as another card revealed this way, create a Treasure token.
+
+</details>
+
+## single-target-proliferate
+
+Blocks **1** card.
+
+- **(op)** an op that, for ONE targeted permanent or player (a single target spec accepting either a permanent or a player), puts one more counter of each kind already on it -- +1 of every counter kind present on a permanent, or +1 poison/energy/experience etc. on a player
+  <br>Why the existing vocabulary won't do: proliferate takes only `as` and is untargeted, letting the controller choose any number of permanents and players, which is a different (broader) effect; add_counters needs one named `counter` kind and cannot iterate over the kinds present; for_each iterates objects, not counter kinds; double_counters/double_player_counters double every count rather than adding one of each kind
+
+<details><summary>Cards waiting on this</summary>
+
+- **Skyship Plunderer** (rank 16105) — `skyship_plunderer`
+  - Whenever this creature deals combat damage to a player, for each kind of counter on target permanent or player, give that permanent or player another counter of that kind.
 
 </details>
 

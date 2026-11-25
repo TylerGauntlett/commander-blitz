@@ -15584,6 +15584,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "luminarch_aspirant": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "luminous_broodmoth": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -18612,6 +18619,13 @@
   "oracle_of_mul_daya": {
     "zone": "battlefield"
   },
+  "oracle_s_vault": {
+    "battlefield_count": 33,
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "oran_rief_the_vastwood": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -19197,6 +19211,11 @@
     "opponent_battlefield_count": 6,
     "zone": "graveyard"
   },
+  "perrie_the_pulverizer": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "persist": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -19698,6 +19717,10 @@
     "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
+  "power_conduit": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "power_fist": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -19796,6 +19819,13 @@
     "zone": "battlefield"
   },
   "primal_beyond": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "primal_empathy": {
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
@@ -29411,6 +29441,14 @@
       "kind": "charge"
     }
   },
+  "vivid_meadow": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 2,
+      "kind": "charge"
+    },
+    "zone": "battlefield"
+  },
   "vivien_reid": {
     "battlefield_count": 33,
     "hand_size": {
@@ -30475,6 +30513,10 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "wingspan_mentor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "winter_orb": {
     "battlefield_count": 33,
