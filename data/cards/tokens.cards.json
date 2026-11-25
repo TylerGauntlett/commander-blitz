@@ -1063,6 +1063,56 @@
       ]
     },
     {
+      "id": "smoke_blessing",
+      "name": "Smoke Blessing",
+      "oracle_text": "Enchant creature\nWhen enchanted creature dies, it deals 1 damage to its controller and you create a Treasure token.",
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [
+        "Aura"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When enchanted creature dies, it deals 1 damage to its controller and you create a Treasure token.",
+          "trigger": {
+            "event": "dies",
+            "controller": "any",
+            "filter": {
+              "attached": true
+            }
+          },
+          "effects": [
+            {
+              "op": "damage",
+              "amount": {
+                "const": 1
+              },
+              "player": {
+                "controller_of": "subject"
+              }
+            },
+            {
+              "op": "create_token",
+              "token": "treasure_token",
+              "amount": {
+                "const": 1
+              },
+              "controller": "you"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "detective_2_2_wu",
       "name": "Detective Token",
       "oracle_text": "2/2 white and blue Detective creature token.",
@@ -4168,6 +4218,29 @@
       "colors": [],
       "color_identity": [],
       "is_token": true
+    },
+    {
+      "id": "spirit_2_2_r_menace",
+      "name": "Spirit Token",
+      "oracle_text": "2/2 red Spirit creature token with menace.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Spirit"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true,
+      "keywords": [
+        "menace"
+      ]
     },
     {
       "id": "spirit_1_1_w_flying",
