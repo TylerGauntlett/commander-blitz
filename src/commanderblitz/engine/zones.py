@@ -2236,6 +2236,8 @@ def _enter_battlefield(
                 obj.copying_colors = frozenset(colors) if colors is not None else None
                 obj.copying_no_mana_cost = bool(exception.get("no_mana_cost"))
                 obj.copying_add_supertypes = None
+                obj.copying_power = None
+                obj.copying_toughness = None
                 obj.copying_own_abilities = None
                 # "…and it has "{T}: Add {U}."" (Machine God's Effigy): a
                 # quoted ability, written once under the card's

@@ -144,7 +144,9 @@ def op_become_copy(ctx: EffectContext, spec: Mapping[str, Any]):
     copy keeps ("and this ability", Kimahri, Valiant Guardian); ``add_types``
     ("except it's an artifact in addition to its other types", Saheeli, Sublime
     Artificer) and ``add_supertypes`` ("and it's legendary in addition to its
-    other types", Sarkhan, Soul Aflame). ``duration``
+    other types", Sarkhan, Soul Aflame); ``power`` and ``toughness``, the base
+    size instead of the copied one ("except it's 1/4", Cephalid Facetaker).
+    ``duration``
     defaults to ``end_of_turn``; ``permanent`` is Clone's shape, and only the
     timed form is cleared by `clear_until_eot`.
     """
@@ -170,6 +172,8 @@ def op_become_copy(ctx: EffectContext, spec: Mapping[str, Any]):
     types_added = exception.get("add_types")
     supertypes_added = exception.get("add_supertypes")
     kept = tuple(int(i) for i in exception.get("keep_abilities") or ()) or None
+    power = exception.get("power")
+    toughness = exception.get("toughness")
     for oid in subjects:
         obj = ctx.state.objects.get(oid)
         if obj is None or not obj.on_battlefield:
@@ -184,6 +188,8 @@ def op_become_copy(ctx: EffectContext, spec: Mapping[str, Any]):
         obj.copying_colors = None
         obj.copying_no_mana_cost = False
         obj.copying_add_supertypes = frozenset(supertypes_added) if supertypes_added else None
+        obj.copying_power = None if power is None else int(power)
+        obj.copying_toughness = None if toughness is None else int(toughness)
         obj.copying_own_abilities = kept
         obj.copying_add_abilities = None
         obj.copying_until_eot = until_eot

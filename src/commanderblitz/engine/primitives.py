@@ -3016,6 +3016,8 @@ def clear_until_eot(state: GameState) -> None:
             obj.copying_colors = None
             obj.copying_no_mana_cost = False
             obj.copying_add_supertypes = None
+            obj.copying_power = None
+            obj.copying_toughness = None
             obj.copying_own_abilities = None
             obj.copying_add_abilities = None
             obj.copying_until_eot = False

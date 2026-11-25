@@ -4109,6 +4109,7 @@ granted on top:
 | `keep_abilities` | positions in the copying card's **own** printed `abilities` that the copy keeps, on `copying_own_abilities` ("and this ability") |
 | `add_types` | card types added to the copied face, on `copying_add_types` ("except it's an artifact in addition to its other types", Saheeli, Sublime Artificer) |
 | `add_supertypes` | supertypes added to the copied face, on `copying_add_supertypes` ("and it's legendary in addition to its other types", Sarkhan, Soul Aflame), so the legend rule sees the copy |
+| `power`, `toughness` | the copy's base size instead of the copied one, on `copying_power` and `copying_toughness` ("except it's 1/4", Cephalid Facetaker), so counters, pumps and a layer-7b set all start from it. Always a pair of non-negative whole numbers. A `set_pt` after the copy is the near miss: it is cancelled the moment the copy is pumped |
 
 `GameState.card_of` appends the kept abilities after the copied face's own, so
 the copied card's indices keep meaning what they printed, and a kept triggered

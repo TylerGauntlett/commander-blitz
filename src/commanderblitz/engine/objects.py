@@ -250,6 +250,14 @@ class GameObject:
     #: types". Written by `become_copy` from its ``except_.add_supertypes``,
     #: and read and cleared beside `copying_remove_supertypes`, for its reasons.
     copying_add_supertypes: frozenset[str] | None = None
+    #: The base power and toughness the copy has *instead of* the copied ones
+    #: (707.9b) -- Cephalid Facetaker's "…except it's 1/4". Written by
+    #: `become_copy` from its ``except_.power`` and ``except_.toughness``, on
+    #: the copied face, so a layer-7b set, counters and pumps all start from
+    #: the 1/4. Read and cleared beside
+    #: `copying_add_supertypes`, for its reasons.
+    copying_power: int | None = None
+    copying_toughness: int | None = None
     #: Positions in this permanent's **own** printed ``abilities`` that the copy
     #: keeps as part of its copiable values (707.9b) -- Kimahri, Valiant
     #: Guardian's "…except its name is Kimahri, Valiant Guardian and it has
@@ -1581,6 +1589,8 @@ class GameObject:
         self.copying_colors = None
         self.copying_no_mana_cost = False
         self.copying_add_supertypes = None
+        self.copying_power = None
+        self.copying_toughness = None
         self.copying_own_abilities = None
         self.copying_add_abilities = None
         self.renamed_to = None
