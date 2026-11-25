@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**554 cards** blocked by **464** capabilities.
+**552 cards** blocked by **464** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -30,7 +30,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [face-down-characteristics](#face-down-characteristics) | 4 | 5733 | op |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
-| [choose-counter-kind](#choose-counter-kind) | 3 | 4274 | decision, op |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
 | [crime](#crime) | 3 | 2244 | trigger_event |
 | [escape](#escape) | 3 | 1514 | engine, op |
@@ -392,6 +391,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [random-counter-kind](#random-counter-kind) | 1 | 6446 | op |
 | [rate-limited-free-cast-by-counters](#rate-limited-free-cast-by-counters) | 1 | 1837 | static_effect |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
+| [remove-bound-counter-kind](#remove-bound-counter-kind) | 1 | 4274 | op |
 | [remove-counter-of-kinds-cost](#remove-counter-of-kinds-cost) | 1 | 20169 | cost |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
@@ -1161,28 +1161,6 @@ Blocks **4** cards.
   - Create X tapped 2/2 black Zombie Druid creature tokens, where X is the number of cards that were put into your graveyard from your hand or library this turn.
 - **Essence Anchor** (rank 8833) — `essence_anchor`
   - {T}: Create a 2/2 black Zombie Druid creature token. Activate only during your turn and only if a card left your graveyard this turn.
-
-</details>
-
-## choose-counter-kind
-
-Blocks **3** cards.
-
-- **(op)** an op that has the controller choose one counter kind from among the kinds currently on permanents they control, binding it (e.g. `as: "kind"`) so a later `add_counters` can take `counter: {"binding": "kind"}` and a condition/selector can test `has_counters: {"binding": "kind"}` on the target ("if it doesn't have a counter of that kind on it")
-  <br>Why the existing vocabulary won't do: `add_counters` takes only a fixed printed `counter` kind; `move_counters`/`remove_counters` have `any_kind` but move or remove existing counters from a source rather than naming a kind and putting a fresh one elsewhere; `proliferate` adds to every kind already present on chosen objects, not one chosen kind onto a permanent lacking it; `choose_type`/`choose_color`/`choose_card_name` choose other vocabularies, not counter kinds
-- **(op)** an op (or an `as` binding on a counter-kind choice) that has the controller choose one kind of counter already on the target and binds it, so a following `choose_mode` can either remove one counter of that kind or put one more of that same kind on it -- add_counters reading `counter: {"binding": <as>}` from an effect-made choice rather than from a counter_placed trigger
-  <br>Why the existing vocabulary won't do: add_counters needs a printed kind; its `{"binding": "counter"}` form is allowed only on a counter_placed trigger (`_counter_kind` reads the trigger's event binding). remove_counters with any_kind can remove a chosen kind but binds nothing usable to add the same kind, and proliferate touches every permanent and player rather than the one target
-- **(decision)** an op that has the controller choose a creature they control and one kind of counter present on it, binding both the kind (as a string usable by add_counters' `counter: {"binding": ...}`) and the chosen creature (so the follow-up add_counters can exclude it as "each other creature you control")
-  <br>Why the existing vocabulary won't do: add_counters takes a printed counter kind, and its `counter: {binding}` form is only filled by a counter_placed trigger's event bindings; choose_permanents binds a permanent but no counter kind; choose_mode would need one mode per kind and cannot be restricted to kinds actually on a creature you control; proliferate/move_counters any_kind act on existing counters rather than putting a new one of a chosen kind on other creatures
-
-<details><summary>Cards waiting on this</summary>
-
-- **Clockspinning** (rank 4274) — `clockspinning`
-  - Choose a counter on target permanent or suspended card. Remove that counter from that permanent or card or put another of those counters on it.
-- **Aven Courier** (rank 8469) — `aven_courier`
-  - Whenever this creature attacks, choose a counter on a permanent you control. Put a counter of that kind on target permanent you control if it doesn't have a counter of that kind on it.
-- **Contractual Safeguard** (rank 9404) — `contractual_safeguard`
-  - Choose a kind of counter on a creature you control. Put a counter of that kind on each other creature you control.
 
 </details>
 
@@ -6610,6 +6588,20 @@ Blocks **1** card.
 
 - **Nexus Mentality** (rank 12132) — `nexus_mentality`
   - • Remove all counters from target nonland permanent you control. Draw a card for each counter removed this way.
+
+</details>
+
+## remove-bound-counter-kind
+
+Blocks **1** card.
+
+- **(op)** remove_counters reading `counter: {"binding": <as>}` -- the kind a choose_counter_kind bound -- so "remove that counter" takes one of the chosen kind off the target
+  <br>Why the existing vocabulary won't do: choose_counter_kind binds the kind and add_counters puts one of it, but the loader allows the bound-kind mapping only on add_counters (and counters_on); remove_counters takes a printed kind or any_kind, which asks the kind again rather than using the one chosen
+
+<details><summary>Cards waiting on this</summary>
+
+- **Clockspinning** (rank 4274) — `clockspinning`
+  - Choose a counter on target permanent or suspended card. Remove that counter from that permanent or card or put another of those counters on it.
 
 </details>
 

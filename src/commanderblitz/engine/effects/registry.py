@@ -52,6 +52,12 @@ RECORDING_OPS = frozenset(
         #: back only by a selector's ``{"name": {"binding": …}}``. Tamiyo,
         #: Collector of Tales. See `ops_control.op_choose_card_name`.
         "choose_card_name",
+        #: The one recorder whose binding is a **counter kind** -- a string,
+        #: read back by `add_counters`' and `counters_on`'s
+        #: ``counter: {"binding": …}``; ``holder_as`` records the permanent it
+        #: was on as a list of one oid. Contractual Safeguard. See
+        #: `ops_counters.op_choose_counter_kind`.
+        "choose_counter_kind",
         #: The one recorder whose binding is a **chosen integer**, read back by
         #: a value expression's ``{"binding": …}`` -- Expel the Interlopers'
         #: "power greater than or equal to the chosen number". See

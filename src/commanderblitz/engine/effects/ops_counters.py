@@ -35,7 +35,7 @@ from .board_helpers import (
     _players,
 )
 from .context import EffectContext, ask_mode, ask_objects, ask_x, ask_yes_no
-from .counter_removal import remove_counters_one_at_a_time
+from .counter_removal import ask_counter_kind, counters_on, remove_counters_one_at_a_time
 from .ops_cards import cast_copy_paying
 from .ops_characteristics import source_bound_seat
 from .registry import register
@@ -65,19 +65,61 @@ def op_add_counters(ctx: EffectContext, spec: Mapping[str, Any]):
 
 
 def _counter_kind(ctx: EffectContext, counter: Any) -> str | None:
-    """The kind an `add_counters` puts: printed, or the placement that fired it.
+    """The kind an `add_counters` puts: printed, or one a binding holds.
 
     ``{"binding": "counter"}`` is "the same **kind** of counters" (Captain
     Marvel, Apex Avenger): the kind the triggering `counter_placed` event put,
     which `triggers.event_bindings` copies into the bindings beside ``amount``.
-    The loader allows it only on a `counter_placed` trigger, so an absent or
-    non-string binding is a placement with nothing to copy and puts nothing --
-    never a +1/+1 counter by default.
+    Any other name is a kind `choose_counter_kind` bound ("a counter of that
+    kind"). An absent or non-string binding is a choice with nothing to copy
+    and puts nothing -- never a +1/+1 counter by default.
     """
     if isinstance(counter, Mapping):
         bound = ctx.bindings.get(str(counter.get("binding", "")))
         return bound if isinstance(bound, str) and bound else None
     return str(counter)
+
+
+@register("choose_counter_kind")
+def op_choose_counter_kind(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Choose a kind of counter on a creature you control." Contractual Safeguard.
+
+    Binds the chosen **kind**, a string, under ``as``; `add_counters` puts one
+    of it with ``counter: {"binding": …}`` and the value leaf ``counters_on``
+    counts it the same way, which is how Aven Courier says "if it doesn't
+    have a counter of that kind on it". ``from`` is the selector whose
+    permanents' counters may be chosen. ``holder_as`` also binds the permanent
+    the chosen counter is on, as a list of one oid, for "each **other**
+    creature you control" (``exclude_binding``).
+
+    The counter is chosen where it is: first which permanent of the pool that
+    carries a counter, then which kind on it -- `ask_objects`, then
+    `counter_removal.ask_counter_kind` -- each asked only when there is more
+    than one answer. That is the printed choice exactly ("a counter on a
+    permanent you control"), and it is the one Contractual Safeguard needs,
+    because the permanent chosen is the one "each other creature" leaves out.
+    The kinds are offered harmful last, since the answer is copied rather than
+    removed.
+
+    Chosen on resolution by the controller. Nothing in the pool carrying a
+    counter binds nothing, and every reader of an absent kind puts or counts
+    none (609.3). **No new `DecisionKind`**: both questions already existed.
+    """
+    pool = resolve_pool(ctx, spec.get("from"))
+    candidates = [oid for oid in pool if counters_on(ctx, oid) > 0]
+    picked = yield from ask_objects(
+        ctx, "Choose a counter on which permanent?", candidates, 1, 1, ctx.controller
+    )
+    if not picked:
+        return
+    kind = yield from ask_counter_kind(
+        ctx, picked[0], ctx.controller, verb="Choose", harmful_first=False
+    )
+    if kind is None:
+        return
+    ctx.bindings[str(spec["as"])] = kind
+    if holder := spec.get("holder_as"):
+        ctx.bindings[str(holder)] = [picked[0]]
 
 
 #: The token "empower Jace" creates when you control no Jace token: the blue

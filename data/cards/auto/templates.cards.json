@@ -21884,6 +21884,95 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "kind",
+              "from": {
+                "controller": "you",
+                "zone": "battlefield"
+              },
+              "op": "choose_counter_kind"
+            },
+            {
+              "condition": {
+                "cmp": "==",
+                "left": {
+                  "counters_on": {
+                    "counter": {
+                      "binding": "kind"
+                    },
+                    "objects": {
+                      "target": "t1"
+                    }
+                  }
+                },
+                "right": {
+                  "const": 0
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": {
+                    "binding": "kind"
+                  },
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "add_counters"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature attacks, choose a counter on a permanent you control. Put a counter of that kind on target permanent you control if it doesn't have a counter of that kind on it.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "aven_courier",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Aven Courier",
+      "oracle_text": "Flying\nWhenever this creature attacks, choose a counter on a permanent you control. Put a counter of that kind on target permanent you control if it doesn't have a counter of that kind on it.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Bird",
+        "Advisor"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -63338,6 +63427,77 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "contractual_safeguard",
+      "mana_cost": "{2}{W}",
+      "name": "Contractual Safeguard",
+      "oracle_text": "Addendum — If you cast this spell during your main phase, put a shield counter on a creature you control. (If it would be dealt damage or destroyed, remove a shield counter from it instead.)\nChoose a kind of counter on a creature you control. Put a counter of that kind on each other creature you control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "cast_during": "your_main"
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "shield",
+              "objects": {
+                "controller": "you",
+                "count": 1,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ]
+        },
+        {
+          "as": "kind",
+          "from": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "holder_as": "holder",
+          "op": "choose_counter_kind"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "counter": {
+            "binding": "kind"
+          },
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "exclude_binding": "holder",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "add_counters"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {

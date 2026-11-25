@@ -1128,6 +1128,7 @@
   "choose_blockers",
   "choose_card_name",
   "choose_color",
+  "choose_counter_kind",
   "choose_mode",
   "choose_new_targets",
   "choose_number",

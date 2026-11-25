@@ -1810,6 +1810,9 @@
       "0": 43
     }
   },
+  "aven_courier": {
+    "zone": "battlefield"
+  },
   "aven_envoy": {
     "zone": "battlefield"
   },
@@ -5164,6 +5167,12 @@
     "zone": "graveyard"
   },
   "contingency_plan": {
+    "zone": "graveyard"
+  },
+  "contractual_safeguard": {
+    "hand_size": {
+      "0": 1
+    },
     "zone": "graveyard"
   },
   "control_magic": {

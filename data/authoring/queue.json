@@ -17332,12 +17332,12 @@
     },
     "Aven Courier": {
       "edhrec_rank": 8469,
-      "gate": "template",
+      "gate": null,
       "name": "Aven Courier",
-      "reason": "no template for: Whenever this creature attacks, choose a counter on a permanent you control. Put a counter",
+      "reason": "",
       "scryfall_id": "7bb0e478-c359-4523-a1e1-ba711a8cb8e0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aven Envoy": {
@@ -52762,12 +52762,12 @@
     },
     "Contractual Safeguard": {
       "edhrec_rank": 9404,
-      "gate": "template",
+      "gate": null,
       "name": "Contractual Safeguard",
-      "reason": "no template for: Addendum — If you cast this spell during your main phase, put a shield counter on a creatu",
+      "reason": "",
       "scryfall_id": "c2511fcf-f394-4b0c-8ed6-db0826cb296c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Contradict": {

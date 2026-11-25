@@ -17228,6 +17228,49 @@ the spell modal (700.2) and announces the number on the stack. No new
 being `min + i`. Not `ask_x` — every seat answers `CHOOSE_X` with its maximum,
 and the largest number is the one that destroys nothing.
 
+## "Choose a kind of counter" — `choose_counter_kind`
+
+    Contractual Safeguard — "Choose a kind of counter on a creature you
+    control. Put a counter of that kind on each other creature you control."
+
+```jsonc
+{ "op": "choose_counter_kind", "as": "kind", "holder_as": "holder",
+  "from": { "zone": "battlefield", "controller": "you", "types": ["Creature"] } },
+{ "op": "add_counters", "counter": { "binding": "kind" },
+  "objects": { "zone": "battlefield", "controller": "you", "types": ["Creature"],
+               "count": "all", "exclude_binding": "holder" } }
+```
+
+The controller chooses, on resolution, a counter on a permanent `from` finds:
+which permanent (only those carrying a counter are offered), then which kind
+on it, each asked only when there is more than one answer, the harmful kinds
+offered last. `as` (required) binds the **kind**, a string; `holder_as`
+(optional) binds the permanent it is on as a set of one, which is the creature
+"each other creature" leaves out. `from` is required. Nothing carrying a
+counter binds nothing, and every reader then puts or counts none.
+
+Two readers take the bound kind as `counter: {"binding": …}`: `add_counters`,
+and the effect-side value leaf `counters_on`, which is how Aven Courier says
+"if it doesn't have a counter of that kind on it":
+
+```jsonc
+{ "op": "if",
+  "condition": { "cmp": "==", "right": { "const": 0 },
+    "left": { "counters_on": { "counter": { "binding": "kind" },
+                               "objects": { "target": "t1" } } } },
+  "then": [ { "op": "add_counters", "counter": { "binding": "kind" },
+              "objects": { "target": "t1" } } ] }
+```
+
+The loader refuses a kind binding no `choose_counter_kind` on the card writes,
+`as: "counter"` (the name a `counter_placed` trigger binds for "the same
+kind"), the mapping on any op but `add_counters`, a
+static's `counters_on` reading one, and `holder_as` on any other op. The near
+misses are a printed `+1/+1`, which is a weaker card on a board of shield or
+keyword counters, and a `choose_mode` with one mode per kind, which cannot be
+narrowed to the kinds actually present. No new `DecisionKind`: `ask_objects`,
+then the `ask_mode` that `move_counters`' `any_kind` already asks.
+
 ## "Choose a color"
 
 Heraldic Banner, and the colour twin of the section above. It reads back as
