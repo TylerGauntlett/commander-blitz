@@ -3813,6 +3813,10 @@
     },
     "zone": "battlefield"
   },
+  "captain_n_ghathrod": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "captain_of_the_watch": {
     "battlefield_count": 36,
     "tokens": {
@@ -4116,6 +4120,13 @@
     "zone": "battlefield"
   },
   "celestial_colonnade": {
+    "zone": "battlefield"
+  },
+  "celestial_crusader": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "celestial_prism": {
@@ -20197,6 +20208,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "quagnoth": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "quakestrider_ceratops": {
     "zone": "battlefield"
   },
@@ -25190,6 +25208,10 @@
       "0": 41
     }
   },
+  "sulfur_elemental": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sulfur_falls": {
     "zone": "battlefield"
   },
@@ -25732,6 +25754,11 @@
     "zone": "battlefield"
   },
   "tajuru_snarecaster": {
+    "zone": "battlefield"
+  },
+  "take_possession": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "takenuma_abandoned_mire": {

@@ -46102,6 +46102,108 @@
         {
           "affects": {
             "controller": "you",
+            "subtypes": [
+              "Horror"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "menace"
+          ],
+          "kind": "static",
+          "text": "Horrors you control have menace."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "mill",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a Horror you control deals combat damage to a player, that player mills that many cards.",
+          "trigger": {
+            "controller": "you",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "subtypes": [
+                "Horror"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Creature"
+                ],
+                "controller": "opponent",
+                "graveyard_arrival_this_turn": [
+                  "from_library"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "At the beginning of your end step, choose target artifact or creature card in an opponent's graveyard that was put there from their library this turn. Put it onto the battlefield under your control.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "captain_n_ghathrod",
+      "mana_cost": "{3}{U}{B}",
+      "name": "Captain N'ghathrod",
+      "oracle_text": "Horrors you control have menace.\nWhenever a Horror you control deals combat damage to a player, that player mills that many cards.\nAt the beginning of your end step, choose target artifact or creature card in an opponent's graveyard that was put there from their library this turn. Put it onto the battlefield under your control.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Horror",
+        "Pirate"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
             "exclude_self": true,
             "subtypes": [
               "Soldier"
@@ -50374,6 +50476,55 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "colors": [
+              "W"
+            ],
+            "controller": "any",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other white creatures get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "celestial_crusader",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{2}{W}{W}",
+      "name": "Celestial Crusader",
+      "oracle_text": "Flash\nSplit second (As long as this spell is on the stack, players can't cast spells or activate abilities that aren't mana abilities.)\nFlying\nOther white creatures get +1/+1.",
+      "power": 2,
+      "source": "auto",
+      "split_second": true,
+      "subtypes": [
+        "Spirit"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -242438,6 +242589,58 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When a spell or ability an opponent controls causes you to discard this card, return it to your hand.",
+          "trigger": {
+            "cause_controller": "opponent",
+            "controller": "you",
+            "event": "discard",
+            "filter": {
+              "self_only": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "quagnoth",
+      "keywords": [
+        "shroud"
+      ],
+      "mana_cost": "{5}{G}",
+      "name": "Quagnoth",
+      "oracle_text": "Split second (As long as this spell is on the stack, players can't cast spells or activate abilities that aren't mana abilities.)\nShroud (This creature can't be the target of spells or abilities.)\nWhen a spell or ability an opponent controls causes you to discard this card, return it to your hand.",
+      "power": 4,
+      "source": "auto",
+      "split_second": true,
+      "subtypes": [
+        "Beast"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -300591,6 +300794,53 @@
     {
       "abilities": [
         {
+          "affects": {
+            "colors": [
+              "W"
+            ],
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "White creatures get +1/-1.",
+          "toughness": {
+            "const": -1
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "sulfur_elemental",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Sulfur Elemental",
+      "oracle_text": "Flash\nSplit second (As long as this spell is on the stack, players can't cast spells or activate abilities that aren't mana abilities.)\nWhite creatures get +1/-1.",
+      "power": 3,
+      "source": "auto",
+      "split_second": true,
+      "subtypes": [
+        "Elemental"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -308441,6 +308691,46 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "controller": "you",
+          "effect": "control",
+          "kind": "static",
+          "text": "You control enchanted permanent."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "take_possession",
+      "mana_cost": "{5}{U}{U}",
+      "name": "Take Possession",
+      "oracle_text": "Split second (As long as this spell is on the stack, players can't cast spells or activate abilities that aren't mana abilities.)\nEnchant permanent\nYou control enchanted permanent.",
+      "source": "auto",
+      "split_second": true,
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {

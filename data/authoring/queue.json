@@ -39502,12 +39502,12 @@
     },
     "Captain N'ghathrod": {
       "edhrec_rank": 4402,
-      "gate": "template",
+      "gate": null,
       "name": "Captain N'ghathrod",
-      "reason": "no template for: Horrors you control have menace",
+      "reason": "",
       "scryfall_id": "18937a89-4931-4cb0-b8b8-8582433f6e1a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Captain Ripley Vance": {
@@ -42042,12 +42042,12 @@
     },
     "Celestial Crusader": {
       "edhrec_rank": 15662,
-      "gate": "template",
+      "gate": null,
       "name": "Celestial Crusader",
-      "reason": "no template for: Split second",
+      "reason": "",
       "scryfall_id": "56f371f5-9c2a-4a00-a4d2-e4f97ac0f3e0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Celestial Dawn": {
@@ -211272,12 +211272,12 @@
     },
     "Quagnoth": {
       "edhrec_rank": 30356,
-      "gate": "template",
+      "gate": null,
       "name": "Quagnoth",
-      "reason": "no template for: Split second",
+      "reason": "",
       "scryfall_id": "335c3aa3-af89-44ce-955a-69e12d83175f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Quake, Agent of S.H.I.E.L.D.": {
@@ -268542,12 +268542,12 @@
     },
     "Sulfur Elemental": {
       "edhrec_rank": 30171,
-      "gate": "template",
+      "gate": null,
       "name": "Sulfur Elemental",
-      "reason": "no template for: Split second",
+      "reason": "",
       "scryfall_id": "0aed10f9-8c52-400b-a432-a0d8c6458e87",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sulfur Falls": {
@@ -274052,12 +274052,12 @@
     },
     "Take Possession": {
       "edhrec_rank": 20658,
-      "gate": "template",
+      "gate": null,
       "name": "Take Possession",
-      "reason": "no template for: Split second",
+      "reason": "",
       "scryfall_id": "a8632ab0-9b6d-4d32-8af9-c61e9206497f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Take Up Arms": {

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**541 cards** blocked by **453** capabilities.
+**543 cards** blocked by **455** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -117,6 +117,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [batched-counter-removed](#batched-counter-removed) | 1 | 11093 | trigger_event |
 | [battle-protector](#battle-protector) | 1 | 17299 | selector |
 | [become-copy-remove-supertypes](#become-copy-remove-supertypes) | 1 | 4458 | op |
+| [become-copy-until-your-next-turn](#become-copy-until-your-next-turn) | 1 | 13431 | op |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
 | [bloodthirst](#bloodthirst) | 1 | 6438 | keyword |
@@ -176,6 +177,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [counters-persist-across-zones](#counters-persist-across-zones) | 1 | 15120 | engine |
 | [coven](#coven) | 1 | 1129 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
+| [crewed-by](#crewed-by) | 1 | 11451 | selector |
 | [cursed-role](#cursed-role) | 1 | 7808 | token |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
 | [deals-damage-to-creature-trigger](#deals-damage-to-creature-trigger) | 1 | 19999 | trigger_event |
@@ -2673,6 +2675,20 @@ Blocks **1** card.
 
 </details>
 
+## become-copy-until-your-next-turn
+
+Blocks **1** card.
+
+- **(op)** a `duration: "until_your_next_turn"` on the `become_copy` op: the in-place copy effect (with its except_ power/toughness and keep_abilities) persists through the end of this turn and opponents' turns, and is cleared when the effect controller's next turn begins (611.2b), not at cleanup
+  <br>Why the existing vocabulary won't do: op_become_copy only distinguishes `permanent` from everything else: any other duration sets `copying_until_eot`, which `clear_until_eot` wipes at this turn's cleanup, so the copy would end too early; `permanent` never ends. No op reverts a copy effect, so a `delayed_trigger` with `until_your_next_turn` cannot end a permanent copy either. The rest of the line is expressible (target selector `has_counters: true`, except_ {power: 7, toughness: 5, keep_abilities: [1]}), and the begin_combat trigger line is expressible too
+
+<details><summary>Cards waiting on this</summary>
+
+- **Volrath, the Shapestealer** (rank 13431) — `volrath_the_shapestealer`
+  - {1}: Until your next turn, Volrath becomes a copy of target creature with a counter on it, except it's 7/5 and it has this ability.
+
+</details>
+
 ## blocked-by-source
 
 Blocks **1** card.
@@ -3511,6 +3527,20 @@ Blocks **1** card.
 
 - **Interface Ace** (rank 7596) — `interface_ace`
   - This creature saddles Mounts and crews Vehicles using its toughness rather than its power.
+
+</details>
+
+## crewed-by
+
+Blocks **1** card.
+
+- **(selector)** a selector/target filter key matching the creatures that were tapped to pay crew costs of a given Vehicle this turn ("target nonlegendary creature that crewed it this turn"), e.g. `crewed: "self"` read from a per-turn ledger the crew cost writes for every permanent it taps
+  <br>Why the existing vocabulary won't do: `becomes_crewed` fires with only the Vehicle as subject and carries nothing about who crewed it; `tap_permanents.as` binds only one tapped permanent (never count above 1, and Crew 1 can tap several) and that binding lives on the crew ability, not on the separate triggered ability that targets; `paid_by` is about mana sources; no key in selector_keys or target_keys remembers crew tappers
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mindlink Mech** (rank 11451) — `mindlink_mech`
+  - Whenever this Vehicle becomes crewed for the first time each turn, until end of turn, this Vehicle becomes a copy of target nonlegendary creature that crewed it this turn, except it's 4/3, it's a Vehicle artifact in addition to its other types, and it has flying.
 
 </details>
 
