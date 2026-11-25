@@ -14635,6 +14635,13 @@
   "koma_cosmos_serpent": {
     "zone": "battlefield"
   },
+  "komainu_battle_armor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "komodo_rhino": {
     "zone": "battlefield"
   },
@@ -20082,6 +20089,13 @@
     "zone": "battlefield"
   },
   "primeval_herald": {
+    "zone": "battlefield"
+  },
+  "primeval_protector": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "primeval_titan": {

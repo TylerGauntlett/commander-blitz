@@ -151352,12 +151352,12 @@
     },
     "Komainu Battle Armor": {
       "edhrec_rank": 3453,
-      "gate": "template",
+      "gate": null,
       "name": "Komainu Battle Armor",
-      "reason": "no template for: Whenever this creature or equipped creature deals combat damage to a player, goad each cre",
+      "reason": "",
       "scryfall_id": "5f21d1d1-9500-48c6-bf26-3bcd0c2c732e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Komodo Rhino": {
@@ -207222,12 +207222,12 @@
     },
     "Primeval Protector": {
       "edhrec_rank": 6888,
-      "gate": "template",
+      "gate": null,
       "name": "Primeval Protector",
-      "reason": "no template for: This spell costs {1} less to cast for each creature your opponents control",
+      "reason": "",
       "scryfall_id": "15ab4c3b-323a-47c6-b675-447d16def3d5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Primeval Shambler": {
