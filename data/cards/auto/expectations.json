@@ -4892,6 +4892,14 @@
     },
     "zone": "graveyard"
   },
+  "collision_of_realms": {
+    "battlefield_count": 31,
+    "library_size": {
+      "0": 41,
+      "1": 21
+    },
+    "zone": "graveyard"
+  },
   "colorful_feiyi_sparrow": {
     "zone": "battlefield"
   },
@@ -13924,6 +13932,13 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "kami_of_celebration": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "kami_of_old_stone": {
     "zone": "battlefield"
   },
@@ -15901,6 +15916,10 @@
       "0": 40
     },
     "zone": "graveyard"
+  },
+  "mage_slayer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "magefire_wings": {
     "zone": [

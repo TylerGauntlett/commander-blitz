@@ -50142,12 +50142,12 @@
     },
     "Collision of Realms": {
       "edhrec_rank": 15931,
-      "gate": "template",
+      "gate": null,
       "name": "Collision of Realms",
-      "reason": "no template for: Each player shuffles all creatures they own into their library. Each player who shuffled a",
+      "reason": "",
       "scryfall_id": "49618217-1bbb-498a-a6f0-f269ce7166a6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Colonel Autumn": {
@@ -145512,12 +145512,12 @@
     },
     "Kami of Celebration": {
       "edhrec_rank": 6634,
-      "gate": "template",
+      "gate": null,
       "name": "Kami of Celebration",
-      "reason": "no template for: Whenever a modified creature you control attacks, exile the top card of your library. You ",
+      "reason": "",
       "scryfall_id": "3f969b1f-5f39-4777-b41f-5f7604595672",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kami of Empty Graves": {
@@ -164352,12 +164352,12 @@
     },
     "Mage Slayer": {
       "edhrec_rank": 4290,
-      "gate": "template",
+      "gate": null,
       "name": "Mage Slayer",
-      "reason": "no template for: Whenever equipped creature attacks, it deals damage equal to its power to the player or pl",
+      "reason": "",
       "scryfall_id": "e3226808-493e-4df2-9446-cb7cb47aaf2c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mage Tower Referee": {
