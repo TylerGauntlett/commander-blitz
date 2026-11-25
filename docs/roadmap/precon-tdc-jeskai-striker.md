@@ -7,7 +7,7 @@ impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
 depends_on: [divided-damage-any-target]
 status: proposed
-rank: 22
+rank: 12
 ---
 
 ## Today

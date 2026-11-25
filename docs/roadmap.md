@@ -50,6 +50,10 @@ each heading; this table is generated from them.
 
 | Item | Effort | Impact | Depends on | Unlocks |
 |---|---|---|---|---:|
+| [Federation Fleet (Star Trek Commander)](#federation-fleet-star-trek-commander) | M | high | nothing | 0 |
+| [Klingon Fury (Star Trek Commander)](#klingon-fury-star-trek-commander) | L | high | nothing | 0 |
+| [Landing Party (Star Trek Commander)](#landing-party-star-trek-commander) | L | high | nothing | 0 |
+| [We Are the Borg (Star Trek Commander)](#we-are-the-borg-star-trek-commander) | L | high | nothing | 0 |
 | [Prismari Artistry (Secrets of Strixhaven Commander)](#prismari-artistry-secrets-of-strixhaven-commander) | L | high | Divided damage that may hit players | 0 |
 | [Lorehold Spirit (Secrets of Strixhaven Commander)](#lorehold-spirit-secrets-of-strixhaven-commander) | L | high | Voting: will of the council and council's dilemma | 0 |
 | [Quandrix Unlimited (Secrets of Strixhaven Commander)](#quandrix-unlimited-secrets-of-strixhaven-commander) | L | high | Distributing counters from a spell | 0 |
@@ -75,28 +79,28 @@ each heading; this table is generated from them.
 | [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) | L | high | Rad counters | 0 |
 | [Science! (Fallout)](#science-fallout) | L | high | Secret choices | 0 |
 | [Mutant Menace (Fallout)](#mutant-menace-fallout) | L | high | Rad counters | 0 |
-| [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) | L | high | Voting: will of the council and council's dilemma, Secret choices | 0 |
 | [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) | L | high | Every creature type means every creature type | 0 |
-| [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) | L | high | Voting: will of the council and council's dilemma, Secret choices | 0 |
-| [Paradox Power (Doctor Who)](#paradox-power-doctor-who) | L | high | Voting: will of the council and council's dilemma, Secret choices | 0 |
+| [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) | L | high | Voting: will of the council and council's dilemma, Secret choices | 0 |
 | [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) | L | high | Planechase: the planar deck and planeswalking, Time Lord as one creature type, Voting: will of the council and council's dilemma | 0 |
+| [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) | L | high | Voting: will of the council and council's dilemma, Secret choices | 0 |
 | [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) | L | high | Planechase: the planar deck and planeswalking, Time Lord as one creature type | 0 |
+| [Paradox Power (Doctor Who)](#paradox-power-doctor-who) | L | high | Voting: will of the council and council's dilemma, Secret choices | 0 |
 | [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) | L | high | The Ring tempts you | 0 |
-| [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) | L | high | Voting: will of the council and council's dilemma, The Ring tempts you | 0 |
 | [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) | L | high | The Ring tempts you | 0 |
+| [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) | L | high | Voting: will of the council and council's dilemma, The Ring tempts you | 0 |
 | [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) | L | high | Planechase: the planar deck and planeswalking | 0 |
-| [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) | L | high | Planechase: the planar deck and planeswalking | 0 |
 | [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) | L | high | Planechase: the planar deck and planeswalking | 0 |
-| [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) | L | high | Planechase: the planar deck and planeswalking | 0 |
 | [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) | L | high | Planechase: the planar deck and planeswalking | 0 |
+| [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) | L | high | Planechase: the planar deck and planeswalking | 0 |
+| [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) | L | high | Planechase: the planar deck and planeswalking | 0 |
 | [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) | M | high | Experience counters | 0 |
 | [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) | M | high | Encore, granted to cards in a graveyard | 0 |
 | [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) | L | high | The authoring sandbox resolves a card's own triggers | 0 |
 | [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) | L | high | Distributing counters from a triggered ability, A draw replaced by something other than more draws | 0 |
 | [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) | L | high | Distributing counters from a spell | 0 |
 | [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) | L | high | A land that sacrifices itself on entering | 0 |
-| [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) | L | high | A fixed target count is exact, not a ceiling, A land that sacrifices itself on entering | 0 |
 | [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) | L | high | Divided damage that may hit players, Divided damage from a triggered or activated ability, A land that sacrifices itself on entering | 0 |
+| [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) | L | high | A fixed target count is exact, not a ceiling, A land that sacrifices itself on entering | 0 |
 | [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) | L | high | nothing | 0 |
 | [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) | L | high | nothing | 0 |
 | [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) | L | high | nothing | 0 |
@@ -154,52 +158,56 @@ same list, and `/extend-roadmap` starts at the top of it.
 
 **Ready now, best first:**
 
-1. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
-2. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
-3. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
-4. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
-5. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-6. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
-7. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-8. [The Ring tempts you](#the-ring-tempts-you) — M, high
-9. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-10. [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) — S, medium
-11. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
-12. [Difficulty](#difficulty) — S, medium
-13. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-14. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
-15. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
-16. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-17. [Why a press is refused](#why-a-press-is-refused) — S, medium
-18. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-19. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
-20. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-21. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
-22. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
-23. [Secret choices](#secret-choices) — M, medium
-24. [Experience counters](#experience-counters) — M, medium
-25. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-26. [Outcomes as data](#outcomes-as-data) — M, medium
-27. [Rad counters](#rad-counters) — M, medium
-28. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-29. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
-30. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-31. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-32. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
-33. [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) — M, medium
-34. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
-35. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
-36. [Replays and sharing](#replays-and-sharing) — M, medium
-37. [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) — M, medium
-38. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-39. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-40. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-41. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-42. [Archidekt import](#archidekt-import) — S, low
-43. [Sound](#sound) — S, low
-44. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
-45. [A draw replaced by something other than more draws](#a-draw-replaced-by-something-other-than-more-draws) — M, low
-46. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
+1. [Federation Fleet (Star Trek Commander)](#federation-fleet-star-trek-commander) — M, high
+2. [Klingon Fury (Star Trek Commander)](#klingon-fury-star-trek-commander) — L, high
+3. [Landing Party (Star Trek Commander)](#landing-party-star-trek-commander) — L, high
+4. [We Are the Borg (Star Trek Commander)](#we-are-the-borg-star-trek-commander) — L, high
+5. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
+6. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
+7. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
+8. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
+9. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
+10. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
+11. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
+12. [The Ring tempts you](#the-ring-tempts-you) — M, high
+13. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+14. [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) — S, medium
+15. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
+16. [Difficulty](#difficulty) — S, medium
+17. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+18. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
+19. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
+20. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+21. [Why a press is refused](#why-a-press-is-refused) — S, medium
+22. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+23. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
+24. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
+25. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+26. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+27. [Secret choices](#secret-choices) — M, medium
+28. [Experience counters](#experience-counters) — M, medium
+29. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
+30. [Outcomes as data](#outcomes-as-data) — M, medium
+31. [Rad counters](#rad-counters) — M, medium
+32. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+33. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
+34. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+35. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+36. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
+37. [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) — M, medium
+38. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
+39. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
+40. [Replays and sharing](#replays-and-sharing) — M, medium
+41. [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) — M, medium
+42. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+43. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+44. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+45. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+46. [Archidekt import](#archidekt-import) — S, low
+47. [Sound](#sound) — S, low
+48. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
+49. [A draw replaced by something other than more draws](#a-draw-replaced-by-something-other-than-more-draws) — M, low
+50. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
 
 **Blocked, and by what:**
 
@@ -227,28 +235,28 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) — [Rad counters](#rad-counters)
 - [Science! (Fallout)](#science-fallout) — [Secret choices](#secret-choices)
 - [Mutant Menace (Fallout)](#mutant-menace-fallout) — [Rad counters](#rad-counters)
-- [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Secret choices](#secret-choices)
 - [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) — [Every creature type means every creature type](#every-creature-type-means-every-creature-type)
-- [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Secret choices](#secret-choices)
-- [Paradox Power (Doctor Who)](#paradox-power-doctor-who) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Secret choices](#secret-choices)
+- [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Secret choices](#secret-choices)
 - [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking), [Time Lord as one creature type](#time-lord-as-one-creature-type), [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma)
+- [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Secret choices](#secret-choices)
 - [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking), [Time Lord as one creature type](#time-lord-as-one-creature-type)
+- [Paradox Power (Doctor Who)](#paradox-power-doctor-who) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Secret choices](#secret-choices)
 - [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) — [The Ring tempts you](#the-ring-tempts-you)
-- [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [The Ring tempts you](#the-ring-tempts-you)
 - [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) — [The Ring tempts you](#the-ring-tempts-you)
+- [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [The Ring tempts you](#the-ring-tempts-you)
 - [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking)
-- [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking)
 - [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking)
-- [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking)
 - [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking)
+- [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking)
+- [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) — [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking)
 - [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — [Experience counters](#experience-counters)
 - [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard)
 - [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers)
 - [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability), [A draw replaced by something other than more draws](#a-draw-replaced-by-something-other-than-more-draws)
 - [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — [Distributing counters from a spell](#distributing-counters-from-a-spell)
 - [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering)
-- [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling), [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering)
 - [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — [Divided damage that may hit players](#divided-damage-that-may-hit-players), [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability), [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering)
+- [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling), [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -1861,6 +1869,202 @@ it and dredge is offered. Abundance passes the six authoring gates in
 
 ## Decks
 
+### Federation Fleet (Star Trek Commander)
+
+Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Federation Fleet, the Star Trek Commander precon released 2026-11-13, is a
+coming-soon shell on the shelf: its row `trc_federation_fleet` is in
+`data/decks/sources.json` and there is no `data/decks/trc_federation_fleet.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing trc_federation_fleet` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Federation Fleet ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck trc_federation_fleet`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Klingon Fury (Star Trek Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Klingon Fury, the Star Trek Commander precon released 2026-11-13, is a
+coming-soon shell on the shelf: its row `trc_klingon_fury` is in
+`data/decks/sources.json` and there is no `data/decks/trc_klingon_fury.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing trc_klingon_fury` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Klingon Fury ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck trc_klingon_fury`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Landing Party (Star Trek Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Landing Party, the Star Trek Commander precon released 2026-11-13, is a
+coming-soon shell on the shelf: its row `trc_landing_party` is in
+`data/decks/sources.json` and there is no `data/decks/trc_landing_party.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing trc_landing_party` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Landing Party ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck trc_landing_party`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### We Are the Borg (Star Trek Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+We Are the Borg, the Star Trek Commander precon released 2026-11-13, is a
+coming-soon shell on the shelf: its row `trc_we_are_the_borg` is in
+`data/decks/sources.json` and there is no `data/decks/trc_we_are_the_borg.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing trc_we_are_the_borg` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+We Are the Borg ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck trc_we_are_the_borg`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
 ### Prismari Artistry (Secrets of Strixhaven Commander)
 
 Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Divided damage that may hit players](#divided-damage-that-may-hit-players) · Awaiting decisions.
@@ -3274,6 +3478,83 @@ whole-game test able to draw the deck.
   this item back to `proposed`, and opens the pull request with the cards and
   capabilities done so far. This item stays until the deck is whole.
 
+### Deadly Disguise (Murders at Karlov Manor Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Every creature type means every creature type](#every-creature-type-means-every-creature-type).
+
+#### Today
+
+Deadly Disguise, the Murders at Karlov Manor Commander precon released 2024-02-09, is a
+coming-soon shell on the shelf: its row `mkc_deadly_disguise` is in
+`data/decks/sources.json` and there is no `data/decks/mkc_deadly_disguise.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing mkc_deadly_disguise` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+Every card on the list has been through `/author-cards` once, and disguise,
+`turn_face_up`, a face-down `return_from_graveyard`, counters on
+`create_token` and the `deals_damage` trigger are built. Thirteen cards are
+left, and each has a gap record naming what it waits on:
+
+- Mirror Entity is every creature type, which
+  [changeling-every-type](changeling-every-type.md) covers; this item
+  depends on it.
+- Boltbender needs "choose new targets" for spells and abilities already on
+  the stack.
+- Den Protector needs a block restriction comparing a blocker's power with
+  this creature's.
+- Duskana, the Rage Mother needs base power and toughness in a trigger
+  filter.
+- Hooded Hydra needs "as this is turned face up, put five +1/+1 counters on
+  it", a replacement on turning face up.
+- Kaust, Eyes of the Glade needs a "turned face up this turn" filter key.
+- Obscuring Aether needs an op that turns a permanent face down and a
+  face-down filter on spell cost reductions.
+- Panoptic Projektor needs a next-spell discount for a face-down creature
+  spell.
+- Scroll of Fate needs manifest from hand.
+- Tesak, Judith's Hellhound needs unleash.
+- Veiled Ascension needs `face_down` in a static's `affects` filter.
+- Yedora, Grave Gardener needs a face-down permanent that is a Forest land
+  rather than a 2/2 creature.
+- Zoetic Cavern needs morph on a land card.
+
+#### The change
+
+Deadly Disguise ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck mkc_deadly_disguise`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
 ### Blame Game (Murders at Karlov Manor Commander)
 
 Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Secret choices](#secret-choices).
@@ -3363,57 +3644,34 @@ whole-game test able to draw the deck.
   this item back to `proposed`, and opens the pull request with the cards and
   capabilities done so far. This item stays until the deck is whole.
 
-### Deadly Disguise (Murders at Karlov Manor Commander)
+### Blast from the Past (Doctor Who)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Every creature type means every creature type](#every-creature-type-means-every-creature-type).
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking), [Time Lord as one creature type](#time-lord-as-one-creature-type), [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma).
 
 #### Today
 
-Deadly Disguise, the Murders at Karlov Manor Commander precon released 2024-02-09, is a
-coming-soon shell on the shelf: its row `mkc_deadly_disguise` is in
-`data/decks/sources.json` and there is no `data/decks/mkc_deadly_disguise.deck.json`, so
+Blast from the Past, the Doctor Who precon released 2023-10-13, is a
+coming-soon shell on the shelf: its row `who_blast_from_the_past` is in
+`data/decks/sources.json` and there is no `data/decks/who_blast_from_the_past.deck.json`, so
 `GET /api/precons/upcoming` serves it.
-`python scripts/sync_precons.py --missing mkc_deadly_disguise` lists the cards the engine
+`python scripts/sync_precons.py --missing who_blast_from_the_past` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
-
-Every card on the list has been through `/author-cards` once, and disguise,
-`turn_face_up`, a face-down `return_from_graveyard`, counters on
-`create_token` and the `deals_damage` trigger are built. Thirteen cards are
-left, and each has a gap record naming what it waits on:
-
-- Mirror Entity is every creature type, which
-  [changeling-every-type](changeling-every-type.md) covers; this item
-  depends on it.
-- Boltbender needs "choose new targets" for spells and abilities already on
-  the stack.
-- Den Protector needs a block restriction comparing a blocker's power with
-  this creature's.
-- Duskana, the Rage Mother needs base power and toughness in a trigger
-  filter.
-- Hooded Hydra needs "as this is turned face up, put five +1/+1 counters on
-  it", a replacement on turning face up.
-- Kaust, Eyes of the Glade needs a "turned face up this turn" filter key.
-- Obscuring Aether needs an op that turns a permanent face down and a
-  face-down filter on spell cost reductions.
-- Panoptic Projektor needs a next-spell discount for a face-down creature
-  spell.
-- Scroll of Fate needs manifest from hand.
-- Tesak, Judith's Hellhound needs unleash.
-- Veiled Ascension needs `face_down` in a static's `affects` filter.
-- Yedora, Grave Gardener needs a face-down permanent that is a Forest land
-  rather than a 2/2 creature.
-- Zoetic Cavern needs morph on a land card.
+attempted card waits on. Every card has been attempted once; TARDIS and Susan
+Foreman wait on planeswalking ([planechase](planechase.md)), Trial of a Time
+Lord on council's dilemma ([voting](voting.md)), and Trenzalore Clocktower and
+Time Lord Regeneration on the Time Lord creature type
+([time-lord-subtype](time-lord-subtype.md)), so the deck cannot be whole until
+those land.
 
 #### The change
 
-Deadly Disguise ships native, card for card, as one batch of
+Blast from the Past ships native, card for card, as one batch of
 [every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
 
 1. `/author-cards` by name over the `--missing` list.
 2. One `/extend-dsl` run per capability the gap records name, in the order
    the most cards elsewhere in the catalog wait on it.
-3. Re-author until `--missing` is empty, then `--write-deck mkc_deadly_disguise`, the
+3. Re-author until `--missing` is empty, then `--write-deck who_blast_from_the_past`, the
    dossier and the archetype, and the deck joins `PRECONS` in
    `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
 4. One `/author-cards` wave over the pending cards the new capabilities reach.
@@ -3493,112 +3751,6 @@ whole-game test able to draw the deck.
   this item back to `proposed`, and opens the pull request with the cards and
   capabilities done so far. This item stays until the deck is whole.
 
-### Paradox Power (Doctor Who)
-
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Secret choices](#secret-choices).
-
-#### Today
-
-Paradox Power, the Doctor Who precon released 2023-10-13, is a
-coming-soon shell on the shelf: its row `who_paradox_power` is in
-`data/decks/sources.json` and there is no `data/decks/who_paradox_power.deck.json`, so
-`GET /api/precons/upcoming` serves it.
-`python scripts/sync_precons.py --missing who_paradox_power` lists the cards the engine
-lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on. Every card has been attempted once; Truth or
-Consequences waits on a secret council vote, rules subsystems the engine does
-not have ([voting](voting.md) and [secret-choices](secret-choices.md)), so the
-deck cannot be whole until those land.
-
-#### The change
-
-Paradox Power ships native, card for card, as one batch of
-[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
-
-1. `/author-cards` by name over the `--missing` list.
-2. One `/extend-dsl` run per capability the gap records name, in the order
-   the most cards elsewhere in the catalog wait on it.
-3. Re-author until `--missing` is empty, then `--write-deck who_paradox_power`, the
-   dossier and the archetype, and the deck joins `PRECONS` in
-   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
-4. One `/author-cards` wave over the pending cards the new capabilities reach.
-
-It does not touch another precon's deck.
-
-#### Gate
-
-`tests/cards/test_precon_imports.py` over the new deck; one unit test under
-`tests/unit/` per capability; the manifest test and
-`tests/server/test_upcoming_precons.py` still green; and the sampled
-whole-game test able to draw the deck.
-
-#### Decisions
-
-- **Scope:** this precon only, taken to 100% in one pull request titled
-  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
-- **The editorial fields:** the run writes the dossier and picks the closest
-  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
-  archetype that visibly misplays the deck is a new item.
-- **A capability that needs a rules subsystem the engine does not have**
-  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
-  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
-  this item back to `proposed`, and opens the pull request with the cards and
-  capabilities done so far. This item stays until the deck is whole.
-
-### Blast from the Past (Doctor Who)
-
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking), [Time Lord as one creature type](#time-lord-as-one-creature-type), [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma).
-
-#### Today
-
-Blast from the Past, the Doctor Who precon released 2023-10-13, is a
-coming-soon shell on the shelf: its row `who_blast_from_the_past` is in
-`data/decks/sources.json` and there is no `data/decks/who_blast_from_the_past.deck.json`, so
-`GET /api/precons/upcoming` serves it.
-`python scripts/sync_precons.py --missing who_blast_from_the_past` lists the cards the engine
-lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on. Every card has been attempted once; TARDIS and Susan
-Foreman wait on planeswalking ([planechase](planechase.md)), Trial of a Time
-Lord on council's dilemma ([voting](voting.md)), and Trenzalore Clocktower and
-Time Lord Regeneration on the Time Lord creature type
-([time-lord-subtype](time-lord-subtype.md)), so the deck cannot be whole until
-those land.
-
-#### The change
-
-Blast from the Past ships native, card for card, as one batch of
-[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
-
-1. `/author-cards` by name over the `--missing` list.
-2. One `/extend-dsl` run per capability the gap records name, in the order
-   the most cards elsewhere in the catalog wait on it.
-3. Re-author until `--missing` is empty, then `--write-deck who_blast_from_the_past`, the
-   dossier and the archetype, and the deck joins `PRECONS` in
-   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
-4. One `/author-cards` wave over the pending cards the new capabilities reach.
-
-It does not touch another precon's deck.
-
-#### Gate
-
-`tests/cards/test_precon_imports.py` over the new deck; one unit test under
-`tests/unit/` per capability; the manifest test and
-`tests/server/test_upcoming_precons.py` still green; and the sampled
-whole-game test able to draw the deck.
-
-#### Decisions
-
-- **Scope:** this precon only, taken to 100% in one pull request titled
-  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
-- **The editorial fields:** the run writes the dossier and picks the closest
-  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
-  archetype that visibly misplays the deck is a new item.
-- **A capability that needs a rules subsystem the engine does not have**
-  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
-  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
-  this item back to `proposed`, and opens the pull request with the cards and
-  capabilities done so far. This item stays until the deck is whole.
-
 ### Timey-Wimey (Doctor Who)
 
 Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking), [Time Lord as one creature type](#time-lord-as-one-creature-type).
@@ -3625,6 +3777,58 @@ Timey-Wimey ships native, card for card, as one batch of
 2. One `/extend-dsl` run per capability the gap records name, in the order
    the most cards elsewhere in the catalog wait on it.
 3. Re-author until `--missing` is empty, then `--write-deck who_timey_wimey`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Paradox Power (Doctor Who)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Secret choices](#secret-choices).
+
+#### Today
+
+Paradox Power, the Doctor Who precon released 2023-10-13, is a
+coming-soon shell on the shelf: its row `who_paradox_power` is in
+`data/decks/sources.json` and there is no `data/decks/who_paradox_power.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing who_paradox_power` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on. Every card has been attempted once; Truth or
+Consequences waits on a secret council vote, rules subsystems the engine does
+not have ([voting](voting.md) and [secret-choices](secret-choices.md)), so the
+deck cannot be whole until those land.
+
+#### The change
+
+Paradox Power ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck who_paradox_power`, the
    dossier and the archetype, and the deck joins `PRECONS` in
    `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
 4. One `/author-cards` wave over the pending cards the new capabilities reach.
@@ -3680,6 +3884,62 @@ Food and Fellowship ships native, card for card, as one batch of
 2. One `/extend-dsl` run per capability the gap records name, in the order
    the most cards elsewhere in the catalog wait on it.
 3. Re-author until `--missing` is empty, then `--write-deck ltc_food_and_fellowship`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### The Hosts of Mordor (Tales of Middle-earth Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [The Ring tempts you](#the-ring-tempts-you).
+
+#### Today
+
+The Hosts of Mordor, the Tales of Middle-earth Commander precon released 2023-06-23, is a
+coming-soon shell on the shelf: its row `ltc_the_hosts_of_mordor` is in
+`data/decks/sources.json` and there is no `data/decks/ltc_the_hosts_of_mordor.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing ltc_the_hosts_of_mordor` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+One of those capabilities is a rules subsystem the engine does not have
+([rules-coverage.md](rules-coverage.md#not-implemented)). The deck's
+commander, Sauron, Lord of the Rings, has the Ring tempt you whenever an
+opponent's commander dies, and Fiery Inscription, In the Darkness Bind Them and
+Lord of the Nazgûl tempt you too, so the deck waits on
+[the Ring](the-ring-tempts-you.md). The rest of its missing cards wait on
+tokens and smaller capabilities this batch builds once the Ring lands.
+
+#### The change
+
+The Hosts of Mordor ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck ltc_the_hosts_of_mordor`, the
    dossier and the archetype, and the deck joins `PRECONS` in
    `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
 4. One `/author-cards` wave over the pending cards the new capabilities reach.
@@ -3763,62 +4023,6 @@ whole-game test able to draw the deck.
   this item back to `proposed`, and opens the pull request with the cards and
   capabilities done so far. This item stays until the deck is whole.
 
-### The Hosts of Mordor (Tales of Middle-earth Commander)
-
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [The Ring tempts you](#the-ring-tempts-you).
-
-#### Today
-
-The Hosts of Mordor, the Tales of Middle-earth Commander precon released 2023-06-23, is a
-coming-soon shell on the shelf: its row `ltc_the_hosts_of_mordor` is in
-`data/decks/sources.json` and there is no `data/decks/ltc_the_hosts_of_mordor.deck.json`, so
-`GET /api/precons/upcoming` serves it.
-`python scripts/sync_precons.py --missing ltc_the_hosts_of_mordor` lists the cards the engine
-lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
-One of those capabilities is a rules subsystem the engine does not have
-([rules-coverage.md](rules-coverage.md#not-implemented)). The deck's
-commander, Sauron, Lord of the Rings, has the Ring tempt you whenever an
-opponent's commander dies, and Fiery Inscription, In the Darkness Bind Them and
-Lord of the Nazgûl tempt you too, so the deck waits on
-[the Ring](the-ring-tempts-you.md). The rest of its missing cards wait on
-tokens and smaller capabilities this batch builds once the Ring lands.
-
-#### The change
-
-The Hosts of Mordor ships native, card for card, as one batch of
-[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
-
-1. `/author-cards` by name over the `--missing` list.
-2. One `/extend-dsl` run per capability the gap records name, in the order
-   the most cards elsewhere in the catalog wait on it.
-3. Re-author until `--missing` is empty, then `--write-deck ltc_the_hosts_of_mordor`, the
-   dossier and the archetype, and the deck joins `PRECONS` in
-   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
-4. One `/author-cards` wave over the pending cards the new capabilities reach.
-
-It does not touch another precon's deck.
-
-#### Gate
-
-`tests/cards/test_precon_imports.py` over the new deck; one unit test under
-`tests/unit/` per capability; the manifest test and
-`tests/server/test_upcoming_precons.py` still green; and the sampled
-whole-game test able to draw the deck.
-
-#### Decisions
-
-- **Scope:** this precon only, taken to 100% in one pull request titled
-  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
-- **The editorial fields:** the run writes the dossier and picks the closest
-  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
-  archetype that visibly misplays the deck is a new item.
-- **A capability that needs a rules subsystem the engine does not have**
-  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
-  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
-  this item back to `proposed`, and opens the pull request with the cards and
-  capabilities done so far. This item stays until the deck is whole.
-
 ### Cavalry Charge (March of the Machine Commander)
 
 Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking).
@@ -3876,66 +4080,6 @@ whole-game test able to draw the deck.
   this item back to `proposed`, and opens the pull request with the cards and
   capabilities done so far. This item stays until the deck is whole.
 
-### Divine Convocation (March of the Machine Commander)
-
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking).
-
-#### Today
-
-Divine Convocation, the March of the Machine Commander precon released 2023-04-21, is a
-coming-soon shell on the shelf: its row `moc_divine_convocation` is in
-`data/decks/sources.json` and there is no `data/decks/moc_divine_convocation.deck.json`, so
-`GET /api/precons/upcoming` serves it.
-`python scripts/sync_precons.py --missing moc_divine_convocation` lists the cards the engine
-lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
-One of those capabilities is a rules subsystem the engine does not have:
-Fractured Powerstone rolls the planar die, Ichor Elixir replaces planar die
-rolls, and Path of the Ghosthunter has the players vote to planeswalk or make
-chaos ensue, so the deck waits on [Planechase](planechase.md). The rest of its
-missing cards wait on smaller capabilities this batch builds once Planechase
-lands, `convoke` above all (Flockchaser Phantom, Joyful Stormsculptor, Kasla,
-the Broken Halo, Saint Traft and Rem Karolus, Venerated Loxodon, Wand of the
-Worldsoul), then three tokens (The Locust God, Saint Traft and Rem Karolus,
-Wildfire Awakener), Path of the Ghosthunter's `voting`, and one card each for
-`prevent-damage-by-source`, `prevent_next_n_damage_divided`,
-`flashback-nonmana-cost`, `activated_this_turn` and `sandbox_combat_targets`.
-
-#### The change
-
-Divine Convocation ships native, card for card, as one batch of
-[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
-
-1. `/author-cards` by name over the `--missing` list.
-2. One `/extend-dsl` run per capability the gap records name, in the order
-   the most cards elsewhere in the catalog wait on it.
-3. Re-author until `--missing` is empty, then `--write-deck moc_divine_convocation`, the
-   dossier and the archetype, and the deck joins `PRECONS` in
-   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
-4. One `/author-cards` wave over the pending cards the new capabilities reach.
-
-It does not touch another precon's deck.
-
-#### Gate
-
-`tests/cards/test_precon_imports.py` over the new deck; one unit test under
-`tests/unit/` per capability; the manifest test and
-`tests/server/test_upcoming_precons.py` still green; and the sampled
-whole-game test able to draw the deck.
-
-#### Decisions
-
-- **Scope:** this precon only, taken to 100% in one pull request titled
-  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
-- **The editorial fields:** the run writes the dossier and picks the closest
-  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
-  archetype that visibly misplays the deck is a new item.
-- **A capability that needs a rules subsystem the engine does not have**
-  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
-  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
-  this item back to `proposed`, and opens the pull request with the cards and
-  capabilities done so far. This item stays until the deck is whole.
-
 ### Tinker Time (March of the Machine Commander)
 
 Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking).
@@ -3966,6 +4110,64 @@ Tinker Time ships native, card for card, as one batch of
 2. One `/extend-dsl` run per capability the gap records name, in the order
    the most cards elsewhere in the catalog wait on it.
 3. Re-author until `--missing` is empty, then `--write-deck moc_tinker_time`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Call for Backup (March of the Machine Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking).
+
+#### Today
+
+Call for Backup, the March of the Machine Commander precon released 2023-04-21, is a
+coming-soon shell on the shelf: its row `moc_call_for_backup` is in
+`data/decks/sources.json` and there is no `data/decks/moc_call_for_backup.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing moc_call_for_backup` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+Six cards are left. Fractured Powerstone, Ichor Elixir and Path of the
+Pyromancer roll the planar die or planeswalk, so they wait on
+[planechase](planechase.md), a rules subsystem the engine does not have; Path
+of the Pyromancer also waits on `voting`. Dromoka's Command waits on
+`prevent-damage-by-source` (a shield keyed to a spell on the stack),
+Hindervines on `no-counters-of-kind-filter`, and Ion Storm on
+`remove-counter-of-kinds-cost`; those are `/extend-dsl` runs this item still
+owns.
+
+#### The change
+
+Call for Backup ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck moc_call_for_backup`, the
    dossier and the archetype, and the deck joins `PRECONS` in
    `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
 4. One `/author-cards` wave over the pending cards the new capabilities reach.
@@ -4050,38 +4252,40 @@ whole-game test able to draw the deck.
   this item back to `proposed`, and opens the pull request with the cards and
   capabilities done so far. This item stays until the deck is whole.
 
-### Call for Backup (March of the Machine Commander)
+### Divine Convocation (March of the Machine Commander)
 
 Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking).
 
 #### Today
 
-Call for Backup, the March of the Machine Commander precon released 2023-04-21, is a
-coming-soon shell on the shelf: its row `moc_call_for_backup` is in
-`data/decks/sources.json` and there is no `data/decks/moc_call_for_backup.deck.json`, so
+Divine Convocation, the March of the Machine Commander precon released 2023-04-21, is a
+coming-soon shell on the shelf: its row `moc_divine_convocation` is in
+`data/decks/sources.json` and there is no `data/decks/moc_divine_convocation.deck.json`, so
 `GET /api/precons/upcoming` serves it.
-`python scripts/sync_precons.py --missing moc_call_for_backup` lists the cards the engine
+`python scripts/sync_precons.py --missing moc_divine_convocation` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
-
-Six cards are left. Fractured Powerstone, Ichor Elixir and Path of the
-Pyromancer roll the planar die or planeswalk, so they wait on
-[planechase](planechase.md), a rules subsystem the engine does not have; Path
-of the Pyromancer also waits on `voting`. Dromoka's Command waits on
-`prevent-damage-by-source` (a shield keyed to a spell on the stack),
-Hindervines on `no-counters-of-kind-filter`, and Ion Storm on
-`remove-counter-of-kinds-cost`; those are `/extend-dsl` runs this item still
-owns.
+One of those capabilities is a rules subsystem the engine does not have:
+Fractured Powerstone rolls the planar die, Ichor Elixir replaces planar die
+rolls, and Path of the Ghosthunter has the players vote to planeswalk or make
+chaos ensue, so the deck waits on [Planechase](planechase.md). The rest of its
+missing cards wait on smaller capabilities this batch builds once Planechase
+lands, `convoke` above all (Flockchaser Phantom, Joyful Stormsculptor, Kasla,
+the Broken Halo, Saint Traft and Rem Karolus, Venerated Loxodon, Wand of the
+Worldsoul), then three tokens (The Locust God, Saint Traft and Rem Karolus,
+Wildfire Awakener), Path of the Ghosthunter's `voting`, and one card each for
+`prevent-damage-by-source`, `prevent_next_n_damage_divided`,
+`flashback-nonmana-cost`, `activated_this_turn` and `sandbox_combat_targets`.
 
 #### The change
 
-Call for Backup ships native, card for card, as one batch of
+Divine Convocation ships native, card for card, as one batch of
 [every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
 
 1. `/author-cards` by name over the `--missing` list.
 2. One `/extend-dsl` run per capability the gap records name, in the order
    the most cards elsewhere in the catalog wait on it.
-3. Re-author until `--missing` is empty, then `--write-deck moc_call_for_backup`, the
+3. Re-author until `--missing` is empty, then `--write-deck moc_divine_convocation`, the
    dossier and the archetype, and the deck joins `PRECONS` in
    `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
 4. One `/author-cards` wave over the pending cards the new capabilities reach.
@@ -4439,29 +4643,29 @@ whole-game test able to draw the deck.
   this item back to `proposed`, and opens the pull request with the cards and
   capabilities done so far. This item stays until the deck is whole.
 
-### Maestros Massacre (New Capenna Commander)
+### Riveteers Rampage (New Capenna Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling), [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering).
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Divided damage that may hit players](#divided-damage-that-may-hit-players), [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability), [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering).
 
 #### Today
 
-Maestros Massacre, the New Capenna Commander precon released 2022-04-29, is a
-coming-soon shell on the shelf: its row `ncc_maestros_massacre` is in
-`data/decks/sources.json` and there is no `data/decks/ncc_maestros_massacre.deck.json`, so
+Riveteers Rampage, the New Capenna Commander precon released 2022-04-29, is a
+coming-soon shell on the shelf: its row `ncc_riveteers_rampage` is in
+`data/decks/sources.json` and there is no `data/decks/ncc_riveteers_rampage.deck.json`, so
 `GET /api/precons/upcoming` serves it.
-`python scripts/sync_precons.py --missing ncc_maestros_massacre` lists the cards the engine
+`python scripts/sync_precons.py --missing ncc_riveteers_rampage` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
 
 #### The change
 
-Maestros Massacre ships native, card for card, as one batch of
+Riveteers Rampage ships native, card for card, as one batch of
 [every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
 
 1. `/author-cards` by name over the `--missing` list.
 2. One `/extend-dsl` run per capability the gap records name, in the order
    the most cards elsewhere in the catalog wait on it.
-3. Re-author until `--missing` is empty, then `--write-deck ncc_maestros_massacre`, the
+3. Re-author until `--missing` is empty, then `--write-deck ncc_riveteers_rampage`, the
    dossier and the archetype, and the deck joins `PRECONS` in
    `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
 4. One `/author-cards` wave over the pending cards the new capabilities reach.
@@ -4488,29 +4692,29 @@ whole-game test able to draw the deck.
   this item back to `proposed`, and opens the pull request with the cards and
   capabilities done so far. This item stays until the deck is whole.
 
-### Riveteers Rampage (New Capenna Commander)
+### Maestros Massacre (New Capenna Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Divided damage that may hit players](#divided-damage-that-may-hit-players), [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability), [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering).
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling), [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering).
 
 #### Today
 
-Riveteers Rampage, the New Capenna Commander precon released 2022-04-29, is a
-coming-soon shell on the shelf: its row `ncc_riveteers_rampage` is in
-`data/decks/sources.json` and there is no `data/decks/ncc_riveteers_rampage.deck.json`, so
+Maestros Massacre, the New Capenna Commander precon released 2022-04-29, is a
+coming-soon shell on the shelf: its row `ncc_maestros_massacre` is in
+`data/decks/sources.json` and there is no `data/decks/ncc_maestros_massacre.deck.json`, so
 `GET /api/precons/upcoming` serves it.
-`python scripts/sync_precons.py --missing ncc_riveteers_rampage` lists the cards the engine
+`python scripts/sync_precons.py --missing ncc_maestros_massacre` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
 
 #### The change
 
-Riveteers Rampage ships native, card for card, as one batch of
+Maestros Massacre ships native, card for card, as one batch of
 [every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
 
 1. `/author-cards` by name over the `--missing` list.
 2. One `/extend-dsl` run per capability the gap records name, in the order
    the most cards elsewhere in the catalog wait on it.
-3. Re-author until `--missing` is empty, then `--write-deck ncc_riveteers_rampage`, the
+3. Re-author until `--missing` is empty, then `--write-deck ncc_maestros_massacre`, the
    dossier and the archetype, and the deck joins `PRECONS` in
    `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
 4. One `/author-cards` wave over the pending cards the new capabilities reach.

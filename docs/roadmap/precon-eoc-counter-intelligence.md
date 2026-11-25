@@ -7,7 +7,7 @@ impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
 depends_on: [station-spacecraft]
 status: proposed
-rank: 16
+rank: 10
 ---
 
 ## Today

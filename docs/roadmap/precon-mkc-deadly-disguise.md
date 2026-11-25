@@ -7,7 +7,7 @@ impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
 depends_on: [changeling-every-type]
 status: proposed
-rank: 52
+rank: 30
 ---
 
 ## Today
