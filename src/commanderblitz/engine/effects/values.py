@@ -1858,7 +1858,7 @@ def validate_rolled(spec: Any, where: str) -> None:
         validate_value(spec["face"], f"{where}.face")
 
 
-def validate_entered_filter(spec: Any, where: str) -> None:
+def validate_entered_filter(spec: Any, where: str, *, allow_binding: bool = False) -> None:
     """Load-time check of the enters-this-turn filter.
 
     Stricter than the selector language it is spelled after, in one place:
@@ -1869,6 +1869,15 @@ def validate_entered_filter(spec: Any, where: str) -> None:
     that dropped the word would fire off the opponent's Human, which is a
     strictly better card and a plausible-looking one. ``"all"`` is how a future
     card says it really does mean anybody's.
+
+    With ``allow_binding`` -- the effect side only -- ``controller`` may also be
+    ``{"binding": <name>}``, the player a ``for_each_player`` loop is visiting.
+    Smuggler's Share: "a Treasure token for each opponent who had two or more
+    lands enter the battlefield under their control this turn" asks each
+    opponent's own count, which ``each_opponent`` cannot: it sums them, so two
+    opponents with one land each would read as one who had two. A static has no
+    loop to bind a player, so there the binding would read nobody and 0 for
+    ever; it stays refused.
     """
     if not isinstance(spec, Mapping):
         raise DslError(f"{where}: must be an object -- the filter on what entered")
@@ -1877,7 +1886,13 @@ def validate_entered_filter(spec: Any, where: str) -> None:
         raise DslError(f"{where}: unsupported keys {sorted(unknown)}")
 
     who = spec.get("controller")
-    if not isinstance(who, str) or who not in PLAYER_SPEC_NAMES:
+    if allow_binding and isinstance(who, Mapping):
+        if set(who) != {"binding"} or not (isinstance(who["binding"], str) and who["binding"]):
+            raise DslError(
+                f"{where}.controller: a mapping here is {{'binding': <name>}}, the "
+                f"player a for_each_player loop is visiting, got {who!r}"
+            )
+    elif not isinstance(who, str) or who not in PLAYER_SPEC_NAMES:
         raise DslError(
             f"{where}.controller: must name one of {sorted(PLAYER_SPEC_NAMES)} "
             f"-- 'under whose control' is part of the printed sentence, got {who!r}"
@@ -2279,7 +2294,9 @@ def validate_value(expr: Any, where: str) -> None:
         )
     if "permanents_entered_this_turn" in expr:
         validate_entered_filter(
-            expr["permanents_entered_this_turn"], f"{where}.permanents_entered_this_turn"
+            expr["permanents_entered_this_turn"],
+            f"{where}.permanents_entered_this_turn",
+            allow_binding=True,
         )
     departed = expr.get("cards_from_graveyard_this_turn")
     if isinstance(departed, Mapping) and "filter" in departed:

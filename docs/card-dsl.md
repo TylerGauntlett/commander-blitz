@@ -2865,6 +2865,26 @@ an any-of spelling would still count an artifact land.
 `controller` is **required** — omitted, it would silently count the opponents'
 arrivals too. Say `"all"` when a card really does mean anybody's.
 
+**"Each opponent who had two or more lands enter under their control" asks each
+opponent alone**, so inside a `for_each_player` loop `controller` takes
+`{"binding": "each_player"}`, the player the loop is visiting. Smuggler's Share:
+
+```jsonc
+{ "op": "for_each_player", "players": "each_opponent", "effects": [
+  { "op": "if",
+    "condition": { "cmp": ">=",
+                   "left": { "permanents_entered_this_turn": {
+                               "controller": { "binding": "each_player" },
+                               "types": ["Land"] } },
+                   "right": { "const": 2 } },
+    "then": [ { "op": "create_token", "token": "treasure_token" } ] } ] }
+```
+
+`"each_opponent"` is the near miss: it sums every opponent's arrivals, so two
+opponents with one land each read as one who had two. A binding is the only
+mapping `controller` takes, and only on the effect side; a static has no loop
+to bind a player and refuses it.
+
 **`is_token: false` is the printed word "nontoken"**, and `true` is "token"; it
 must be a boolean. Gyome, Master Chef counts "nontoken creatures you had enter
 the battlefield under your control this turn":
@@ -4089,6 +4109,7 @@ granted on top:
 | `keep_abilities` | positions in the copying card's **own** printed `abilities` that the copy keeps, on `copying_own_abilities` ("and this ability") |
 | `add_types` | card types added to the copied face, on `copying_add_types` ("except it's an artifact in addition to its other types", Saheeli, Sublime Artificer) |
 | `add_supertypes` | supertypes added to the copied face, on `copying_add_supertypes` ("and it's legendary in addition to its other types", Sarkhan, Soul Aflame), so the legend rule sees the copy |
+| `power`, `toughness` | the copy's base size instead of the copied one, on `copying_power` and `copying_toughness` ("except it's 1/4", Cephalid Facetaker), so counters, pumps and a layer-7b set all start from it. Always a pair of non-negative whole numbers. A `set_pt` after the copy is the near miss: it is cancelled the moment the copy is pumped |
 
 `GameState.card_of` appends the kept abilities after the copied face's own, so
 the copied card's indices keep meaning what they printed, and a kept triggered

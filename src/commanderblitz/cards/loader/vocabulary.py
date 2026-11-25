@@ -900,6 +900,13 @@ STATIC_EFFECTS = frozenset(
         # `primitives.damage_player` through `temp_effects.life_floor`, beside
         # the timed table -- damage only, so a `lose_life` walks past it.
         "damage_life_floor",
+        # Archon of Coronation.  "As long as you're the monarch, damage doesn't
+        # cause you to lose life."  The damage is still dealt -- lifelink,
+        # combat-damage triggers and the monarch passing all happen -- and only
+        # the loss half of `primitives.damage_player` is skipped, read through
+        # `player_statics.damage_causes_no_life_loss`.  Damage only, so a
+        # `lose_life` walks past it, as it walks past the floor above.
+        "damage_doesnt_cause_life_loss",
         # Ashiok, Dream Render.  "Spells and abilities your opponents control
         # can't cause their controller to search their library."  A player-wide
         # prohibition on one precise search: the named player searching **their
@@ -1095,6 +1102,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "cant_win_the_game",
         "replace_lose_game",
         "damage_life_floor",
+        "damage_doesnt_cause_life_loss",
         "player_hexproof",
         "player_protection",
         "plot_cost_reduction",

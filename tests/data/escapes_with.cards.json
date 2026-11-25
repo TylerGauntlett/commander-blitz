@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/keywords/test_escapes_with.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. t_woe_strider is Woe Strider's escape line and its 'escapes with two +1/+1 counters' rider on a vanilla 3/2 body. t_crypt_keeper (conditional_graveyard_cast.cards.json) is the other route out of the graveyard: a permission to cast it for its mana cost, which is not escaping.",
+  "_comment": "Shapes for tests/unit/keywords/test_escapes_with.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. t_woe_strider is Woe Strider's escape line and its 'escapes with two +1/+1 counters' rider on a vanilla 3/2 body. t_crypt_keeper (conditional_graveyard_cast.cards.json) is the other route out of the graveyard: a permission to cast it for its mana cost, which is not escaping. t_linked_strider is the same escape with a linked exile, Skyway Robber's 'cards exiled with this creature'.",
   "cards": [
     {
       "id": "t_woe_strider",
@@ -25,6 +25,23 @@
           "condition": {"escaped": true}
         }
       ]
+    },
+    {
+      "id": "t_linked_strider",
+      "name": "Test Linked Strider",
+      "oracle_text": "Escape—{3}{B}{B}, Exile four other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)",
+      "mana_cost": "{2}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Horror"],
+      "power": 3,
+      "toughness": 2,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "graveyard_cost": {
+        "mana": "{3}{B}{B}",
+        "exile_from_graveyard": {"count": 4, "exclude_self": true, "link": true}
+      },
+      "graveyard_cast": "graveyard"
     }
   ]
 }

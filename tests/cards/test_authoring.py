@@ -385,6 +385,48 @@ class TestTheGraveyardSpellProp:
         prop = hand_written.get(theirs[0])
         assert prop.is_creature and not prop.abilities and "Legendary" not in prop.supertypes
 
+    def test_a_permanent_target_of_theirs_gets_a_creature_too(self, hand_written):
+        """Jailbreak: "target permanent card in an opponent's graveyard".
+
+        Any of the permanent types, and a creature card is one of them, so the
+        same quiet creature is a legal choice.
+        """
+        payload = {
+            **self.CONSCRIPTION,
+            "id": "auto_test_jailbreak",
+            "targets": [
+                {
+                    **self.CONSCRIPTION["targets"][0],
+                    "selector": {
+                        "any_types": ["Artifact", "Creature", "Enchantment", "Land", "Planeswalker"],
+                        "controller": "opponent",
+                        "zone": "graveyard",
+                    },
+                }
+            ],
+        }
+        own, theirs = self._graveyards(hand_written, payload)
+        assert len(own) == 2 and len(theirs) == 1
+        assert hand_written.get(theirs[0]).is_creature
+
+    def test_a_noncreature_permanent_target_gets_no_creature(self, hand_written):
+        """An any-of that leaves creatures out is not satisfied by one."""
+        payload = {
+            **self.CONSCRIPTION,
+            "id": "auto_test_artifact_thief",
+            "targets": [
+                {
+                    **self.CONSCRIPTION["targets"][0],
+                    "selector": {
+                        "any_types": ["Artifact", "Enchantment"],
+                        "controller": "opponent",
+                        "zone": "graveyard",
+                    },
+                }
+            ],
+        }
+        assert self._graveyards(hand_written, payload)[1] == []
+
     def test_an_optional_creature_target_needs_no_prop(self, hand_written):
         payload = {
             **self.CONSCRIPTION,

@@ -1073,6 +1073,8 @@ STATICS: dict[str, Entry] = {
     "crew_power_bonus": ("Matching creatures crew as though their power were N greater.",
                          "Crews Vehicles as though its power were N greater"),
     "damage_life_floor": ("Damage can't reduce the player's life below N.", H_FLOOR),
+    "damage_doesnt_cause_life_loss": ("Damage dealt to the player causes no life loss; it is still dealt.",
+                                      H_FLOOR),
     "double_land_mana": ("Lands the player taps for mana add twice as much.", None),
     "double_land_triggers": ("The player's landfall-style triggers fire twice.", None),
     "double_nonland_mana": ("Nonland permanents the player taps for mana add twice as much.", None),

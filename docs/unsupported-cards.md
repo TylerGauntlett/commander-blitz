@@ -10,19 +10,19 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**541 cards** blocked by **454** capabilities.
+**543 cards** blocked by **455** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [rad-counters](#rad-counters) | 22 | 2709 | engine |
-| [council-s-dilemma](#council-s-dilemma) | 16 | 3539 | decision, op, trigger_event |
+| [council-s-dilemma](#council-s-dilemma) | 17 | 3539 | decision, op, trigger_event |
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 11 | 2713 | op, replacement, static_effect |
 | [planechase](#planechase) | 10 | 5666 | engine |
 | [convoke](#convoke) | 7 | 5528 | engine, op, selector, static_effect |
+| [voting](#voting) | 7 | 4565 | decision, op, static_effect |
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [the-ring-tempts-you](#the-ring-tempts-you) | 6 | 1136 | engine, op |
-| [voting](#voting) | 6 | 6980 | decision, op |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 6 | 2672 | selector, trigger_event |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
@@ -117,6 +117,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [batched-counter-removed](#batched-counter-removed) | 1 | 11093 | trigger_event |
 | [battle-protector](#battle-protector) | 1 | 17299 | selector |
 | [become-copy-remove-supertypes](#become-copy-remove-supertypes) | 1 | 4458 | op |
+| [become-copy-until-your-next-turn](#become-copy-until-your-next-turn) | 1 | 13431 | op |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
 | [bloodthirst](#bloodthirst) | 1 | 6438 | keyword |
@@ -176,6 +177,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [counters-persist-across-zones](#counters-persist-across-zones) | 1 | 15120 | engine |
 | [coven](#coven) | 1 | 1129 | value |
 | [crew-with-toughness](#crew-with-toughness) | 1 | 7596 | static_effect |
+| [crewed-by](#crewed-by) | 1 | 11451 | selector |
 | [cursed-role](#cursed-role) | 1 | 7808 | token |
 | [damage-player-or-planeswalker](#damage-player-or-planeswalker) | 1 | 5120 | op |
 | [deals-damage-to-creature-trigger](#deals-damage-to-creature-trigger) | 1 | 19999 | trigger_event |
@@ -352,7 +354,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [per-player-damage-amount](#per-player-damage-amount) | 1 | 13205 | value |
 | [per-recipient-damage-trigger](#per-recipient-damage-trigger) | 1 | 3523 | trigger_event |
 | [permanent-or-suspended-card-target](#permanent-or-suspended-card-target) | 1 | 4274 | engine |
-| [permanents-entered-this-turn-per-player](#permanents-entered-this-turn-per-player) | 1 | 1701 | value |
 | [phases-out-trigger](#phases-out-trigger) | 1 | 7780 | trigger_event |
 | [play-cost-paid-card](#play-cost-paid-card) | 1 | 6544 | op |
 | [play-exiled-land](#play-exiled-land) | 1 | 11125 | op |
@@ -536,7 +537,7 @@ Blocks **22** cards.
 
 ## council-s-dilemma
 
-Blocks **16** cards.
+Blocks **17** cards.
 
 - **(op)** a vote op where each player (here secretly, revealed simultaneously) votes for a player, with the tally bound so later effects can read it per player: a value 'votes received by <each_player>' for 'draws a card for each vote they received', and a condition/player filter for 'received no votes' feeding a for_each_player whose may lets that player put a permanent card from their hand onto the battlefield
   <br>Why the existing vocabulary won't do: choose_player is made by one player only and binds a single choice; for_each_player wrapping choose_player has no way to aggregate the choices into a per-player vote count, and no value_key or condition reads votes received; join_forces collects payments, not choices
@@ -560,6 +561,8 @@ Blocks **16** cards.
   <br>Why the existing vocabulary won't do: for_each_player with starting_with can walk the players and choose_mode has a `chooser`, but nothing records each player's chosen mode as a tally and no condition or value key reads 'how many players voted for option X', so the two outcome branches cannot be selected; running each player's choice as an immediate choose_mode would apply per-voter effects instead of the majority outcome
 - **(decision)** a voting op: starting with the controller and proceeding in turn order, each player publicly chooses one of N named options (here 'wild' or 'free'); the op binds the tally per option (e.g. as: 'votes' giving {binding: 'votes.wild'} / {binding: 'votes.free'}) so later effects in the same spell can use each count as an amount -- here reveal_until's creature count and a repeated optional put-from-hand of a permanent card
   <br>Why the existing vocabulary won't do: value_keys has no vote count and no op in reference casts a vote; choose_mode is one chooser picking modes, and for_each_player + choose_mode cannot accumulate a per-option tally into a value. join_forces pools mana payments, not choices. Once the tally exists, the rest looks expressible: reveal_until with amount {binding: votes.wild}, selector Creature, destination battlefield, shuffle_rest; and repeat over {binding: votes.free} of a may put_onto_battlefield of a permanent card from hand
+- **(decision)** a voting op: starting with the controller and proceeding in turn order, each player publicly votes for one of N named options (here 'evidence' or 'bribery'); the op binds the tally per option (e.g. as: 'votes' giving {binding: 'votes.evidence'} / {binding: 'votes.bribery'}) so later effects in the same ability can use each count as an amount -- here investigate with amount = evidence votes and create_token treasure_token with amount = bribery votes. Each vote must be visible to the players voting after them
+  <br>Why the existing vocabulary won't do: choose_mode is one chooser picking modes, not every player casting a public vote with a per-option tally; for_each_player + choose_mode cannot accumulate a count per chosen option into a value, and value_keys has no vote count. The trigger (self_enters / deals_combat_damage_to_player), investigate, the Treasure token and the flying/ward {3} line are all expressible; only the vote is missing
 - **(op)** a vote op (rule 701.38) over objects: every player secretly chooses one object from a selector (here creatures the spell's controller doesn't control) without targeting, votes revealed simultaneously (secret council); the op keeps a per-candidate tally and binds the set of candidates with one or more votes under an `as`, with a value key reading the vote count of the current object, so a following for_each can add_counters of kind stun with amount = that object's votes and then tap it
   <br>Why the existing vocabulary won't do: for_each_player can walk the players but choose_permanents has no per-player chooser and no binding that accumulates across players; no value_key counts how many players chose a given object, so 'put that many stun counters on it' has no amount; targeting would be wrong because the vote does not target. add_counters (counter: stun) and tap are themselves available, so only the vote and tally are missing
 - **(decision)** a voting op: starting with the controller and proceeding in turn order, each player publicly chooses one of N named options (here 'Redhorn Pass' or 'Mines of Moria'); the op binds the tally per option (e.g. as: 'votes' giving {binding: 'votes.redhorn_pass'} / {binding: 'votes.mines_of_moria'}) so later effects in the same spell can use each count as an amount -- here a search_library of basic lands to the battlefield tapped with count = the Redhorn tally (shuffle only if that tally > 0), and a return of that many chosen cards from your graveyard to hand
@@ -579,6 +582,9 @@ Blocks **16** cards.
   - Council's dilemma — Starting with you, each player votes for wild or free.
   - Reveal cards from the top of your library until you reveal a creature card for each wild vote.
   - You may put a permanent card from your hand onto the battlefield for each free vote.
+- **Tivit, Seller of Secrets** (rank 4565) — `tivit_seller_of_secrets`
+  - Council's dilemma — Whenever Tivit enters or deals combat damage to a player, starting with you, each player votes for evidence or bribery. For each evidence vote, investigate. For each bribery vote, create a Treasure token
+  - While voting, you may vote an additional time
 - **Plea for Power** (rank 5643) — `plea_for_power`
   - Will of the council — Starting with you, each player votes for time or knowledge. If time gets more votes, take an extra turn after this one. If knowledge gets more votes or the vote is tied, draw three cards.
 - **Mob Verdict** (rank 6957) — `mob_verdict`
@@ -825,6 +831,40 @@ Blocks **7** cards.
 
 </details>
 
+## voting
+
+Blocks **7** cards.
+
+- **(decision)** a vote op: starting with the caster, each player in turn order picks one of a fixed list of options, the tally is bound so later effects can branch on which option got more votes (with ties resolved as printed, here toward chaos)
+  <br>Why the existing vocabulary won't do: `choose_mode` has one chooser, and `for_each_player` with `choose_mode` inside cannot accumulate a tally that an `if` condition can compare; no value key reads vote counts
+- **(decision)** a vote op: starting with the caster, each player in turn order picks one of a fixed list of options (here planeswalk or chaos), the tally is bound so later effects can branch on which option got more votes, with ties resolved as printed (here toward chaos)
+  <br>Why the existing vocabulary won't do: `choose_mode` has one chooser, and `for_each_player` with `choose_mode` inside cannot accumulate a tally that an `if` condition can compare; no value key reads vote counts
+- **(op)** a council's-dilemma / will-of-the-council voting op where each player votes, plus a static granting you an additional vote while voting
+  <br>Why the existing vocabulary won't do: No vote op exists in reference ops; join_forces and choose_player/choose_mode are not votes and no static_effect adds extra votes
+- **(static_effect)** a player-wide static (affects_player: 'you') that gives its controller one additional vote, cast as a separate vote that may be for the same or a different option, whenever that player votes -- read by the council_s_dilemma / will-of-the-council voting op, including the vote this same card's trigger starts
+  <br>Why the existing vocabulary won't do: No static_effect adds votes, and with no voting op there is nothing for it to modify; join_forces and choose_player are not votes
+
+<details><summary>Cards waiting on this</summary>
+
+- **Tivit, Seller of Secrets** (rank 4565) — `tivit_seller_of_secrets`
+  - Council's dilemma — Whenever Tivit enters or deals combat damage to a player, starting with you, each player votes for evidence or bribery. For each evidence vote, investigate. For each bribery vote, create a Treasure token
+  - While voting, you may vote an additional time
+- **Path of the Pyromancer** (rank 6980) — `path_of_the_pyromancer`
+  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
+- **The Valeyard** (rank 8294) — `the_valeyard`
+  - If an opponent would face a villainous choice, they face that choice an additional time
+  - While voting, you may vote an additional time
+- **Path of the Animist** (rank 10704) — `path_of_the_animist`
+  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
+- **Path of the Ghosthunter** (rank 15393) — `path_of_the_ghosthunter`
+  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
+- **Path of the Schemer** (rank 17367) — `path_of_the_schemer`
+  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
+- **Path of the Enigma** (rank 19044) — `path_of_the_enigma`
+  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
+
+</details>
+
 ## rooms
 
 Blocks **6** cards.
@@ -905,35 +945,6 @@ Blocks **6** cards.
   - Whenever a commander an opponent controls dies, the Ring tempts you.
 - **Galadriel, Elven-Queen** (rank 11138) — `galadriel_elven_queen`
   - Will of the council — At the beginning of combat on your turn, if another Elf entered the battlefield under your control this turn, starting with you, each player votes for dominion or guidance. If dominion gets more votes, the Ring tempts you, then you put a +1/+1 counter on your Ring-bearer. If guidance gets more votes or the vote is tied, draw a card.
-
-</details>
-
-## voting
-
-Blocks **6** cards.
-
-- **(decision)** a vote op: starting with the caster, each player in turn order picks one of a fixed list of options, the tally is bound so later effects can branch on which option got more votes (with ties resolved as printed, here toward chaos)
-  <br>Why the existing vocabulary won't do: `choose_mode` has one chooser, and `for_each_player` with `choose_mode` inside cannot accumulate a tally that an `if` condition can compare; no value key reads vote counts
-- **(decision)** a vote op: starting with the caster, each player in turn order picks one of a fixed list of options (here planeswalk or chaos), the tally is bound so later effects can branch on which option got more votes, with ties resolved as printed (here toward chaos)
-  <br>Why the existing vocabulary won't do: `choose_mode` has one chooser, and `for_each_player` with `choose_mode` inside cannot accumulate a tally that an `if` condition can compare; no value key reads vote counts
-- **(op)** a council's-dilemma / will-of-the-council voting op where each player votes, plus a static granting you an additional vote while voting
-  <br>Why the existing vocabulary won't do: No vote op exists in reference ops; join_forces and choose_player/choose_mode are not votes and no static_effect adds extra votes
-
-<details><summary>Cards waiting on this</summary>
-
-- **Path of the Pyromancer** (rank 6980) — `path_of_the_pyromancer`
-  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
-- **The Valeyard** (rank 8294) — `the_valeyard`
-  - If an opponent would face a villainous choice, they face that choice an additional time
-  - While voting, you may vote an additional time
-- **Path of the Animist** (rank 10704) — `path_of_the_animist`
-  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
-- **Path of the Ghosthunter** (rank 15393) — `path_of_the_ghosthunter`
-  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
-- **Path of the Schemer** (rank 17367) — `path_of_the_schemer`
-  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
-- **Path of the Enigma** (rank 19044) — `path_of_the_enigma`
-  - Will of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.
 
 </details>
 
@@ -2664,6 +2675,20 @@ Blocks **1** card.
 
 </details>
 
+## become-copy-until-your-next-turn
+
+Blocks **1** card.
+
+- **(op)** a `duration: "until_your_next_turn"` on the `become_copy` op: the in-place copy effect (with its except_ power/toughness and keep_abilities) persists through the end of this turn and opponents' turns, and is cleared when the effect controller's next turn begins (611.2b), not at cleanup
+  <br>Why the existing vocabulary won't do: op_become_copy only distinguishes `permanent` from everything else: any other duration sets `copying_until_eot`, which `clear_until_eot` wipes at this turn's cleanup, so the copy would end too early; `permanent` never ends. No op reverts a copy effect, so a `delayed_trigger` with `until_your_next_turn` cannot end a permanent copy either. The rest of the line is expressible (target selector `has_counters: true`, except_ {power: 7, toughness: 5, keep_abilities: [1]}), and the begin_combat trigger line is expressible too
+
+<details><summary>Cards waiting on this</summary>
+
+- **Volrath, the Shapestealer** (rank 13431) — `volrath_the_shapestealer`
+  - {1}: Until your next turn, Volrath becomes a copy of target creature with a counter on it, except it's 7/5 and it has this ability.
+
+</details>
+
 ## blocked-by-source
 
 Blocks **1** card.
@@ -3502,6 +3527,20 @@ Blocks **1** card.
 
 - **Interface Ace** (rank 7596) — `interface_ace`
   - This creature saddles Mounts and crews Vehicles using its toughness rather than its power.
+
+</details>
+
+## crewed-by
+
+Blocks **1** card.
+
+- **(selector)** a selector/target filter key matching the creatures that were tapped to pay crew costs of a given Vehicle this turn ("target nonlegendary creature that crewed it this turn"), e.g. `crewed: "self"` read from a per-turn ledger the crew cost writes for every permanent it taps
+  <br>Why the existing vocabulary won't do: `becomes_crewed` fires with only the Vehicle as subject and carries nothing about who crewed it; `tap_permanents.as` binds only one tapped permanent (never count above 1, and Crew 1 can tap several) and that binding lives on the crew ability, not on the separate triggered ability that targets; `paid_by` is about mana sources; no key in selector_keys or target_keys remembers crew tappers
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mindlink Mech** (rank 11451) — `mindlink_mech`
+  - Whenever this Vehicle becomes crewed for the first time each turn, until end of turn, this Vehicle becomes a copy of target nonlegendary creature that crewed it this turn, except it's 4/3, it's a Vehicle artifact in addition to its other types, and it has flying.
 
 </details>
 
@@ -6011,20 +6050,6 @@ Blocks **1** card.
 
 - **Clockspinning** (rank 4274) — `clockspinning`
   - Choose a counter on target permanent or suspended card. Remove that counter from that permanent or card or put another of those counters on it.
-
-</details>
-
-## permanents-entered-this-turn-per-player
-
-Blocks **1** card.
-
-- **(value)** let the `permanents_entered_this_turn` value's `controller` take a bound player spec such as {"binding": "each_player"} inside a `for_each_player` loop (or a `player_count`-style headcount over the ledger), so "each opponent who had two or more lands enter the battlefield under their control this turn" can test each opponent's own count of lands entered under their control against 2
-  <br>Why the existing vocabulary won't do: `validate_entered_filter` restricts `controller` to fixed specs (you, opponent, each_opponent, ...) and refuses {"binding": "each_player"}; `each_opponent` sums every opponent's lands into one total, so two opponents with one land each would wrongly count. `player_count` with `cmp`/`than` only counts objects currently matching a selector, and `entered_this_turn` on a battlefield selector misses lands that entered and left and reads current rather than at-entry controller. The draw half is expressible (for_each_player over each_opponent with an `if` on {"cards_drawn_this_turn": {"binding": "each_player"}} >= 2).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Smuggler's Share** (rank 1701) — `smuggler_s_share`
-  - At the beginning of each end step, draw a card for each opponent who drew two or more cards this turn, then create a Treasure token for each opponent who had two or more lands enter the battlefield under their control this turn.
 
 </details>
 

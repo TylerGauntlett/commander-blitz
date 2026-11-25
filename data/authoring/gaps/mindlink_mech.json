@@ -1,0 +1,23 @@
+{
+  "card_id": "mindlink_mech",
+  "name": "Mindlink Mech",
+  "oracle_text": "Flying\nWhenever this Vehicle becomes crewed for the first time each turn, until end of turn, this Vehicle becomes a copy of target nonlegendary creature that crewed it this turn, except it's 4/3, it's a Vehicle artifact in addition to its other types, and it has flying.\nCrew 1",
+  "blocked_sentences": [
+    "Whenever this Vehicle becomes crewed for the first time each turn, until end of turn, this Vehicle becomes a copy of target nonlegendary creature that crewed it this turn, except it's 4/3, it's a Vehicle artifact in addition to its other types, and it has flying."
+  ],
+  "needs": [
+    {
+      "capability": "crewed_by",
+      "kind": "selector",
+      "what": "a selector/target filter key matching the creatures that were tapped to pay crew costs of a given Vehicle this turn (\"target nonlegendary creature that crewed it this turn\"), e.g. `crewed: \"self\"` read from a per-turn ledger the crew cost writes for every permanent it taps",
+      "why_existing_wont_do": "`becomes_crewed` fires with only the Vehicle as subject and carries nothing about who crewed it; `tap_permanents.as` binds only one tapped permanent (never count above 1, and Crew 1 can tap several) and that binding lives on the crew ability, not on the separate triggered ability that targets; `paid_by` is about mana sources; no key in selector_keys or target_keys remembers crew tappers"
+    }
+  ],
+  "closest_existing": [
+    "becomes_crewed",
+    "tap_permanents.as",
+    "become_copy",
+    "paid_by"
+  ],
+  "confidence": "high"
+}

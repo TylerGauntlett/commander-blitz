@@ -128,9 +128,11 @@ COPY_EXCEPT_KEYS = frozenset(
 #: ``add_supertypes``, as `copy_permanent`'s keys of the same names ("except
 #: it's an artifact in addition to its other types", Saheeli, Sublime
 #: Artificer; "and it's legendary in addition to its other types", Sarkhan,
-#: Soul Aflame). The name stays on ``except_name``.
+#: Soul Aflame); ``power`` and ``toughness``, the base size instead of the
+#: copied one ("except it's 1/4", Cephalid Facetaker), always written as a
+#: pair. The name stays on ``except_name``.
 BECOME_COPY_EXCEPT_KEYS = frozenset(
-    {"add_keywords", "keep_abilities", "add_types", "add_supertypes"}
+    {"add_keywords", "keep_abilities", "add_types", "add_supertypes", "power", "toughness"}
 )
 
 #: The recorders whose `as` binding is a **set of seats** rather than of
@@ -3318,6 +3320,20 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 if k not in KNOWN_KEYWORDS:
                     raise DslError(f"{where}.except_.add_keywords: unknown keyword {k!r}")
             refuse_numbered_grant(added, f"{where}.except_.add_keywords")
+        if ("power" in exception) != ("toughness" in exception):
+            # "…except it's 1/4" prints both halves. One alone would keep the
+            # copied card's other half, a size no printing asks for.
+            raise DslError(
+                f"{where}.except_: 'power' and 'toughness' go together -- the "
+                f"printed exception names the whole size ('except it's 1/4')"
+            )
+        for key in ("power", "toughness"):
+            if key in exception:
+                size = exception[key]
+                if not isinstance(size, int) or isinstance(size, bool) or size < 0:
+                    raise DslError(
+                        f"{where}.except_.{key}: must be a non-negative whole number, got {size!r}"
+                    )
         if "keep_abilities" in exception:
             # Range-checked against the card by `_check_grant_targets`.
             kept = exception["keep_abilities"]

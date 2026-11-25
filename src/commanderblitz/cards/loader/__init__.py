@@ -7210,6 +7210,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"'affects_player' and an optional 'condition', and no 'affects' "
             f"or 'amount'"
         )
+    if model.effect == "damage_doesnt_cause_life_loss" and (
+        model.affects is not None or model.amount is not None
+    ):
+        # "Damage doesn't cause you to lose life" names players and nothing
+        # else: a permanent filter would read as "damage dealt by creatures
+        # you control", a different and much stronger card.
+        raise DslError(
+            f"{where}: damage_doesnt_cause_life_loss takes 'affects_player' and an "
+            f"optional 'condition', and no 'affects' or 'amount'"
+        )
     if model.effect in ("cant_lose_the_game", "cant_win_the_game") and (
         model.affects is not None or model.amount is not None
     ):
