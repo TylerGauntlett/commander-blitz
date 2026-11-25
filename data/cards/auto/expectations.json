@@ -18797,6 +18797,10 @@
   "oona_s_gatewarden": {
     "zone": "battlefield"
   },
+  "opal_palace": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "opaline_unicorn": {
     "zone": "battlefield"
   },

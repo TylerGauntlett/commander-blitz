@@ -5507,6 +5507,30 @@ and [#card-level-costs](card-dsl-reference.md#card-level-costs):
                  "zone": "exile", "exiled_with": "self" } } } }      //  of that card"
 ```
 
+### `mana_grant` that counts command-zone casts — Opal Palace
+
+```jsonc
+{ "kind": "activated", "is_mana_ability": true,
+  "text": "{1}, {T}: Add one mana of any color in your commander's color identity. If you spend this mana to cast your commander, it enters with a number of additional +1/+1 counters on it equal to the number of times it's been cast from the command zone this game.",
+  "cost": { "mana": "{1}", "tap": true },
+  "mana_grant": { "commander_only": true, "enters_with_command_zone_casts": "+1/+1" },
+  "effects": [ … ] }
+```
+
+`commander_only` narrows any `mana_grant` to a spell that is a commander the
+payer owns, asked as the mana is spent. `enters_with_command_zone_casts` names a
+counter kind; the permanent enters with that many more of them as its 903.8
+tally reads (614.1c, one placement with the rest, 122.6). Staged on the spell by
+`costs.pay_mana` and counted by `zones._enter_battlefield`, because `Game` bumps
+the tally after payment: counted at spend time, the first cast would be 0.
+`keywords` may be left out beside it; the loader refuses the key without
+`commander_only`, where the count would always be 0.
+
+| Near miss | Why not |
+|---|---|
+| `mana_spent_trigger` with `add_counters` | resolves with the spell still on the stack, so the counters land on nothing |
+| `enters_with_additional_counters` on the land | a standing replacement of the land's, so the `{C}` would grant it too |
+
 ### `exert` — the keyword as a cost
 
 "{R}, {T}, **Exert this land**: Add {R}{R}" — Arena of Glory.

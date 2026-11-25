@@ -193242,12 +193242,12 @@
     },
     "Opal Palace": {
       "edhrec_rank": 653,
-      "gate": "template",
+      "gate": null,
       "name": "Opal Palace",
-      "reason": "no template for: {1}, {T}: Add one mana of any color in your commander's color identity. If you spend this ",
+      "reason": "",
       "scryfall_id": "912553e7-1e67-4045-84fd-0a791754cf6c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Opal Titan": {
