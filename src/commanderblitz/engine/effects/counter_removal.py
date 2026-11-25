@@ -47,21 +47,32 @@ def counters_on(ctx: EffectContext, oid: int, kind: str | None = None) -> int:
     return sum(n for n in obj.counters.values() if n > 0)
 
 
-def kinds_held(ctx: EffectContext, oid: int) -> dict[str, int]:
-    """The kinds ``oid`` carries, harmful first, then the most numerous."""
+def kinds_held(ctx: EffectContext, oid: int, *, harmful_first: bool = True) -> dict[str, int]:
+    """The kinds ``oid`` carries, harmful first, then the most numerous.
+
+    ``harmful_first=False`` puts the harmful kinds last instead, for a question
+    whose answer is copied rather than taken away (`choose_counter_kind`).
+    """
     obj = ctx.state.objects.get(oid)
     if obj is None:
         return {}
     held = {k: n for k, n in obj.counters.items() if n > 0}
-    order = sorted(held, key=lambda k: (k not in HARMFUL_COUNTERS, -held[k], k))
+    order = sorted(
+        held, key=lambda k: ((k not in HARMFUL_COUNTERS) == harmful_first, -held[k], k)
+    )
     return {k: held[k] for k in order}
 
 
 def ask_counter_kind(
-    ctx: EffectContext, oid: int, chooser: int, verb: str = "Remove"
+    ctx: EffectContext,
+    oid: int,
+    chooser: int,
+    verb: str = "Remove",
+    *,
+    harmful_first: bool = True,
 ) -> Generator[Any, Any, str | None]:
     """Which kind of counter on ``oid`` -- asked only when it carries two or more."""
-    held = kinds_held(ctx, oid)
+    held = kinds_held(ctx, oid, harmful_first=harmful_first)
     kinds = list(held)
     if not kinds:
         return None

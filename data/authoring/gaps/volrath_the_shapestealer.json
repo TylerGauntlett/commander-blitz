@@ -1,0 +1,18 @@
+{
+  "card_id": "volrath_the_shapestealer",
+  "name": "Volrath, the Shapestealer",
+  "oracle_text": "At the beginning of combat on your turn, put a -1/-1 counter on up to one target creature.\n{1}: Until your next turn, Volrath becomes a copy of target creature with a counter on it, except it's 7/5 and it has this ability.",
+  "blocked_sentences": [
+    "{1}: Until your next turn, Volrath becomes a copy of target creature with a counter on it, except it's 7/5 and it has this ability."
+  ],
+  "needs": [
+    {
+      "capability": "become_copy_until_your_next_turn",
+      "kind": "op",
+      "what": "a `duration: \"until_your_next_turn\"` on the `become_copy` op: the in-place copy effect (with its except_ power/toughness and keep_abilities) persists through the end of this turn and opponents' turns, and is cleared when the effect controller's next turn begins (611.2b), not at cleanup",
+      "why_existing_wont_do": "op_become_copy only distinguishes `permanent` from everything else: any other duration sets `copying_until_eot`, which `clear_until_eot` wipes at this turn's cleanup, so the copy would end too early; `permanent` never ends. No op reverts a copy effect, so a `delayed_trigger` with `until_your_next_turn` cannot end a permanent copy either. The rest of the line is expressible (target selector `has_counters: true`, except_ {power: 7, toughness: 5, keep_abilities: [1]}), and the begin_combat trigger line is expressible too"
+    }
+  ],
+  "closest_existing": ["become_copy", "delayed_trigger"],
+  "confidence": "high"
+}

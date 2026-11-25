@@ -1,0 +1,18 @@
+{
+  "card_id": "littjara_mirrorlake",
+  "name": "Littjara Mirrorlake",
+  "oracle_text": "This land enters tapped.\n{T}: Add {U}.\n{2}{G}{G}{U}, {T}, Sacrifice this land: Create a token that's a copy of target creature you control, except it enters with an additional +1/+1 counter on it. Activate only as a sorcery.",
+  "blocked_sentences": [
+    "{2}{G}{G}{U}, {T}, Sacrifice this land: Create a token that's a copy of target creature you control, except it enters with an additional +1/+1 counter on it. Activate only as a sorcery."
+  ],
+  "needs": [
+    {
+      "capability": "token_copy_enters_with_counters",
+      "kind": "op",
+      "what": "a `counters` option on `copy_permanent` (map of counter kind to value expression, e.g. {\"+1/+1\": {\"const\": 1}}) passed through to primitives.create_token's `enters_with`, so each token copy enters the battlefield with the counters already on it (122.6, 614.1c) rather than having them put on afterwards",
+      "why_existing_wont_do": "copy_permanent's options (amount, as, attacking, controller, embalm, except/except_, objects, or_planeswalker, tapped) have no counters key, and its except_ overrides only copiable values (power, toughness, types, subtypes, keywords, name, colors, mana cost), not counters. create_token has `counters` (enters_with) but names a fixed token id and cannot copy a target. copy_permanent with `as` followed by add_counters on the binding puts the counter on after the token has entered, which differs from 'enters with' for its enters-triggers and anything that reads how it entered"
+    }
+  ],
+  "closest_existing": ["copy_permanent", "create_token", "add_counters"],
+  "confidence": "high"
+}

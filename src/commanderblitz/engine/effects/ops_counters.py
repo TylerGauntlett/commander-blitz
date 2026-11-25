@@ -12,9 +12,11 @@ from ..enums import Zone
 from ..errors import DslError
 from ..events import EventType
 from ..objects import TIME_COUNTER
+from ..player import PLAYER_COUNTER_KINDS
 from ..player_statics import player_cant_cast_while_resolving
 from ..primitives import (
     add_counters,
+    add_player_counters,
     add_subtypes,
     attach,
     attach_to_player,
@@ -31,11 +33,12 @@ from ..structs import StackItem
 from ..suspend import cast_suspended, remove_time_counter, suspended_cards
 from ..triggers import fire
 from ..zones import exile, move_object
+from . import execute
 from .board_helpers import (
     _players,
 )
 from .context import EffectContext, ask_mode, ask_objects, ask_x, ask_yes_no
-from .counter_removal import remove_counters_one_at_a_time
+from .counter_removal import ask_counter_kind, counters_on, remove_counters_one_at_a_time
 from .ops_cards import cast_copy_paying
 from .ops_characteristics import source_bound_seat
 from .registry import register
@@ -43,6 +46,7 @@ from .selectors import (
     choose_objects,
     pick_from_pool,
     resolve_pool,
+    select_players,
 )
 from .tokens import ask_token_copies
 from .values import evaluate_value
@@ -57,6 +61,19 @@ def op_add_counters(ctx: EffectContext, spec: Mapping[str, Any]):
     # underneath.
     amount = max(0, evaluate_value(ctx, spec.get("amount", 1)))
     kind = _counter_kind(ctx, spec.get("counter", "+1/+1"))
+    if "player" in spec:
+        # "Give that **player** another counter of that kind" (Skyship
+        # Plunderer): a bound kind put on players, through the funnel that
+        # lets a counter replacement reaching players apply. The loader allows
+        # `player` only with a bound kind -- a printed poison counter is
+        # `add_poison` -- and a bound kind no player can carry here (one read
+        # off a permanent) puts nothing.
+        if kind in PLAYER_COUNTER_KINDS:
+            for pid in select_players(ctx, spec["player"]):
+                add_player_counters(
+                    ctx.state, pid, kind, amount, source=ctx.source_oid, by=ctx.controller
+                )
+        return
     oids = yield from choose_objects(ctx, spec.get("objects"), "Put counters on")
     if kind is None:
         return
@@ -65,19 +82,118 @@ def op_add_counters(ctx: EffectContext, spec: Mapping[str, Any]):
 
 
 def _counter_kind(ctx: EffectContext, counter: Any) -> str | None:
-    """The kind an `add_counters` puts: printed, or the placement that fired it.
+    """The kind an `add_counters` puts: printed, or one a binding holds.
 
     ``{"binding": "counter"}`` is "the same **kind** of counters" (Captain
     Marvel, Apex Avenger): the kind the triggering `counter_placed` event put,
     which `triggers.event_bindings` copies into the bindings beside ``amount``.
-    The loader allows it only on a `counter_placed` trigger, so an absent or
-    non-string binding is a placement with nothing to copy and puts nothing --
-    never a +1/+1 counter by default.
+    Any other name is a kind `choose_counter_kind` bound ("a counter of that
+    kind"). An absent or non-string binding is a choice with nothing to copy
+    and puts nothing -- never a +1/+1 counter by default.
     """
     if isinstance(counter, Mapping):
         bound = ctx.bindings.get(str(counter.get("binding", "")))
         return bound if isinstance(bound, str) and bound else None
     return str(counter)
+
+
+@register("choose_counter_kind")
+def op_choose_counter_kind(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Choose a kind of counter on a creature you control." Contractual Safeguard.
+
+    Binds the chosen **kind**, a string, under ``as``; `add_counters` puts one
+    of it with ``counter: {"binding": …}`` and the value leaf ``counters_on``
+    counts it the same way, which is how Aven Courier says "if it doesn't
+    have a counter of that kind on it". ``from`` is the selector whose
+    permanents' counters may be chosen. ``holder_as`` also binds the permanent
+    the chosen counter is on, as a list of one oid, for "each **other**
+    creature you control" (``exclude_binding``).
+
+    The counter is chosen where it is: first which permanent of the pool that
+    carries a counter, then which kind on it -- `ask_objects`, then
+    `counter_removal.ask_counter_kind` -- each asked only when there is more
+    than one answer. That is the printed choice exactly ("a counter on a
+    permanent you control"), and it is the one Contractual Safeguard needs,
+    because the permanent chosen is the one "each other creature" leaves out.
+    The kinds are offered harmful last, since the answer is copied rather than
+    removed.
+
+    Chosen on resolution by the controller. Nothing in the pool carrying a
+    counter binds nothing, and every reader of an absent kind puts or counts
+    none (609.3). **No new `DecisionKind`**: both questions already existed.
+    """
+    pool = resolve_pool(ctx, spec.get("from"))
+    candidates = [oid for oid in pool if counters_on(ctx, oid) > 0]
+    picked = yield from ask_objects(
+        ctx, "Choose a counter on which permanent?", candidates, 1, 1, ctx.controller
+    )
+    if not picked:
+        return
+    kind = yield from ask_counter_kind(
+        ctx, picked[0], ctx.controller, verb="Choose", harmful_first=False
+    )
+    if kind is None:
+        return
+    ctx.bindings[str(spec["as"])] = kind
+    if holder := spec.get("holder_as"):
+        ctx.bindings[str(holder)] = [picked[0]]
+
+
+@register("for_each_counter_kind")
+def op_for_each_counter_kind(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "For each kind of counter on …" -- a loop over counter kinds (122.1).
+
+    Bribe Taker's "for each kind of counter on permanents you control",
+    Skyship Plunderer's "on target permanent or player", Denry Klin's "the
+    same number of each kind of counter" Denry has. The domain is the kinds
+    carried by the permanents ``objects`` finds and by the players ``players``
+    names (each kind in `player.PLAYER_COUNTER_KINDS` they have), either or
+    both. Each kind present at least once is one iteration, in the order it is
+    first met, with the kind -- a string -- bound under ``as`` and, with
+    ``count_as``, the number of counters of it among the whole domain bound as
+    an int.
+
+    The kinds and counts are read **once**, before the body runs: "each kind
+    of counter on permanents you control" is the kinds there as the effect
+    resolves, so a kind the body itself puts on (Bribe Taker taking a +1/+1
+    counter on a board that had none) is not a further iteration, and a count
+    is not grown by its own placement. Proliferate snapshots the same way.
+
+    The body reads the kind as ``counter: {"binding": …}`` on `add_counters`
+    (on ``objects``, or on ``player`` for a player's kind) and on the value
+    leaf ``counters_on`` -- the convention `choose_counter_kind` set -- and the
+    count as an ordinary ``{"binding": …}`` value. Both bindings exist only
+    inside the body; what they held before the loop is restored after it.
+    Nothing carrying a counter runs the body zero times (609.3).
+    """
+    held: dict[str, int] = {}
+    for oid in resolve_pool(ctx, spec["objects"]) if spec.get("objects") else ():
+        obj = ctx.state.objects.get(oid)
+        if obj is None:
+            continue
+        for kind, n in obj.counters.items():
+            if n > 0:
+                held[kind] = held.get(kind, 0) + n
+    for pid in select_players(ctx, spec["players"]) if "players" in spec else ():
+        player = ctx.state.players[pid]
+        for kind in PLAYER_COUNTER_KINDS:
+            if (n := getattr(player, kind)) > 0:
+                held[kind] = held.get(kind, 0) + n
+    names = [str(spec["as"])] + ([str(spec["count_as"])] if spec.get("count_as") else [])
+    previous = {name: ctx.bindings[name] for name in names if name in ctx.bindings}
+    body = spec.get("effects") or []
+    try:
+        for kind, n in held.items():
+            ctx.bindings[names[0]] = kind
+            if len(names) > 1:
+                ctx.bindings[names[1]] = n
+            yield from execute(ctx, body)
+    finally:
+        for name in names:
+            if name in previous:
+                ctx.bindings[name] = previous[name]
+            else:
+                ctx.bindings.pop(name, None)
 
 
 #: The token "empower Jace" creates when you control no Jace token: the blue

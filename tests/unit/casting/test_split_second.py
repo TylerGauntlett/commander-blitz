@@ -174,3 +174,41 @@ class TestTheCardLoads:
         game = position(builder, opponent_board=(BEAR,))
         oid = only_oid(game, BEAR, 1)
         assert game.state.objects[oid].zone is Zone.BATTLEFIELD
+
+
+class TestTheResidualGateClaimsTheLine:
+    """A permanent spell with split second: In Too Deep, an Aura.
+
+    An instant's `spell_effects` claim every printed line, so the keyword line
+    on Krosan Grip never needed claiming on its own. A permanent has only its
+    abilities, and none of them could carry a keyword that works while the card
+    is a spell, so the card-level flag claims it -- and only the flag.
+    """
+
+    LINE = (
+        "Split second (As long as this spell is on the stack, players can't cast "
+        "spells or activate abilities that aren't mana abilities.)"
+    )
+
+    def residual(self, *, split_second: bool) -> str:
+        from commanderblitz.cards.authoring.verify import residual_text
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.cards.schema import CardModel
+
+        card = compile_card(
+            CardModel(
+                id="t_split_aura",
+                name="Split Aura",
+                mana_cost="{U}",
+                types=["Enchantment"],
+                oracle_text=self.LINE,
+                split_second=split_second,
+            )
+        )
+        return residual_text(card, card.oracle_text)
+
+    def test_the_flag_claims_the_printed_line(self):
+        assert self.residual(split_second=True) == ""
+
+    def test_without_the_flag_the_line_stays_residual(self):
+        assert "Split second" in self.residual(split_second=False)

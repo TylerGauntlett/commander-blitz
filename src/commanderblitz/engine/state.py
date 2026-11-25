@@ -678,6 +678,19 @@ class GameState:
                 copied = replace(
                     copied, supertypes=copied.supertypes | obj.copying_add_supertypes
                 )
+            if obj.copying_power is not None or obj.copying_toughness is not None:
+                # "…except it's 1/4" (Cephalid Facetaker): the base size on the
+                # copied face rather than a set on top, so every layer starts
+                # from it (707.9b).
+                copied = replace(
+                    copied,
+                    power=copied.power if obj.copying_power is None else obj.copying_power,
+                    toughness=(
+                        copied.toughness
+                        if obj.copying_toughness is None
+                        else obj.copying_toughness
+                    ),
+                )
             if obj.copying_set_types:
                 # "…except it's an artifact" (Machine God's Effigy): the
                 # copy's card types *instead of* the copied ones, so a copy of

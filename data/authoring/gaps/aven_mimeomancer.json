@@ -1,0 +1,18 @@
+{
+  "card_id": "aven_mimeomancer",
+  "name": "Aven Mimeomancer",
+  "oracle_text": "Flying\nAt the beginning of your upkeep, you may put a feather counter on target creature. If you do, that creature has base power and toughness 3/1 and has flying for as long as it has a feather counter on it.",
+  "blocked_sentences": [
+    "At the beginning of your upkeep, you may put a feather counter on target creature. If you do, that creature has base power and toughness 3/1 and has flying for as long as it has a feather counter on it."
+  ],
+  "needs": [
+    {
+      "capability": "while_counter_duration",
+      "kind": "op",
+      "what": "a `duration: \"while_counter\"` (with `counter` naming the kind, here \"feather\") on the ops that set base power/toughness and grant keywords -- `animate` with `keep_colors`/no type change setting base 3/1 and `keywords: [\"flying\"]` (or `set_pt` plus `grant_keyword`) -- so the effect lasts exactly as long as the target has a counter of that kind, ending when the last one is removed, with no end-of-turn clock",
+      "why_existing_wont_do": "`add_subtype` is the only op with a `while_counter` duration (Xolatoyac's flood counter). `animate` accepts only until-end-of-turn, until-your-next-turn or `permanent`; `grant_keyword` accepts until-end-of-turn, `permanent` or `as_long_as_you_control_source`; `set_pt` is an until-end-of-turn compensating pump. A `permanent` duration would keep the 3/1 flying body after the feather counter is removed, which is a different card"
+    }
+  ],
+  "closest_existing": ["add_subtype", "animate", "grant_keyword"],
+  "confidence": "high"
+}

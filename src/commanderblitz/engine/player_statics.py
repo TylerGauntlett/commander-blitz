@@ -345,6 +345,24 @@ def lose_game_replacement(
     return None
 
 
+def damage_causes_no_life_loss(state: GameState, pid: int) -> bool:
+    """Whether an active `damage_doesnt_cause_life_loss` static reaches ``pid``.
+
+    Archon of Coronation: "As long as you're the monarch, damage doesn't cause
+    you to lose life." 120.3a makes the loss a *result* of damage to a player,
+    and this removes that one result: the damage is dealt, so lifelink still
+    gains, `DAMAGE_DEALT` still fires, commander damage is still tallied and a
+    combat hit still takes the crown -- the reminder text the card prints.
+    `prevent_damage` is the near miss and stops all of those. The condition is
+    the static's own, asked at each damage event, so a monarch who loses the
+    crown to the first hit of a combat damage step loses the protection with it.
+    """
+    return any(
+        _reaches_player(obj, static, pid)
+        for obj, static in _active_player_statics(state, "damage_doesnt_cause_life_loss")
+    )
+
+
 def static_life_floor(state: GameState, pid: int) -> int | None:
     """The highest life floor an active `damage_life_floor` static gives ``pid``.
 

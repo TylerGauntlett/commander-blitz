@@ -35,6 +35,7 @@ from commanderblitz.engine.zones import destroy, move_object
 from tests.conftest import pass_until, plus_one_counters, pt
 
 STRIDER = "t_woe_strider"  # {2}{B} 3/2; escape {3}{B}{B} + exile four others
+LINKED = "t_linked_strider"  # the same escape, its exile linked (Skyway Robber)
 KEEPER = "t_crypt_keeper"  # once each turn, cast a creature spell from your graveyard
 
 
@@ -251,3 +252,67 @@ class TestThePrintedEscapeLinesAreClaimed:
     def test_an_ungated_counter_replacement_does_not_claim_escapes_with(self):
         ungated = [{"event": "self_enters_with_counters", "counter": "+1/+1", "amount": 2}]
         assert "escapes with" in self._residual(replacements=ungated)
+
+    def test_a_linked_exile_still_claims_the_line(self):
+        linked = {
+            "mana": "{3}{B}{B}",
+            "exile_from_graveyard": {"count": 4, "exclude_self": True, "link": True},
+        }
+        assert self._residual(graveyard_cost=linked) == ""
+
+    def test_another_exile_key_cannot_claim_it(self):
+        named = {
+            "mana": "{3}{B}{B}",
+            "exile_from_graveyard": {"count": 4, "exclude_self": True, "as": "exiled"},
+        }
+        assert "Escape" in self._residual(graveyard_cost=named)
+
+
+class TestALinkedEscapeRemembersItsCards:
+    """Skyway Robber: "…cast a spell from among cards exiled with this creature".
+
+    The cards the escape cost exiled are the ones the escaped ability reads, so
+    with ``link`` they are linked to the permanent the spell becomes (607.2a);
+    without it, nothing is exiled *with* the creature and the ability is inert.
+    """
+
+    def board(self, builder, card: str):
+        return (
+            builder(players=2)
+            .graveyard(0, [card, "t_bear", "t_bear", "t_bear", "t_bear"])
+            .battlefield(0, ["swamp"] * 5)
+            .hand(0, ["forest"])
+            .hand(1, ["forest"])
+            .library(0, ["forest"] * 30)
+            .library(1, ["forest"] * 30)
+            .build()
+        )
+
+    def escape(self, game, card: str) -> int:
+        (oid,) = [o.oid for o in game.state.objects.values() if o.def_id == card]
+        game.apply(
+            next(
+                a
+                for a in game.legal_actions()
+                if a.kind is ActionKind.CAST and a.source == oid and a.flashback
+            )
+        )
+        pass_until(
+            game,
+            lambda g: g.state.objects[oid].zone is Zone.BATTLEFIELD and not g.state.stack,
+        )
+        return oid
+
+    def test_the_exiled_cards_are_exiled_with_the_creature(self, builder):
+        game = self.board(builder, LINKED)
+        oid = self.escape(game, LINKED)
+        exiled = game.state.players[0].exile
+        assert len(exiled) == 4
+        assert sorted(game.state.objects[oid].exiled_cards) == sorted(exiled)
+        assert all(game.state.objects[c].exiled_by == oid for c in exiled)
+
+    def test_an_unlinked_escape_links_nothing(self, builder):
+        game = self.board(builder, STRIDER)
+        oid = self.escape(game, STRIDER)
+        assert len(game.state.players[0].exile) == 4
+        assert game.state.objects[oid].exiled_cards == []

@@ -7,7 +7,7 @@ impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
 depends_on: [exact-target-count, self-sacrificing-lands]
 status: proposed
-rank: 51
+rank: 53
 ---
 
 ## Today

@@ -1061,7 +1061,9 @@ _SPELL_TYPES = frozenset({"Instant", "Sorcery"})
 _CREATURE_TYPES = frozenset({"Creature"})
 
 
-def _graveyard_target_specs(card: CardDef | None, seat: int, kinds: frozenset[str]) -> list[Any]:
+def _graveyard_target_specs(
+    card: CardDef | None, seat: int, kinds: frozenset[str], *, any_of: bool = False
+) -> list[Any]:
     """``card``'s required spell targets that want a card of ``kinds`` in ``seat``'s graveyard.
 
     Only the spell's own ``targets``: an ability's are the activated-ability
@@ -1070,6 +1072,12 @@ def _graveyard_target_specs(card: CardDef | None, seat: int, kinds: frozenset[st
     "Selects ``kinds``" means its ``types`` or ``any_types`` name nothing
     else. Seat 0 is "your graveyard", the default; seat 1 is a selector whose
     ``controller`` or ``owner`` is ``opponent``.
+
+    With ``any_of``, a wider ``any_types`` also counts when it names one of
+    ``kinds`` and ``types`` asks nothing outside them, since a card of
+    ``kinds`` then satisfies the selector too: Jailbreak's "target permanent
+    card in an opponent's graveyard" is any of the permanent types, and a
+    creature card is one.
     """
     if card is None:
         return []
@@ -1080,10 +1088,12 @@ def _graveyard_target_specs(card: CardDef | None, seat: int, kinds: frozenset[st
         if not isinstance(spec.count, int) or spec.count < 1:
             continue
         selector = spec.selector
-        named = {str(t) for t in selector.get("types") or ()} | {
-            str(t) for t in selector.get("any_types") or ()
-        }
-        if not named or not named <= kinds:
+        every = {str(t) for t in selector.get("types") or ()}
+        either = {str(t) for t in selector.get("any_types") or ()}
+        named = every | either
+        if not named:
+            continue
+        if not named <= kinds and not (any_of and every <= kinds and either & kinds):
             continue
         whose = selector.get("controller", selector.get("owner", "you"))
         if {"you": 0, "opponent": 1}.get(str(whose)) == seat:
@@ -1187,7 +1197,7 @@ def graveyard_target_props(registry: CardRegistry, card: CardDef | None, seat: i
         if pick is not None:
             out.extend([pick] * spec.count)
     if seat == 1:
-        for spec in _graveyard_target_specs(card, seat, _CREATURE_TYPES):
+        for spec in _graveyard_target_specs(card, seat, _CREATURE_TYPES, any_of=True):
             pick = quiet_graveyard_creature(registry, spec.selector)
             if pick is not None:
                 out.extend([pick] * spec.count)
@@ -2231,14 +2241,24 @@ _ESCAPE_LINE = re.compile(
 
 
 def _declares_printed_escape(card: CardDef, match: re.Match[str]) -> bool:
-    """Whether ``card``'s graveyard cost is the escape cost ``match`` prints."""
+    """Whether ``card``'s graveyard cost is the escape cost ``match`` prints.
+
+    ``link`` may ride on the exile: it changes nothing the Escape line prints,
+    only records the cards as exiled with the permanent the spell becomes
+    (607.2a), which a later line reads -- Skyway Robber's "cards exiled with
+    this creature". Any other key would be a price the line does not print.
+    """
     cost = card.flashback
     if cost is None or card.graveyard_cast_exiles or card.mayhem:
         return False
     if not _declares_printed_cost(match.group("mana"), cost.mana):
         return False
     exile = cost.exile_from_graveyard
-    if not exile or set(exile) - {"count", "exclude_self"} or not exile.get("exclude_self"):
+    if (
+        not exile
+        or set(exile) - {"count", "exclude_self", "link"}
+        or not exile.get("exclude_self")
+    ):
         return False
     if _NUMBER_WORDS.get(match.group("count").lower(), -1) != int(exile.get("count", 1)):
         return False
@@ -2705,6 +2725,16 @@ def _covered(card: CardDef, line: str) -> bool:
     # Time Vortex: cascade and rebound) has none. Strict like improvise's: the
     # line must be the bare word plus its reminder, and the field must be set.
     if card.rebound and _bare_keyword_line(stripped) == "rebound":
+        return True
+
+    # "Split second (As long as this spell is on the stack, players can't cast
+    # spells or activate abilities that aren't mana abilities.)" is the
+    # card-level `split_second` flag, read off the stack by
+    # `legality.split_second_active`. An instant's `spell_effects` already claim
+    # the line; a permanent spell (In Too Deep, an Aura) has no ability that
+    # could, since the keyword works only while the card is a spell. Strict like
+    # rebound's: the bare word plus its reminder, and the flag must be set.
+    if card.split_second and _bare_keyword_line(stripped) == "split second":
         return True
 
     # "Improvise (Your artifacts can help cast this spell…)", and convoke and

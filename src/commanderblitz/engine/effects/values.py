@@ -577,7 +577,16 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         # every kind summed -- Ferrafor's "the number of counters among
         # creatures target player controls".
         spec = expr["counters_on"]
-        kind = str(spec.get("counter", PLUS_ONE))
+        counter = spec.get("counter", PLUS_ONE)
+        if isinstance(counter, Mapping):
+            # A kind `choose_counter_kind` bound -- Aven Courier's "if it
+            # doesn't have a counter of that kind on it". Nothing chosen is
+            # nothing to count.
+            bound = ctx.bindings.get(str(counter.get("binding", "")))
+            if not (isinstance(bound, str) and bound):
+                return 0
+            counter = bound
+        kind = str(counter)
 
         objects = spec.get("objects") or {"self_only": True}
         snap = ctx.bindings.get(str(objects["binding"])) if "binding" in objects else None
@@ -1588,7 +1597,9 @@ def validate_counter_kind(kind: Any, where: str) -> None:
         )
 
 
-def validate_counters_on(spec: Any, where: str, *, validate_objects: Any = None) -> None:
+def validate_counters_on(
+    spec: Any, where: str, *, validate_objects: Any = None, bound_kind: bool = False
+) -> None:
     """Shared by the effect-side and static-side value validators.
 
     Both languages accept ``counters_on`` -- "double the number of +1/+1
@@ -1625,8 +1636,20 @@ def validate_counters_on(spec: Any, where: str, *, validate_objects: Any = None)
             f"to '{PLUS_ONE}' in the evaluator and so would read 0 for ever on a "
             f"permanent that carries some other kind"
         )
-    if spec["counter"] != ANY_COUNTER_KIND:
-        validate_counter_kind(spec["counter"], f"{where}.counter")
+    counter = spec["counter"]
+    if isinstance(counter, Mapping):
+        # ``{"binding": …}``, a kind `choose_counter_kind` bound. Only an
+        # effect's value reads bindings (``bound_kind``); a static binds
+        # nothing, so there it would count nothing for ever.
+        if not bound_kind or set(counter) != {"binding"} or not (
+            isinstance(counter["binding"], str) and counter["binding"]
+        ):
+            raise DslError(
+                f"{where}.counter: a counter kind, 'any', or (in an effect) "
+                f"{{'binding': …}} naming a kind choose_counter_kind bound; got {counter!r}"
+            )
+    elif counter != ANY_COUNTER_KIND:
+        validate_counter_kind(counter, f"{where}.counter")
     if not spec.get("objects"):
         raise DslError(
             f"{where}: needs 'objects' -- an empty selector is not "
@@ -1858,7 +1881,7 @@ def validate_rolled(spec: Any, where: str) -> None:
         validate_value(spec["face"], f"{where}.face")
 
 
-def validate_entered_filter(spec: Any, where: str) -> None:
+def validate_entered_filter(spec: Any, where: str, *, allow_binding: bool = False) -> None:
     """Load-time check of the enters-this-turn filter.
 
     Stricter than the selector language it is spelled after, in one place:
@@ -1869,6 +1892,15 @@ def validate_entered_filter(spec: Any, where: str) -> None:
     that dropped the word would fire off the opponent's Human, which is a
     strictly better card and a plausible-looking one. ``"all"`` is how a future
     card says it really does mean anybody's.
+
+    With ``allow_binding`` -- the effect side only -- ``controller`` may also be
+    ``{"binding": <name>}``, the player a ``for_each_player`` loop is visiting.
+    Smuggler's Share: "a Treasure token for each opponent who had two or more
+    lands enter the battlefield under their control this turn" asks each
+    opponent's own count, which ``each_opponent`` cannot: it sums them, so two
+    opponents with one land each would read as one who had two. A static has no
+    loop to bind a player, so there the binding would read nobody and 0 for
+    ever; it stays refused.
     """
     if not isinstance(spec, Mapping):
         raise DslError(f"{where}: must be an object -- the filter on what entered")
@@ -1877,7 +1909,13 @@ def validate_entered_filter(spec: Any, where: str) -> None:
         raise DslError(f"{where}: unsupported keys {sorted(unknown)}")
 
     who = spec.get("controller")
-    if not isinstance(who, str) or who not in PLAYER_SPEC_NAMES:
+    if allow_binding and isinstance(who, Mapping):
+        if set(who) != {"binding"} or not (isinstance(who["binding"], str) and who["binding"]):
+            raise DslError(
+                f"{where}.controller: a mapping here is {{'binding': <name>}}, the "
+                f"player a for_each_player loop is visiting, got {who!r}"
+            )
+    elif not isinstance(who, str) or who not in PLAYER_SPEC_NAMES:
         raise DslError(
             f"{where}.controller: must name one of {sorted(PLAYER_SPEC_NAMES)} "
             f"-- 'under whose control' is part of the printed sentence, got {who!r}"
@@ -2130,7 +2168,7 @@ def validate_value(expr: Any, where: str) -> None:
     if "mana_symbols" in expr:
         validate_mana_symbols(expr["mana_symbols"], f"{where}.mana_symbols")
     if "counters_on" in expr:
-        validate_counters_on(expr["counters_on"], f"{where}.counters_on")
+        validate_counters_on(expr["counters_on"], f"{where}.counters_on", bound_kind=True)
     if "auras_had" in expr:
         validate_auras_had(expr["auras_had"], f"{where}.auras_had")
     if "targets_of_spell" in expr:
@@ -2279,7 +2317,9 @@ def validate_value(expr: Any, where: str) -> None:
         )
     if "permanents_entered_this_turn" in expr:
         validate_entered_filter(
-            expr["permanents_entered_this_turn"], f"{where}.permanents_entered_this_turn"
+            expr["permanents_entered_this_turn"],
+            f"{where}.permanents_entered_this_turn",
+            allow_binding=True,
         )
     departed = expr.get("cards_from_graveyard_this_turn")
     if isinstance(departed, Mapping) and "filter" in departed:

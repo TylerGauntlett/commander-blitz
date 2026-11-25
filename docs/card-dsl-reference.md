@@ -10,15 +10,15 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 188 |
+| [Effect ops](#effect-ops) | 190 |
 | [Selectors](#selectors) | 83 |
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 80 |
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 68 |
 | [Trigger filters](#trigger-filters) | 40 |
-| [Static effects](#static-effects) | 115 |
-| [Player-wide statics](#player-wide-statics) | 53 |
+| [Static effects](#static-effects) | 116 |
+| [Player-wide statics](#player-wide-statics) | 54 |
 | [Grantable statics](#grantable-statics) | 52 |
 | [Cost reduction](#cost-reduction) | 9 |
 | [Ability costs](#ability-costs) | 38 |
@@ -80,7 +80,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `surveil` | Cards |  | Surveil N: look at the top cards, graveyard any of them; each surveiling player fires `surveils` once. | [Surveil — the surveil op and the surveils trigger](card-dsl-cookbook.md#surveil--the-surveil-op-and-the-surveils-trigger) |
 | `suspend` | Cards |  | Exile a card (if it is not already in exile) with N time counters; it is suspended, its owner's to tick and cast. | ["It gains suspend" — suspending a card from an effect](card-dsl-cookbook.md#it-gains-suspend--suspending-a-card-from-an-effect) |
 | `two_piles` | Cards |  | Separate cards into two piles; an opponent chooses one. | [Two piles](card-dsl-cookbook.md#two-piles) |
-| `add_counters` | Board |  | Put N counters of a kind on permanents or players; `counter: {"binding": "counter"}` on a `counter_placed` trigger is the kind that placement put. | [Effect ops](card-dsl.md#effect-ops) |
+| `add_counters` | Board |  | Put N counters of a kind on permanents (`objects`), or of a bound kind on players (`player`); `counter: {"binding": "counter"}` on a `counter_placed` trigger is the kind that placement put, and any other `{"binding": …}` a kind `choose_counter_kind` or `for_each_counter_kind` bound. | [Effect ops](card-dsl.md#effect-ops) |
 | `airbend` | Board | yes | Airbend: exile and let owners cast for {2}; `as` records the pool. | [Airbend — "exile them, and their owners may cast them for {2}"](card-dsl-cookbook.md#airbend--exile-them-and-their-owners-may-cast-them-for-2) |
 | `amass` | Board | yes | Amass [subtype] N: N +1/+1 counters on an Army creature you control, creating a 0/0 black Army token first if none; it becomes that subtype too. | [amass — "Amass Zombies N"](card-dsl-cookbook.md#amass--amass-zombies-n) |
 | `attach` | Board |  | Attach an Aura, Equipment or Fortification to a permanent; with `player`, move this Aura onto one player (701.3). | [Auras and Equipment](card-dsl-cookbook.md#auras-and-equipment) |
@@ -217,6 +217,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `roll_dice` | Dice | yes | Roll N dice with F faces; `as` records the results. | [Rolling dice](card-dsl-cookbook.md#rolling-dice) |
 | `choose_card_name` | Control flow | yes | Choose a card name; `as` records it. | ["Choose a card name"](card-dsl-cookbook.md#choose-a-card-name) |
 | `choose_color` | Control flow |  | Choose a color, readable later; `except_colors` removes colors from the offer. | ["Choose a color"](card-dsl-cookbook.md#choose-a-color) |
+| `choose_counter_kind` | Control flow | yes | Choose a counter on a permanent `from` finds; `as` records its kind, `holder_as` the permanent it is on. | ["Choose a kind of counter" — choose_counter_kind](card-dsl-cookbook.md#choose-a-kind-of-counter--choose_counter_kind) |
 | `choose_mode` | Control flow |  | Choose one or more modes and run them; `repeatable` lets one mode be chosen more than once, each instance with its own targets. | [Modal spells with a target](card-dsl-cookbook.md#modal-spells-with-a-target) |
 | `choose_number` | Control flow | yes | Choose an integer in a printed range on resolution; `as` records it. | ["Choose a number"](card-dsl-cookbook.md#choose-a-number) |
 | `choose_permanents` | Control flow | yes | Mark permanents without acting on them; `as` records them; `max_total_power` caps the chosen set's total power. | [choose_permanents — marking without acting](card-dsl-cookbook.md#choose_permanents--marking-without-acting) |
@@ -225,6 +226,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `delay` | Control flow |  | Run effects at the beginning of a named later step. | [Delayed triggers — "at the beginning of the next …"](card-dsl-cookbook.md#delayed-triggers--at-the-beginning-of-the-next-) |
 | `delayed_trigger` | Control flow |  | Create a trigger that watches an event for a `duration` (the rest of the turn by default, or this combat). | [delayed_trigger — an ability that watches an event](card-dsl-cookbook.md#delayed_trigger--an-ability-that-watches-an-event) |
 | `for_each` | Control flow |  | Run effects once per object a selector finds, bound as the loop value. | [Effect ops](card-dsl.md#effect-ops) |
+| `for_each_counter_kind` | Control flow | yes | Run effects once per kind of counter on the permanents `objects` finds and the players `players` names, read before the body runs; `as` binds the kind, `count_as` how many of it. | ["For each kind of counter on…" — for_each_counter_kind](card-dsl-cookbook.md#for-each-kind-of-counter-on--for_each_counter_kind) |
 | `for_each_player` | Control flow |  | Run effects once per player of a spec, in seat order; `starting_with: "you"` walks turn order from the controller. | ["Each opponent sacrifices…" — a loop over players](card-dsl-cookbook.md#each-opponent-sacrifices--a-loop-over-players) |
 | `if` | Control flow |  | Run `then` effects if a condition holds, else `else`. | [Effect ops](card-dsl.md#effect-ops) |
 | `join_forces` | Control flow | yes | Each player may pay into one shared X. | [Join forces — the one cost the whole table pays](card-dsl-cookbook.md#join-forces--the-one-cost-the-whole-table-pays) |
@@ -366,7 +368,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `const` | A literal number. | [Value expressions](card-dsl.md#value-expressions) |
 | `count` | How many objects a selector finds. | [Value expressions](card-dsl.md#value-expressions) |
 | `counters_had` | Counters of a kind (or "any", every kind) the permanent that just left had. | [Value expressions](card-dsl.md#value-expressions) |
-| `counters_on` | Counters of a kind (or "any", every kind) on the objects a selector finds. | [Value expressions](card-dsl.md#value-expressions) |
+| `counters_on` | Counters of a kind (or "any", every kind, or in an effect a `{"binding": …}` kind `choose_counter_kind` or `for_each_counter_kind` bound) on the objects a selector finds. | [Value expressions](card-dsl.md#value-expressions) |
 | `counters_put_this_turn` | Counters the player put on permanents this turn, by recipient types, kind or one recipient (`on`). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `creatures_dealt_combat_damage_to_player_this_turn` | How many distinct creatures the player controlled that dealt combat damage to a player this turn, kept past death and re-entry. | [Which creatures dealt combat damage to a player this turn](card-dsl.md#which-creatures-dealt-combat-damage-to-a-player-this-turn) |
 | `creatures_died_this_turn` | Creatures that died this turn (morbid). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
@@ -640,6 +642,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `control` |  |  | The `controller` seat (`you`, `monarch`) controls the enchanted permanent while it applies. | ["You control enchanted creature" — the control static](card-dsl-cookbook.md#you-control-enchanted-creature--the-control-static) |
 | `crew_power_bonus` |  | yes | Matching creatures crew as though their power were N greater. | [Crews Vehicles as though its power were N greater](card-dsl.md#crews-vehicles-as-though-its-power-were-n-greater) |
 | `damage_cant_be_prevented` |  |  | No damage can be prevented: every prevention effect is skipped. | ["Damage can't be prevented"](card-dsl-cookbook.md#damage-cant-be-prevented) |
+| `damage_doesnt_cause_life_loss` | yes |  | Damage dealt to the player causes no life loss; it is still dealt. | [Damage can't take you below 1](card-dsl-cookbook.md#damage-cant-take-you-below-1) |
 | `damage_life_floor` | yes |  | Damage can't reduce the player's life below N. | [Damage can't take you below 1](card-dsl-cookbook.md#damage-cant-take-you-below-1) |
 | `double_land_mana` | yes |  | Lands the player taps for mana add twice as much. | [Static abilities](card-dsl.md#static-abilities) |
 | `double_land_triggers` | yes |  | The player's landfall-style triggers fire twice. | [Static abilities](card-dsl.md#static-abilities) |
@@ -736,6 +739,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 | `cast_from_graveyard` | The player may cast matching spells from their graveyard, narrowed to cards surveilled this turn by `surveilled_this_turn`, for life equal to their mana value with `pay_life_instead`, for an escape cost with `escape`, or with retrace's land discard on top with `grants_retrace`; with `active_zones: ["graveyard"]`, the card may cast itself from there. | [Casting from the graveyard](card-dsl-cookbook.md#casting-from-the-graveyard) |
 | `cast_from_library_top` | The player may cast spells from the top of their library: for life with `pay_life_instead`, or matching `affects_spells` at the printed cost, granting `cast_gains_keywords` to what is cast that way. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `cast_only_at_sorcery_speed` | The player may cast matching spells only at sorcery speed. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
+| `damage_doesnt_cause_life_loss` | Damage dealt to the player causes no life loss; it is still dealt. | [Damage can't take you below 1](card-dsl-cookbook.md#damage-cant-take-you-below-1) |
 | `damage_life_floor` | Damage can't reduce the player's life below N. | [Damage can't take you below 1](card-dsl-cookbook.md#damage-cant-take-you-below-1) |
 | `double_land_mana` | Lands the player taps for mana add twice as much. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `double_land_triggers` | The player's landfall-style triggers fire twice. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
@@ -1119,7 +1123,7 @@ The subset of the value language a static's magnitude (`power`, `amount`, …) m
 | `commander_casts_this_game` | Times you have cast your commanders from the command zone this game (903.8's tally); `"you"` only. | [An anthem for each commander cast](card-dsl-cookbook.md#an-anthem-for-each-commander-cast) |
 | `const` | A literal number. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `count` | How many objects a counting filter matches; on the battlefield it may be an `any_of` union, each object counted once. | [any_of in a count — "base power or toughness 1"](card-dsl.md#any_of-in-a-count--base-power-or-toughness-1) |
-| `counters_on` | Counters of a kind (or "any", every kind) on the objects a selector finds. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
+| `counters_on` | Counters of a kind (or "any", every kind, or in an effect a `{"binding": …}` kind `choose_counter_kind` or `for_each_counter_kind` bound) on the objects a selector finds. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `creatures_died_this_turn` | Creatures that died this turn (morbid). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `distinct` | The number of card types among a counting filter's pool off the battlefield (delirium); `of: "card_type"` only. | [Counting different values rather than objects](card-dsl.md#counting-different-values-rather-than-objects) |
 | `exiled_card_power` | The power of the card this permanent exiled, while it stays in exile; `"self"` only, 0 with none. | [A size read off the card this permanent exiled](card-dsl-cookbook.md#a-size-read-off-the-card-this-permanent-exiled) |
@@ -1189,7 +1193,7 @@ The ops a mana ability may carry beside `add_mana` -- the painland's drawback. D
 
 | Name | Description | Defined in |
 |---|---|---|
-| `add_counters` | Put N counters of a kind on permanents or players; `counter: {"binding": "counter"}` on a `counter_placed` trigger is the kind that placement put. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
+| `add_counters` | Put N counters of a kind on permanents (`objects`), or of a bound kind on players (`player`); `counter: {"binding": "counter"}` on a `counter_placed` trigger is the kind that placement put, and any other `{"binding": …}` a kind `choose_counter_kind` or `for_each_counter_kind` bound. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
 | `add_poison` | A player gets N poison counters. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
 | `damage` | A source deals N damage to objects or players; `excess_to` spills over; `defender_of` hits what a creature is attacking; `divided` splits it among a target spec as the spell is cast; `as` records how much was actually dealt. | [damage's excess_to](card-dsl.md#damages-excess_to) |
 | `delayed_trigger` | Create a trigger that watches an event for a `duration` (the rest of the turn by default, or this combat). | [delayed_trigger — an ability that watches an event](card-dsl-cookbook.md#delayed_trigger--an-ability-that-watches-an-event) |

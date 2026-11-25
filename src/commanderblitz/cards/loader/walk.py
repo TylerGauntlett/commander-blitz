@@ -304,12 +304,18 @@ def reads_placed_kind(effects: Any) -> bool:
     """Does any effect in this tree put "the same kind" a placement put?
 
     That is an ``add_counters`` whose ``counter`` is the ``{"binding":
-    "counter"}`` mapping. `_validate_effect` holds the mapping to that one op
-    and that one shape; whether the binding will exist is a question about the
-    trigger, which only the ability compiler can see.
+    "counter"}`` mapping. `_validate_effect` holds the mapping to that one op;
+    whether the binding will exist is a question about the trigger, which only
+    the ability compiler can see. A mapping naming any other binding is a kind
+    `choose_counter_kind` bound, checked by `_refuse_unbound_counter_kinds`.
     """
     if isinstance(effects, Mapping):
-        if effects.get("op") == "add_counters" and isinstance(effects.get("counter"), Mapping):
+        counter = effects.get("counter")
+        if (
+            effects.get("op") == "add_counters"
+            and isinstance(counter, Mapping)
+            and counter.get("binding") == "counter"
+        ):
             return True
         return any(reads_placed_kind(v) for v in effects.values())
     if isinstance(effects, (list, tuple)):

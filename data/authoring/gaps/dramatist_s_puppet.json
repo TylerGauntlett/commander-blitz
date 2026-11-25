@@ -1,0 +1,18 @@
+{
+  "card_id": "dramatist_s_puppet",
+  "name": "Dramatist's Puppet",
+  "oracle_text": "When this creature enters, for each kind of counter on target permanent, put another counter of that kind on it or remove one from it.",
+  "blocked_sentences": [
+    "When this creature enters, for each kind of counter on target permanent, put another counter of that kind on it or remove one from it."
+  ],
+  "needs": [
+    {
+      "capability": "remove_bound_counter_kind",
+      "kind": "op",
+      "what": "remove_counters accepting counter: {\"binding\": <kind>} -- remove one counter of the kind a for_each_counter_kind (or choose_counter_kind) bound, so the loop body can be a two-mode choose_mode: add_counters of the bound kind on the target, or remove_counters of the bound kind from it",
+      "why_existing_wont_do": "for_each_counter_kind plus add_counters with counter: {binding} covers the 'put another' half, but op_remove_counters (without any_kind/all_kinds) reads the kind as str(spec['counter']), so a binding mapping becomes the literal string \"{'binding': 'kind'}\" and removes nothing; any_kind lets the controller pick any kind on the permanent rather than the iterated kind, and remove_counters_from_among has the same str() read of 'counter'. The loader's bound-kind check does not cover remove_counters either, so the miswrite would load and silently do nothing"
+    }
+  ],
+  "closest_existing": ["for_each_counter_kind", "remove_counters", "choose_mode", "add_counters"],
+  "confidence": "high"
+}

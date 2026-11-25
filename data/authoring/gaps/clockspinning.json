@@ -7,10 +7,10 @@
   ],
   "needs": [
     {
-      "capability": "choose_counter_kind",
+      "capability": "remove_bound_counter_kind",
       "kind": "op",
-      "what": "an op (or an `as` binding on a counter-kind choice) that has the controller choose one kind of counter already on the target and binds it, so a following `choose_mode` can either remove one counter of that kind or put one more of that same kind on it -- add_counters reading `counter: {\"binding\": <as>}` from an effect-made choice rather than from a counter_placed trigger",
-      "why_existing_wont_do": "add_counters needs a printed kind; its `{\"binding\": \"counter\"}` form is allowed only on a counter_placed trigger (`_counter_kind` reads the trigger's event binding). remove_counters with any_kind can remove a chosen kind but binds nothing usable to add the same kind, and proliferate touches every permanent and player rather than the one target"
+      "what": "remove_counters reading `counter: {\"binding\": <as>}` -- the kind a choose_counter_kind bound -- so \"remove that counter\" takes one of the chosen kind off the target",
+      "why_existing_wont_do": "choose_counter_kind binds the kind and add_counters puts one of it, but the loader allows the bound-kind mapping only on add_counters (and counters_on); remove_counters takes a printed kind or any_kind, which asks the kind again rather than using the one chosen"
     },
     {
       "capability": "permanent_or_suspended_card_target",
@@ -26,10 +26,10 @@
     }
   ],
   "closest_existing": [
+    "choose_counter_kind",
     "remove_counters",
     "add_counters",
     "choose_mode",
-    "proliferate",
     "buyback",
     "suspended"
   ],

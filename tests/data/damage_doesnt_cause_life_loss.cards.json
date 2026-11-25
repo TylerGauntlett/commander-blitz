@@ -1,0 +1,23 @@
+{
+  "_comment": "Shapes for tests/unit/damage/test_damage_doesnt_cause_life_loss.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. t_coronation_archon is Archon of Coronation's static on its own: as long as you're the monarch, damage doesn't cause you to lose life. The lifelinker and the bear come from testing.cards.json.",
+  "cards": [
+    {
+      "id": "t_coronation_archon",
+      "name": "Test Coronation Archon",
+      "oracle_text": "As long as you're the monarch, damage doesn't cause you to lose life.",
+      "mana_cost": "{W}",
+      "types": ["Enchantment"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "As long as you're the monarch, damage doesn't cause you to lose life.",
+          "effect": "damage_doesnt_cause_life_loss",
+          "affects_player": "you",
+          "condition": {"is_monarch": "you"}
+        }
+      ]
+    }
+  ]
+}
