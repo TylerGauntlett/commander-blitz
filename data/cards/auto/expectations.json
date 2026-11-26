@@ -21174,6 +21174,10 @@
     },
     "zone": "battlefield"
   },
+  "rattlechains": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "raucous_audience": {
     "zone": "battlefield"
   },
@@ -23483,6 +23487,10 @@
   "sewn_eye_drake": {
     "zone": "battlefield"
   },
+  "shacklegeist": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "shadow_glider": {
     "zone": "battlefield"
   },
@@ -24257,6 +24265,13 @@
     "zone": "battlefield"
   },
   "sire_of_stagnation": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "sire_of_the_storm": {
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
@@ -25039,6 +25054,16 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "spectral_arcanist": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "spectral_flight": {
     "zone": [
       "battlefield",
@@ -25053,6 +25078,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "spectral_shepherd": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "spectral_steel": {
@@ -25888,6 +25917,19 @@
       "0": 41
     }
   },
+  "sudden_salvation": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "sulfur_elemental": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -26087,6 +26129,10 @@
     "zone": "battlefield"
   },
   "superior_foes_of_spider_man": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "supreme_phantom": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -28107,6 +28153,13 @@
   },
   "timestream_navigator": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "timin_youthful_geist": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "timothar_baron_of_bats": {

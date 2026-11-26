@@ -215862,12 +215862,12 @@
     },
     "Rattlechains": {
       "edhrec_rank": 10274,
-      "gate": "template",
+      "gate": null,
       "name": "Rattlechains",
-      "reason": "no template for: When this creature enters, target Spirit gains hexproof until end of turn",
+      "reason": "",
       "scryfall_id": "709f6376-9a33-4900-a7ae-00767fb9f9bf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rattleclaw Mystic": {
@@ -241722,12 +241722,12 @@
     },
     "Shacklegeist": {
       "edhrec_rank": 12474,
-      "gate": "template",
+      "gate": null,
       "name": "Shacklegeist",
-      "reason": "no template for: This creature can block only creatures with flying",
+      "reason": "",
       "scryfall_id": "d69b40d5-25e7-4c59-b00a-aa7d7367504e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shackles": {
@@ -248652,12 +248652,12 @@
     },
     "Sire of the Storm": {
       "edhrec_rank": 16198,
-      "gate": "template",
+      "gate": null,
       "name": "Sire of the Storm",
-      "reason": "no template for: Whenever you cast a Spirit or Arcane spell, you may draw a card",
+      "reason": "",
       "scryfall_id": "bea64c04-6cd0-49e9-b4ba-1b50aab0a490",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Siren Lookout": {
@@ -257542,12 +257542,12 @@
     },
     "Spectral Arcanist": {
       "edhrec_rank": 12375,
-      "gate": "template",
+      "gate": null,
       "name": "Spectral Arcanist",
-      "reason": "no template for: When this creature enters, you may cast an instant or sorcery spell with mana value less t",
+      "reason": "",
       "scryfall_id": "8ac3ee2e-455e-4cf9-b1ec-6d260098574a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spectral Bears": {
@@ -257732,12 +257732,12 @@
     },
     "Spectral Shepherd": {
       "edhrec_rank": 15966,
-      "gate": "template",
+      "gate": null,
       "name": "Spectral Shepherd",
-      "reason": "no template for: {1}{U}: Return target Spirit you control to its owner's hand",
+      "reason": "",
       "scryfall_id": "89fd38be-8b2a-4ff4-8f51-e7d6971f7aef",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spectral Shield": {
@@ -268322,12 +268322,12 @@
     },
     "Sudden Salvation": {
       "edhrec_rank": 18247,
-      "gate": "template",
+      "gate": null,
       "name": "Sudden Salvation",
-      "reason": "no template for: Choose up to three target permanent cards in graveyards that were put there from the battl",
+      "reason": "",
       "scryfall_id": "7cbeb9bc-5731-4976-b59f-62935760b917",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sudden Setback": {
@@ -270592,12 +270592,12 @@
     },
     "Supreme Phantom": {
       "edhrec_rank": 9493,
-      "gate": "template",
+      "gate": null,
       "name": "Supreme Phantom",
-      "reason": "no template for: Other Spirits you control get +1/+1",
+      "reason": "",
       "scryfall_id": "cbf4ca25-73cc-45ba-bed5-dbaa517e8bb8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Supreme Verdict": {
@@ -287702,12 +287702,12 @@
     },
     "Timin, Youthful Geist": {
       "edhrec_rank": 9923,
-      "gate": "template",
+      "gate": null,
       "name": "Timin, Youthful Geist",
-      "reason": "no template for: Partner with Rhoda, Geist Avenger",
+      "reason": "",
       "scryfall_id": "8d58a295-f5cc-4d32-b314-a66a7c4a4636",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Timmerian Fiends": {
