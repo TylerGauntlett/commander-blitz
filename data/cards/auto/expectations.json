@@ -2930,6 +2930,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "bloodlord_of_vaasgoth": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bloodrite_invoker": {
     "battlefield_count": 33,
     "life": {

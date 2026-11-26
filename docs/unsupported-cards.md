@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**561 cards** blocked by **465** capabilities.
+**560 cards** blocked by **465** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -48,7 +48,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [all-creature-types](#all-creature-types) | 2 | 958 | static_effect |
 | [attach-enchant-legality](#attach-enchant-legality) | 2 | 1540 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
-| [bloodthirst](#bloodthirst) | 2 | 6438 | keyword, op |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
 | [casualty](#casualty) | 2 | 11576 | static_effect |
@@ -124,6 +123,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [become-copy-until-your-next-turn](#become-copy-until-your-next-turn) | 1 | 13431 | op |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
+| [bloodthirst](#bloodthirst) | 1 | 6438 | keyword |
 | [cant-attack-this-turn](#cant-attack-this-turn) | 1 | 2358 | op |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cant-block](#cant-block) | 1 | 7526 | op |
@@ -1569,24 +1569,6 @@ Blocks **2** cards.
 
 </details>
 
-## bloodthirst
-
-Blocks **2** cards.
-
-- **(op)** a spell_cast-triggered op that grants the cast creature spell a conditional enters-with-counters replacement (bloodthirst N): the permanent it becomes enters with N +1/+1 counters if an opponent was dealt damage this turn, with the condition judged AS IT ENTERS (702.54a), not when the trigger resolves
-  <br>Why the existing vocabulary won't do: spell_enters_with_counters is the closest: it writes cast_enters_with onto the spell, but its `counters` amount is evaluated when the trigger resolves and it carries no condition, so damage dealt to an opponent after the trigger resolves but before the Vampire spell resolves would be missed. Bloodthirst on the Bloodlord itself is a self_enters_with_counters replacement with a damage_taken_this_turn condition, but nothing hands that replacement to another spell
-- **(keyword)** bloodthirst N (702.54) as a grantable keyword with a magnitude: a static that gives other colorless creatures you control 'bloodthirst 2', so each enters with two additional +1/+1 counters if an opponent was dealt damage this turn (checked at the moment it enters)
-  <br>Why the existing vocabulary won't do: bloodthirst is not in `keywords`. The nearest is the `enters_with_additional_counters` static (affects {controller: you, types: [Creature], colorless: true, exclude_self: true}, counter +1/+1, amount 2), but its condition can only read `static_condition_keys`/`static_value_keys`, and neither has a reading of damage dealt to opponents this turn (`damage_taken_this_turn` is in `value_keys` only, not the static value language). Even with that, the creatures would not actually HAVE bloodthirst, which matters for keyword-reading effects. The first sentence is expressible (you_attack trigger, choose_mode of two cant_block effects over creatures with mana_value {parity: odd|even}, duration this_turn).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Twins of Discord** (rank 6438) — `twins_of_discord`
-  - Each other colorless creature you control has bloodthirst 2
-- **Bloodlord of Vaasgoth** (rank 8594) — `bloodlord_of_vaasgoth`
-  - Whenever you cast a Vampire creature spell, it gains bloodthirst 3.
-
-</details>
-
 ## cast-as-though-flash
 
 Blocks **2** cards.
@@ -2821,6 +2803,20 @@ Blocks **1** card.
 
 - **Plasma Caster** (rank 8137) — `plasma_caster`
   - Pay {E}{E}: Choose target creature that's blocking equipped creature. Flip a coin. If you win the flip, exile the chosen creature. Otherwise, this Equipment deals 1 damage to it.
+
+</details>
+
+## bloodthirst
+
+Blocks **1** card.
+
+- **(keyword)** bloodthirst N (702.54) as a grantable keyword with a magnitude: a static that gives other colorless creatures you control 'bloodthirst 2', so each enters with two additional +1/+1 counters if an opponent was dealt damage this turn (checked at the moment it enters)
+  <br>Why the existing vocabulary won't do: bloodthirst is not in `keywords`. The nearest is the `enters_with_additional_counters` static (affects {controller: you, types: [Creature], colorless: true, exclude_self: true}, counter +1/+1, amount 2), but its condition can only read `static_condition_keys`/`static_value_keys`, and neither has a reading of damage dealt to opponents this turn (`damage_taken_this_turn` is in `value_keys` only, not the static value language). Even with that, the creatures would not actually HAVE bloodthirst, which matters for keyword-reading effects. The first sentence is expressible (you_attack trigger, choose_mode of two cant_block effects over creatures with mana_value {parity: odd|even}, duration this_turn).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Twins of Discord** (rank 6438) — `twins_of_discord`
+  - Each other colorless creature you control has bloodthirst 2
 
 </details>
 

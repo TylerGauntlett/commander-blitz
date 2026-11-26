@@ -2338,6 +2338,27 @@ filter, not a one-shot owed to one spell. Yuna's sentence is this op inside a
 mana ability — see
 [the mana-rider recipe](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback).
 
+### Granting bloodthirst to a spell
+
+```jsonc
+{ "op": "grant_bloodthirst", "amount": 3 }
+```
+
+"Whenever you cast a Vampire creature spell, **it gains bloodthirst 3**"
+(Bloodlord of Vaasgoth). Bloodthirst N (702.54a) is "if an opponent was dealt
+damage this turn, this permanent enters with N +1/+1 counters on it", a
+replacement judged **as the permanent enters**. So the op stages N on the
+spell's object (`GameObject.cast_bloodthirst`), carried like
+`spell_enters_with_counters`' promise, and `zones._enter_battlefield` asks the
+question on the arrival and adds the counters to the one placement. Damage dealt
+with the spell still on the stack counts; damage to the spell's controller does
+not. Instances add (702.54c). `amount` is required, a positive integer; the
+spell is named as `grant_rebound` names one.
+
+`spell_enters_with_counters` is the near miss: it evaluates its amount as the op
+resolves and takes no condition, so it gives the counters on a turn nobody was
+hurt and misses damage dealt after the trigger resolved.
+
 ## Value expressions
 
 Anywhere a number is expected -- the leaf list is

@@ -362,6 +362,7 @@ def move_object(
     cast_rider = obj.cast_rider
     cast_enters_with = obj.cast_enters_with
     cast_enters_with_command_casts = obj.cast_enters_with_command_casts
+    cast_bloodthirst = obj.cast_bloodthirst
     # The cards a `link` exile cost took while this was being cast, owed to the
     # permanent the spell becomes and to nothing else (607.2a). See
     # `costs._link_cost_exiles`.
@@ -439,6 +440,7 @@ def move_object(
         obj.cast_rider = cast_rider
         obj.cast_enters_with = cast_enters_with
         obj.cast_enters_with_command_casts = cast_enters_with_command_casts
+        obj.cast_bloodthirst = cast_bloodthirst
     _add_to_zone(state, obj, to_zone, target_player, to_top=to_top, to_index=to_index)
     state.bump_chars()
     if to_zone is Zone.BATTLEFIELD:
@@ -2409,6 +2411,16 @@ def _enter_battlefield(
         for kind in by_casts:
             if casts:
                 entering.setdefault(str(kind), []).append(int(casts))
+
+    # Bloodlord of Vaasgoth: a granted bloodthirst (702.54a), judged now, as
+    # the permanent enters -- "if an opponent was dealt damage this turn" --
+    # and on the same placement, for Yuna's reason above.
+    thirst = obj.cast_bloodthirst
+    obj.cast_bloodthirst = 0
+    if thirst and any(
+        state.turn_ledger.damage_taken.get(p, 0) > 0 for p in state.opponents(obj.controller)
+    ):
+        entering.setdefault("+1/+1", []).append(int(thirst))
 
     # Giada, Font of Hope and Oath of Gideon: more "enters with" on the same
     # placement, so the counter replacements below see them in the total.

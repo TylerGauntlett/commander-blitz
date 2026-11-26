@@ -565,6 +565,30 @@ def op_spell_enters_with_counters(ctx: EffectContext, spec: Mapping[str, Any]):
             obj.cast_enters_with[str(kind)] = obj.cast_enters_with.get(str(kind), 0) + value
 
 
+@register("grant_bloodthirst")
+def op_grant_bloodthirst(ctx: EffectContext, spec: Mapping[str, Any]):
+    """"Whenever you cast a Vampire creature spell, it gains bloodthirst 3." --
+    Bloodlord of Vaasgoth.
+
+    Bloodthirst N (702.54a) is "if an opponent was dealt damage this turn,
+    this permanent enters with N +1/+1 counters on it" -- a replacement judged
+    **as the permanent enters**, not when this trigger resolves. So this only
+    stages the amount on the spell's object (`GameObject.cast_bloodthirst`),
+    carried like `spell_enters_with_counters`' promise, and
+    `zones._enter_battlefield` asks the question on the arrival. That op is
+    the near miss: it evaluates its amount now and takes no condition, so it
+    would miss damage dealt between this trigger and the spell resolving.
+    Instances add (702.54c). **Which spell** is `_spell_named_by`'s answer.
+    """
+    item = _spell_named_by(ctx, spec)
+    if item is None:
+        return
+    obj = ctx.state.objects.get(item.oid)
+    if obj is None:
+        return
+    obj.cast_bloodthirst += int(spec["amount"])
+
+
 @register("grant_plot")
 def op_grant_plot(ctx: EffectContext, spec: Mapping[str, Any]):
     """"Exile that spell instead of putting it into your graveyard as it resolves.

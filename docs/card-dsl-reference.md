@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 190 |
+| [Effect ops](#effect-ops) | 191 |
 | [Selectors](#selectors) | 84 |
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 80 |
@@ -202,6 +202,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `copy_spell` | Stack |  | Copy a spell, or with `spells` each spell in a pool, or with `this_spell` the spell resolving; `new_targets` lets the copy be re-aimed. | ["You may choose new targets for the copy"](card-dsl-cookbook.md#you-may-choose-new-targets-for-the-copy) |
 | `counter` | Stack | yes | Counter a spell or ability; `exiles` sends a spell it countered to exile instead of its owner's graveyard, `as` binds the cards it countered. | ["If that spell is countered this way, exile it instead"](card-dsl.md#if-that-spell-is-countered-this-way-exile-it-instead) |
 | `exile_spell_on_resolution` | Stack |  | A spell is exiled as it resolves instead of binned, linked to this source. | [Plot](card-dsl.md#plot) |
+| `grant_bloodthirst` | Stack |  | Give a spell bloodthirst N, judged as its permanent enters. | [Granting bloodthirst to a spell](card-dsl.md#granting-bloodthirst-to-a-spell) |
 | `grant_plot` | Stack |  | Plot a card: exile it, castable free on a later turn. | [Plot](card-dsl.md#plot) |
 | `grant_rebound` | Stack |  | Give a spell rebound as it resolves. | [Granting rebound to a spell that does not print it](card-dsl.md#granting-rebound-to-a-spell-that-does-not-print-it) |
 | `next_spell_gains_cascade` | Stack |  | The `player`'s (default you) next spell this turn matching `affects_spells` has cascade: the rules' cascade trigger, on the spell itself. | [A spell given cascade — next_spell_gains_cascade](card-dsl-cookbook.md#a-spell-given-cascade--next_spell_gains_cascade) |

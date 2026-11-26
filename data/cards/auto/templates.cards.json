@@ -35171,6 +35171,71 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": 3,
+              "op": "grant_bloodthirst"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a Vampire creature spell, it gains bloodthirst 3.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "subtypes": [
+                "Vampire"
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "bloodlord_of_vaasgoth",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{B}{B}",
+      "name": "Bloodlord of Vaasgoth",
+      "oracle_text": "Bloodthirst 3 (If an opponent was dealt damage this turn, this creature enters with three +1/+1 counters on it.)\nFlying\nWhenever you cast a Vampire creature spell, it gains bloodthirst 3.",
+      "power": 3,
+      "replacements": [
+        {
+          "amount": 3,
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "damage_taken_this_turn": "opponent"
+            },
+            "right": {
+              "const": 0
+            }
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Warrior"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{8}"
           },

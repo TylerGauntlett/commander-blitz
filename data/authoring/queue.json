@@ -28842,12 +28842,12 @@
     },
     "Bloodlord of Vaasgoth": {
       "edhrec_rank": 8594,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodlord of Vaasgoth",
-      "reason": "no template for: Bloodthirst 3",
+      "reason": "",
       "scryfall_id": "510c65ea-7c9f-461f-b038-ef119db1ca30",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodlust Inciter": {
