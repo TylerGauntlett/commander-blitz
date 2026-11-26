@@ -349764,6 +349764,67 @@
     {
       "abilities": [
         {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted land has \"{T}, Pay 1 life: Draw a card.\""
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "pay_life": 1,
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Pay 1 life: Draw a card."
+        }
+      ],
+      "id": "underworld_connections",
+      "mana_cost": "{1}{B}{B}",
+      "name": "Underworld Connections",
+      "oracle_text": "Enchant land\nEnchanted land has \"{T}, Pay 1 life: Draw a card.\"",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -352016,6 +352077,82 @@
       "toughness": 7,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "urge_to_feed",
+      "mana_cost": "{B}{B}",
+      "name": "Urge to Feed",
+      "oracle_text": "Target creature gets -3/-3 until end of turn. You may tap any number of untapped Vampire creatures you control. If you do, put a +1/+1 counter on each of those Vampires.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "until_end_of_turn",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "pump",
+          "power": {
+            "const": -3
+          },
+          "toughness": {
+            "const": -3
+          }
+        },
+        {
+          "as": "fed",
+          "objects": {
+            "controller": "you",
+            "count": "any",
+            "subtypes": [
+              "Vampire"
+            ],
+            "tapped": false,
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "choose_permanents",
+          "prompt": "You may tap any number of untapped Vampire creatures you control"
+        },
+        {
+          "objects": {
+            "binding": "fed"
+          },
+          "op": "tap"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "counter": "+1/+1",
+          "objects": {
+            "binding": "fed"
+          },
+          "op": "add_counters"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {

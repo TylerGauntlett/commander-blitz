@@ -297442,12 +297442,12 @@
     },
     "Underworld Connections": {
       "edhrec_rank": 4963,
-      "gate": "template",
+      "gate": null,
       "name": "Underworld Connections",
-      "reason": "no template for: Enchanted land has \"{T}, Pay 1 life: Draw a card.\"",
+      "reason": "",
       "scryfall_id": "1df71add-7bb6-4687-bb69-cf4450adb7dc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Underworld Dreams": {
@@ -299452,12 +299452,12 @@
     },
     "Urge to Feed": {
       "edhrec_rank": 11537,
-      "gate": "template",
+      "gate": null,
       "name": "Urge to Feed",
-      "reason": "no template for: Target creature gets -3/-3 until end of turn. You may tap any number of untapped Vampire c",
+      "reason": "",
       "scryfall_id": "6f56b179-dedf-44fc-952a-dec22f30af49",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Urgent Exorcism": {
