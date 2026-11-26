@@ -1,0 +1,24 @@
+{
+  "card": {
+    "id": "kami_of_the_crescent_moon",
+    "name": "Kami of the Crescent Moon",
+    "oracle_text": "At the beginning of each player's draw step, that player draws an additional card.",
+    "mana_cost": "{U}{U}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Spirit"],
+    "power": 1,
+    "toughness": 3,
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "At the beginning of each player's draw step, that player draws an additional card.",
+        "trigger": {"event": "draw_step", "controller": "any"},
+        "effects": [{"op": "draw", "amount": {"const": 1}, "player": {"binding": "event_player"}}]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33, "hand_size": {"0": 1}}
+}
