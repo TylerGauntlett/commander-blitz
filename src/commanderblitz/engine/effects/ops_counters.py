@@ -54,6 +54,27 @@ from .values import evaluate_value
 
 @register("add_counters")
 def op_add_counters(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Put ``amount`` counters of ``counter`` on each of ``objects``, or on players.
+
+    ``as`` binds **the number of counters actually put**, summed over every
+    permanent and player this one op reached, as an int read back with
+    ``{"binding": …}`` -- Guinan, Ancient Advisor's "if you put two or more
+    +1/+1 counters on creatures **this way**, draw a card". Actually put, not
+    asked for: `primitives.add_counters` returns the count after every counter
+    replacement (Hardened Scales makes one into two) and zero for a placement a
+    ``cant_have_counters`` static forbids, so counting the recipients would
+    agree with the printed card only while nothing modifies the placement. The
+    binding is written by this op alone and overwrites any earlier value of the
+    same name, as `lose_life`'s and `remove_counters`' do.
+    """
+    total = yield from _put_counters(ctx, spec)
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = total
+
+
+def _put_counters(ctx: EffectContext, spec: Mapping[str, Any]):
+    """`op_add_counters`' placement; returns how many counters arrived."""
+    total = 0
     # Rule 107.1b: a calculation that comes out negative uses zero. "Put
     # counters equal to its power" with a -1/-1 creature puts none -- Station's
     # release notes say so outright -- where the primitive, handed -1, would
@@ -70,15 +91,16 @@ def op_add_counters(ctx: EffectContext, spec: Mapping[str, Any]):
         # off a permanent) puts nothing.
         if kind in PLAYER_COUNTER_KINDS:
             for pid in select_players(ctx, spec["player"]):
-                add_player_counters(
+                total += add_player_counters(
                     ctx.state, pid, kind, amount, source=ctx.source_oid, by=ctx.controller
                 )
-        return
+        return total
     oids = yield from choose_objects(ctx, spec.get("objects"), "Put counters on")
     if kind is None:
-        return
+        return total
     for oid in oids:
-        add_counters(ctx.state, oid, kind, amount, source=ctx.source_oid)
+        total += add_counters(ctx.state, oid, kind, amount, source=ctx.source_oid)
+    return total
 
 
 def _counter_kind(ctx: EffectContext, counter: Any) -> str | None:
