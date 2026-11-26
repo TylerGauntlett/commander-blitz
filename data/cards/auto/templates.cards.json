@@ -8964,6 +8964,100 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "parley_card",
+                  "objects": {
+                    "player": {
+                      "binding": "each_player"
+                    },
+                    "zone": "library"
+                  },
+                  "op": "snapshot"
+                },
+                {
+                  "objects": {
+                    "binding": "parley_card"
+                  },
+                  "op": "reveal"
+                },
+                {
+                  "condition": {
+                    "exists": {
+                      "binding": "parley_card",
+                      "not_types": [
+                        "Land"
+                      ],
+                      "zone": "library"
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "add_counters"
+                    }
+                  ]
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Parley — At the beginning of combat on your turn, each player reveals the top card of their library, then draws a card. For each nonland card revealed this way, put a +1/+1 counter on Ambassador K'Ehleyr.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "ambassador_k_ehleyr",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Ambassador K'Ehleyr",
+      "oracle_text": "Vigilance\nParley — At the beginning of combat on your turn, each player reveals the top card of their library, then draws a card. For each nonland card revealed this way, put a +1/+1 counter on Ambassador K'Ehleyr.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Klingon",
+        "Human",
+        "Advisor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -24036,6 +24130,124 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "surveil",
+              "player": "you"
+            },
+            {
+              "effects": [
+                {
+                  "as": "top_card",
+                  "objects": {
+                    "controller": "you",
+                    "zone": "library"
+                  },
+                  "op": "snapshot"
+                },
+                {
+                  "objects": {
+                    "binding": "top_card"
+                  },
+                  "op": "reveal"
+                },
+                {
+                  "condition": {
+                    "exists": {
+                      "binding": "top_card",
+                      "types": [
+                        "Artifact"
+                      ],
+                      "zone": "library"
+                    }
+                  },
+                  "else": [
+                    {
+                      "amount": {
+                        "const": 2
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "self_only": true,
+                        "zone": "battlefield"
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "op": "if",
+                  "then": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "draw",
+                      "player": "you"
+                    }
+                  ]
+                }
+              ],
+              "else": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "may",
+              "prompt": "Reveal the top card of your library?"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, {T}: Surveil 2, then you may reveal the top card of your library. If an artifact card is revealed this way, draw a card. If you don't draw a card this way, put two +1/+1 counters on B'Elanna Torres."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "b_elanna_torres_scrapper",
+      "keywords": [
+        "vigilance",
+        "trample"
+      ],
+      "mana_cost": "{1}{U}{R}",
+      "name": "B'Elanna Torres, Scrapper",
+      "oracle_text": "Vigilance, trample\n{2}, {T}: Surveil 2, then you may reveal the top card of your library. If an artifact card is revealed this way, draw a card. If you don't draw a card this way, put two +1/+1 counters on B'Elanna Torres.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Klingon",
+        "Human",
+        "Artificer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -30825,6 +31037,68 @@
         "Legendary"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 3,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "Seek out — Whenever you draw your second card each turn, put a +1/+1 counter on each of up to three target creatures.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw",
+            "nth": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "beverly_crusher_ship_s_doctor",
+      "mana_cost": "{2}{W}",
+      "name": "Beverly Crusher, Ship's Doctor",
+      "oracle_text": "Seek out — Whenever you draw your second card each turn, put a +1/+1 counter on each of up to three target creatures.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Doctor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -55745,6 +56019,65 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "double_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Creature"
+                ],
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Seek out — Whenever you draw your second card each turn, double the number of each kind of counter on target artifact or creature you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw",
+            "nth": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "chief_miles_o_brien",
+      "mana_cost": "{2}{U}",
+      "name": "Chief Miles O'Brien",
+      "oracle_text": "Seek out — Whenever you draw your second card each turn, double the number of each kind of counter on target artifact or creature you control.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "controller": "you",
             "exclude_self": true,
@@ -57182,6 +57515,35 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "chronomantic_escape",
+      "mana_cost": "{4}{W}{W}",
+      "name": "Chronomantic Escape",
+      "oracle_text": "Until your next turn, creatures can't attack you. Exile Chronomantic Escape with three time counters on it.\nSuspend 3—{2}{W} (Rather than cast this card from your hand, you may pay {2}{W} and exile it with three time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "attacker": "each_player",
+          "defender": "you",
+          "duration": "until_your_next_turn",
+          "op": "cant_attack_player"
+        }
+      ],
+      "suspend": {
+        "cost": "{2}{W}",
+        "counters": 3
+      },
+      "suspends_itself": 3,
+      "types": [
+        "Sorcery"
       ]
     },
     {

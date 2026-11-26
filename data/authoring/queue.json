@@ -1,5 +1,25 @@
 {
   "entries": {
+    "\"The Ignoble Serpent\"": {
+      "edhrec_rank": 31580,
+      "gate": null,
+      "name": "\"The Ignoble Serpent\"",
+      "reason": "",
+      "scryfall_id": "a1510c0a-30d8-48b3-857f-6214f5e0efaf",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "\"Zekes, Acid Rock Fan\"": {
+      "edhrec_rank": 31943,
+      "gate": null,
+      "name": "\"Zekes, Acid Rock Fan\"",
+      "reason": "",
+      "scryfall_id": "7edeeae9-26d8-4e9f-8647-93a8f8cfd265",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "+2 Mace": {
       "edhrec_rank": 18161,
       "gate": null,
@@ -1020,6 +1040,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Abyssal Lotus": {
+      "edhrec_rank": 30521,
+      "gate": null,
+      "name": "Abyssal Lotus",
+      "reason": "",
+      "scryfall_id": "11c1757d-66e2-4979-a57b-10d22fb897eb",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Abyssal Nightstalker": {
       "edhrec_rank": 27510,
       "gate": "template",
@@ -1236,6 +1266,16 @@
       "name": "Academy Elite",
       "reason": "no template for: This creature enters with X +1/+1 counters on it, where X is the number of instant and sor",
       "scryfall_id": "c9ec1d12-63be-4b4c-9e09-af65c1ef3bd5",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Academy Instructor": {
+      "edhrec_rank": 24536,
+      "gate": null,
+      "name": "Academy Instructor",
+      "reason": "",
+      "scryfall_id": "660ec8bc-dc03-4b42-84f3-091c19e2a853",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -2426,6 +2466,16 @@
       "name": "Adventurous Impulse",
       "reason": "no template for: Look at the top three cards of your library. You may reveal a creature or land card from a",
       "scryfall_id": "913e79c9-c342-4efd-bd11-cec5af81e668",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Adversary by Algorithm": {
+      "edhrec_rank": 32467,
+      "gate": null,
+      "name": "Adversary by Algorithm",
+      "reason": "",
+      "scryfall_id": "41644f06-d08f-406c-a56a-47e1b5273982",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -5980,6 +6030,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Alexander, Ship's Fool": {
+      "edhrec_rank": 26320,
+      "gate": null,
+      "name": "Alexander, Ship's Fool",
+      "reason": "",
+      "scryfall_id": "7a6d3f42-dffb-4c01-aa9c-8e68351bbba6",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Alexi's Cloak": {
       "edhrec_rank": 11900,
       "gate": null,
@@ -6176,6 +6236,16 @@
       "name": "Alive // Well",
       "reason": "no template for: Create a 3/3 green Centaur creature token",
       "scryfall_id": "db84415e-048a-4cfc-9121-5ae17a412198",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "All Good Things...": {
+      "edhrec_rank": 30581,
+      "gate": null,
+      "name": "All Good Things...",
+      "reason": "",
+      "scryfall_id": "fe5dda31-159c-49c7-962e-a04b771256ea",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -7010,6 +7080,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Amanda Grayson, Logic's Link": {
+      "edhrec_rank": 23423,
+      "gate": null,
+      "name": "Amanda Grayson, Logic's Link",
+      "reason": "",
+      "scryfall_id": "2cf064eb-7d6c-4961-962b-3d7e68f8e73e",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Amarant Coral": {
       "edhrec_rank": 15617,
       "gate": "template",
@@ -7088,6 +7168,16 @@
       "scryfall_id": "794dda34-8bc5-4cb9-8460-07f93426dd34",
       "source": "",
       "status": "pending",
+      "wanted": false
+    },
+    "Ambassador K'Ehleyr": {
+      "edhrec_rank": 24025,
+      "gate": null,
+      "name": "Ambassador K'Ehleyr",
+      "reason": "",
+      "scryfall_id": "5241fa80-1af1-4f9b-b2a2-cd94262e6f3d",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ambassador Laquatus": {
@@ -7216,6 +7306,16 @@
       "name": "Ambulatory Edifice",
       "reason": "no template for: When this creature enters, you may pay 2 life. When you do, target creature gets -1/-1 unt",
       "scryfall_id": "43c9005c-0574-4b75-8dbf-0a6641c3ae33",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Ambulatory Reactor": {
+      "edhrec_rank": 16303,
+      "gate": null,
+      "name": "Ambulatory Reactor",
+      "reason": "",
+      "scryfall_id": "9a81140d-9279-4ca5-be68-ec990cf541a6",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -8430,12 +8530,32 @@
       "status": "done",
       "wanted": false
     },
+    "Andoria": {
+      "edhrec_rank": 24202,
+      "gate": null,
+      "name": "Andoria",
+      "reason": "",
+      "scryfall_id": "0e9e72ef-3e34-4d19-aec0-b5e1ba84d244",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Andradite Leech": {
       "edhrec_rank": 29805,
       "gate": "template",
       "name": "Andradite Leech",
       "reason": "no template for: Black spells you cast cost {B} more to cast",
       "scryfall_id": "6da0d4f3-9216-406c-8f3e-b9bb0a11dc75",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Andromedan Automatons": {
+      "edhrec_rank": 32670,
+      "gate": null,
+      "name": "Andromedan Automatons",
+      "reason": "",
+      "scryfall_id": "fc386662-0fe3-432f-85a8-9a06e1274245",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -9870,6 +9990,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Antagonist Incorporator": {
+      "edhrec_rank": 19475,
+      "gate": null,
+      "name": "Antagonist Incorporator",
+      "reason": "",
+      "scryfall_id": "63918e59-0c03-4d98-9216-e58ee157b7ea",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Antagonize": {
       "edhrec_rank": 8724,
       "gate": "template",
@@ -9926,6 +10056,16 @@
       "name": "Anthroplasm",
       "reason": "no template for: This creature enters with two +1/+1 counters on it",
       "scryfall_id": "089e2bc7-0063-47bf-8f66-48bed6eb046b",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Anthropological Mission": {
+      "edhrec_rank": 17494,
+      "gate": null,
+      "name": "Anthropological Mission",
+      "reason": "",
+      "scryfall_id": "93b458aa-a928-48ef-b685-1306cc65ad06",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -13680,6 +13820,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Armus, Skin of Evil": {
+      "edhrec_rank": 28498,
+      "gate": null,
+      "name": "Armus, Skin of Evil",
+      "reason": "",
+      "scryfall_id": "c3ba1e0d-5e3d-4fa7-9b58-5b90944b43c5",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Army Ants": {
       "edhrec_rank": 20657,
       "gate": "template",
@@ -14096,6 +14246,16 @@
       "name": "Artificer's Intuition",
       "reason": "no template for: {U}, Discard an artifact card: Search your library for an artifact card with mana value 1 ",
       "scryfall_id": "abe37c88-afd7-45ac-9f84-f4bd881a1462",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Artificial Anomaly": {
+      "edhrec_rank": 25411,
+      "gate": null,
+      "name": "Artificial Anomaly",
+      "reason": "",
+      "scryfall_id": "7dfead74-0625-4f6a-b66b-6d5d363a387c",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -15330,6 +15490,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Assembly Specialist": {
+      "edhrec_rank": 26155,
+      "gate": null,
+      "name": "Assembly Specialist",
+      "reason": "",
+      "scryfall_id": "a4d339a5-198c-49bd-845e-2632476746e0",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Assembly-Worker": {
       "edhrec_rank": 27525,
       "gate": "template",
@@ -15370,12 +15540,32 @@
       "status": "pending",
       "wanted": false
     },
+    "Assimilate the Wounded": {
+      "edhrec_rank": 19583,
+      "gate": null,
+      "name": "Assimilate the Wounded",
+      "reason": "",
+      "scryfall_id": "16cb0526-7623-4d02-97d4-b87021d5efc4",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Assimilation Aegis": {
       "edhrec_rank": 9874,
       "gate": "template",
       "name": "Assimilation Aegis",
       "reason": "no template for: When this Equipment enters, exile up to one target creature until this Equipment leaves th",
       "scryfall_id": "014bf3c6-e46f-48f8-902f-82deeba260b2",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Assimilation Assessor": {
+      "edhrec_rank": 18099,
+      "gate": null,
+      "name": "Assimilation Assessor",
+      "reason": "",
+      "scryfall_id": "0d1f1428-a912-4c42-a0bc-4e4cb5bdd1b1",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -15538,6 +15728,16 @@
       "scryfall_id": "a0f6e2d7-58b5-4a7d-8c42-e25185cd173f",
       "source": "agent",
       "status": "done",
+      "wanted": false
+    },
+    "Astute Terraformer": {
+      "edhrec_rank": 32013,
+      "gate": null,
+      "name": "Astute Terraformer",
+      "reason": "",
+      "scryfall_id": "2ef7c30c-3ee6-413d-bd24-476322f36cb8",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Asylum Visitor": {
@@ -16726,6 +16926,16 @@
       "name": "Auspicious Ancestor",
       "reason": "no template for: When this creature dies, you gain 3 life",
       "scryfall_id": "7f6f9ec3-6033-4cd4-a52e-31a559559a93",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Auspicious Aquarium": {
+      "edhrec_rank": null,
+      "gate": null,
+      "name": "Auspicious Aquarium",
+      "reason": "",
+      "scryfall_id": "2647ed1a-53c0-4158-8de4-b8f99940a9c4",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -18680,6 +18890,16 @@
       "status": "pending",
       "wanted": false
     },
+    "B'Elanna Torres, Scrapper": {
+      "edhrec_rank": 27271,
+      "gate": null,
+      "name": "B'Elanna Torres, Scrapper",
+      "reason": "",
+      "scryfall_id": "85ed14c9-ff10-4c3b-856b-8128acc07aa8",
+      "source": "agent",
+      "status": "done",
+      "wanted": false
+    },
     "Ba Sing Se": {
       "edhrec_rank": 1803,
       "gate": "template",
@@ -19060,6 +19280,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Bajor": {
+      "edhrec_rank": 24069,
+      "gate": null,
+      "name": "Bajor",
+      "reason": "",
+      "scryfall_id": "ff5254a6-4961-4604-b65b-2eb0ce9b1c82",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Bake into a Pie": {
       "edhrec_rank": 6050,
       "gate": "template",
@@ -19176,6 +19406,16 @@
       "name": "Balance of Power",
       "reason": "no template for: If target opponent has more cards in hand than you, draw cards equal to the difference",
       "scryfall_id": "fbd5b80d-ea23-4446-9ead-aa268310d616",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Balance of Terror": {
+      "edhrec_rank": 23293,
+      "gate": null,
+      "name": "Balance of Terror",
+      "reason": "",
+      "scryfall_id": "2fc3e03e-29bd-4d69-b1c1-438183f39eb5",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -20790,6 +21030,16 @@
       "status": "done",
       "wanted": false
     },
+    "Baron Vladimir Harkonnen": {
+      "edhrec_rank": 32329,
+      "gate": null,
+      "name": "Baron Vladimir Harkonnen",
+      "reason": "",
+      "scryfall_id": "90923093-b29e-44d6-8e86-7e7c12dd3c92",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Baron, Airship Kingdom": {
       "edhrec_rank": 4646,
       "gate": null,
@@ -21976,6 +22226,16 @@
       "name": "Battle of Wits",
       "reason": "no template for: At the beginning of your upkeep, if you have 200 or more cards in your library, you win th",
       "scryfall_id": "6b36c4f5-5eff-4b46-9671-9a038d4d1788",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Battle of Wolf 359": {
+      "edhrec_rank": 15719,
+      "gate": null,
+      "name": "Battle of Wolf 359",
+      "reason": "",
+      "scryfall_id": "140808f4-ab95-40cf-86ff-151927105628",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -24290,6 +24550,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Beta Ray Bill": {
+      "edhrec_rank": 32182,
+      "gate": null,
+      "name": "Beta Ray Bill",
+      "reason": "",
+      "scryfall_id": "11ac1717-b3c3-4ff6-84a8-9961d128e7f9",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Betor, Ancestor's Voice": {
       "edhrec_rank": 5423,
       "gate": null,
@@ -24358,6 +24628,16 @@
       "scryfall_id": "5e517aa4-d8ba-4a49-bf9f-172bf029fa52",
       "source": "",
       "status": "pending",
+      "wanted": false
+    },
+    "Beverly Crusher, Ship's Doctor": {
+      "edhrec_rank": 21483,
+      "gate": null,
+      "name": "Beverly Crusher, Ship's Doctor",
+      "reason": "",
+      "scryfall_id": "35a289b9-18da-437a-ad0a-450accb99100",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bewilder": {
@@ -26440,6 +26720,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Blastoneuron": {
+      "edhrec_rank": 29132,
+      "gate": null,
+      "name": "Blastoneuron",
+      "reason": "",
+      "scryfall_id": "c1855a4c-c7d1-407c-b134-4c43968cbdd3",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Blatant Thievery": {
       "edhrec_rank": 4683,
       "gate": "template",
@@ -28370,6 +28660,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Blood-Sport Champion": {
+      "edhrec_rank": 28420,
+      "gate": null,
+      "name": "Blood-Sport Champion",
+      "reason": "",
+      "scryfall_id": "660cee6d-a942-4595-b6cc-7c2053108944",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Blood-Toll Harpy": {
       "edhrec_rank": 28318,
       "gate": "template",
@@ -29716,6 +30016,16 @@
       "name": "Boarded Window",
       "reason": "no template for: Creatures attacking you get -1/-0",
       "scryfall_id": "21827378-cd7b-4be7-9a1f-bbe82885496d",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Boarding Action": {
+      "edhrec_rank": 30184,
+      "gate": null,
+      "name": "Boarding Action",
+      "reason": "",
+      "scryfall_id": "3a0d33cd-f81c-4950-81ed-9536061eca8a",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -31740,12 +32050,42 @@
       "status": "done",
       "wanted": false
     },
+    "Borg Cube": {
+      "edhrec_rank": 17310,
+      "gate": null,
+      "name": "Borg Cube",
+      "reason": "",
+      "scryfall_id": "953e0763-3788-4a97-8e2f-394cc2649e43",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Borg Incursion": {
+      "edhrec_rank": 17159,
+      "gate": null,
+      "name": "Borg Incursion",
+      "reason": "",
+      "scryfall_id": "2b7eed2d-8baa-4be2-a392-e218baaedd50",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Borg Queen, Perfection Manifest": {
       "edhrec_rank": 31077,
       "gate": "template",
       "name": "Borg Queen, Perfection Manifest",
       "reason": "no template for: Artifact creatures you control get +2/+0",
       "scryfall_id": "cb07e5e4-154e-4ba5-85a4-ecc78f1555d2",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Borg Scout Sphere": {
+      "edhrec_rank": 15604,
+      "gate": null,
+      "name": "Borg Scout Sphere",
+      "reason": "",
+      "scryfall_id": "0813b13e-06a3-403b-ac00-6d6edd74935d",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -33110,6 +33450,16 @@
       "status": "done",
       "wanted": false
     },
+    "Branching Timeline": {
+      "edhrec_rank": 23182,
+      "gate": null,
+      "name": "Branching Timeline",
+      "reason": "",
+      "scryfall_id": "4a2231ff-677d-4041-9413-b8d683846920",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Branchloft Pathway // Boulderloft Pathway": {
       "edhrec_rank": 1151,
       "gate": "template",
@@ -33416,6 +33766,16 @@
       "name": "Brazen Blademaster",
       "reason": "no template for: Whenever this creature attacks while you control two or more artifacts, it gets +2/+1 unti",
       "scryfall_id": "8e9e0c66-f64a-428c-be13-a52691833df1",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Brazen Bluff": {
+      "edhrec_rank": 17953,
+      "gate": null,
+      "name": "Brazen Bluff",
+      "reason": "",
+      "scryfall_id": "5b306901-1bba-488b-866e-83aa162dab5a",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -38490,6 +38850,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Calmwater Mentor": {
+      "edhrec_rank": 28584,
+      "gate": null,
+      "name": "Calmwater Mentor",
+      "reason": "",
+      "scryfall_id": "89906965-c35a-444e-8f18-535e8b428dfe",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Caltrops": {
       "edhrec_rank": 5447,
       "gate": "template",
@@ -39410,6 +39780,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Captain Benjamin Sisko": {
+      "edhrec_rank": 24841,
+      "gate": null,
+      "name": "Captain Benjamin Sisko",
+      "reason": "",
+      "scryfall_id": "51338fb2-13a3-41b8-981f-05fa35e87e2e",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Captain Howler, Sea Scourge": {
       "edhrec_rank": 5166,
       "gate": "template",
@@ -39426,6 +39806,36 @@
       "name": "Captain James T. Kirk",
       "reason": "no template for: Whenever Captain Kirk enters or attacks, choose one. If you have no cards in hand, choose ",
       "scryfall_id": "367aa1e6-ce6c-41a0-ba7c-af00487a4302",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Captain Janeway, Endgame": {
+      "edhrec_rank": 23127,
+      "gate": "template",
+      "name": "Captain Janeway, Endgame",
+      "reason": "no template for: Whenever one or more Officers you control deal combat damage to a player, you draw a card ",
+      "scryfall_id": "1fc05320-c8f8-4acd-8bac-86c4156352d2",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Captain Jean-Luc Picard": {
+      "edhrec_rank": 17121,
+      "gate": null,
+      "name": "Captain Jean-Luc Picard",
+      "reason": "",
+      "scryfall_id": "566c03c3-aedd-4bd0-8932-e1b279e53c68",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Captain Jonathan Archer": {
+      "edhrec_rank": 26646,
+      "gate": null,
+      "name": "Captain Jonathan Archer",
+      "reason": "",
+      "scryfall_id": "a4518ea3-5f56-4f1d-9024-2bf06ac98786",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -39500,6 +39910,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Captain Michael Burnham": {
+      "edhrec_rank": 20892,
+      "gate": null,
+      "name": "Captain Michael Burnham",
+      "reason": "",
+      "scryfall_id": "e10d6d71-9360-4ecf-97c8-22afb22aaeb7",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Captain N'ghathrod": {
       "edhrec_rank": 4402,
       "gate": null,
@@ -39508,6 +39928,16 @@
       "scryfall_id": "18937a89-4931-4cb0-b8b8-8582433f6e1a",
       "source": "agent",
       "status": "done",
+      "wanted": false
+    },
+    "Captain Pike, Fullness of Time": {
+      "edhrec_rank": 22292,
+      "gate": null,
+      "name": "Captain Pike, Fullness of Time",
+      "reason": "",
+      "scryfall_id": "62c9b897-bc43-47f9-8939-13faaa0b7c6b",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Captain Ripley Vance": {
@@ -39846,6 +40276,16 @@
       "name": "Carbonize",
       "reason": "no template for: deals 3 damage to any target. If it's a creature, it can't be regenerated this turn, and i",
       "scryfall_id": "d4b4767b-edd1-4e36-b363-52114a9afe5e",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Cardassia Prime": {
+      "edhrec_rank": 24214,
+      "gate": null,
+      "name": "Cardassia Prime",
+      "reason": "",
+      "scryfall_id": "d634424f-9148-46a5-95e3-4965a9226bb4",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -42900,6 +43340,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Cetacean Ops": {
+      "edhrec_rank": 29000,
+      "gate": null,
+      "name": "Cetacean Ops",
+      "reason": "",
+      "scryfall_id": "a8dc7ecd-e6f0-4050-9d5b-8436f60a1395",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Cetavolver": {
       "edhrec_rank": 31148,
       "gate": "template",
@@ -43570,6 +44020,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Chancellor Gorkon": {
+      "edhrec_rank": 29060,
+      "gate": null,
+      "name": "Chancellor Gorkon",
+      "reason": "",
+      "scryfall_id": "7a021b9d-9500-48a0-8d38-92f175340eb6",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Chancellor of Tales": {
       "edhrec_rank": 12075,
       "gate": "template",
@@ -44218,6 +44678,16 @@
       "scryfall_id": "4260fab8-5597-45d8-8a1c-22ef96939071",
       "source": "agent",
       "status": "done",
+      "wanted": false
+    },
+    "Chani, Blade of Sietch Tabr": {
+      "edhrec_rank": 27149,
+      "gate": null,
+      "name": "Chani, Blade of Sietch Tabr",
+      "reason": "",
+      "scryfall_id": "6eb17c62-1ba0-4d5f-8947-ff04e09f0b84",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Channel": {
@@ -45230,6 +45700,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Chekov and McCoy": {
+      "edhrec_rank": 31049,
+      "gate": null,
+      "name": "Chekov and McCoy",
+      "reason": "",
+      "scryfall_id": "eb40c889-15e0-4a01-bec1-2148b17ad382",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Chelonian Tackle": {
       "edhrec_rank": 18861,
       "gate": "template",
@@ -45290,12 +45770,42 @@
       "status": "pending",
       "wanted": false
     },
+    "Chief Kyle, Transporter Tech": {
+      "edhrec_rank": 22268,
+      "gate": null,
+      "name": "Chief Kyle, Transporter Tech",
+      "reason": "",
+      "scryfall_id": "7a310a62-836b-4ed9-99b1-a09c9079ab43",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Chief Magistrate of Mercadia": {
       "edhrec_rank": 31676,
       "gate": "template",
       "name": "Chief Magistrate of Mercadia",
       "reason": "no template for: When enters, you become the monarch",
       "scryfall_id": "1aa3f1d6-92e5-4da2-a0e3-2c4df5619e1d",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Chief Miles O'Brien": {
+      "edhrec_rank": 19886,
+      "gate": null,
+      "name": "Chief Miles O'Brien",
+      "reason": "",
+      "scryfall_id": "095f7f84-b889-4536-a3a5-c40c643bdd00",
+      "source": "agent",
+      "status": "done",
+      "wanted": false
+    },
+    "Chief Montgomery Scott": {
+      "edhrec_rank": 23705,
+      "gate": null,
+      "name": "Chief Montgomery Scott",
+      "reason": "",
+      "scryfall_id": "825fe7dd-2767-407d-b74e-20425d8b23f3",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -46382,12 +46892,12 @@
     },
     "Chronomantic Escape": {
       "edhrec_rank": 12020,
-      "gate": "template",
+      "gate": null,
       "name": "Chronomantic Escape",
-      "reason": "no template for: Until your next turn, creatures can't attack you. Exile with three time counters on it",
+      "reason": "",
       "scryfall_id": "cb6989fd-05cf-4169-96c0-37c556454b92",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chronomaton": {
@@ -47560,6 +48070,26 @@
       "status": "pending",
       "wanted": false
     },
+    "Class-4 Tactical Cube": {
+      "edhrec_rank": 16511,
+      "gate": null,
+      "name": "Class-4 Tactical Cube",
+      "reason": "",
+      "scryfall_id": "363d63ce-a9a8-46bf-b5e4-837aa10efca8",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Class-F Shuttlecraft": {
+      "edhrec_rank": 19272,
+      "gate": null,
+      "name": "Class-F Shuttlecraft",
+      "reason": "",
+      "scryfall_id": "55e0a183-4145-472f-8bed-a1f247febe06",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Clattering Augur": {
       "edhrec_rank": 9584,
       "gate": "template",
@@ -48030,6 +48560,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Cleveland Booker, Empath": {
+      "edhrec_rank": 27660,
+      "gate": null,
+      "name": "Cleveland Booker, Empath",
+      "reason": "",
+      "scryfall_id": "6b2e52e2-5cb9-4360-92d6-5c0d9e435d09",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Clever Concealment": {
       "edhrec_rank": 595,
       "gate": null,
@@ -48278,6 +48818,16 @@
       "scryfall_id": "50aa361c-72fd-4ecb-b877-a27646c66ad0",
       "source": "agent",
       "status": "done",
+      "wanted": false
+    },
+    "Cloak and Phaser": {
+      "edhrec_rank": 30741,
+      "gate": null,
+      "name": "Cloak and Phaser",
+      "reason": "",
+      "scryfall_id": "2d9fb7e7-582d-41e7-be9e-98372505ea44",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Cloak of Confusion": {
@@ -49130,6 +49680,26 @@
       "status": "pending",
       "wanted": false
     },
+    "Cmdr. Troi, Outgoing Empath": {
+      "edhrec_rank": 22015,
+      "gate": "template",
+      "name": "Cmdr. Troi, Outgoing Empath",
+      "reason": "no template for: {T}: Target opponent whose turn it is may cast a spell from their hand without paying its ",
+      "scryfall_id": "7cc079c8-9c00-439f-9e5d-08e7c8e2c5ed",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Co-Option Adjutant": {
+      "edhrec_rank": 15013,
+      "gate": null,
+      "name": "Co-Option Adjutant",
+      "reason": "",
+      "scryfall_id": "2c66865d-86f0-4ef7-8b08-4a463a2fedae",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Coal Golem": {
       "edhrec_rank": 31416,
       "gate": "template",
@@ -49940,6 +50510,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Collation Trimatrix": {
+      "edhrec_rank": 20658,
+      "gate": null,
+      "name": "Collation Trimatrix",
+      "reason": "",
+      "scryfall_id": "92c19351-0592-4269-90f4-2475d5529400",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Collected Company": {
       "edhrec_rank": 12442,
       "gate": "template",
@@ -50026,6 +50606,16 @@
       "name": "Collective Nightmare",
       "reason": "no template for: Convoke",
       "scryfall_id": "05864d3a-d8bb-4ddf-b721-883632050cb1",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Collective Override": {
+      "edhrec_rank": 16986,
+      "gate": null,
+      "name": "Collective Override",
+      "reason": "",
+      "scryfall_id": "a16b9be3-5c17-4f63-9355-8fec2ce803e1",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -50208,6 +50798,16 @@
       "scryfall_id": "4fe31ab9-d217-464e-96b1-d8a1ca6ad005",
       "source": "template:etb:^you gain (?P<n>\\d+|a|an|one|two|three|f",
       "status": "done",
+      "wanted": false
+    },
+    "Colossal Clone Master": {
+      "edhrec_rank": 22643,
+      "gate": null,
+      "name": "Colossal Clone Master",
+      "reason": "",
+      "scryfall_id": "1eadfff4-1e89-4ff2-a91c-d45389b80d69",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Colossal Collision": {
@@ -50406,6 +51006,16 @@
       "name": "Coma Veil",
       "reason": "no template for: Enchant artifact or creature",
       "scryfall_id": "2d5b820c-fd07-4e1f-9451-da9267347acd",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Combadge": {
+      "edhrec_rank": 25754,
+      "gate": null,
+      "name": "Combadge",
+      "reason": "",
+      "scryfall_id": "8bcf6bb5-f689-4d61-8f69-3290eeab539d",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -50650,12 +51260,32 @@
       "status": "pending",
       "wanted": false
     },
+    "Command Chair": {
+      "edhrec_rank": 23334,
+      "gate": null,
+      "name": "Command Chair",
+      "reason": "",
+      "scryfall_id": "20a04275-384b-403f-b2a3-a999341259fd",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Command Decision": {
       "edhrec_rank": null,
       "gate": "template",
       "name": "Command Decision",
       "reason": "no template for: Choose one —",
       "scryfall_id": "9f1f789b-5c08-4a4d-b3a3-4d51ad9f1a4d",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Command Subadjunct": {
+      "edhrec_rank": 15074,
+      "gate": null,
+      "name": "Command Subadjunct",
+      "reason": "",
+      "scryfall_id": "853bf74d-0b61-43df-9018-0b40b624a9d1",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -50760,6 +51390,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Commander Raffi Musiker": {
+      "edhrec_rank": 29161,
+      "gate": null,
+      "name": "Commander Raffi Musiker",
+      "reason": "",
+      "scryfall_id": "7e60bd56-3da1-4211-b790-320471eef242",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Commander Sofia Daguerre": {
       "edhrec_rank": 11153,
       "gate": null,
@@ -50768,6 +51408,26 @@
       "scryfall_id": "63259e39-7267-465e-8600-9104c34bfcba",
       "source": "agent",
       "status": "done",
+      "wanted": false
+    },
+    "Commander Spock": {
+      "edhrec_rank": 20214,
+      "gate": null,
+      "name": "Commander Spock",
+      "reason": "",
+      "scryfall_id": "cf114392-a38d-4117-aa41-911d6dc1051b",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Commander William Riker": {
+      "edhrec_rank": 21889,
+      "gate": "template",
+      "name": "Commander William Riker",
+      "reason": "no template for: {1}, {T}: You and target opponent each draw two cards",
+      "scryfall_id": "24f91f09-0f6b-4766-80bc-be545e509056",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Commander's Authority": {
@@ -51860,6 +52520,16 @@
       "status": "done",
       "wanted": false
     },
+    "Conjurer's Closet // Conjurer's Closet": {
+      "edhrec_rank": 456,
+      "gate": null,
+      "name": "Conjurer's Closet // Conjurer's Closet",
+      "reason": "",
+      "scryfall_id": "dc791c6a-331a-44f6-ab40-7a1ff9673170",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Conjurer's Mantle": {
       "edhrec_rank": 7665,
       "gate": null,
@@ -51936,6 +52606,16 @@
       "name": "Conqueror's Pledge",
       "reason": "no template for: Kicker {6}",
       "scryfall_id": "1af1844a-601a-48c1-bf96-921d2d2e2aa1",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Conquest Mission": {
+      "edhrec_rank": 16299,
+      "gate": null,
+      "name": "Conquest Mission",
+      "reason": "",
+      "scryfall_id": "be8d8f65-211e-47d7-973c-f44537b43826",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -52106,6 +52786,16 @@
       "name": "Conspiracy Unraveler",
       "reason": "no template for: You may collect evidence 10 rather than pay the mana cost for spells you cast",
       "scryfall_id": "0a33f43e-e57e-4d2c-b6f3-c785ab96214e",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Constable Odo": {
+      "edhrec_rank": 27394,
+      "gate": null,
+      "name": "Constable Odo",
+      "reason": "",
+      "scryfall_id": "3df582e4-3bfb-4413-9b39-898f33a5c1fd",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -57960,6 +58650,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Culber and Stamets, Star-Crossed": {
+      "edhrec_rank": 30050,
+      "gate": null,
+      "name": "Culber and Stamets, Star-Crossed",
+      "reason": "",
+      "scryfall_id": "962752f7-5c94-41e4-ab7d-3e8741c7a502",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Culling Dais": {
       "edhrec_rank": 7406,
       "gate": "template",
@@ -59170,6 +59870,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Curzon Dax, Bound by Blood": {
+      "edhrec_rank": 27625,
+      "gate": null,
+      "name": "Curzon Dax, Bound by Blood",
+      "reason": "",
+      "scryfall_id": "1335371c-d886-48ed-962c-3bc46f1f9076",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Custodi Lich": {
       "edhrec_rank": 9655,
       "gate": null,
@@ -59800,6 +60510,36 @@
       "status": "pending",
       "wanted": false
     },
+    "D'Ghor Bloodletter": {
+      "edhrec_rank": 24309,
+      "gate": null,
+      "name": "D'Ghor Bloodletter",
+      "reason": "",
+      "scryfall_id": "5075645d-ef69-4559-953e-c3140153bd75",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "D'Vana Tendi, Optimistic Ensign": {
+      "edhrec_rank": 28865,
+      "gate": null,
+      "name": "D'Vana Tendi, Optimistic Ensign",
+      "reason": "",
+      "scryfall_id": "206239ca-341a-4f07-8149-a24ccf20ee45",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "D-7 Battle Cruiser": {
+      "edhrec_rank": 23393,
+      "gate": null,
+      "name": "D-7 Battle Cruiser",
+      "reason": "",
+      "scryfall_id": "40c41dc2-f67d-4199-a1bb-eb15c776fe8e",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "DOT-7 Repair Squad": {
       "edhrec_rank": null,
       "gate": "template",
@@ -59956,6 +60696,16 @@
       "name": "Daghatar the Adamant",
       "reason": "no template for: Daghatar enters with four +1/+1 counters on it",
       "scryfall_id": "2b7eed1e-7b28-4900-a6ac-67f167476c11",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Dahar Master": {
+      "edhrec_rank": 31436,
+      "gate": null,
+      "name": "Dahar Master",
+      "reason": "",
+      "scryfall_id": "1122fe1c-97f7-409d-ad37-0fed46f9f963",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -60136,6 +60886,16 @@
       "name": "Dakra Mystic",
       "reason": "no template for: {U}, {T}: Each player reveals the top card of their library. You may put the revealed card",
       "scryfall_id": "10c7b066-938a-4e0c-8012-03b20927a2e2",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Dal R'El, Augment Orphan": {
+      "edhrec_rank": 20613,
+      "gate": null,
+      "name": "Dal R'El, Augment Orphan",
+      "reason": "",
+      "scryfall_id": "0da52d3a-dd83-4662-8e6d-3f4d4d389c3d",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -60466,6 +61226,16 @@
       "name": "Dangerous Wager",
       "reason": "no template for: Discard your hand, then draw two cards",
       "scryfall_id": "636c4042-703f-4548-9a0f-cb550c468bf9",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Daniels, Temporal Agent": {
+      "edhrec_rank": 32250,
+      "gate": null,
+      "name": "Daniels, Temporal Agent",
+      "reason": "",
+      "scryfall_id": "b64dd792-7dc7-4d22-9776-9b9e25e1173d",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -61790,12 +62560,52 @@
       "status": "pending",
       "wanted": false
     },
+    "Data, Exploring Humanity": {
+      "edhrec_rank": 19003,
+      "gate": "template",
+      "name": "Data, Exploring Humanity",
+      "reason": "no template for: Seek out — Whenever you draw your second card each turn, discover 4",
+      "scryfall_id": "2c769fc2-b234-4bb2-aac0-1373e6ad07d3",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Data, New Life": {
+      "edhrec_rank": 22723,
+      "gate": null,
+      "name": "Data, New Life",
+      "reason": "",
+      "scryfall_id": "96b7e757-c64d-48c8-bd9c-caad5f3c78fb",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Data, Professor of Humanities": {
+      "edhrec_rank": 23174,
+      "gate": null,
+      "name": "Data, Professor of Humanities",
+      "reason": "",
+      "scryfall_id": "59eedf7b-0738-4a42-88d0-4ba7c7b73480",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Dathon and Picard at El-Adrel": {
       "edhrec_rank": null,
       "gate": "template",
       "name": "Dathon and Picard at El-Adrel",
       "reason": "no template for: Choose one —",
       "scryfall_id": "94e9d400-f2bb-46e7-8d41-6038ebdc6c8b",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Dathon, His Heart Open": {
+      "edhrec_rank": 23495,
+      "gate": null,
+      "name": "Dathon, His Heart Open",
+      "reason": "",
+      "scryfall_id": "51602acb-62f6-4d38-8a0e-f73497c8f512",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -62066,6 +62876,16 @@
       "name": "Dauthi Warlord",
       "reason": "no template for: 's power is equal to the number of creatures on the battlefield with shadow",
       "scryfall_id": "af3ca689-482a-457d-9744-0bd79981f361",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "David and Carol Marcus, Creators": {
+      "edhrec_rank": 25505,
+      "gate": null,
+      "name": "David and Carol Marcus, Creators",
+      "reason": "",
+      "scryfall_id": "43091ed3-a412-48b4-8794-62c0a279e4b2",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -62730,6 +63550,16 @@
       "status": "pending",
       "wanted": false
     },
+    "De-evolve": {
+      "edhrec_rank": 30565,
+      "gate": null,
+      "name": "De-evolve",
+      "reason": "",
+      "scryfall_id": "81d798f1-07dd-46b1-b0b3-411280a2e257",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Dead // Gone": {
       "edhrec_rank": 16624,
       "gate": "template",
@@ -63260,6 +64090,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Deanna Troi, Psychic Counsel": {
+      "edhrec_rank": 21094,
+      "gate": null,
+      "name": "Deanna Troi, Psychic Counsel",
+      "reason": "",
+      "scryfall_id": "1a027761-84e7-4cbf-a629-ae9bd3d8467b",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Dearly Departed": {
       "edhrec_rank": 15968,
       "gate": null,
@@ -63366,6 +64206,16 @@
       "name": "Death Grasp",
       "reason": "no template for: deals X damage to any target. You gain X life",
       "scryfall_id": "7cd6f616-2b22-42ed-818d-02d4a474ca8f",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Death Is Irrelevant": {
+      "edhrec_rank": 18477,
+      "gate": null,
+      "name": "Death Is Irrelevant",
+      "reason": "",
+      "scryfall_id": "408cb5dd-1a79-47a9-98ea-41f3f4502c5e",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -64680,6 +65530,26 @@
       "status": "pending",
       "wanted": false
     },
+    "Deep Space 9": {
+      "edhrec_rank": 12081,
+      "gate": null,
+      "name": "Deep Space 9",
+      "reason": "",
+      "scryfall_id": "473aab2f-cfc2-430b-b785-4b6a491bcd28",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Deep Space Scan": {
+      "edhrec_rank": 24760,
+      "gate": null,
+      "name": "Deep Space Scan",
+      "reason": "",
+      "scryfall_id": "15ffeda3-28ac-4adf-9844-d7b051aae227",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Deep Spawn": {
       "edhrec_rank": 28238,
       "gate": "template",
@@ -65776,6 +66646,16 @@
       "name": "Deliver Unto Evil",
       "reason": "no template for: Choose up to four target cards in your graveyard. If you control a Bolas planeswalker, ret",
       "scryfall_id": "67aa7104-7acc-4827-b763-ac053c99baab",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Deliver from Chaos": {
+      "edhrec_rank": 18437,
+      "gate": null,
+      "name": "Deliver from Chaos",
+      "reason": "",
+      "scryfall_id": "2f5b9460-53e8-4a1e-b635-8e6299fa4ae5",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -71370,6 +72250,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Doctor Strange, Master of Magic": {
+      "edhrec_rank": 30976,
+      "gate": null,
+      "name": "Doctor Strange, Master of Magic",
+      "reason": "",
+      "scryfall_id": "5c661711-6136-49aa-b14b-225407681e5d",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Doctor Strange, Surgeon": {
       "edhrec_rank": 17242,
       "gate": "template",
@@ -71616,6 +72506,26 @@
       "name": "Domineering Will",
       "reason": "no template for: Target player gains control of up to three target nonattacking creatures until end of turn",
       "scryfall_id": "e8c3836d-a08b-424c-aefe-e1585161edf7",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Dominion Assault Force": {
+      "edhrec_rank": 31679,
+      "gate": null,
+      "name": "Dominion Assault Force",
+      "reason": "",
+      "scryfall_id": "28a55f63-1cbd-4362-a192-e42a06f44686",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Dominion Infiltration": {
+      "edhrec_rank": 28400,
+      "gate": null,
+      "name": "Dominion Infiltration",
+      "reason": "",
+      "scryfall_id": "09fbeced-90d7-4cfc-80ae-7b6226d95de5",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -72790,6 +73700,26 @@
       "status": "pending",
       "wanted": false
     },
+    "Dr. Joseph M'Benga": {
+      "edhrec_rank": 17631,
+      "gate": null,
+      "name": "Dr. Joseph M'Benga",
+      "reason": "",
+      "scryfall_id": "71f54ed7-1def-4c3f-9be5-11332fce751f",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Dr. Leonard \"Bones\" McCoy": {
+      "edhrec_rank": 24028,
+      "gate": null,
+      "name": "Dr. Leonard \"Bones\" McCoy",
+      "reason": "",
+      "scryfall_id": "cff4d056-1050-4c08-9b8d-9941e20e974e",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Dr. Madison Li": {
       "edhrec_rank": 6935,
       "gate": null,
@@ -72798,6 +73728,26 @@
       "scryfall_id": "3e356527-66a6-4d71-bc59-0c3bdde3d14c",
       "source": "agent",
       "status": "done",
+      "wanted": false
+    },
+    "Dr. McCoy, Surly Surgeon": {
+      "edhrec_rank": 23338,
+      "gate": null,
+      "name": "Dr. McCoy, Surly Surgeon",
+      "reason": "",
+      "scryfall_id": "00474b9c-620f-44dc-912f-5d1972a1eb22",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Dr. Pulaski, Cynical Clinician": {
+      "edhrec_rank": 25306,
+      "gate": "template",
+      "name": "Dr. Pulaski, Cynical Clinician",
+      "reason": "no template for: Seek out — Whenever you draw your second card each turn, you gain 4 life",
+      "scryfall_id": "0c4ca596-211c-4681-b90e-c91e36fd3e5a",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Drach'Nyen": {
@@ -78460,6 +79410,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Earth, Sector 001": {
+      "edhrec_rank": 21091,
+      "gate": null,
+      "name": "Earth, Sector 001",
+      "reason": "",
+      "scryfall_id": "5278d354-97c4-4c21-a902-2f9252b151eb",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Earth-Cult Elemental": {
       "edhrec_rank": 7659,
       "gate": "template",
@@ -79586,6 +80546,16 @@
       "name": "Eerie Interlude",
       "reason": "no template for: Exile any number of target creatures you control. Return those cards to the battlefield un",
       "scryfall_id": "4ba9f15f-00d2-4797-9228-91b320e85705",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Eerie Interlude // Eerie Interlude": {
+      "edhrec_rank": 998,
+      "gate": null,
+      "name": "Eerie Interlude // Eerie Interlude",
+      "reason": "",
+      "scryfall_id": "35306f70-ec13-469a-9954-0d90b8b8b687",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -81026,6 +81996,16 @@
       "name": "Eligeth, Crossroads Augur",
       "reason": "no template for: If you would scry a number of cards, draw that many cards instead",
       "scryfall_id": "1a0adf34-1a2b-497b-aaab-4b2b998ed8b3",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Elim Garak, Simple Tailor": {
+      "edhrec_rank": 23262,
+      "gate": null,
+      "name": "Elim Garak, Simple Tailor",
+      "reason": "",
+      "scryfall_id": "113bd51a-dfbb-4106-adf3-e567057fcd06",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -82750,6 +83730,16 @@
       "status": "done",
       "wanted": false
     },
+    "Emergency Holographic Crew": {
+      "edhrec_rank": 28725,
+      "gate": null,
+      "name": "Emergency Holographic Crew",
+      "reason": "",
+      "scryfall_id": "53943948-8f24-495a-b6eb-e788fa169fcd",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Emergency Medical Hologram": {
       "edhrec_rank": null,
       "gate": "template",
@@ -82776,6 +83766,16 @@
       "name": "Emergency Powers",
       "reason": "no template for: Each player shuffles their hand and graveyard into their library, then draws seven cards. ",
       "scryfall_id": "6473a93f-879f-4f44-8650-ee05a647c763",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Emergency Regeneration": {
+      "edhrec_rank": 15272,
+      "gate": null,
+      "name": "Emergency Regeneration",
+      "reason": "",
+      "scryfall_id": "2a1b8fcc-df68-4bd1-b2d9-5a41155fbf6e",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -83490,6 +84490,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Encounter the Unknown": {
+      "edhrec_rank": 25243,
+      "gate": null,
+      "name": "Encounter the Unknown",
+      "reason": "",
+      "scryfall_id": "0b45cf00-f72f-4b21-8d80-124893ed3c7f",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Encouraging Aviator // Jump": {
       "edhrec_rank": 17523,
       "gate": "template",
@@ -84020,6 +85030,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Energize": {
+      "edhrec_rank": 30384,
+      "gate": null,
+      "name": "Energize",
+      "reason": "",
+      "scryfall_id": "24e72db3-a8d9-4553-92fe-ba6e40c4f62e",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Energizer": {
       "edhrec_rank": 30156,
       "gate": "template",
@@ -84510,6 +85530,26 @@
       "status": "pending",
       "wanted": false
     },
+    "Ensign Harry Kim, Operations": {
+      "edhrec_rank": 23822,
+      "gate": "template",
+      "name": "Ensign Harry Kim, Operations",
+      "reason": "no template for: Whenever another creature you control enters, if it has greater power than Ensign Kim, put",
+      "scryfall_id": "1ccd6aeb-e6f4-4673-b4f5-a4b66b869992",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Ensign Pavel Chekov": {
+      "edhrec_rank": 25289,
+      "gate": null,
+      "name": "Ensign Pavel Chekov",
+      "reason": "",
+      "scryfall_id": "578709ac-771b-410b-bd71-ba4ab8d466a2",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Enslave": {
       "edhrec_rank": 16935,
       "gate": "template",
@@ -84696,6 +85736,16 @@
       "name": "Enter the Unknown",
       "reason": "no template for: Target creature you control explores",
       "scryfall_id": "96acf94b-75bb-4f0e-92be-978ce5920710",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Enterprise NX-01": {
+      "edhrec_rank": 25402,
+      "gate": null,
+      "name": "Enterprise NX-01",
+      "reason": "",
+      "scryfall_id": "385638fe-cafb-4541-ba37-19bc57520c48",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -85396,6 +86446,16 @@
       "name": "Erhnam Djinn",
       "reason": "no template for: At the beginning of your upkeep, target non-Wall creature an opponent controls gains fores",
       "scryfall_id": "d8aa6020-3a1f-43c6-a8ca-d8caf09fa0c4",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Erica Ortegas, Plucky Pilot": {
+      "edhrec_rank": 27908,
+      "gate": null,
+      "name": "Erica Ortegas, Plucky Pilot",
+      "reason": "",
+      "scryfall_id": "3667eb41-598e-4543-97ed-6da961f8b567",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -86226,6 +87286,16 @@
       "name": "Essence Flux",
       "reason": "no template for: Exile target creature you control, then return that card to the battlefield under its owne",
       "scryfall_id": "be9cb87e-d741-4f17-bbb7-f6d2292f820f",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Essence Flux // Essence Flux": {
+      "edhrec_rank": 903,
+      "gate": null,
+      "name": "Essence Flux // Essence Flux",
+      "reason": "",
+      "scryfall_id": "a4e971ed-f532-4f4b-a5ad-d08ff214fa9a",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -87700,6 +88770,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Excalbian Gamemaster": {
+      "edhrec_rank": 24292,
+      "gate": null,
+      "name": "Excalbian Gamemaster",
+      "reason": "",
+      "scryfall_id": "31b5780c-8c5f-4836-8848-1eea1d416a93",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Excalibur II": {
       "edhrec_rank": 4855,
       "gate": "template",
@@ -87806,6 +88886,16 @@
       "name": "Excavator",
       "reason": "no template for: {T}, Sacrifice a basic land: Target creature gains landwalk of each of the land types of t",
       "scryfall_id": "6dc3d5b4-b04f-4b34-afd2-72fb3de0a33b",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Exchange of Words": {
+      "edhrec_rank": 10848,
+      "gate": null,
+      "name": "Exchange of Words",
+      "reason": "",
+      "scryfall_id": "965976b0-2027-4b31-a295-f414381637f2",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -88540,6 +89630,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Exploratory Mission": {
+      "edhrec_rank": 22895,
+      "gate": null,
+      "name": "Exploratory Mission",
+      "reason": "",
+      "scryfall_id": "61bb2ec5-5f04-4c34-ba72-7fa226922c5c",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Explore the Underdark": {
       "edhrec_rank": 5563,
       "gate": "template",
@@ -89016,6 +90116,16 @@
       "name": "Extract the Truth",
       "reason": "no template for: Choose one —",
       "scryfall_id": "2bdb9df1-4475-45e7-bc9c-40937c8c1722",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Extraction Integrant": {
+      "edhrec_rank": 16659,
+      "gate": null,
+      "name": "Extraction Integrant",
+      "reason": "",
+      "scryfall_id": "957b8417-aad1-4e3c-9908-de155d02333e",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -89516,6 +90626,16 @@
       "name": "Ezio, Brash Novice",
       "reason": "no template for: Whenever Ezio attacks, put a +1/+1 counter on it",
       "scryfall_id": "3351cae2-87be-4438-ba58-f4f4aff2416c",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Ezri Dax, Newly Joined": {
+      "edhrec_rank": 25727,
+      "gate": "template",
+      "name": "Ezri Dax, Newly Joined",
+      "reason": "no template for: You may have Ezri Dax enter as a copy of any creature card in your graveyard that was put ",
+      "scryfall_id": "f1e43d7f-682b-4cb6-ad3c-4dfb2b9253c6",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -92790,12 +93910,32 @@
       "status": "pending",
       "wanted": false
     },
+    "Federation Outpost": {
+      "edhrec_rank": 16527,
+      "gate": null,
+      "name": "Federation Outpost",
+      "reason": "",
+      "scryfall_id": "02e368bd-ece8-4201-8d1a-4c5287d5cfee",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Federation Probe": {
       "edhrec_rank": null,
       "gate": "template",
       "name": "Federation Probe",
       "reason": "no template for: When this creature enters, choose one —",
       "scryfall_id": "f988ba84-fc78-41a2-b2f2-eebf78cee591",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Federation Resupply": {
+      "edhrec_rank": 18469,
+      "gate": null,
+      "name": "Federation Resupply",
+      "reason": "",
+      "scryfall_id": "28a6184b-69ee-453e-be58-49180ed72a39",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -93630,6 +94770,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Ferenginar": {
+      "edhrec_rank": 25247,
+      "gate": null,
+      "name": "Ferenginar",
+      "reason": "",
+      "scryfall_id": "17fab75f-7ff9-4c50-a6f7-03a85cd275bf",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Ferocification": {
       "edhrec_rank": 13911,
       "gate": "template",
@@ -93646,6 +94796,16 @@
       "name": "Ferocious Charge",
       "reason": "no template for: Target creature gets +4/+4 until end of turn. Scry 2",
       "scryfall_id": "3749181f-7b4e-4b9d-aaf3-94f707c306aa",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Ferocious Colonist": {
+      "edhrec_rank": 27951,
+      "gate": null,
+      "name": "Ferocious Colonist",
+      "reason": "",
+      "scryfall_id": "3cb42c08-b167-40ac-a9be-00630ba31b83",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -95036,6 +96196,16 @@
       "name": "Final Fortune",
       "reason": "no template for: Take an extra turn after this one. At the beginning of that turn's end step, you lose the ",
       "scryfall_id": "c7b110c0-7211-4192-b065-37a25f832698",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Final Frontier": {
+      "edhrec_rank": 22949,
+      "gate": null,
+      "name": "Final Frontier",
+      "reason": "",
+      "scryfall_id": "34ea6df3-36e3-42c5-a4ed-a4cd18ec6dd0",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -97738,6 +98908,16 @@
       "scryfall_id": "0afb3c64-c88a-417b-a1f7-2edea045cb14",
       "source": "agent",
       "status": "done",
+      "wanted": false
+    },
+    "Fleet Captain Christopher Pike": {
+      "edhrec_rank": 25276,
+      "gate": null,
+      "name": "Fleet Captain Christopher Pike",
+      "reason": "",
+      "scryfall_id": "0e9c7fbf-fe01-43b1-834f-3c6ba2bbd217",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Fleet Swallower": {
@@ -103030,6 +104210,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Fugitive Listener": {
+      "edhrec_rank": 31676,
+      "gate": null,
+      "name": "Fugitive Listener",
+      "reason": "",
+      "scryfall_id": "bd04c738-b4e3-481e-9a68-d257524bf40e",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Fugitive Wizard": {
       "edhrec_rank": 27966,
       "gate": null,
@@ -103980,6 +105170,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Gabriel Lorca, Mirror Menace": {
+      "edhrec_rank": 30392,
+      "gate": null,
+      "name": "Gabriel Lorca, Mirror Menace",
+      "reason": "",
+      "scryfall_id": "a98d0f01-8e5e-4ff1-88e5-684b8f4c015c",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Gaddock Teeg": {
       "edhrec_rank": 9314,
       "gate": "template",
@@ -104206,6 +105406,16 @@
       "name": "Gaelicat",
       "reason": "no template for: As long as you control two or more artifacts, this creature gets +2/+0",
       "scryfall_id": "29606c49-e1a4-49c3-883b-9122c08bbbc7",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Gagh Slinger": {
+      "edhrec_rank": 24846,
+      "gate": null,
+      "name": "Gagh Slinger",
+      "reason": "",
+      "scryfall_id": "74d92802-7cca-4892-962b-95758007c719",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -104790,6 +106000,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Galvanizing Tenor": {
+      "edhrec_rank": 27169,
+      "gate": null,
+      "name": "Galvanizing Tenor",
+      "reason": "",
+      "scryfall_id": "6727d111-d99b-4027-ad5d-81568e366b6e",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Galvanoth": {
       "edhrec_rank": 12950,
       "gate": "template",
@@ -105136,6 +106356,16 @@
       "name": "Gargadon",
       "reason": "no template for: Suspend 4—{1}{R}",
       "scryfall_id": "079d5536-1b2e-4d5b-bae9-9fd14562087a",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Gargantos, the Endbringer": {
+      "edhrec_rank": 24895,
+      "gate": null,
+      "name": "Gargantos, the Endbringer",
+      "reason": "",
+      "scryfall_id": "60b48730-3590-4c8c-b0e8-6007bb36d6b6",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -105556,6 +106786,16 @@
       "name": "Gas Guzzler",
       "reason": "no template for: Start your engines!",
       "scryfall_id": "3150199e-9e4f-486d-bfb0-fc2a9feb8536",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Gaseous Anomaly": {
+      "edhrec_rank": 24552,
+      "gate": null,
+      "name": "Gaseous Anomaly",
+      "reason": "",
+      "scryfall_id": "e6974579-7e88-4d7f-9b05-93d08167cb17",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -106750,6 +107990,26 @@
       "status": "pending",
       "wanted": false
     },
+    "Genesis Device": {
+      "edhrec_rank": 18424,
+      "gate": null,
+      "name": "Genesis Device",
+      "reason": "",
+      "scryfall_id": "6a5b94ba-ac1f-478e-981f-7dfc31ad02f9",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Genesis Effect": {
+      "edhrec_rank": 29467,
+      "gate": null,
+      "name": "Genesis Effect",
+      "reason": "",
+      "scryfall_id": "f0996bab-c2e4-4483-a76e-1355c81f1577",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Genesis Hydra": {
       "edhrec_rank": 2594,
       "gate": null,
@@ -106976,6 +108236,26 @@
       "name": "Geometric Nexus",
       "reason": "no template for: Whenever a player casts an instant or sorcery spell, put a number of charge counters on th",
       "scryfall_id": "3f200a52-ecf6-4890-9307-e9296080ff9a",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Geordi La Forge, Innovator": {
+      "edhrec_rank": 22836,
+      "gate": "template",
+      "name": "Geordi La Forge, Innovator",
+      "reason": "no template for: Geordi La Forge can't be blocked if you control a Spacecraft",
+      "scryfall_id": "b5b349ba-6421-487a-b4f7-f35fde7a7995",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Georgiou, Terran Emperor": {
+      "edhrec_rank": 22993,
+      "gate": null,
+      "name": "Georgiou, Terran Emperor",
+      "reason": "",
+      "scryfall_id": "53401f53-aebe-4538-82be-9d6916c01c76",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -107870,6 +109150,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Ghost of Illyria": {
+      "edhrec_rank": 31343,
+      "gate": null,
+      "name": "Ghost of Illyria",
+      "reason": "",
+      "scryfall_id": "99830058-c97a-4326-8c2f-8658cf8a1561",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Ghost of Ramirez DePietro": {
       "edhrec_rank": 9699,
       "gate": null,
@@ -108600,6 +109890,16 @@
       "status": "done",
       "wanted": false
     },
+    "Giant Space Amoeba": {
+      "edhrec_rank": 28231,
+      "gate": null,
+      "name": "Giant Space Amoeba",
+      "reason": "",
+      "scryfall_id": "6b49ed91-0898-4d03-8f5f-e5f39813e3ef",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Giant Spectacle": {
       "edhrec_rank": 19960,
       "gate": null,
@@ -109116,6 +110416,16 @@
       "name": "Gift of Paradise",
       "reason": "no template for: When this Aura enters, you gain 3 life",
       "scryfall_id": "48273e83-139a-43a4-9bb8-171d3620da60",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Gift of Perfection": {
+      "edhrec_rank": 20962,
+      "gate": null,
+      "name": "Gift of Perfection",
+      "reason": "",
+      "scryfall_id": "7589eda0-0a0b-4372-9cee-ea379d6a6f61",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -111580,6 +112890,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Glory to the Empire!": {
+      "edhrec_rank": 26545,
+      "gate": null,
+      "name": "Glory to the Empire!",
+      "reason": "",
+      "scryfall_id": "0bb3c5ef-257f-4505-8781-c6db8e12d59a",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Glory-Bound Initiate": {
       "edhrec_rank": 23589,
       "gate": "template",
@@ -111946,6 +113266,16 @@
       "name": "Gnarlid Pack",
       "reason": "no template for: Multikicker {1}{G}",
       "scryfall_id": "1e445fa9-ea4a-4276-8211-de023a56dff6",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Gnarling Targ": {
+      "edhrec_rank": 28018,
+      "gate": null,
+      "name": "Gnarling Targ",
+      "reason": "",
+      "scryfall_id": "19537ae7-01ea-4a03-975c-9230f3f3ae4b",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -115170,6 +116500,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Goramou the Coral-Taken": {
+      "edhrec_rank": 23451,
+      "gate": null,
+      "name": "Goramou the Coral-Taken",
+      "reason": "",
+      "scryfall_id": "1d478480-d5ab-4e97-a51d-25a17681c544",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Gorbag of Minas Morgul": {
       "edhrec_rank": 10195,
       "gate": "template",
@@ -115570,6 +116910,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Gowron, Eager for Battle": {
+      "edhrec_rank": 27296,
+      "gate": null,
+      "name": "Gowron, Eager for Battle",
+      "reason": "",
+      "scryfall_id": "1a7bda12-b72b-49e6-a086-644d0560ddc9",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Graaz, Unstoppable Juggernaut": {
       "edhrec_rank": 6994,
       "gate": null,
@@ -115946,6 +117296,16 @@
       "name": "Grand Melee",
       "reason": "no template for: All creatures attack each combat if able",
       "scryfall_id": "9a0d3142-4224-4b51-885d-33c8938418c1",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Grand Nagus Zek": {
+      "edhrec_rank": 26064,
+      "gate": null,
+      "name": "Grand Nagus Zek",
+      "reason": "",
+      "scryfall_id": "2d1651f5-7bc9-4d65-9387-f4646a04e816",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -116936,6 +118296,16 @@
       "name": "Gray Slaad // Entropic Decay",
       "reason": "no template for: As long as there are four or more creature cards in your graveyard, this creature has mena",
       "scryfall_id": "0c2b6960-ff4c-4557-ba6d-d504f87d4516",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Gray and Adira, Forever Joined": {
+      "edhrec_rank": 27952,
+      "gate": null,
+      "name": "Gray and Adira, Forever Joined",
+      "reason": "",
+      "scryfall_id": "eede6822-c8bc-4344-81a9-bc608245d5b6",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -118046,6 +119416,16 @@
       "name": "Grifter's Blade",
       "reason": "no template for: As this Equipment enters, choose a creature you control it could be attached to. If you do",
       "scryfall_id": "7c411784-fe96-42c0-baaa-36616d2be0b3",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Grilka, Widowed Warrior": {
+      "edhrec_rank": 26432,
+      "gate": null,
+      "name": "Grilka, Widowed Warrior",
+      "reason": "",
+      "scryfall_id": "63d3add3-be3f-4ced-85c5-a7d4891b11f5",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -120350,12 +121730,32 @@
       "status": "pending",
       "wanted": false
     },
+    "Guinan, Ancient Advisor": {
+      "edhrec_rank": 25182,
+      "gate": "template",
+      "name": "Guinan, Ancient Advisor",
+      "reason": "no template for: {1}, {T}: Put a +1/+1 counter on each creature you control that entered this turn. If you ",
+      "scryfall_id": "06fa6050-0f9d-46a2-9635-8d05899dbc49",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Guise of Fire": {
       "edhrec_rank": 28284,
       "gate": "template",
       "name": "Guise of Fire",
       "reason": "no template for: Enchanted creature gets +1/-1 and attacks each combat if able",
       "scryfall_id": "beb10d42-fa19-400c-bad8-ec3827f077bc",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Gul Dukat, Colonial Prefect": {
+      "edhrec_rank": 24076,
+      "gate": null,
+      "name": "Gul Dukat, Colonial Prefect",
+      "reason": "",
+      "scryfall_id": "7adc6373-1196-448f-8aee-cee7a890c724",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -120900,6 +122300,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Gwyndala, the Progeny": {
+      "edhrec_rank": 27197,
+      "gate": null,
+      "name": "Gwyndala, the Progeny",
+      "reason": "",
+      "scryfall_id": "2f1e927f-dd27-4af3-8941-64ce80e16e36",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Gylwain, Casting Director": {
       "edhrec_rank": 10565,
       "gate": null,
@@ -120988,6 +122398,16 @@
       "scryfall_id": "5e2f9f4c-dbdd-4da6-b08f-1f4d3fcb1328",
       "source": "agent",
       "status": "done",
+      "wanted": false
+    },
+    "H.M.S. Bounty, Unlikely Timeship": {
+      "edhrec_rank": 25073,
+      "gate": null,
+      "name": "H.M.S. Bounty, Unlikely Timeship",
+      "reason": "",
+      "scryfall_id": "15403912-07e8-4f52-9861-c0fc1d2b5a92",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "HELIOS One": {
@@ -125430,6 +126850,26 @@
       "status": "pending",
       "wanted": false
     },
+    "Hela's Arcanum": {
+      "edhrec_rank": 31925,
+      "gate": null,
+      "name": "Hela's Arcanum",
+      "reason": "",
+      "scryfall_id": "738f0bc9-075c-45de-a1c3-7509b8bdb55b",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Hela, Mistress of Darkness // Dark Tutor": {
+      "edhrec_rank": 25615,
+      "gate": null,
+      "name": "Hela, Mistress of Darkness // Dark Tutor",
+      "reason": "",
+      "scryfall_id": "7750d4bb-0463-43fd-bdf3-a14271cace20",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Helbrute": {
       "edhrec_rank": 19686,
       "gate": null,
@@ -126036,6 +127476,16 @@
       "name": "Hemlock Vial",
       "reason": "no template for: When this artifact enters, you draw a card and you lose 1 life",
       "scryfall_id": "181fb6b8-7c74-42f7-82f2-33503c1f910a",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Hemmer, Fixing What Is Broken": {
+      "edhrec_rank": 23623,
+      "gate": null,
+      "name": "Hemmer, Fixing What Is Broken",
+      "reason": "",
+      "scryfall_id": "f3e730d7-3fd1-4bd2-a35b-6fb85bfd3c65",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -128370,6 +129820,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Hit It!": {
+      "edhrec_rank": 21188,
+      "gate": null,
+      "name": "Hit It!",
+      "reason": "",
+      "scryfall_id": "2dad81b5-caf4-4d1c-9a29-8b556984d3f1",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Hit the Mother Lode": {
       "edhrec_rank": 1845,
       "gate": null,
@@ -128976,6 +130436,36 @@
       "name": "Hollowsage",
       "reason": "no template for: Whenever this creature becomes untapped, you may have target player discard a card",
       "scryfall_id": "b6618713-0573-44f6-82d9-dfc16dfef052",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Holo-Engineer": {
+      "edhrec_rank": 30872,
+      "gate": null,
+      "name": "Holo-Engineer",
+      "reason": "",
+      "scryfall_id": "acfaf5f3-a4f5-418a-a29a-211b33bf18ee",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Hologram Janeway": {
+      "edhrec_rank": 27914,
+      "gate": null,
+      "name": "Hologram Janeway",
+      "reason": "",
+      "scryfall_id": "02d29047-a7b8-43fb-8b90-b35ba34da5f9",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Hologram Stalker": {
+      "edhrec_rank": 30786,
+      "gate": null,
+      "name": "Hologram Stalker",
+      "reason": "",
+      "scryfall_id": "6bd8a87b-ca7a-4a15-b96f-1a673ee44f3e",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -131030,6 +132520,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Hugh, First of Many": {
+      "edhrec_rank": 16118,
+      "gate": null,
+      "name": "Hugh, First of Many",
+      "reason": "",
+      "scryfall_id": "4c4fd011-47a0-4f8e-a1c1-5e9a1568b0bc",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Hugs, Grisly Guardian": {
       "edhrec_rank": 4810,
       "gate": "template",
@@ -132626,6 +134126,16 @@
       "name": "I'm a Doctor, Not a . . .",
       "reason": "no template for: Put a +1/+1 counter on target creature you control. Untap it. Until end of turn, it gets +",
       "scryfall_id": "c07979d4-8a58-4cfb-bffa-74e8bd97c7ff",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "I.K.S. Negh'Var, Imperial Flagship": {
+      "edhrec_rank": 26270,
+      "gate": null,
+      "name": "I.K.S. Negh'Var, Imperial Flagship",
+      "reason": "",
+      "scryfall_id": "1a9b48d4-3954-4073-a629-a4e31b9bc962",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -134630,6 +136140,16 @@
       "status": "done",
       "wanted": false
     },
+    "Imperial Hullbreachers": {
+      "edhrec_rank": 26974,
+      "gate": null,
+      "name": "Imperial Hullbreachers",
+      "reason": "",
+      "scryfall_id": "67d6472b-383e-4ad4-aeb6-7dd6fb9bbd23",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Imperial Lancer": {
       "edhrec_rank": 28722,
       "gate": "template",
@@ -134918,6 +136438,16 @@
       "scryfall_id": "24a256b0-e25b-43c6-9f7a-2ad76b268d22",
       "source": "template:enchant,attached:grant",
       "status": "done",
+      "wanted": false
+    },
+    "Impossible Choice": {
+      "edhrec_rank": 21698,
+      "gate": null,
+      "name": "Impossible Choice",
+      "reason": "",
+      "scryfall_id": "6c5a87cf-7790-4335-8497-ff793bbdcb05",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Impossible Inferno": {
@@ -135676,6 +137206,16 @@
       "name": "Indebted Spirit",
       "reason": "no template for: Bestow {2}{W}",
       "scryfall_id": "bfdbef00-bc1b-4dd6-aef5-aeb5ce454344",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Indelicate Healer": {
+      "edhrec_rank": 26939,
+      "gate": null,
+      "name": "Indelicate Healer",
+      "reason": "",
+      "scryfall_id": "39da1e17-d5d1-4252-bdd7-42e6541e6ab6",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -136546,6 +138086,16 @@
       "name": "Infinite Coursework",
       "reason": "",
       "scryfall_id": "a5988272-faaa-463d-a0a1-a8e96b946bad",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Infinite Diversity": {
+      "edhrec_rank": 27877,
+      "gate": null,
+      "name": "Infinite Diversity",
+      "reason": "",
+      "scryfall_id": "2da35dd7-e6b8-47d4-9e92-f5158a4d9d7e",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -138146,6 +139696,16 @@
       "name": "Interpret the Signs",
       "reason": "no template for: Scry 3, then reveal the top card of your library. Draw cards equal to that card's mana val",
       "scryfall_id": "5fc72645-d2c3-40cd-81d7-77142e495c8d",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Interstellar Effigy": {
+      "edhrec_rank": 31947,
+      "gate": null,
+      "name": "Interstellar Effigy",
+      "reason": "",
+      "scryfall_id": "4b7d505f-2a6b-4525-87c7-19e06d49c9df",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -140580,6 +142140,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Isolinear Processor": {
+      "edhrec_rank": 25314,
+      "gate": null,
+      "name": "Isolinear Processor",
+      "reason": "",
+      "scryfall_id": "8c1a2c13-5e36-4707-9d90-18c2e58a2b26",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Isperia the Inscrutable": {
       "edhrec_rank": 20066,
       "gate": "template",
@@ -141840,6 +143410,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Jadzia Dax, Living Legacy": {
+      "edhrec_rank": 19659,
+      "gate": null,
+      "name": "Jadzia Dax, Living Legacy",
+      "reason": "",
+      "scryfall_id": "6eff742c-9b8a-4458-976e-577d34e9c1d8",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Jagged Barrens": {
       "edhrec_rank": 3615,
       "gate": "template",
@@ -141928,6 +143508,16 @@
       "scryfall_id": "a4be8e47-9006-4770-8d99-68a684064a43",
       "source": "agent",
       "status": "done",
+      "wanted": false
+    },
+    "Jake Sisko, War Correspondent": {
+      "edhrec_rank": 25785,
+      "gate": null,
+      "name": "Jake Sisko, War Correspondent",
+      "reason": "",
+      "scryfall_id": "9e47c6b6-f99b-46be-98a1-92c98416aefe",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Jalira, Master Polymorphist": {
@@ -142026,6 +143616,16 @@
       "name": "Jangling Automaton",
       "reason": "no template for: Whenever this creature attacks, untap all creatures defending player controls",
       "scryfall_id": "2e2a427b-9869-4059-aeeb-d9b97b324e4e",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Janice Rand, Essential Aide": {
+      "edhrec_rank": 22539,
+      "gate": null,
+      "name": "Janice Rand, Essential Aide",
+      "reason": "",
+      "scryfall_id": "92925156-ffd3-4f8a-8592-ccbd935ab894",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -142370,6 +143970,26 @@
       "status": "done",
       "wanted": false
     },
+    "Jean-Luc Picard, Luminary": {
+      "edhrec_rank": 19504,
+      "gate": "template",
+      "name": "Jean-Luc Picard, Luminary",
+      "reason": "no template for: Whenever another historic permanent you control with mana value 3 or greater enters, draw ",
+      "scryfall_id": "3221fc7e-2eed-4517-a785-3e3a1748450f",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Jean-Luc, Mon Capitaine": {
+      "edhrec_rank": 27551,
+      "gate": null,
+      "name": "Jean-Luc, Mon Capitaine",
+      "reason": "",
+      "scryfall_id": "f8ce0f9a-a6d9-497d-bdca-2cf57f08a84c",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Jecht, Reluctant Guardian // Braska's Final Aeon": {
       "edhrec_rank": 6558,
       "gate": "template",
@@ -142436,6 +144056,16 @@
       "name": "Jeering Instigator",
       "reason": "no template for: Morph {2}{R}",
       "scryfall_id": "72777ccf-1cd8-45e8-8dfb-0a42550b5607",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Jefferies Tube": {
+      "edhrec_rank": 22331,
+      "gate": null,
+      "name": "Jefferies Tube",
+      "reason": "",
+      "scryfall_id": "6b81db51-ae7e-4f4b-9071-afabc72f61c0",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -142928,6 +144558,16 @@
       "scryfall_id": "399bf36a-5901-437f-b5d3-32283cedbbcb",
       "source": "",
       "status": "unexpressible",
+      "wanted": false
+    },
+    "Jett Reno, Problem Solver": {
+      "edhrec_rank": 26396,
+      "gate": null,
+      "name": "Jett Reno, Problem Solver",
+      "reason": "",
+      "scryfall_id": "6dc34d44-397a-4dda-a8e3-0c2ff7da110f",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Jetting Glasskite": {
@@ -143496,6 +145136,16 @@
       "name": "Join Shields",
       "reason": "no template for: Untap all creatures you control. They gain hexproof and indestructible until end of turn",
       "scryfall_id": "d3a5c2e5-7914-4edc-960a-75f3dfb5afc4",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Join the Collective": {
+      "edhrec_rank": 18856,
+      "gate": null,
+      "name": "Join the Collective",
+      "reason": "",
+      "scryfall_id": "2f601ac1-92e3-46dd-b9d8-dfb4a7f7eb81",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -144240,6 +145890,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Julian Bashir, Frontier Doctor": {
+      "edhrec_rank": 22513,
+      "gate": "template",
+      "name": "Julian Bashir, Frontier Doctor",
+      "reason": "no template for: Seek out — Whenever you draw your second card each turn, put a +1/+1 counter on Julian Bas",
+      "scryfall_id": "0301c7fe-2acf-4f7b-9941-fd7e44a81e15",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Jumbo Cactuar": {
       "edhrec_rank": 3157,
       "gate": "template",
@@ -144630,6 +146290,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Jurati, Cordial Queen": {
+      "edhrec_rank": 15523,
+      "gate": null,
+      "name": "Jurati, Cordial Queen",
+      "reason": "",
+      "scryfall_id": "8983cc30-d377-4c02-bc53-74e84b41513c",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Juri, Master of the Revue": {
       "edhrec_rank": 1857,
       "gate": null,
@@ -144840,6 +146510,16 @@
       "status": "pending",
       "wanted": false
     },
+    "K'Vort-Class Raider": {
+      "edhrec_rank": 21527,
+      "gate": null,
+      "name": "K'Vort-Class Raider",
+      "reason": "",
+      "scryfall_id": "9e2ad655-5206-4832-a350-ebfffdc180ff",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "K'rrik, Son of Yawgmoth": {
       "edhrec_rank": 1070,
       "gate": null,
@@ -144848,6 +146528,16 @@
       "scryfall_id": "45393005-78c7-4056-9ce6-310264922af3",
       "source": "agent",
       "status": "done",
+      "wanted": false
+    },
+    "K't'inga-Class Battle Cruiser": {
+      "edhrec_rank": 27276,
+      "gate": null,
+      "name": "K't'inga-Class Battle Cruiser",
+      "reason": "",
+      "scryfall_id": "1e7f2f10-3eb4-47ac-8a0e-0821b5e7084c",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "K'un-Lun Warrior": {
@@ -145106,6 +146796,16 @@
       "name": "Kaho, Minamo Historian",
       "reason": "no template for: When Kaho enters, search your library for up to three instant cards, exile them, then shuf",
       "scryfall_id": "7a5ad263-6b0d-4eaa-bc5a-16f5077206e1",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Kai Winn, Faithless Leader": {
+      "edhrec_rank": 31043,
+      "gate": null,
+      "name": "Kai Winn, Faithless Leader",
+      "reason": "",
+      "scryfall_id": "76e49c4e-ebb8-4821-9709-ec6ec1745aa3",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -145766,6 +147466,16 @@
       "name": "Kang the Conqueror",
       "reason": "no template for: Power-up — {5}{U}{U}{U}: Put a +1/+1 counter on Kang. Take an extra turn after this one. D",
       "scryfall_id": "55b486ad-53bd-4255-9f8e-286b300e7e43",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Kang, Suspicious Captain": {
+      "edhrec_rank": 26171,
+      "gate": null,
+      "name": "Kang, Suspicious Captain",
+      "reason": "",
+      "scryfall_id": "3dccf6b9-2971-41e0-9ff8-4eff09480eae",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -148120,6 +149830,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Kes, Evolving Telepath": {
+      "edhrec_rank": 27011,
+      "gate": "template",
+      "name": "Kes, Evolving Telepath",
+      "reason": "no template for: At the beginning of your end step, put a time counter on Kes, then draw X cards, where X i",
+      "scryfall_id": "282b02ed-9bfb-4490-947f-f0cc10d50b7f",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Keskit, the Flesh Sculptor": {
       "edhrec_rank": 13397,
       "gate": null,
@@ -148426,6 +150146,26 @@
       "name": "Khalni Hydra",
       "reason": "no template for: This spell costs {G} less to cast for each green creature you control",
       "scryfall_id": "06d17713-a67e-471f-89ed-4866acb52ba4",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Khan, Despot by Design": {
+      "edhrec_rank": 31426,
+      "gate": null,
+      "name": "Khan, Despot by Design",
+      "reason": "",
+      "scryfall_id": "0c7fed60-4bec-47a4-81e3-4654e74386d2",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Khan, Vengeful Heart": {
+      "edhrec_rank": 23232,
+      "gate": null,
+      "name": "Khan, Vengeful Heart",
+      "reason": "",
+      "scryfall_id": "80dcc7dd-203f-4a3b-afe7-52987bbd006b",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -149540,6 +151280,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Kira Nerys, Firebrand": {
+      "edhrec_rank": 23999,
+      "gate": null,
+      "name": "Kira Nerys, Firebrand",
+      "reason": "",
+      "scryfall_id": "81ad6427-e730-47c9-8310-6d3ca4b10c82",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Kira, Great Glass-Spinner": {
       "edhrec_rank": 5487,
       "gate": "template",
@@ -149580,12 +151330,32 @@
       "status": "pending",
       "wanted": false
     },
+    "Kirk, Commanding Officer": {
+      "edhrec_rank": 27742,
+      "gate": null,
+      "name": "Kirk, Commanding Officer",
+      "reason": "",
+      "scryfall_id": "245d0430-0967-44f1-8c59-985104a8db30",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Kirk, Enterprising Captain": {
       "edhrec_rank": 31939,
       "gate": "template",
       "name": "Kirk, Enterprising Captain",
       "reason": "no template for: Whenever Kirk attacks while creatures you control have total power 8 or greater, exile the",
       "scryfall_id": "e1d339e1-3433-4630-965e-1841e46b40a4",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Kirk, Man of Action": {
+      "edhrec_rank": 26879,
+      "gate": null,
+      "name": "Kirk, Man of Action",
+      "reason": "",
+      "scryfall_id": "f0944425-2caa-4fde-82be-2f1f5c7d8e13",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -151050,6 +152820,16 @@
       "status": "done",
       "wanted": false
     },
+    "Kobayashi Maru Scenario": {
+      "edhrec_rank": 25385,
+      "gate": null,
+      "name": "Kobayashi Maru Scenario",
+      "reason": "",
+      "scryfall_id": "406806fa-213e-40ed-aaee-47ff21f36551",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Kobold Drill Sergeant": {
       "edhrec_rank": 20345,
       "gate": "template",
@@ -151306,6 +153086,16 @@
       "name": "Kolodin, Triumph Caster",
       "reason": "no template for: Mounts and Vehicles you control have haste",
       "scryfall_id": "33887384-a2bb-4daf-b932-a4259c93b808",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Koloth, Tribble Hunter": {
+      "edhrec_rank": 22786,
+      "gate": null,
+      "name": "Koloth, Tribble Hunter",
+      "reason": "",
+      "scryfall_id": "33bfbd68-fc0f-41ce-b033-975fe9ba960a",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -151690,6 +153480,16 @@
       "status": "done",
       "wanted": false
     },
+    "Kor, Cause of Vengeance": {
+      "edhrec_rank": 26223,
+      "gate": null,
+      "name": "Kor, Cause of Vengeance",
+      "reason": "",
+      "scryfall_id": "9e4364a4-6dac-4eea-be75-9f8ce1b3e334",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Korlash, Heir to Blackblade": {
       "edhrec_rank": 16323,
       "gate": "template",
@@ -151716,6 +153516,16 @@
       "name": "Kormus Bell",
       "reason": "no template for: All Swamps are 1/1 black creatures that are still lands",
       "scryfall_id": "3bd054ed-9c91-4bc6-9d0d-0c045c089bd9",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Korok, Liberated Rage": {
+      "edhrec_rank": 20772,
+      "gate": null,
+      "name": "Korok, Liberated Rage",
+      "reason": "",
+      "scryfall_id": "4a861490-8541-40fe-af7b-f7e242372b69",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -153260,6 +155070,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Kurn, Son of Mogh": {
+      "edhrec_rank": 24713,
+      "gate": null,
+      "name": "Kurn, Son of Mogh",
+      "reason": "",
+      "scryfall_id": "03fcc84d-45cc-4894-ab35-6d5a799b21ef",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Kuro's Taken": {
       "edhrec_rank": 20798,
       "gate": "template",
@@ -153610,12 +155430,32 @@
       "status": "pending",
       "wanted": false
     },
+    "L'Rell, Fierce Visionary": {
+      "edhrec_rank": 25297,
+      "gate": null,
+      "name": "L'Rell, Fierce Visionary",
+      "reason": "",
+      "scryfall_id": "51161805-0955-49b7-97f3-20b002c9b86e",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "La Forge, Perceptive Engineer": {
       "edhrec_rank": null,
       "gate": "template",
       "name": "La Forge, Perceptive Engineer",
       "reason": "no template for: {T}: Add {U}. Spend this mana only to cast an artifact spell",
       "scryfall_id": "c2412446-ddff-40fa-b180-9385c691a9fd",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "La Forge, Thoughtful as Ever": {
+      "edhrec_rank": 27529,
+      "gate": null,
+      "name": "La Forge, Thoughtful as Ever",
+      "reason": "",
+      "scryfall_id": "09ee57fa-c301-4278-9db6-8d6ebab7ce38",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -157610,12 +159450,42 @@
       "status": "pending",
       "wanted": false
     },
+    "Lieutenant Commander Data": {
+      "edhrec_rank": 20822,
+      "gate": null,
+      "name": "Lieutenant Commander Data",
+      "reason": "",
+      "scryfall_id": "191809e6-87f5-414e-a45e-62988f092832",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Lieutenant Hikaru Sulu": {
+      "edhrec_rank": 24015,
+      "gate": null,
+      "name": "Lieutenant Hikaru Sulu",
+      "reason": "",
+      "scryfall_id": "57c92aae-f0c1-46f9-a99e-66a6419c8b38",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Lieutenant Kirtar": {
       "edhrec_rank": 15125,
       "gate": "template",
       "name": "Lieutenant Kirtar",
       "reason": "no template for: {1}{W}, Sacrifice : Exile target attacking creature",
       "scryfall_id": "475ba0c3-237e-4349-85e9-c31b016f609b",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Lieutenant Nyota Uhura": {
+      "edhrec_rank": 24468,
+      "gate": null,
+      "name": "Lieutenant Nyota Uhura",
+      "reason": "",
+      "scryfall_id": "4f932b20-3f3e-4f59-ab82-46733e3f54b9",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -159600,6 +161470,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Live Long and Prosper": {
+      "edhrec_rank": 23913,
+      "gate": null,
+      "name": "Live Long and Prosper",
+      "reason": "",
+      "scryfall_id": "0fc50ffc-3b4d-4fb3-898f-c308a63eb6e9",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Live or Die": {
       "edhrec_rank": 10781,
       "gate": "template",
@@ -160570,6 +162450,26 @@
       "status": "pending",
       "wanted": false
     },
+    "Locutus of Borg": {
+      "edhrec_rank": 14912,
+      "gate": null,
+      "name": "Locutus of Borg",
+      "reason": "",
+      "scryfall_id": "1b2e5971-d31c-4f6d-9bee-4b13a402e798",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Locutus, the One Who Speaks": {
+      "edhrec_rank": 16740,
+      "gate": null,
+      "name": "Locutus, the One Who Speaks",
+      "reason": "",
+      "scryfall_id": "15387ef2-c761-4906-8909-4cf7dddefd9b",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Lodestone Bauble": {
       "edhrec_rank": 13340,
       "gate": "template",
@@ -161436,6 +163336,16 @@
       "name": "Lore Weaver",
       "reason": "no template for: Partner with Ley Weaver",
       "scryfall_id": "f3366998-5ea0-4dcd-bf2a-f654b1c68e93",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Lore, Positronic Provocateur": {
+      "edhrec_rank": 30267,
+      "gate": null,
+      "name": "Lore, Positronic Provocateur",
+      "reason": "",
+      "scryfall_id": "62afa55d-d4ba-48d5-9991-0f8408f9c92c",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -162450,6 +164360,26 @@
       "status": "pending",
       "wanted": false
     },
+    "Lt. Arex, Ever-Adapting": {
+      "edhrec_rank": 23045,
+      "gate": null,
+      "name": "Lt. Arex, Ever-Adapting",
+      "reason": "",
+      "scryfall_id": "16787d1c-3a1c-4c72-a986-9cea0371fd75",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Lt. Cmdr. Geordi La Forge": {
+      "edhrec_rank": 19299,
+      "gate": null,
+      "name": "Lt. Cmdr. Geordi La Forge",
+      "reason": "",
+      "scryfall_id": "3a558d82-7efd-49b3-9f7b-ace639b44a35",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Lu Bu, Master-at-Arms": {
       "edhrec_rank": 24586,
       "gate": null,
@@ -162486,6 +164416,16 @@
       "name": "Lu Xun, Scholar General",
       "reason": "no template for: Whenever Lu Xun deals damage to an opponent, you may draw a card",
       "scryfall_id": "3e16e5b7-d130-4e52-b002-5f3d986e3e82",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Lu Xun, Scholar General // Lu Xun, Scholar General": {
+      "edhrec_rank": 16949,
+      "gate": null,
+      "name": "Lu Xun, Scholar General // Lu Xun, Scholar General",
+      "reason": "",
+      "scryfall_id": "7c074d4c-7155-44a0-a4a5-b3825cbc36b6",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -163490,6 +165430,16 @@
       "status": "done",
       "wanted": false
     },
+    "Lwaxana Troi, Charming Guest": {
+      "edhrec_rank": 18628,
+      "gate": null,
+      "name": "Lwaxana Troi, Charming Guest",
+      "reason": "",
+      "scryfall_id": "19bf2f2f-4be2-4958-bfab-eb46c9ca1995",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Lychguard": {
       "edhrec_rank": 14778,
       "gate": null,
@@ -163690,6 +165640,16 @@
       "status": "done",
       "wanted": false
     },
+    "M'Ress, Crew Coordinator": {
+      "edhrec_rank": 20605,
+      "gate": null,
+      "name": "M'Ress, Crew Coordinator",
+      "reason": "",
+      "scryfall_id": "870e5f5c-502e-42d8-92cb-827ea09a83f4",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "M.O.D.O.K.": {
       "edhrec_rank": 10163,
       "gate": "template",
@@ -163716,6 +165676,16 @@
       "name": "MACH-1, Swooping Scoundrel",
       "reason": "no template for: When MACH-1 enters and whenever you gain life, surveil 1. This ability triggers only once ",
       "scryfall_id": "f3933900-a6f7-411c-be2a-96fe7c28f972",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "MACO Strike Team": {
+      "edhrec_rank": 31013,
+      "gate": null,
+      "name": "MACO Strike Team",
+      "reason": "",
+      "scryfall_id": "960f4cd1-2fe1-4f8d-9c7a-2547a6a9f46e",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -164556,6 +166526,16 @@
       "name": "Magical Hack",
       "reason": "no template for: Change the text of target spell or permanent by replacing all instances of one basic land ",
       "scryfall_id": "9a12c7be-5001-4e4b-81d5-cbb76fd3c9d0",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Magik, Illyana Rasputin // Darkchild, Demon Uncaged": {
+      "edhrec_rank": 24876,
+      "gate": null,
+      "name": "Magik, Illyana Rasputin // Darkchild, Demon Uncaged",
+      "reason": "",
+      "scryfall_id": "60e252e3-88ea-49f2-a14f-ae9d0712bafe",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -165446,6 +167426,16 @@
       "name": "Make Disappear",
       "reason": "no template for: Casualty 1",
       "scryfall_id": "3f2d6a21-ea77-484b-9e3a-1bd49806f907",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Make It So": {
+      "edhrec_rank": 23608,
+      "gate": null,
+      "name": "Make It So",
+      "reason": "",
+      "scryfall_id": "7149df19-4833-47ca-8add-b897f55b930c",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -168350,6 +170340,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Martok, Hero of the Empire": {
+      "edhrec_rank": 26744,
+      "gate": null,
+      "name": "Martok, Hero of the Empire",
+      "reason": "",
+      "scryfall_id": "0a046a34-0149-41d6-ae6b-e59eb4232643",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Martyr for the Cause": {
       "edhrec_rank": 14296,
       "gate": "template",
@@ -169560,6 +171560,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Maturation Chamber": {
+      "edhrec_rank": 17673,
+      "gate": null,
+      "name": "Maturation Chamber",
+      "reason": "",
+      "scryfall_id": "541f6458-1d63-49c7-91a5-b4b3dcf80da3",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Matzalantli, the Great Door // The Core": {
       "edhrec_rank": 1752,
       "gate": "template",
@@ -169986,6 +171996,16 @@
       "name": "Mazzy, Truesword Paladin",
       "reason": "no template for: Whenever an enchanted creature attacks one of your opponents, it gets +2/+0 and gains tram",
       "scryfall_id": "4d79c221-e07a-41e1-b92f-dc057802449c",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "McCoy, Not a Bricklayer": {
+      "edhrec_rank": 24095,
+      "gate": null,
+      "name": "McCoy, Not a Bricklayer",
+      "reason": "",
+      "scryfall_id": "23417c1d-5878-4cf1-bb50-888694876183",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -170606,6 +172626,16 @@
       "name": "Melira, the Living Cure",
       "reason": "no template for: If you would get one or more poison counters, instead you get one poison counter and you c",
       "scryfall_id": "538fcecf-0e1d-4995-960b-c461b92d2f72",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Melkotian Adjudicator": {
+      "edhrec_rank": 28225,
+      "gate": null,
+      "name": "Melkotian Adjudicator",
+      "reason": "",
+      "scryfall_id": "873c9933-7939-4376-873c-6a5b3bbc98d4",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -171336,6 +173366,16 @@
       "name": "Merchant's Dockhand",
       "reason": "no template for: {3}{U}, {T}, Tap X untapped artifacts you control: Look at the top X cards of your library",
       "scryfall_id": "955b4bc9-1ded-4f23-b415-ab968c681eb7",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Merciful Mandate": {
+      "edhrec_rank": 21490,
+      "gate": null,
+      "name": "Merciful Mandate",
+      "reason": "",
+      "scryfall_id": "30bfd653-fd11-415e-906d-b005edd3b811",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -173276,6 +175316,16 @@
       "name": "Miles Morales // Ultimate Spider-Man",
       "reason": "no template for: When Miles Morales enters, put a +1/+1 counter on each of up to two target creatures",
       "scryfall_id": "9f8b4d9b-208a-4673-a617-5e3edd069c33",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Miles O'Brien, Transporter Ops": {
+      "edhrec_rank": 28244,
+      "gate": null,
+      "name": "Miles O'Brien, Transporter Ops",
+      "reason": "",
+      "scryfall_id": "8adfd9c9-0cbd-479d-bcce-6f115b8a1c38",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -175320,6 +177370,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Mirror Universe Intrusion": {
+      "edhrec_rank": 28812,
+      "gate": null,
+      "name": "Mirror Universe Intrusion",
+      "reason": "",
+      "scryfall_id": "3507f99b-15fb-4f66-9484-8e8115e7f5de",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Mirror Wall": {
       "edhrec_rank": 29247,
       "gate": "template",
@@ -177290,6 +179350,16 @@
       "status": "done",
       "wanted": false
     },
+    "Mohiam, Imperial Truthsayer": {
+      "edhrec_rank": 31010,
+      "gate": null,
+      "name": "Mohiam, Imperial Truthsayer",
+      "reason": "",
+      "scryfall_id": "589100fa-b201-417f-ade3-5ad531b2d1c5",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Moira Brown, Guide Author": {
       "edhrec_rank": 14880,
       "gate": "template",
@@ -177986,6 +180056,16 @@
       "name": "Momentary Blink",
       "reason": "no template for: Exile target creature you control, then return it to the battlefield under its owner's con",
       "scryfall_id": "3dfd5aa4-b920-4aff-ba0d-2d4777ebbf66",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Momentary Blink // Momentary Blink": {
+      "edhrec_rank": 2790,
+      "gate": null,
+      "name": "Momentary Blink // Momentary Blink",
+      "reason": "",
+      "scryfall_id": "dca9d627-caae-4c59-89c2-efb8702e9a51",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -180400,6 +182480,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Mr. Spock, Science Officer": {
+      "edhrec_rank": 16212,
+      "gate": null,
+      "name": "Mr. Spock, Science Officer",
+      "reason": "",
+      "scryfall_id": "7dd9dec1-5793-4514-8a15-c3bce21a5115",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Ms. Bumbleflower": {
       "edhrec_rank": 3143,
       "gate": null,
@@ -180506,6 +182596,16 @@
       "name": "Mu Yanling, Wind Rider",
       "reason": "no template for: When Mu Yanling enters, create a 3/2 colorless Vehicle artifact token with crew 1",
       "scryfall_id": "40d45912-7b8d-416e-893b-1d103492a5a1",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Muad'Dib, Prophet Foretold": {
+      "edhrec_rank": 26315,
+      "gate": null,
+      "name": "Muad'Dib, Prophet Foretold",
+      "reason": "",
+      "scryfall_id": "3259dcf4-ed05-4d7e-93ed-d9b17f8e2a8a",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -184860,6 +186960,16 @@
       "status": "unexpressible",
       "wanted": false
     },
+    "Neelix, Moral Support": {
+      "edhrec_rank": 30824,
+      "gate": null,
+      "name": "Neelix, Moral Support",
+      "reason": "",
+      "scryfall_id": "09c0daa9-9eca-4817-a427-868d1efcfa20",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Neera, Wild Mage": {
       "edhrec_rank": 8000,
       "gate": "template",
@@ -186196,6 +188306,16 @@
       "name": "Nezumi Shortfang // Stabwhisker the Odious",
       "reason": "no template for: {1}{B}, {T}: Target opponent discards a card. Then if that player has no cards in hand, fl",
       "scryfall_id": "84b1a2d9-9b48-4eeb-8971-b1ebe1b0e0cb",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Ni'Var Science Academy": {
+      "edhrec_rank": 17224,
+      "gate": null,
+      "name": "Ni'Var Science Academy",
+      "reason": "",
+      "scryfall_id": "86ba5cb2-f124-4947-9780-43fc24f37699",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -188380,6 +190500,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Nog, Ambitious Cadet": {
+      "edhrec_rank": 25550,
+      "gate": null,
+      "name": "Nog, Ambitious Cadet",
+      "reason": "",
+      "scryfall_id": "6cda814c-bdbe-486c-b956-ff2c7872124f",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Noggin Whack": {
       "edhrec_rank": 26611,
       "gate": "template",
@@ -189700,6 +191830,16 @@
       "status": "done",
       "wanted": false
     },
+    "Nyota Uhura, Communications": {
+      "edhrec_rank": 23891,
+      "gate": null,
+      "name": "Nyota Uhura, Communications",
+      "reason": "",
+      "scryfall_id": "2b71b656-a316-4f29-b2bd-44165ad8cebe",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Nyssa of Traken": {
       "edhrec_rank": 13108,
       "gate": null,
@@ -190510,6 +192650,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Oberth-Class Starship": {
+      "edhrec_rank": 23671,
+      "gate": null,
+      "name": "Oberth-Class Starship",
+      "reason": "",
+      "scryfall_id": "7efe3788-ecf7-4b56-8970-bc324092941c",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Oblation": {
       "edhrec_rank": 5317,
       "gate": "template",
@@ -190868,6 +193018,16 @@
       "scryfall_id": "2dcf9804-ccd6-4a03-90ca-088388800e7f",
       "source": "agent",
       "status": "done",
+      "wanted": false
+    },
+    "Obsidian Order Operative": {
+      "edhrec_rank": 24692,
+      "gate": null,
+      "name": "Obsidian Order Operative",
+      "reason": "",
+      "scryfall_id": "17a7b0a8-baaf-4e6a-8536-f511c796a713",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Obstinate Baloth": {
@@ -192690,6 +194850,16 @@
       "status": "pending",
       "wanted": false
     },
+    "On the Shoulders of Giants": {
+      "edhrec_rank": 22702,
+      "gate": "template",
+      "name": "On the Shoulders of Giants",
+      "reason": "no template for: Historic creatures you control have flying",
+      "scryfall_id": "71807912-94e7-4ebd-91ca-d0b00dceae9c",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "On the Trail": {
       "edhrec_rank": 4662,
       "gate": null,
@@ -192946,6 +195116,16 @@
       "name": "One with the Stars",
       "reason": "no template for: Enchant creature or enchantment",
       "scryfall_id": "98b7070d-4b09-4390-aa21-1bc0aa2b629c",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "One, Borg Evolved": {
+      "edhrec_rank": 14528,
+      "gate": null,
+      "name": "One, Borg Evolved",
+      "reason": "",
+      "scryfall_id": "16bde88c-6e7a-4149-9893-c767a763af9c",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -193536,6 +195716,16 @@
       "name": "Optimistic Scavenger",
       "reason": "no template for: Eerie — Whenever an enchantment you control enters and whenever you fully unlock a Room, p",
       "scryfall_id": "9c72fc6f-6a96-420d-812d-b5cf0f57cc7f",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Optimization Annex": {
+      "edhrec_rank": 19228,
+      "gate": null,
+      "name": "Optimization Annex",
+      "reason": "",
+      "scryfall_id": "68024cc0-7728-470f-86d3-3440724717f3",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -194720,6 +196910,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Orion": {
+      "edhrec_rank": 25720,
+      "gate": null,
+      "name": "Orion",
+      "reason": "",
+      "scryfall_id": "dec37ff4-d6e9-4b87-865b-125b17162465",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Oriq Loremage": {
       "edhrec_rank": 4897,
       "gate": "template",
@@ -195860,6 +198060,16 @@
       "status": "done",
       "wanted": false
     },
+    "Overflow Submatrix": {
+      "edhrec_rank": 21864,
+      "gate": null,
+      "name": "Overflow Submatrix",
+      "reason": "",
+      "scryfall_id": "33af9300-c477-4b47-9501-ebe03aa5a806",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Overflowing Basin": {
       "edhrec_rank": 711,
       "gate": null,
@@ -196470,6 +198680,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Own the Day": {
+      "edhrec_rank": 25264,
+      "gate": null,
+      "name": "Own the Day",
+      "reason": "",
+      "scryfall_id": "558edfb8-eaf1-4d8e-927c-85a43d2a01d7",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Ox Drover": {
       "edhrec_rank": 11926,
       "gate": null,
@@ -196780,12 +199000,32 @@
       "status": "done",
       "wanted": false
     },
+    "Padishah Emperor Shaddam IV": {
+      "edhrec_rank": 32019,
+      "gate": null,
+      "name": "Padishah Emperor Shaddam IV",
+      "reason": "",
+      "scryfall_id": "5254fa46-3984-43ac-902b-e0771b3c6e36",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Page, Loose Leaf": {
       "edhrec_rank": 16717,
       "gate": "template",
       "name": "Page, Loose Leaf",
       "reason": "no template for: Grandeur — Discard another card named : Reveal cards from the top of your library until yo",
       "scryfall_id": "8c6fecfd-8241-4cf0-b1eb-19472b99e0ed",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Pah-Wraith": {
+      "edhrec_rank": 29580,
+      "gate": null,
+      "name": "Pah-Wraith",
+      "reason": "",
+      "scryfall_id": "24c7e179-c016-4db8-ad8b-aa5629152b5c",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -198890,6 +201130,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Pattern Buffer Preservation": {
+      "edhrec_rank": 30556,
+      "gate": null,
+      "name": "Pattern Buffer Preservation",
+      "reason": "",
+      "scryfall_id": "23166580-9676-4025-916b-864568c2e59d",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Pattern Matcher": {
       "edhrec_rank": 26570,
       "gate": "template",
@@ -198910,6 +201160,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Paul Atreides, Ducal Heir": {
+      "edhrec_rank": 32522,
+      "gate": null,
+      "name": "Paul Atreides, Ducal Heir",
+      "reason": "",
+      "scryfall_id": "30473f74-454b-4622-9c38-f71dea3b7139",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Paupers' Cage": {
       "edhrec_rank": 24490,
       "gate": "template",
@@ -198926,6 +201186,16 @@
       "name": "Pause for Reflection",
       "reason": "no template for: Convoke",
       "scryfall_id": "3cfcf84c-a30c-4c4f-9f8c-ee807661e499",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Pavel Chekov, First Posting": {
+      "edhrec_rank": 24056,
+      "gate": null,
+      "name": "Pavel Chekov, First Posting",
+      "reason": "",
+      "scryfall_id": "4015cb79-b698-4f3b-85b7-083cc4ab1e3c",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -199006,6 +201276,16 @@
       "name": "Peace and Quiet",
       "reason": "no template for: Destroy two target enchantments",
       "scryfall_id": "5d73accc-8f19-44d4-8216-c1acdbef3856",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Peace in Our Time": {
+      "edhrec_rank": 21815,
+      "gate": null,
+      "name": "Peace in Our Time",
+      "reason": "",
+      "scryfall_id": "54da7aa7-3049-4f2a-a92e-62a0a7386de8",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -199446,6 +201726,16 @@
       "name": "Penance",
       "reason": "no template for: Put a card from your hand on top of your library: The next time a black or red source of y",
       "scryfall_id": "1f3db848-8394-43bd-a236-264641033a6d",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Penance Stare": {
+      "edhrec_rank": 32702,
+      "gate": null,
+      "name": "Penance Stare",
+      "reason": "",
+      "scryfall_id": "7082199e-318e-4e4e-9102-61e79af8a10c",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -200410,6 +202700,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Pet Sehlat": {
+      "edhrec_rank": 32583,
+      "gate": null,
+      "name": "Pet Sehlat",
+      "reason": "",
+      "scryfall_id": "477a6a46-7fda-4666-87d9-a35c953dd94d",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Petalmane Baku": {
       "edhrec_rank": 19464,
       "gate": "template",
@@ -201180,6 +203480,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Phlox, Unorthodox Doctor": {
+      "edhrec_rank": 26216,
+      "gate": null,
+      "name": "Phlox, Unorthodox Doctor",
+      "reason": "",
+      "scryfall_id": "2695e76e-c27d-49fc-9ef2-d9eaff449f3d",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Phobian Phantasm": {
       "edhrec_rank": 31069,
       "gate": "template",
@@ -201268,6 +203578,16 @@
       "scryfall_id": "09e4d824-b01b-4bf8-8b08-3ba94657b580",
       "source": "agent",
       "status": "done",
+      "wanted": false
+    },
+    "Photosynthetic Physician": {
+      "edhrec_rank": 31685,
+      "gate": null,
+      "name": "Photosynthetic Physician",
+      "reason": "",
+      "scryfall_id": "88b87ddb-fbf8-4e6e-9895-1b30ae5ad63a",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Phthisis": {
@@ -203930,6 +206250,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Planet Killer": {
+      "edhrec_rank": 20080,
+      "gate": null,
+      "name": "Planet Killer",
+      "reason": "",
+      "scryfall_id": "3e488b00-6488-4342-b71e-edd9137b8a01",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Planetarium of Wan Shi Tong": {
       "edhrec_rank": 3981,
       "gate": "template",
@@ -203948,6 +206278,16 @@
       "scryfall_id": "65a07be7-1967-4db6-8868-94e2dde10ad5",
       "source": "agent",
       "status": "done",
+      "wanted": false
+    },
+    "Planetary Bombardment": {
+      "edhrec_rank": 31199,
+      "gate": null,
+      "name": "Planetary Bombardment",
+      "reason": "",
+      "scryfall_id": "4d9c39ce-f598-48d1-afa0-22f9513f1483",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Planetary Patrol": {
@@ -207160,6 +209500,16 @@
       "status": "done",
       "wanted": false
     },
+    "Primary Unimatrix Adjunct": {
+      "edhrec_rank": 16294,
+      "gate": null,
+      "name": "Primary Unimatrix Adjunct",
+      "reason": "",
+      "scryfall_id": "59ce5cdb-3e08-4de1-9335-aafeddfd1829",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Prime Speaker Vannifar": {
       "edhrec_rank": 8860,
       "gate": "template",
@@ -207396,6 +209746,16 @@
       "name": "Prince of Thralls",
       "reason": "no template for: Whenever a permanent an opponent controls is put into a graveyard, put that card onto the ",
       "scryfall_id": "56c7da42-cd73-443e-9f0e-d6aefe08523a",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Princess Irulan Corrino": {
+      "edhrec_rank": 28534,
+      "gate": null,
+      "name": "Princess Irulan Corrino",
+      "reason": "",
+      "scryfall_id": "63d31118-94db-43c0-822e-ec7f84de2cea",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -210090,6 +212450,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Pure Energy": {
+      "edhrec_rank": 30395,
+      "gate": null,
+      "name": "Pure Energy",
+      "reason": "",
+      "scryfall_id": "215709a8-044f-4fdb-b3ca-bd5a394b2a0f",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Pure Intentions": {
       "edhrec_rank": 28300,
       "gate": "template",
@@ -211100,6 +213470,36 @@
       "status": "pending",
       "wanted": false
     },
+    "Q Continuum": {
+      "edhrec_rank": 19994,
+      "gate": null,
+      "name": "Q Continuum",
+      "reason": "",
+      "scryfall_id": "cd424080-e8ad-4a56-a820-20d8534fba31",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Q, Stacking the Deck": {
+      "edhrec_rank": 19753,
+      "gate": null,
+      "name": "Q, Stacking the Deck",
+      "reason": "",
+      "scryfall_id": "881693cb-1492-4347-88a5-e96dc907744b",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Q, Your Illustrious Host": {
+      "edhrec_rank": 26986,
+      "gate": null,
+      "name": "Q, Your Illustrious Host",
+      "reason": "",
+      "scryfall_id": "4c879981-f3a9-4da4-bf49-fb6ccea739b8",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Qal Sisma Behemoth": {
       "edhrec_rank": 30468,
       "gate": "template",
@@ -211206,6 +213606,26 @@
       "name": "Qiqirn Merchant",
       "reason": "no template for: {1}, {T}: Draw a card, then discard a card",
       "scryfall_id": "a75a6ecc-a6a5-462c-bd92-ae57dde9b965",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Qo'noS": {
+      "edhrec_rank": 25767,
+      "gate": null,
+      "name": "Qo'noS",
+      "reason": "",
+      "scryfall_id": "f1558d93-8a8a-45e0-bcdc-e6cd42f716dc",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Qo'noS Quartermaster": {
+      "edhrec_rank": 26105,
+      "gate": null,
+      "name": "Qo'noS Quartermaster",
+      "reason": "",
+      "scryfall_id": "97573bde-6f45-4487-a8bf-db15cc3c8835",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -211450,6 +213870,26 @@
       "status": "pending",
       "wanted": false
     },
+    "Quark's Bar": {
+      "edhrec_rank": 17049,
+      "gate": null,
+      "name": "Quark's Bar",
+      "reason": "",
+      "scryfall_id": "8422ee4a-9845-429d-bda8-74852168dcba",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Quark, Humble Proprietor": {
+      "edhrec_rank": 20370,
+      "gate": null,
+      "name": "Quark, Humble Proprietor",
+      "reason": "",
+      "scryfall_id": "96104754-57e2-46e9-948d-628aab2aa0ad",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Quarrel": {
       "edhrec_rank": 31895,
       "gate": "template",
@@ -211636,6 +214076,16 @@
       "name": "Queen's Commission",
       "reason": "no template for: Create two 1/1 white Vampire creature tokens with lifelink",
       "scryfall_id": "f06c0007-299e-4d71-99c3-f905d942759d",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Queen's Diamond": {
+      "edhrec_rank": 16737,
+      "gate": null,
+      "name": "Queen's Diamond",
+      "reason": "",
+      "scryfall_id": "18367692-469a-496a-9dbc-bf4adfcdb85c",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -216220,6 +218670,16 @@
       "status": "done",
       "wanted": false
     },
+    "Ravenous Cosmozoan": {
+      "edhrec_rank": 32517,
+      "gate": null,
+      "name": "Ravenous Cosmozoan",
+      "reason": "",
+      "scryfall_id": "8eeb471b-412d-4ea1-bec0-d7dd0a557d76",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Ravenous Daggertooth": {
       "edhrec_rank": 16720,
       "gate": "template",
@@ -218130,6 +220590,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Reclamation Specialist": {
+      "edhrec_rank": 18334,
+      "gate": null,
+      "name": "Reclamation Specialist",
+      "reason": "",
+      "scryfall_id": "7a7a48bb-5a47-4210-bb98-ef9208942303",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Reclusive Artificer": {
       "edhrec_rank": 24813,
       "gate": "template",
@@ -218218,6 +220688,16 @@
       "scryfall_id": "875dfbf5-9313-439b-b021-8b92d898baa4",
       "source": "agent",
       "status": "done",
+      "wanted": false
+    },
+    "Reconnaissance Partition": {
+      "edhrec_rank": 19290,
+      "gate": null,
+      "name": "Reconnaissance Partition",
+      "reason": "",
+      "scryfall_id": "0d62b5d1-b22c-4919-8b3e-19aa3b42e521",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Reconstruct History": {
@@ -218376,6 +220856,16 @@
       "name": "Recycle",
       "reason": "no template for: Skip your draw step",
       "scryfall_id": "ae984b86-ac6d-45e2-9c8d-0b7ac50021a1",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Red Alert!": {
+      "edhrec_rank": 31880,
+      "gate": null,
+      "name": "Red Alert!",
+      "reason": "",
+      "scryfall_id": "0f9b10d3-ba76-45ec-a85c-fb7b26da5561",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -219066,6 +221556,16 @@
       "name": "Refute Destiny",
       "reason": "",
       "scryfall_id": "2c588954-c6eb-4aae-a2fa-0651ccf2d90a",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Reg Barclay, Fidgety Fantasist": {
+      "edhrec_rank": 23046,
+      "gate": "template",
+      "name": "Reg Barclay, Fidgety Fantasist",
+      "reason": "no template for: Seek out — Whenever you draw your second card each turn, create a token that's a copy of a",
+      "scryfall_id": "4eb7acc5-ec39-445e-a56f-5b203d7e7a2f",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -220728,6 +223228,16 @@
       "scryfall_id": "b3149976-2811-4bbd-af1e-d59016bb0754",
       "source": "agent",
       "status": "done",
+      "wanted": false
+    },
+    "Replicator": {
+      "edhrec_rank": 18567,
+      "gate": null,
+      "name": "Replicator",
+      "reason": "",
+      "scryfall_id": "98308586-5ac3-4130-878b-d235b9e1343c",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Repopulate": {
@@ -222580,6 +225090,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Reverend Mother Jessica": {
+      "edhrec_rank": 30114,
+      "gate": null,
+      "name": "Reverend Mother Jessica",
+      "reason": "",
+      "scryfall_id": "9dd5c140-dbde-4d2a-b957-e832f759f073",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Reverent Hoplite": {
       "edhrec_rank": 5621,
       "gate": "template",
@@ -223790,6 +226310,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Right of Vengeance": {
+      "edhrec_rank": 28039,
+      "gate": null,
+      "name": "Right of Vengeance",
+      "reason": "",
+      "scryfall_id": "695c6c58-0301-4c79-a1a2-75b130ad7527",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Righteous Aura": {
       "edhrec_rank": 13926,
       "gate": "template",
@@ -224260,6 +226790,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Ring of Unity": {
+      "edhrec_rank": 27305,
+      "gate": null,
+      "name": "Ring of Unity",
+      "reason": "",
+      "scryfall_id": "2121a789-edc8-4f91-9609-31f93441ff15",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Ring of Valkas": {
       "edhrec_rank": 5013,
       "gate": "template",
@@ -224690,6 +227230,16 @@
       "status": "done",
       "wanted": false
     },
+    "Risa": {
+      "edhrec_rank": 21366,
+      "gate": null,
+      "name": "Risa",
+      "reason": "",
+      "scryfall_id": "c89e7680-9868-4fea-9aaf-6af03bfa0692",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Rise // Fall": {
       "edhrec_rank": 26457,
       "gate": "template",
@@ -224726,6 +227276,16 @@
       "name": "Rise from the Grave",
       "reason": "no template for: Put target creature card from a graveyard onto the battlefield under your control. That cr",
       "scryfall_id": "f0f85057-5f4b-47d8-bb00-d993bed1a755",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Rise from the Nether": {
+      "edhrec_rank": 31976,
+      "gate": null,
+      "name": "Rise from the Nether",
+      "reason": "",
+      "scryfall_id": "bccc5d74-f9bf-4a75-9a45-e2a32f5651f1",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -225096,6 +227656,16 @@
       "name": "Risona, Asari Commander",
       "reason": "no template for: Whenever Risona deals combat damage to a player, if it doesn't have an indestructible coun",
       "scryfall_id": "2cd32b69-5e1e-4990-88ec-85b21056ceae",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Rite of Ascension": {
+      "edhrec_rank": 26220,
+      "gate": null,
+      "name": "Rite of Ascension",
+      "reason": "",
+      "scryfall_id": "03932c24-ffdc-4593-b223-342d68a1533c",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -225846,6 +228416,16 @@
       "name": "Rix Maadi, Dungeon Palace",
       "reason": "no template for: {1}{B}{R}, {T}: Each player discards a card. Activate only as a sorcery",
       "scryfall_id": "132a1e96-6df9-45d7-9dcc-6447a34c6eca",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Ro Laren, Double Agent": {
+      "edhrec_rank": 22819,
+      "gate": "template",
+      "name": "Ro Laren, Double Agent",
+      "reason": "no template for: Seek out — Whenever you draw your second card each turn, Ro Laren deals 2 damage to each o",
+      "scryfall_id": "54e9ffed-d541-4760-b9ae-8e62a4364da3",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -226810,6 +229390,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Rok-Tahk, Budding Scientist": {
+      "edhrec_rank": 24971,
+      "gate": null,
+      "name": "Rok-Tahk, Budding Scientist",
+      "reason": "",
+      "scryfall_id": "5354636f-a324-401b-bece-85b1c4760c07",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Roku's Mastery": {
       "edhrec_rank": 16009,
       "gate": "template",
@@ -226910,6 +229500,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Rom and Leeta, Unlikely Pair": {
+      "edhrec_rank": 21153,
+      "gate": "template",
+      "name": "Rom and Leeta, Unlikely Pair",
+      "reason": "no template for: Seek out — Whenever you draw your second card each turn, create two tapped Treasure tokens",
+      "scryfall_id": "2bba1d93-0904-464b-9797-a0f0f4b05df8",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Romana II": {
       "edhrec_rank": 15316,
       "gate": null,
@@ -226926,6 +229526,26 @@
       "name": "Romantic Rendezvous",
       "reason": "no template for: Discard a card, then draw two cards",
       "scryfall_id": "ede080dd-7df6-474b-b481-de842fec3139",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Romulan Bird-of-Prey": {
+      "edhrec_rank": 24430,
+      "gate": null,
+      "name": "Romulan Bird-of-Prey",
+      "reason": "",
+      "scryfall_id": "6a461d90-6b7b-4777-958a-8a5d8365ad8c",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Romulus": {
+      "edhrec_rank": 25659,
+      "gate": null,
+      "name": "Romulus",
+      "reason": "",
+      "scryfall_id": "1bce111b-b07c-4589-9b6d-f0b5f320808c",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -228910,6 +231530,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Rules of Acquisition": {
+      "edhrec_rank": 26110,
+      "gate": null,
+      "name": "Rules of Acquisition",
+      "reason": "",
+      "scryfall_id": "307c36ec-6fa1-4d4b-afcd-c3c83b876ee8",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Rulik Mons, Warren Chief": {
       "edhrec_rank": 12999,
       "gate": "template",
@@ -230060,6 +232690,16 @@
       "status": "done",
       "wanted": false
     },
+    "Rutherford, Upgraded Ensign": {
+      "edhrec_rank": 25839,
+      "gate": null,
+      "name": "Rutherford, Upgraded Ensign",
+      "reason": "",
+      "scryfall_id": "16a4d8ed-a918-4dfe-9976-0b68adb26afa",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Ruthless Cullblade": {
       "edhrec_rank": 28854,
       "gate": "template",
@@ -230306,6 +232946,16 @@
       "name": "S.H.I.E.L.D. Spy Kit",
       "reason": "no template for: Whenever equipped creature attacks alone, untap it and scry 1",
       "scryfall_id": "4938e23f-b5da-493b-9904-af61a3733ba0",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "S.S. Botany Bay": {
+      "edhrec_rank": 23550,
+      "gate": null,
+      "name": "S.S. Botany Bay",
+      "reason": "",
+      "scryfall_id": "67ab2c2a-0bc7-4672-bf50-53c96e126859",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -231540,6 +234190,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Salinae, the Ocean Mother": {
+      "edhrec_rank": 25046,
+      "gate": null,
+      "name": "Salinae, the Ocean Mother",
+      "reason": "",
+      "scryfall_id": "1ab794d3-ea64-4fc1-9e3f-230c13b7ce18",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Salivating Gremlins": {
       "edhrec_rank": 25401,
       "gate": "template",
@@ -231826,6 +234486,16 @@
       "name": "Salvation Swan",
       "reason": "no template for: Whenever this creature or another Bird you control enters, exile up to one target creature",
       "scryfall_id": "b2656160-d319-4530-a6e5-c418596c3f12",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Sam Kirk, Xenoanthropologist": {
+      "edhrec_rank": 25282,
+      "gate": null,
+      "name": "Sam Kirk, Xenoanthropologist",
+      "reason": "",
+      "scryfall_id": "b2ffe160-1860-41ba-86a5-487211889804",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -233300,6 +235970,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Sarcophagus, Ship of the Dead": {
+      "edhrec_rank": 26501,
+      "gate": null,
+      "name": "Sarcophagus, Ship of the Dead",
+      "reason": "",
+      "scryfall_id": "b5ea32b5-aa58-4f87-ac2e-4e3b8dd4a752",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Sardian Avenger": {
       "edhrec_rank": 7685,
       "gate": "template",
@@ -233316,6 +235996,16 @@
       "name": "Sardian Cliffstomper",
       "reason": "no template for: As long as it's your turn and you control four or more Mountains, this creature gets +X/+0",
       "scryfall_id": "c1c42d56-5b0e-4624-8831-77280f8d56cf",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Sarek, Federation Ambassador": {
+      "edhrec_rank": 26438,
+      "gate": null,
+      "name": "Sarek, Federation Ambassador",
+      "reason": "",
+      "scryfall_id": "25e552e6-43e0-4a1f-b17f-a41569182e11",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -233546,6 +236236,16 @@
       "name": "Sarpadian Simulacrum",
       "reason": "no template for: {3}{R}, Sacrifice this creature: It deals 4 damage to target creature",
       "scryfall_id": "099c65d5-9dd3-41d3-9102-3f6cb30c7b8e",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Saru, Unthreatened": {
+      "edhrec_rank": 30619,
+      "gate": null,
+      "name": "Saru, Unthreatened",
+      "reason": "",
+      "scryfall_id": "445de44d-8af9-4ea3-b165-9e8eb8939820",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -234338,6 +237038,16 @@
       "scryfall_id": "15c98441-2b31-4e48-a399-f36dffcfa41d",
       "source": "agent",
       "status": "done",
+      "wanted": false
+    },
+    "Savvy Profiteer": {
+      "edhrec_rank": 25151,
+      "gate": null,
+      "name": "Savvy Profiteer",
+      "reason": "",
+      "scryfall_id": "8256376f-011f-4cc8-9be4-47f5121ca75e",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Savvy Trader": {
@@ -236026,6 +238736,26 @@
       "name": "Scorpion, Seething Striker",
       "reason": "no template for: At the beginning of your end step, if a creature died this turn, target creature you contr",
       "scryfall_id": "cf407e08-b27f-42ba-b824-75846a80e238",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Scotty, Chief Engineer": {
+      "edhrec_rank": 31004,
+      "gate": null,
+      "name": "Scotty, Chief Engineer",
+      "reason": "",
+      "scryfall_id": "a09834eb-948d-41cf-b79d-f857df6fb853",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Scotty, Miracle Worker": {
+      "edhrec_rank": 26650,
+      "gate": null,
+      "name": "Scotty, Miracle Worker",
+      "reason": "",
+      "scryfall_id": "008db37b-1b2e-4554-b927-8a75ce4ff668",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -239490,6 +242220,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Sela, Tal Shiar Paradox": {
+      "edhrec_rank": 29522,
+      "gate": null,
+      "name": "Sela, Tal Shiar Paradox",
+      "reason": "",
+      "scryfall_id": "71a9b698-e085-4141-80f7-6c57c2ea087f",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Select for Inspection": {
       "edhrec_rank": 17449,
       "gate": "template",
@@ -241530,6 +244270,26 @@
       "status": "pending",
       "wanted": false
     },
+    "Seven of Nine, Tertiary Adjunct": {
+      "edhrec_rank": 18109,
+      "gate": "template",
+      "name": "Seven of Nine, Tertiary Adjunct",
+      "reason": "no template for: That Is Irrelevant — {T}: Draw a card, then discard a card. When you discard a nonland car",
+      "scryfall_id": "a5566e13-727d-4f51-a7af-9724df2d56e5",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Seven of Nine, Unassimilated": {
+      "edhrec_rank": 21137,
+      "gate": null,
+      "name": "Seven of Nine, Unassimilated",
+      "reason": "",
+      "scryfall_id": "ddc517bd-27e1-4688-8941-a41c312bd782",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Seven-Tail Mentor": {
       "edhrec_rank": 16345,
       "gate": "template",
@@ -242276,6 +245036,16 @@
       "name": "Shahrazad",
       "reason": "no template for: Players play a Magic subgame, using their libraries as their decks. Each player who doesn'",
       "scryfall_id": "0014def3-4063-4929-ac51-76aef1bb2a68",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Shai-Hulud": {
+      "edhrec_rank": 27136,
+      "gate": null,
+      "name": "Shai-Hulud",
+      "reason": "",
+      "scryfall_id": "b1ad67bd-6f37-434b-b6b4-876b4c238a43",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -244340,6 +247110,16 @@
       "status": "done",
       "wanted": false
     },
+    "Shimmering Citadel": {
+      "edhrec_rank": 32699,
+      "gate": null,
+      "name": "Shimmering Citadel",
+      "reason": "",
+      "scryfall_id": "5d24978d-05e2-4417-8d4b-3ffd688b1f24",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Shimmering Efreet": {
       "edhrec_rank": 27391,
       "gate": "template",
@@ -245056,6 +247836,16 @@
       "name": "Shore Keeper",
       "reason": "no template for: {7}{U}, {T}, Sacrifice this creature: Draw three cards",
       "scryfall_id": "60f41f5b-3c4b-475b-9bdc-d3742cd9ea65",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Shore Leave Planet": {
+      "edhrec_rank": 14984,
+      "gate": null,
+      "name": "Shore Leave Planet",
+      "reason": "",
+      "scryfall_id": "54cbe3ca-9a18-4297-aff4-9d13670fefb0",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -245970,6 +248760,16 @@
       "status": "done",
       "wanted": false
     },
+    "Shuttlecraft Galileo": {
+      "edhrec_rank": 18494,
+      "gate": null,
+      "name": "Shuttlecraft Galileo",
+      "reason": "",
+      "scryfall_id": "1c0e8838-1293-41bd-bdeb-df06b3e4bc6b",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Shyft": {
       "edhrec_rank": 30568,
       "gate": "template",
@@ -246076,6 +248876,16 @@
       "name": "Sick and Tired",
       "reason": "no template for: Two target creatures each get -1/-1 until end of turn",
       "scryfall_id": "8736f8a2-ee8d-49d2-883f-b22cbe3f3645",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Sickbay": {
+      "edhrec_rank": 26430,
+      "gate": null,
+      "name": "Sickbay",
+      "reason": "",
+      "scryfall_id": "05735357-3cca-42be-a3ae-5b4fc1fd5f47",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -248526,6 +251336,16 @@
       "name": "Sinking Feeling",
       "reason": "no template for: Enchanted creature doesn't untap during its controller's untap step",
       "scryfall_id": "1aac9a8a-7594-4270-a8b6-57b4f8f2a390",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Sins of the Father": {
+      "edhrec_rank": 28020,
+      "gate": null,
+      "name": "Sins of the Father",
+      "reason": "",
+      "scryfall_id": "ebd459db-bde4-4410-b0f4-4ef6bffd956b",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -256760,6 +259580,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Space Beleren": {
+      "edhrec_rank": 17315,
+      "gate": null,
+      "name": "Space Beleren",
+      "reason": "",
+      "scryfall_id": "4ddaa8d0-e266-4a9f-a649-0ccc03d4a346",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Space Marine Devastator": {
       "edhrec_rank": 7976,
       "gate": null,
@@ -257110,6 +259940,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Spatial Anomaly": {
+      "edhrec_rank": 26392,
+      "gate": null,
+      "name": "Spatial Anomaly",
+      "reason": "",
+      "scryfall_id": "2f683f37-4291-410d-b179-ed6139c06877",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Spatial Binding": {
       "edhrec_rank": 21835,
       "gate": "template",
@@ -257346,6 +260186,16 @@
       "name": "Special Move",
       "reason": "no template for: Choose two —",
       "scryfall_id": "600e2c3f-dfbd-4d5c-813a-47ae2d75ac12",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Species 8472": {
+      "edhrec_rank": 30539,
+      "gate": null,
+      "name": "Species 8472",
+      "reason": "",
+      "scryfall_id": "b3d74723-4c9e-4fe7-8276-05d5f1b7ba0c",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -260770,12 +263620,32 @@
       "status": "pending",
       "wanted": false
     },
+    "Spock, Always Your Friend": {
+      "edhrec_rank": 30450,
+      "gate": null,
+      "name": "Spock, Always Your Friend",
+      "reason": "",
+      "scryfall_id": "018d3844-0fa3-4b3a-805c-e9aeb9fc4185",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Spock, Logical Choice": {
       "edhrec_rank": 31864,
       "gate": "template",
       "name": "Spock, Logical Choice",
       "reason": "no template for: {T}: Draw a card",
       "scryfall_id": "5a741052-e92d-4e9c-8cfa-3b5ed1f432f5",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Spock, Voice of Reason": {
+      "edhrec_rank": 30953,
+      "gate": null,
+      "name": "Spock, Voice of Reason",
+      "reason": "",
+      "scryfall_id": "9e4610a4-42ea-4de8-b46a-555d28ee519d",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -261066,6 +263936,16 @@
       "name": "Sporoloth Ancient",
       "reason": "no template for: At the beginning of your upkeep, put a spore counter on this creature",
       "scryfall_id": "57a96041-1b20-464e-9119-93c19675ac46",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Spot, Felis catus": {
+      "edhrec_rank": 22903,
+      "gate": "template",
+      "name": "Spot, Felis catus",
+      "reason": "no template for: Whenever Spot or another nontoken legendary permanent you control enters, create a Food to",
+      "scryfall_id": "ccdc8c1a-68ba-4498-a336-13676d8de107",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -261980,6 +264860,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Stable Wormhole": {
+      "edhrec_rank": 18527,
+      "gate": null,
+      "name": "Stable Wormhole",
+      "reason": "",
+      "scryfall_id": "b18ce9e8-0673-4277-acf0-a109a162f619",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Stadium Headliner": {
       "edhrec_rank": 5121,
       "gate": "template",
@@ -262810,6 +265700,26 @@
       "status": "pending",
       "wanted": false
     },
+    "Starfleet Academy": {
+      "edhrec_rank": 21430,
+      "gate": null,
+      "name": "Starfleet Academy",
+      "reason": "",
+      "scryfall_id": "2da8d3bf-4397-4844-90d6-dd888becc804",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Starfleet Communicator": {
+      "edhrec_rank": 21662,
+      "gate": null,
+      "name": "Starfleet Communicator",
+      "reason": "",
+      "scryfall_id": "14d54778-344c-43c4-99a9-85a2361f8982",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Starfleet Crew": {
       "edhrec_rank": null,
       "gate": null,
@@ -262818,6 +265728,26 @@
       "scryfall_id": "ecf2358f-542d-45c9-b5c5-c57b2b0c1122",
       "source": "template:proxy:complete",
       "status": "done",
+      "wanted": false
+    },
+    "Starfleet Security": {
+      "edhrec_rank": 31003,
+      "gate": null,
+      "name": "Starfleet Security",
+      "reason": "",
+      "scryfall_id": "62acde0e-791d-4259-83bc-3690e498f3b0",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Starfleet Spanner Jockey": {
+      "edhrec_rank": 32591,
+      "gate": null,
+      "name": "Starfleet Spanner Jockey",
+      "reason": "",
+      "scryfall_id": "16bc9660-2bef-4926-b0e6-f49b22817bea",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Starforged Sword": {
@@ -263046,6 +265976,16 @@
       "name": "Starseer Mentor",
       "reason": "no template for: At the beginning of your end step, if you gained or lost life this turn, target opponent l",
       "scryfall_id": "6b2f6dc5-9fe8-49c1-b24c-1d99ce1da619",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Starship Enterprise": {
+      "edhrec_rank": 14932,
+      "gate": null,
+      "name": "Starship Enterprise",
+      "reason": "",
+      "scryfall_id": "66fa6995-4857-466d-8068-508f2904805b",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -265730,6 +268670,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Storied Veteran": {
+      "edhrec_rank": 30006,
+      "gate": null,
+      "name": "Storied Veteran",
+      "reason": "",
+      "scryfall_id": "32c2bfbf-e2ea-46c3-b369-1e203c8af716",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Storm Caller": {
       "edhrec_rank": 21775,
       "gate": "template",
@@ -266730,6 +269680,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Stratagem Emulator": {
+      "edhrec_rank": 19235,
+      "gate": null,
+      "name": "Stratagem Emulator",
+      "reason": "",
+      "scryfall_id": "6694fd8e-247e-4803-baf7-5fff25824244",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Strategic Betrayal": {
       "edhrec_rank": 11105,
       "gate": "template",
@@ -266826,6 +269786,16 @@
       "name": "Strax, Sontaran Nurse",
       "reason": "no template for: Grenades! — {2}, {T}, Sacrifice an artifact: Choose a player at random. When you do, Strax",
       "scryfall_id": "9b9410dc-7f2b-432b-8025-ec26f77446d7",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Stray from History": {
+      "edhrec_rank": 27831,
+      "gate": null,
+      "name": "Stray from History",
+      "reason": "",
+      "scryfall_id": "aac57a7f-a28b-486a-8d85-c620702a9cc0",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -267990,6 +270960,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Subcommander T'Pol": {
+      "edhrec_rank": 25226,
+      "gate": null,
+      "name": "Subcommander T'Pol",
+      "reason": "",
+      "scryfall_id": "142b8804-3bfd-4735-998f-3592b10deb80",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Subdue": {
       "edhrec_rank": 31163,
       "gate": "template",
@@ -268088,6 +271068,16 @@
       "scryfall_id": "78f04f32-f672-443a-86c0-63f5f4747c67",
       "source": "template:proxy:complete",
       "status": "done",
+      "wanted": false
+    },
+    "Subspace Anomaly": {
+      "edhrec_rank": 23332,
+      "gate": null,
+      "name": "Subspace Anomaly",
+      "reason": "",
+      "scryfall_id": "ed62600f-84ae-421e-970a-fd0682c8f280",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Subterfuge": {
@@ -268726,6 +271716,26 @@
       "name": "Sultai Soothsayer",
       "reason": "no template for: When this creature enters, look at the top four cards of your library. Put one of them int",
       "scryfall_id": "6dcc4f4b-a1bd-4581-858f-bbd3ff6a9d7a",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Sulu, Heroic Helmsman": {
+      "edhrec_rank": 22932,
+      "gate": null,
+      "name": "Sulu, Heroic Helmsman",
+      "reason": "",
+      "scryfall_id": "250f9c29-560a-448f-92c9-4f2b6f1b2b50",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Sulu, Space Swashbuckler": {
+      "edhrec_rank": 25436,
+      "gate": null,
+      "name": "Sulu, Space Swashbuckler",
+      "reason": "",
+      "scryfall_id": "01a51ffb-6d51-4e73-8cac-49fb32f14c02",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -270450,6 +273460,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Supplementation Node": {
+      "edhrec_rank": 16990,
+      "gate": null,
+      "name": "Supplementation Node",
+      "reason": "",
+      "scryfall_id": "2aaab414-d080-4998-8800-6b03dc93071f",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Supply // Demand": {
       "edhrec_rank": 19706,
       "gate": "template",
@@ -271406,6 +274426,26 @@
       "name": "Sutured Ghoul",
       "reason": "no template for: As this creature enters, exile any number of creature cards from your graveyard",
       "scryfall_id": "8390d9b7-5adf-4039-8682-02bfba421ff9",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Suurok-Class Science Vessel": {
+      "edhrec_rank": 25120,
+      "gate": null,
+      "name": "Suurok-Class Science Vessel",
+      "reason": "",
+      "scryfall_id": "7608943e-329e-41f9-b098-a0a94b01e6a1",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Suus Mahna Practitioner": {
+      "edhrec_rank": 31324,
+      "gate": null,
+      "name": "Suus Mahna Practitioner",
+      "reason": "",
+      "scryfall_id": "cb204e41-06a9-4ad2-81f2-a4d62f771cfa",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -272760,6 +275800,16 @@
       "status": "done",
       "wanted": false
     },
+    "Sylvia Tilly, Joy of Discovery": {
+      "edhrec_rank": 31698,
+      "gate": null,
+      "name": "Sylvia Tilly, Joy of Discovery",
+      "reason": "",
+      "scryfall_id": "fe6e03b5-cd96-430b-9c74-96eca0212a81",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Sylvok Battle-Chair": {
       "edhrec_rank": 21175,
       "gate": "template",
@@ -273426,6 +276476,16 @@
       "name": "T'Pol, Vulcan Representative",
       "reason": "no template for: When T'Pol enters, tap target creature an opponent controls and put two stun counters on i",
       "scryfall_id": "686a0be0-9374-4454-8bc6-a1bcec95df40",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "T'Pring, Never Parted": {
+      "edhrec_rank": 28160,
+      "gate": null,
+      "name": "T'Pring, Never Parted",
+      "reason": "",
+      "scryfall_id": "3179b18f-fe7a-4c9e-beae-8191b61f04b3",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -274196,6 +277256,26 @@
       "name": "Takklemaggot",
       "reason": "no template for: At the beginning of the upkeep of enchanted creature's controller, put a -0/-1 counter on ",
       "scryfall_id": "a596069b-864b-48fb-a097-bf5e6cafbcce",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Tal Shiar Analyst": {
+      "edhrec_rank": 28801,
+      "gate": null,
+      "name": "Tal Shiar Analyst",
+      "reason": "",
+      "scryfall_id": "66daae4f-8024-4d87-b42f-e5271d29e646",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Tal Shiar Operative": {
+      "edhrec_rank": 27297,
+      "gate": null,
+      "name": "Tal Shiar Operative",
+      "reason": "",
+      "scryfall_id": "ebe9c7bd-5528-41fd-9c51-2306086c7887",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -275330,6 +278410,16 @@
       "status": "done",
       "wanted": false
     },
+    "Targ Wrangler": {
+      "edhrec_rank": 31572,
+      "gate": null,
+      "name": "Targ Wrangler",
+      "reason": "",
+      "scryfall_id": "eabc4252-cf58-48c3-9483-7862450e03d0",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Tariel, Reckoner of Souls": {
       "edhrec_rank": 10232,
       "gate": "template",
@@ -275436,6 +278526,16 @@
       "name": "Tarrian's Soulcleaver",
       "reason": "no template for: Whenever another artifact or creature is put into a graveyard from the battlefield, put a ",
       "scryfall_id": "99413817-1218-4947-b12f-9a952b095a89",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Tasha Yar, Out of Time": {
+      "edhrec_rank": 29757,
+      "gate": null,
+      "name": "Tasha Yar, Out of Time",
+      "reason": "",
+      "scryfall_id": "5f6cbe6c-5cd8-4eec-82b7-25d5bf5641c0",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -275990,6 +279090,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Tea, Earl Grey, Hot": {
+      "edhrec_rank": 24399,
+      "gate": null,
+      "name": "Tea, Earl Grey, Hot",
+      "reason": "",
+      "scryfall_id": "289e8ebe-ab0f-466b-a4e6-d5cf8411e724",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Teach by Example": {
       "edhrec_rank": 7609,
       "gate": "template",
@@ -276138,6 +279248,16 @@
       "scryfall_id": "c160c1f7-714e-444a-ab74-c64c3a099a48",
       "source": "agent",
       "status": "done",
+      "wanted": false
+    },
+    "Tecton, Malignant Ruin": {
+      "edhrec_rank": 26585,
+      "gate": null,
+      "name": "Tecton, Malignant Ruin",
+      "reason": "",
+      "scryfall_id": "29d4ffe8-8b69-48b9-929a-991593a71f43",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Tectonic Break": {
@@ -276930,6 +280050,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Tell Me What You See": {
+      "edhrec_rank": 26019,
+      "gate": null,
+      "name": "Tell Me What You See",
+      "reason": "",
+      "scryfall_id": "e339c8fb-26d2-4514-aeb7-014274df0c9c",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Tellah, Great Sage": {
       "edhrec_rank": 9168,
       "gate": "template",
@@ -277270,6 +280400,16 @@
       "status": "done",
       "wanted": false
     },
+    "Temple of Khonshu": {
+      "edhrec_rank": 32705,
+      "gate": null,
+      "name": "Temple of Khonshu",
+      "reason": "",
+      "scryfall_id": "2369ddb5-fa0b-46a0-a393-f213ec86818d",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Temple of Malady": {
       "edhrec_rank": 352,
       "gate": null,
@@ -277350,6 +280490,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Temporal Anomaly": {
+      "edhrec_rank": 24342,
+      "gate": null,
+      "name": "Temporal Anomaly",
+      "reason": "",
+      "scryfall_id": "d2000219-0a57-48e6-ab0f-d5ad0fb7bcf6",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Temporal Aperture": {
       "edhrec_rank": 23289,
       "gate": "template",
@@ -277378,6 +280528,16 @@
       "scryfall_id": "50ee7315-ec53-43d2-841e-8ec192b850f1",
       "source": "agent",
       "status": "done",
+      "wanted": false
+    },
+    "Temporal Conqueror": {
+      "edhrec_rank": 31102,
+      "gate": null,
+      "name": "Temporal Conqueror",
+      "reason": "",
+      "scryfall_id": "b0bb51a7-1ae2-45d0-8be9-5454a3c8f751",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Temporal Distortion": {
@@ -277496,6 +280656,16 @@
       "name": "Temporal Trespass",
       "reason": "no template for: Delve",
       "scryfall_id": "f06252d1-08ac-415d-b8d8-631568eef17a",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Temporal Tribulation": {
+      "edhrec_rank": 21730,
+      "gate": "template",
+      "name": "Temporal Tribulation",
+      "reason": "no template for: Exile two target permanents you control. Return those cards to the battlefield under their",
+      "scryfall_id": "44fc3020-1f50-4e26-a559-19a1784b0563",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -277786,6 +280956,16 @@
       "name": "Tenacious Dead",
       "reason": "no template for: When this creature dies, you may pay {1}{B}. If you do, return it to the battlefield tappe",
       "scryfall_id": "7d88901c-3fa8-4b73-a584-3efa118338f1",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Tenacious Drone": {
+      "edhrec_rank": 28967,
+      "gate": null,
+      "name": "Tenacious Drone",
+      "reason": "",
+      "scryfall_id": "206ae042-09af-4fc1-8441-69cecdd087de",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -278740,6 +281920,26 @@
       "status": "done",
       "wanted": false
     },
+    "Test of Conviction": {
+      "edhrec_rank": 22713,
+      "gate": null,
+      "name": "Test of Conviction",
+      "reason": "",
+      "scryfall_id": "837d7cec-f3f8-4555-86f2-c5ea1849d7d1",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Test of Courage": {
+      "edhrec_rank": 25691,
+      "gate": null,
+      "name": "Test of Courage",
+      "reason": "",
+      "scryfall_id": "291b9b6b-54bf-4e71-98f1-cb9301ea0727",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Test of Endurance": {
       "edhrec_rank": 3343,
       "gate": "template",
@@ -278756,6 +281956,36 @@
       "name": "Test of Faith",
       "reason": "no template for: Prevent the next 3 damage that would be dealt to target creature this turn. For each 1 dam",
       "scryfall_id": "67ba07ca-7be4-400e-a104-f7bbd527b6b4",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Test of Identity": {
+      "edhrec_rank": 27717,
+      "gate": null,
+      "name": "Test of Identity",
+      "reason": "",
+      "scryfall_id": "7e1c0423-bf58-47a1-a838-c15bbf40eaba",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Test of Loyalty": {
+      "edhrec_rank": 24003,
+      "gate": null,
+      "name": "Test of Loyalty",
+      "reason": "",
+      "scryfall_id": "722eeb21-be3c-4ae6-abd2-c3281d53c035",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Test of Priorities": {
+      "edhrec_rank": 21421,
+      "gate": null,
+      "name": "Test of Priorities",
+      "reason": "",
+      "scryfall_id": "89e3ec23-e4dc-4d58-aeda-9f73ed4504a5",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -279890,6 +283120,16 @@
       "status": "pending",
       "wanted": false
     },
+    "The Beacon of Kahless": {
+      "edhrec_rank": 25475,
+      "gate": null,
+      "name": "The Beacon of Kahless",
+      "reason": "",
+      "scryfall_id": "371cc003-0c2c-47a5-83a4-bca6581a0974",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "The Beamtown Bullies": {
       "edhrec_rank": 11862,
       "gate": null,
@@ -279926,6 +283166,16 @@
       "name": "The Belligerent",
       "reason": "no template for: Whenever attacks, create a Treasure token. Until end of turn, you may look at the top card",
       "scryfall_id": "1454af8c-bce9-47d3-890f-283e2fea2cf2",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "The Best of Both Worlds": {
+      "edhrec_rank": 23911,
+      "gate": null,
+      "name": "The Best of Both Worlds",
+      "reason": "",
+      "scryfall_id": "3fb0d788-8e6a-4109-bd0a-d245866a6dcb",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -280040,6 +283290,16 @@
       "status": "pending",
       "wanted": false
     },
+    "The Borg Queen": {
+      "edhrec_rank": 15193,
+      "gate": null,
+      "name": "The Borg Queen",
+      "reason": "",
+      "scryfall_id": "8ed939ba-bf8d-4a68-ae9f-f8ca4eb301ab",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "The Boulder, Ready to Rumble": {
       "edhrec_rank": 5235,
       "gate": "template",
@@ -280098,6 +283358,16 @@
       "scryfall_id": "05402b51-8cf9-4f69-aa12-8a9d5981f8b1",
       "source": "",
       "status": "unexpressible",
+      "wanted": false
+    },
+    "The Caretaker": {
+      "edhrec_rank": 24226,
+      "gate": null,
+      "name": "The Caretaker",
+      "reason": "",
+      "scryfall_id": "492df5d5-04a2-49d2-a639-61b19f4419df",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "The Cauldron of Eternity": {
@@ -280320,6 +283590,16 @@
       "status": "done",
       "wanted": false
     },
+    "The Darkhold": {
+      "edhrec_rank": 23624,
+      "gate": null,
+      "name": "The Darkhold",
+      "reason": "",
+      "scryfall_id": "fca11cb7-0896-4927-8f11-0e9dec2de416",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "The Darkness Crystal": {
       "edhrec_rank": 1265,
       "gate": "template",
@@ -280410,6 +283690,26 @@
       "status": "pending",
       "wanted": false
     },
+    "The Destruction of Praxis": {
+      "edhrec_rank": 29385,
+      "gate": null,
+      "name": "The Destruction of Praxis",
+      "reason": "",
+      "scryfall_id": "3d33ac2a-73a9-4804-bf9f-c8cf4eea1c76",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "The Doctor, EMH": {
+      "edhrec_rank": 28528,
+      "gate": null,
+      "name": "The Doctor, EMH",
+      "reason": "",
+      "scryfall_id": "8fbad0dd-5f74-40c0-9e3e-c06be8eabb14",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "The Dominion Bracelet": {
       "edhrec_rank": 10304,
       "gate": "template",
@@ -280446,6 +283746,16 @@
       "name": "The Duke, Rebel Sentry",
       "reason": "no template for: The Duke enters with a +1/+1 counter on him",
       "scryfall_id": "cd9d91a8-7315-4355-af99-941f3cf7398c",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "The Duras Sisters": {
+      "edhrec_rank": 28557,
+      "gate": null,
+      "name": "The Duras Sisters",
+      "reason": "",
+      "scryfall_id": "7eb112eb-2abf-4ba3-b9bd-b45ffa80f7eb",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -281090,6 +284400,16 @@
       "status": "done",
       "wanted": false
     },
+    "The Guardian of Forever": {
+      "edhrec_rank": 24741,
+      "gate": null,
+      "name": "The Guardian of Forever",
+      "reason": "",
+      "scryfall_id": "b682a918-4f3a-41ce-90d9-f7acca9acfde",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "The Haunt of Hightower": {
       "edhrec_rank": 7150,
       "gate": "template",
@@ -281116,6 +284436,16 @@
       "name": "The Hive",
       "reason": "no template for: {5}, {T}: Create a 1/1 colorless Insect artifact creature token with flying named Wasp",
       "scryfall_id": "4141e02a-d42c-4272-833d-98e2614ab371",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "The Holodeck": {
+      "edhrec_rank": 24177,
+      "gate": null,
+      "name": "The Holodeck",
+      "reason": "",
+      "scryfall_id": "19366f88-8411-428b-9903-8c9527686cac",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -281216,6 +284546,16 @@
       "name": "The Infamous Cruelclaw",
       "reason": "no template for: Whenever deals combat damage to a player, exile cards from the top of your library until y",
       "scryfall_id": "d7fc26a7-f47e-44d7-a42b-b5415fc86f8f",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "The Inner Light": {
+      "edhrec_rank": 28426,
+      "gate": null,
+      "name": "The Inner Light",
+      "reason": "",
+      "scryfall_id": "af92a773-b237-4cd8-b50d-4f7c3b9290ed",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -281600,6 +284940,16 @@
       "status": "pending",
       "wanted": false
     },
+    "The Measure of a Man": {
+      "edhrec_rank": 29671,
+      "gate": null,
+      "name": "The Measure of a Man",
+      "reason": "",
+      "scryfall_id": "e9e6b01d-7eb5-4632-9d51-0012b58006da",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "The Meathook Massacre": {
       "edhrec_rank": 509,
       "gate": "template",
@@ -281810,12 +285160,32 @@
       "status": "pending",
       "wanted": false
     },
+    "The Naked Time": {
+      "edhrec_rank": 26634,
+      "gate": null,
+      "name": "The Naked Time",
+      "reason": "",
+      "scryfall_id": "627c2ff6-88be-4c37-a676-0eddf453e8c6",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "The Necrobloom": {
       "edhrec_rank": 3586,
       "gate": "template",
       "name": "The Necrobloom",
       "reason": "no template for: Landfall — Whenever a land you control enters, create a 0/1 green Plant creature token. If",
       "scryfall_id": "5fe4969b-2b18-4958-af28-88bdf92dac2c",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "The Needs of the Many": {
+      "edhrec_rank": 18583,
+      "gate": null,
+      "name": "The Needs of the Many",
+      "reason": "",
+      "scryfall_id": "a2e52d26-5e0d-436e-ac8c-65c399dc58be",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -281986,6 +285356,16 @@
       "name": "The Prismatic Piper",
       "reason": "no template for: If is your commander, choose a color before the game begins. is the chosen color",
       "scryfall_id": "c78c2713-39e7-4a6e-a132-027099a89665",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "The Promise of Kahless": {
+      "edhrec_rank": 26783,
+      "gate": null,
+      "name": "The Promise of Kahless",
+      "reason": "",
+      "scryfall_id": "a88d16b6-c241-48a4-b35a-c219b4bfd750",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -282490,6 +285870,16 @@
       "status": "pending",
       "wanted": false
     },
+    "The Sword of Kahless": {
+      "edhrec_rank": 26346,
+      "gate": null,
+      "name": "The Sword of Kahless",
+      "reason": "",
+      "scryfall_id": "26cc1c3a-28ea-4f62-8382-2e5aaf9c1d61",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "The Tabernacle at Pendrell Vale": {
       "edhrec_rank": 8924,
       "gate": "template",
@@ -282650,6 +286040,16 @@
       "status": "pending",
       "wanted": false
     },
+    "The Traveler": {
+      "edhrec_rank": 27808,
+      "gate": null,
+      "name": "The Traveler",
+      "reason": "",
+      "scryfall_id": "171932ba-26da-48e9-b8a2-c71aafe5c6a6",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "The Trickster-God's Heist": {
       "edhrec_rank": 11335,
       "gate": "template",
@@ -282706,6 +286106,16 @@
       "name": "The Underworld Cookbook",
       "reason": "no template for: {T}, Discard a card: Create a Food token",
       "scryfall_id": "039d62b0-3309-4424-a2ea-5a0d88d4bd72",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "The Unicomplex": {
+      "edhrec_rank": 15377,
+      "gate": null,
+      "name": "The Unicomplex",
+      "reason": "",
+      "scryfall_id": "4c881efb-d55b-45fe-9e5a-8a61aec6fbbb",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -283010,6 +286420,16 @@
       "status": "pending",
       "wanted": false
     },
+    "The Wrath of Khan": {
+      "edhrec_rank": 26574,
+      "gate": null,
+      "name": "The Wrath of Khan",
+      "reason": "",
+      "scryfall_id": "426d627e-bb88-4879-8d9f-db1babf22b15",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "The Wretched": {
       "edhrec_rank": 27497,
       "gate": "template",
@@ -283216,6 +286636,16 @@
       "name": "There and Back Again",
       "reason": "no template for: I — Up to one target creature can't block for as long as you control this Saga. The Ring t",
       "scryfall_id": "939b0bd0-24ea-45de-a2d3-37bbf6a3e6f9",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "There's Coffee in that Nebula": {
+      "edhrec_rank": 26521,
+      "gate": null,
+      "name": "There's Coffee in that Nebula",
+      "reason": "",
+      "scryfall_id": "07b3f211-1ff1-47c3-9063-9a1ac0fd814c",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -284236,6 +287666,16 @@
       "name": "Thorough Investigation",
       "reason": "no template for: Whenever you attack, investigate",
       "scryfall_id": "a40e6034-aa05-4542-ac12-78e6a76d86e9",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Those Old Scientists": {
+      "edhrec_rank": 28880,
+      "gate": null,
+      "name": "Those Old Scientists",
+      "reason": "",
+      "scryfall_id": "44280b43-b07e-43a4-9ae3-2eac0baeb918",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -288800,6 +292240,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Tom Paris, Risk-Taker": {
+      "edhrec_rank": 22960,
+      "gate": "template",
+      "name": "Tom Paris, Risk-Taker",
+      "reason": "no template for: Seek out — Whenever you draw your second card each turn, creatures you control gain flying",
+      "scryfall_id": "04ea9781-885c-479b-9b96-c08ba56a6438",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Tom, Bert, and William": {
       "edhrec_rank": 22247,
       "gate": "template",
@@ -291390,6 +294840,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Transporter Malfunction": {
+      "edhrec_rank": 31829,
+      "gate": null,
+      "name": "Transporter Malfunction",
+      "reason": "",
+      "scryfall_id": "85b108c3-00b5-4dfb-90de-57fa483c4926",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Transpose": {
       "edhrec_rank": 2842,
       "gate": null,
@@ -291398,6 +294858,16 @@
       "scryfall_id": "51cb61ab-0508-4668-8680-051d38df7ccb",
       "source": "agent",
       "status": "done",
+      "wanted": false
+    },
+    "Transwarp Hub": {
+      "edhrec_rank": 19612,
+      "gate": null,
+      "name": "Transwarp Hub",
+      "reason": "",
+      "scryfall_id": "43a7eb3f-5d46-4fd9-8548-684cb90a8ac6",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Trap Digger": {
@@ -292650,6 +296120,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Tribble Cluster": {
+      "edhrec_rank": 27541,
+      "gate": null,
+      "name": "Tribble Cluster",
+      "reason": "",
+      "scryfall_id": "1012e618-327e-48a8-9b0b-8a8681bf4442",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Tribune of Rot": {
       "edhrec_rank": 21776,
       "gate": "template",
@@ -292846,6 +296326,16 @@
       "name": "Triclopean Sight",
       "reason": "no template for: When this Aura enters, untap enchanted creature",
       "scryfall_id": "444b5d72-ac5b-43d2-b5dc-0cc4bf63e43d",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Tricorder": {
+      "edhrec_rank": 27206,
+      "gate": null,
+      "name": "Tricorder",
+      "reason": "",
+      "scryfall_id": "3c872f02-80ac-49e3-a777-3526d35ad7cc",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -293180,6 +296670,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Troi, Winging It": {
+      "edhrec_rank": 25284,
+      "gate": null,
+      "name": "Troi, Winging It",
+      "reason": "",
+      "scryfall_id": "bc44fff5-a58d-4da9-88cf-d23414885791",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Trokin High Guard": {
       "edhrec_rank": 30846,
       "gate": null,
@@ -293426,6 +296926,16 @@
       "name": "Troublesome Spirit",
       "reason": "no template for: At the beginning of your end step, tap all lands you control",
       "scryfall_id": "23d7e856-6852-4b97-ae0e-a4becdfc8166",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Troubling Tribbles": {
+      "edhrec_rank": 20478,
+      "gate": null,
+      "name": "Troubling Tribbles",
+      "reason": "",
+      "scryfall_id": "0af3e535-83e6-422b-85c5-39d830cb072c",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -294650,6 +298160,16 @@
       "status": "unexpressible",
       "wanted": false
     },
+    "Tuvok, Chief Tactical Officer": {
+      "edhrec_rank": 26293,
+      "gate": "template",
+      "name": "Tuvok, Chief Tactical Officer",
+      "reason": "no template for: When Tuvok enters during the declare attackers step, choose up to two target attacking cre",
+      "scryfall_id": "40f61357-37b2-45b1-8163-69f016f794ec",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Tuya Bearclaw": {
       "edhrec_rank": 10351,
       "gate": "template",
@@ -295350,6 +298870,26 @@
       "status": "pending",
       "wanted": false
     },
+    "Type-03 Borg Vessel": {
+      "edhrec_rank": 14118,
+      "gate": null,
+      "name": "Type-03 Borg Vessel",
+      "reason": "",
+      "scryfall_id": "9e70cf0a-82c9-4fa7-b422-dac6a913c63a",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Type-2 Phaser": {
+      "edhrec_rank": 28799,
+      "gate": null,
+      "name": "Type-2 Phaser",
+      "reason": "",
+      "scryfall_id": "c704af22-7c42-45c7-b3a4-b414c4dd8e05",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Typhoid Mary, Fractured": {
       "edhrec_rank": 14475,
       "gate": null,
@@ -295640,12 +299180,142 @@
       "status": "pending",
       "wanted": false
     },
+    "U.S.S. Cerritos, Following Up": {
+      "edhrec_rank": 22877,
+      "gate": null,
+      "name": "U.S.S. Cerritos, Following Up",
+      "reason": "",
+      "scryfall_id": "76bf7521-5024-4fdc-9ea1-5e10f2647efb",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "U.S.S. Defiant, Mirror Migrant": {
+      "edhrec_rank": 19132,
+      "gate": null,
+      "name": "U.S.S. Defiant, Mirror Migrant",
+      "reason": "",
+      "scryfall_id": "1ceaa12d-b249-42e8-ada1-ccadf3a36b61",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "U.S.S. Defiant, Tough Little Ship": {
+      "edhrec_rank": 18848,
+      "gate": "template",
+      "name": "U.S.S. Defiant, Tough Little Ship",
+      "reason": "no template for: When U.S.S. Defiant enters, destroy up to one target artifact or enchantment",
+      "scryfall_id": "6062ec17-98bb-4cf7-853e-0b43c2ce4b26",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "U.S.S. Discovery, at Black Alert": {
+      "edhrec_rank": 18086,
+      "gate": null,
+      "name": "U.S.S. Discovery, at Black Alert",
+      "reason": "",
+      "scryfall_id": "69b1f87f-ff02-4945-9f07-18dab5035e2d",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "U.S.S. Enterprise-A, Free Spirit": {
+      "edhrec_rank": 17829,
+      "gate": null,
+      "name": "U.S.S. Enterprise-A, Free Spirit",
+      "reason": "",
+      "scryfall_id": "53941fd6-1913-4848-8fa1-7fff7ea3062b",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "U.S.S. Enterprise-C, Time-Tossed": {
+      "edhrec_rank": 20436,
+      "gate": "template",
+      "name": "U.S.S. Enterprise-C, Time-Tossed",
+      "reason": "no template for: When U.S.S. Enterprise-C enters or dies, you may discard your hand. If you do, draw a card",
+      "scryfall_id": "20a62007-baf3-4e1b-80e1-71b7a7efd13f",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "U.S.S. Enterprise-D, Galaxy-Class": {
       "edhrec_rank": 30204,
       "gate": "template",
       "name": "U.S.S. Enterprise-D, Galaxy-Class",
       "reason": "no template for: Whenever one or more charge counters are put on U.S.S. Enterprise-D for the first time eac",
       "scryfall_id": "057a4413-6a17-491e-bfd7-6cd427b1a442",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "U.S.S. Enterprise-E, Sovereign": {
+      "edhrec_rank": 18716,
+      "gate": "template",
+      "name": "U.S.S. Enterprise-E, Sovereign",
+      "reason": "no template for: Station",
+      "scryfall_id": "15e74da6-477c-4ab3-8b91-40f4b2d22f94",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "U.S.S. Excelsior, Cutting Edge": {
+      "edhrec_rank": 23136,
+      "gate": null,
+      "name": "U.S.S. Excelsior, Cutting Edge",
+      "reason": "",
+      "scryfall_id": "de62b452-3780-4eeb-8163-f44176495615",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "U.S.S. Farragut, Bold Explorer": {
+      "edhrec_rank": 21519,
+      "gate": null,
+      "name": "U.S.S. Farragut, Bold Explorer",
+      "reason": "",
+      "scryfall_id": "312f5ad3-6184-4213-ac6c-4a74c7e4e9d2",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "U.S.S. Prometheus, Prototype": {
+      "edhrec_rank": 18465,
+      "gate": "template",
+      "name": "U.S.S. Prometheus, Prototype",
+      "reason": "no template for: Station",
+      "scryfall_id": "24981fe7-d9cd-4273-9f42-a265d7de3087",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "U.S.S. Reliant, From Hell's Heart": {
+      "edhrec_rank": 26358,
+      "gate": null,
+      "name": "U.S.S. Reliant, From Hell's Heart",
+      "reason": "",
+      "scryfall_id": "2aad44f7-e3f4-46e9-b633-eb939dfd8e51",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "U.S.S. Stargazer, Here and There": {
+      "edhrec_rank": 20091,
+      "gate": "template",
+      "name": "U.S.S. Stargazer, Here and There",
+      "reason": "no template for: Station",
+      "scryfall_id": "b63286ae-127b-4eb0-870f-f105decf575a",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "U.S.S. Voyager, Lone Wanderer": {
+      "edhrec_rank": 19581,
+      "gate": null,
+      "name": "U.S.S. Voyager, Lone Wanderer",
+      "reason": "",
+      "scryfall_id": "aaf8a0b2-c6cb-41cb-913d-7ae1d75e555d",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -295806,6 +299476,16 @@
       "name": "Uglúk of the White Hand",
       "reason": "no template for: Whenever another creature you control dies, put a +1/+1 counter on Uglúk. If that creature",
       "scryfall_id": "e914c7fc-be3c-4346-bf37-6e10f4998204",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Uhura, Xenolinguist": {
+      "edhrec_rank": 30801,
+      "gate": null,
+      "name": "Uhura, Xenolinguist",
+      "reason": "",
+      "scryfall_id": "5e89c267-84af-415c-b255-7ef16102ea35",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -296486,6 +300166,16 @@
       "name": "Umori, the Collector",
       "reason": "no template for: Companion — Each nonland card in your starting deck shares a card type",
       "scryfall_id": "4af29607-8907-4dda-9575-b6ae6ceaf027",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Una Chin-Riley, Number One": {
+      "edhrec_rank": 30000,
+      "gate": null,
+      "name": "Una Chin-Riley, Number One",
+      "reason": "",
+      "scryfall_id": "5585c90d-3fe7-41f4-9728-36b9410ecc53",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -297750,6 +301440,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Unexplored Territory": {
+      "edhrec_rank": 22570,
+      "gate": null,
+      "name": "Unexplored Territory",
+      "reason": "",
+      "scryfall_id": "ca1e60f1-11a9-4bb8-9f6e-5b652b49c517",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Unfathomable Truths": {
       "edhrec_rank": 9450,
       "gate": "template",
@@ -297976,6 +301676,16 @@
       "name": "Unidentified Hovership",
       "reason": "no template for: When this Vehicle enters, exile up to one target creature with toughness 5 or less",
       "scryfall_id": "426b1aa9-e94f-4654-88c7-9cea52f1bc0a",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Unification": {
+      "edhrec_rank": 25679,
+      "gate": "template",
+      "name": "Unification",
+      "reason": "no template for: I — The owner of up to one target creature draws two cards, then shuffles that creature in",
+      "scryfall_id": "1c2378fb-fb29-499e-97c2-f10f97babf7b",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -301430,6 +305140,16 @@
       "status": "done",
       "wanted": false
     },
+    "Vash, Freelance Archaeologist": {
+      "edhrec_rank": 26792,
+      "gate": null,
+      "name": "Vash, Freelance Archaeologist",
+      "reason": "",
+      "scryfall_id": "d1f51765-f336-4ca2-a0f5-e42dc352c0fa",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Vashta Nerada": {
       "edhrec_rank": 5242,
       "gate": null,
@@ -302426,6 +306146,16 @@
       "name": "Vengeance",
       "reason": "no template for: Destroy target tapped creature",
       "scryfall_id": "314e7a88-d721-490f-8b62-23ce58092be8",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Vengeance Mission": {
+      "edhrec_rank": 26624,
+      "gate": null,
+      "name": "Vengeance Mission",
+      "reason": "",
+      "scryfall_id": "059e3331-43bc-43a8-90e9-86fef37e032a",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -303790,6 +307520,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Vexing Drone": {
+      "edhrec_rank": 29741,
+      "gate": null,
+      "name": "Vexing Drone",
+      "reason": "",
+      "scryfall_id": "6f4b2476-8f93-4d4e-b664-233e82fcf212",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Vexing Gull": {
       "edhrec_rank": 25378,
       "gate": null,
@@ -304236,6 +307976,16 @@
       "name": "Vibrating Sphere",
       "reason": "no template for: During your turn, creatures you control get +2/+0",
       "scryfall_id": "48f93ded-ecf6-4a70-8ca3-a9c0c3201c21",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Vic Fontaine, One Night Only": {
+      "edhrec_rank": 26300,
+      "gate": "template",
+      "name": "Vic Fontaine, One Night Only",
+      "reason": "no template for: Seek out — Whenever you draw your second card each turn, one or two target creatures each ",
+      "scryfall_id": "41887da1-5ff0-4785-a3ab-95fff12ca79e",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -307770,6 +311520,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Voq, Torchbearer": {
+      "edhrec_rank": 25939,
+      "gate": null,
+      "name": "Voq, Torchbearer",
+      "reason": "",
+      "scryfall_id": "0b4d2344-d615-4982-b656-44419565121a",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Voracious Bibliophile": {
       "edhrec_rank": 7849,
       "gate": null,
@@ -308460,6 +312220,26 @@
       "status": "pending",
       "wanted": false
     },
+    "Vulcan": {
+      "edhrec_rank": 20736,
+      "gate": null,
+      "name": "Vulcan",
+      "reason": "",
+      "scryfall_id": "4103795c-dbb8-414f-b580-6b0084b8e212",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Vulcan Mind-Meld": {
+      "edhrec_rank": 29927,
+      "gate": null,
+      "name": "Vulcan Mind-Meld",
+      "reason": "",
+      "scryfall_id": "dd6c0c12-01b8-4f68-9401-7430a7f94bf7",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Vulpikeet": {
       "edhrec_rank": 12657,
       "gate": "template",
@@ -308656,6 +312436,16 @@
       "name": "Vuzzle Spaceship",
       "reason": "no template for: Spaceship 6",
       "scryfall_id": "a08483e0-7b75-4141-8707-57e22438168d",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Võx, Child of the Collective": {
+      "edhrec_rank": 18867,
+      "gate": null,
+      "name": "Võx, Child of the Collective",
+      "reason": "",
+      "scryfall_id": "46f7a693-8b99-49e9-866e-01ddb5b54f3e",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -311056,6 +314846,26 @@
       "name": "Warp Artifact",
       "reason": "no template for: At the beginning of the upkeep of enchanted artifact's controller, this Aura deals 1 damag",
       "scryfall_id": "94355dce-dfd6-45d6-9b86-0c2bc10e0231",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Warp Core": {
+      "edhrec_rank": 20648,
+      "gate": null,
+      "name": "Warp Core",
+      "reason": "",
+      "scryfall_id": "de8e2bde-b368-4d10-8409-86f5da6997f6",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Warp Speed": {
+      "edhrec_rank": 21223,
+      "gate": null,
+      "name": "Warp Speed",
+      "reason": "",
+      "scryfall_id": "35ccfa21-00da-497b-8e76-631ec4489e72",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -313550,6 +317360,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Wesley Crusher, Starfleet Cadet": {
+      "edhrec_rank": 25090,
+      "gate": null,
+      "name": "Wesley Crusher, Starfleet Cadet",
+      "reason": "",
+      "scryfall_id": "647f66af-2445-48ce-997a-3c5e94dcb77c",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "West Coast Expansion": {
       "edhrec_rank": 16458,
       "gate": null,
@@ -315676,6 +319496,16 @@
       "name": "Will Riker, Assuming Command",
       "reason": "no template for: When Will Riker enters, put a +1/+1 counter on another target creature you control",
       "scryfall_id": "6b1c20ba-df95-4a22-9646-df907c5700f8",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Will Riker, First in the Field": {
+      "edhrec_rank": 20891,
+      "gate": null,
+      "name": "Will Riker, First in the Field",
+      "reason": "",
+      "scryfall_id": "5d6efbad-ea81-42e8-82f1-85ca5e849e69",
       "source": "",
       "status": "pending",
       "wanted": false
@@ -318820,6 +322650,56 @@
       "status": "done",
       "wanted": false
     },
+    "Worf, Defiant Commander": {
+      "edhrec_rank": 25929,
+      "gate": null,
+      "name": "Worf, Defiant Commander",
+      "reason": "",
+      "scryfall_id": "63020954-9d2b-4521-8292-bd1a71dad006",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Worf, Honor-Bound Warrior": {
+      "edhrec_rank": 27323,
+      "gate": null,
+      "name": "Worf, Honor-Bound Warrior",
+      "reason": "",
+      "scryfall_id": "969a7271-30d5-4e6c-aa6b-1c56dfd69e09",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Worf, Intelligence Contractor": {
+      "edhrec_rank": 24341,
+      "gate": null,
+      "name": "Worf, Intelligence Contractor",
+      "reason": "",
+      "scryfall_id": "7df6c8c1-1f85-4c5d-a4f6-9ffcdad1b12e",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Worf, Son of Mogh": {
+      "edhrec_rank": 21622,
+      "gate": "template",
+      "name": "Worf, Son of Mogh",
+      "reason": "no template for: Other Officers you control get +1/+1",
+      "scryfall_id": "c15be084-e71b-4525-8e63-67d991c25b15",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Worf, Still Not Merry": {
+      "edhrec_rank": 27130,
+      "gate": null,
+      "name": "Worf, Still Not Merry",
+      "reason": "",
+      "scryfall_id": "b4902c9d-0608-4a77-bfee-48703bc25c70",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Workhorse": {
       "edhrec_rank": 13096,
       "gate": "template",
@@ -320890,6 +324770,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Year of Hell": {
+      "edhrec_rank": 27873,
+      "gate": null,
+      "name": "Year of Hell",
+      "reason": "",
+      "scryfall_id": "4ab931e9-fb07-4da2-a0d9-acfec2ac9e19",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Yedora, Grave Gardener": {
       "edhrec_rank": 3081,
       "gate": "template",
@@ -322170,6 +326060,16 @@
       "status": "pending",
       "wanted": false
     },
+    "Zefram Cochrane, Warp Pioneer": {
+      "edhrec_rank": 22388,
+      "gate": null,
+      "name": "Zefram Cochrane, Warp Pioneer",
+      "reason": "",
+      "scryfall_id": "43ce2e91-9dce-4e86-a4b8-8d21e4e368ea",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
     "Zegana, Utopian Speaker": {
       "edhrec_rank": 5260,
       "gate": null,
@@ -322456,6 +326356,16 @@
       "name": "Zero Point Ballad",
       "reason": "no template for: Destroy all creatures with toughness X or less. You lose X life. If X is 6 or more, return",
       "scryfall_id": "59cf9f4d-54cd-4cda-9726-65e16100ab46",
+      "source": "",
+      "status": "pending",
+      "wanted": false
+    },
+    "Zero, Incorporeal Sensate": {
+      "edhrec_rank": 32205,
+      "gate": null,
+      "name": "Zero, Incorporeal Sensate",
+      "reason": "",
+      "scryfall_id": "93f616fe-6906-4e5d-b9fe-b432cccdb0ec",
       "source": "",
       "status": "pending",
       "wanted": false

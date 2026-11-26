@@ -702,6 +702,13 @@
       "0": 42
     }
   },
+  "ambassador_k_ehleyr": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "ambition_s_cost": {
     "hand_size": {
       "0": 4
@@ -1992,6 +1999,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "b_elanna_torres_scrapper": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "back_in_town": {
     "zone": "graveyard"
   },
@@ -2532,6 +2543,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "beverly_crusher_ship_s_doctor": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "big_score": {
@@ -4565,6 +4580,13 @@
     },
     "zone": "graveyard"
   },
+  "chief_miles_o_brien": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "chief_of_the_foundry": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4663,6 +4685,15 @@
   "chronomancer": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "chronomantic_escape": {
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "exile"
   },
   "chulane_teller_of_tales": {
     "battlefield_count": 33,

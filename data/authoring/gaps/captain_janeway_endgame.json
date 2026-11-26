@@ -1,0 +1,18 @@
+{
+  "card_id": "captain_janeway_endgame",
+  "name": "Captain Janeway, Endgame",
+  "oracle_text": "Whenever one or more Officers you control deal combat damage to a player, you draw a card and create a 1/1 red Officer creature token.\n{2}, Tap an untapped creature you control: Captain Janeway can't be blocked this turn.",
+  "blocked_sentences": [
+    "Whenever one or more Officers you control deal combat damage to a player, you draw a card and create a 1/1 red Officer creature token."
+  ],
+  "needs": [
+    {
+      "capability": "officer_token",
+      "kind": "token",
+      "what": "a 1/1 red Officer creature token (e.g. id officer_1_1_r)",
+      "why_existing_wont_do": "token_ids has no Officer token; the nearest 1/1 red creature tokens (warrior_1_1_r, goblin_1_1_r, elemental_1_1_r) have the wrong creature type, and Officer matters because the same trigger counts Officers. The rest of the line is expressible (creatures_deal_combat_damage, batched, filter subtypes Officer controller you; draw; create_token), as is the activated line ({2} plus tap_permanents Creature cost, unblockable on self this_turn)"
+    }
+  ],
+  "closest_existing": ["warrior_1_1_r", "goblin_1_1_r"],
+  "confidence": "high"
+}
