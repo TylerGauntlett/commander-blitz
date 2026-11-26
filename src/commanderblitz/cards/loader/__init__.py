@@ -501,6 +501,9 @@ def load_deck_file(path: Path) -> DeckModel:
 #: has "{T}: Add {U}."" (Machine God's Effigy): positions in the card's
 #: ``grantable_abilities``, each quoted ability written there once and put on
 #: the copied face, range-checked by `_check_grant_targets`.
+#: ``add_supertypes`` is ``remove_supertypes``' other half and `copy_permanent`'s
+#: key of the same name: Ezri Dax, Newly Joined's "…she's a legendary Trill in
+#: addition to her other types".
 ENTERS_COPY_EXCEPT_KEYS = frozenset(
     {
         "add_keywords",
@@ -510,6 +513,7 @@ ENTERS_COPY_EXCEPT_KEYS = frozenset(
         "add_subtypes",
         "colors",
         "no_mana_cost",
+        "add_supertypes",
         "remove_supertypes",
         "name",
         "enters_with",
@@ -604,6 +608,21 @@ def _check_enters_copy_except(spec: Mapping[str, Any], where: str) -> None:
         for s in removed:
             if s not in KNOWN_SUPERTYPES:
                 raise DslError(f"{where}.remove_supertypes: unknown supertype {s!r}")
+    if "add_supertypes" in spec:
+        # "…she's a legendary Trill in addition to her other types" (Ezri Dax,
+        # Newly Joined). Dropped, the copy of a nonlegendary creature is no
+        # legend, and the legend rule never pairs it with another of her name.
+        added = spec["add_supertypes"]
+        if not isinstance(added, list) or not added:
+            raise DslError(f"{where}.add_supertypes: must be a non-empty list")
+        for s in added:
+            if s not in KNOWN_SUPERTYPES:
+                raise DslError(f"{where}.add_supertypes: unknown supertype {s!r}")
+        if set(added) & set(spec.get("remove_supertypes") or ()):
+            # One printed clause never both adds and strips a supertype.
+            raise DslError(
+                f"{where}: a supertype in both 'add_supertypes' and 'remove_supertypes'"
+            )
     if "add_abilities" in spec:
         # "…and it has "{T}: Add {U}."" (Machine God's Effigy). Positions in
         # this card's `grantable_abilities`; the range is checked against the

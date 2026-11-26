@@ -1109,15 +1109,21 @@ def ask_enters_copy(state: GameState, card: CardDef, controller: int, source_oid
         pool = resolve_pool(ctx, selector)
         if not pool:
             continue
+        # A pool may be cards rather than permanents: "…a copy of any creature
+        # card in your graveyard that was put there from the battlefield this
+        # turn" (Ezri Dax, Newly Joined). The model is a card either way --
+        # `enters_copy_of` is its def id, its copiable values as that card
+        # (707.2) -- so only the wording differs.
+        noun = "permanent" if selector.get("zone", "battlefield") == "battlefield" else "card"
         if not (
             yield from ask_yes_no(
-                ctx, f"Have {card.name} enter as a copy of another permanent?", controller
+                ctx, f"Have {card.name} enter as a copy of another {noun}?", controller
             )
         ):
             continue
         chosen = yield from ask_objects(
             ctx,
-            f"Copy which permanent for {card.name}?",
+            f"Copy which {noun} for {card.name}?",
             pool,
             1,
             1,
@@ -2243,7 +2249,13 @@ def _enter_battlefield(
                 colors = exception.get("colors")
                 obj.copying_colors = frozenset(colors) if colors is not None else None
                 obj.copying_no_mana_cost = bool(exception.get("no_mana_cost"))
-                obj.copying_add_supertypes = None
+                # "…she's a legendary Trill in addition to her other types"
+                # (Ezri Dax, Newly Joined): Legendary on the copied face, so the
+                # legend rule (704.5j) sees a legend however plain the model.
+                supertypes_added = exception.get("add_supertypes")
+                obj.copying_add_supertypes = (
+                    frozenset(supertypes_added) if supertypes_added else None
+                )
                 obj.copying_power = None
                 obj.copying_toughness = None
                 obj.copying_own_abilities = None

@@ -1,0 +1,35 @@
+{
+  "_comment": "Shapes for tests/unit/copies/test_enters_as_graveyard_copy.py. t_eagc_ezri is Ezri Dax, Newly Joined: a legendary 1/3 Trill Advisor with flash that may enter as a copy of a creature card in its controller's graveyard that was put there from the battlefield this turn, except her name stays her own and she is a legendary Trill in addition to the copied types.",
+  "cards": [
+    {
+      "id": "t_eagc_ezri",
+      "name": "Test Ezri, Newly Joined",
+      "oracle_text": "Flash\nYou may have Test Ezri enter as a copy of any creature card in your graveyard that was put there from the battlefield this turn, except her name is Test Ezri, Newly Joined and she's a legendary Trill in addition to her other types.",
+      "mana_cost": "{2}",
+      "types": ["Creature"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["Trill", "Advisor"],
+      "power": 1,
+      "toughness": 3,
+      "keywords": ["flash"],
+      "colors": [],
+      "color_identity": [],
+      "replacements": [
+        {
+          "event": "self_enters_as_copy",
+          "copying": {
+            "zone": "graveyard",
+            "controller": "you",
+            "types": ["Creature"],
+            "graveyard_arrival_this_turn": ["from_battlefield"]
+          },
+          "except_": {
+            "name": "Test Ezri, Newly Joined",
+            "add_supertypes": ["Legendary"],
+            "add_subtypes": ["Trill"]
+          }
+        }
+      ]
+    }
+  ]
+}
