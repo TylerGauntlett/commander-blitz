@@ -109,6 +109,12 @@ def begin_step(state: GameState) -> Generator[Any, list[int]]:
     if step is Step.UNTAP:
         yield from _untap_step(state)
     elif step is Step.UPKEEP:
+        # The step's beginning, stamped before anything in it happens: echo's
+        # "since the beginning of your last upkeep" (702.30a) is asked against
+        # it, and a permanent arriving later in this step arrived after it.
+        upkeeper = state.players[state.active_player]
+        upkeeper.previous_upkeep_began_at = upkeeper.upkeep_began_at
+        upkeeper.upkeep_began_at = state.alloc_timestamp()
         # Before the upkeep triggers: removing the last time counter casts the
         # card, and a spell cast this upkeep should be on the stack under
         # anything that triggers from the upkeep itself.

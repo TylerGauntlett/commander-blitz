@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**563 cards** blocked by **466** capabilities.
+**561 cards** blocked by **465** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -56,7 +56,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 2 | 15516 | selector |
 | [distribute-counters-spell](#distribute-counters-spell) | 2 | 4355 | op |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
-| [echo](#echo) | 2 | 961 | keyword |
 | [encore](#encore) | 2 | 9330 | static_effect |
 | [exact-target-count](#exact-target-count) | 2 | 7243 | engine |
 | [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 2 | 5169 | static_effect |
@@ -1717,24 +1716,6 @@ Blocks **2** cards.
   - Magma Opus deals 4 damage divided as you choose among any number of targets.
 - **Skarrgan Hellkite** (rank 13459) — `skarrgan_hellkite`
   - {3}{R}: This creature deals 2 damage divided as you choose among one or two targets. Activate only if this creature has a +1/+1 counter on it.
-
-</details>
-
-## echo
-
-Blocks **2** cards.
-
-- **(keyword)** Echo {cost}: a card-level keyword (702.30) that gives the permanent an upkeep trigger with an intervening-if 'this came under your control since the beginning of your last upkeep' (true after it enters or after a change of control, false once that upkeep has passed), which sacrifices it unless its controller pays the echo mana cost
-  <br>Why the existing vocabulary won't do: No echo key in card_level_cost_keys, card_level_rider_keys or keywords. An `upkeep` trigger with `may` pay {2}{B} else `sacrifice` is writable, but no condition_key reads 'came under your control since your last upkeep'; a `delayed_trigger` on self_enters with duration `until_it_fires` covers only the enter case and misses a change of control (gain_control), so it would be a narrower card
-- **(keyword)** Echo {cost}: a card-level keyword (702.30) that gives the permanent an upkeep trigger with an intervening-if 'this came under your control since the beginning of your last upkeep' (true after it enters or after a change of control, false once that upkeep has passed), which sacrifices it unless its controller pays the echo mana cost
-  <br>Why the existing vocabulary won't do: No echo key in card_level_cost_keys or keywords. An `upkeep` trigger with `may` pay {3}{W}{W} else `sacrifice` is writable, but no condition_key reads 'came under your control since your last upkeep': `entered_this_turn` is false by the next upkeep, and a `set_flag` on self_enters has no op to clear it after the first upkeep and misses control changes (gain_control), so the permanent would be asked to pay echo every upkeep or never
-
-<details><summary>Cards waiting on this</summary>
-
-- **Karmic Guide** (rank 961) — `karmic_guide`
-  - Echo {3}{W}{W} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)
-- **Bone Shredder** (rank 9157) — `bone_shredder`
-  - Echo {2}{B} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)
 
 </details>
 

@@ -131,6 +131,11 @@ CONDITION_KEYS = frozenset(
         # duration on `has_flag`, because a card that reached for the wrong one
         # would be wrong only on the *second* turn, which no one-turn test sees.
         "has_turn_flag",
+        # Echo (702.30a): "if this came under your control since the beginning
+        # of your last upkeep". Asked of the ability's own source, against its
+        # controller's upkeep stamps; true after it arrives and after any change
+        # of control, false once one of its controller's upkeeps has begun since.
+        "came_under_control_since_last_upkeep",
         # Prowl: "…if a player was dealt combat damage this turn by a Faerie or
         # a Rogue". A list of creature subtypes, true when *any* of them dealt
         # combat damage to a player this turn.
@@ -372,6 +377,10 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         # thing that can have become the word.
         obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         return obj is not None and str(cond["has_flag"]) in obj.flags
+    if "came_under_control_since_last_upkeep" in cond:
+        return _came_under_control_since_last_upkeep(ctx) == bool(
+            cond["came_under_control_since_last_upkeep"]
+        )
     if "has_turn_flag" in cond:
         # Combat Celebrant's "if this creature hasn't been exerted this turn",
         # written as `{"not": {"has_turn_flag": "exerted"}}`. Asked of the
@@ -619,6 +628,10 @@ def validate_condition(cond: Any, where: str) -> None:
         raise DslError(f"{where}.solved: must be true or false")
     if "escaped" in cond and not isinstance(cond["escaped"], bool):
         raise DslError(f"{where}.escaped: must be true or false")
+    if "came_under_control_since_last_upkeep" in cond and not isinstance(
+        cond["came_under_control_since_last_upkeep"], bool
+    ):
+        raise DslError(f"{where}.came_under_control_since_last_upkeep: must be true or false")
     if "embalmed" in cond and not isinstance(cond["embalmed"], bool):
         raise DslError(f"{where}.embalmed: must be true or false")
     if "cast_from_exile" in cond and not isinstance(cond["cast_from_exile"], bool):
@@ -769,3 +782,26 @@ def _two_share_a_color(ctx: EffectContext, selector: Mapping[str, Any]) -> bool:
             return True
         seen.append(colors)
     return False
+
+
+def _came_under_control_since_last_upkeep(ctx: EffectContext) -> bool:
+    """Echo's intervening-if (702.30a), asked of the ability's own source.
+
+    "Your last upkeep" is the controller's most recent upkeep to have begun --
+    except while that upkeep is the step being played, where the echo trigger
+    is asked both as it triggers and as it resolves (603.4), and "last" means
+    the one before. Reading the current one there would make every echo
+    trigger false at its own upkeep, and a card that is never asked to pay.
+
+    Stamps, not turn numbers: an additional beginning phase is a second upkeep
+    in the same turn, and a permanent stolen between two upkeeps of one turn
+    must be asked at the second.
+    """
+    state = ctx.state
+    obj = state.objects.get(ctx.source_oid) if ctx.source_oid else None
+    if obj is None or not obj.on_battlefield:
+        return False
+    you = state.players[obj.controller]
+    in_own_upkeep = state.step is Step.UPKEEP and state.active_player == obj.controller
+    since = you.previous_upkeep_began_at if in_own_upkeep else you.upkeep_began_at
+    return obj.came_under_control_at() > since

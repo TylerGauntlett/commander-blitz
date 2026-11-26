@@ -6813,6 +6813,7 @@ The form list is
 { "no_monarch": true }                        // …and the vacancy, which is not its negation
 { "has_flag": "renowned" }                    // a word written by `set_flag`, for the game
 { "has_turn_flag": "exerted" }                // …and one written by `set_turn_flag`, for the turn
+{ "came_under_control_since_last_upkeep": true }   // echo (702.30a)
 { "cast_during": "your_main" }                // addendum — the phase the spell was *cast* in
 { "was_cast": true }                          // 603.6e — *this* arrival was a resolving spell
 { "cast_at_sorcery_timing": false }           // 307.1 — cast any time a sorcery couldn't have been
@@ -6874,6 +6875,14 @@ they are two keys over two stores rather than one key with a duration — see
 ["If this creature hasn't been exerted this turn"](card-dsl-cookbook.md#if-this-creature-hasnt-been-exerted-this-turn)
 in the cookbook. Both ask about the ability's own source, which is the only thing that can
 have become the word.
+
+`came_under_control_since_last_upkeep` is echo's intervening-if, asked of the
+ability's own source: true from its arrival or its last change of control until
+one of its controller's upkeeps has begun since, and during that upkeep "last"
+is the one before. A flag cannot stand in, because a change of control does not
+clear one — see
+[Echo](card-dsl-cookbook.md#echo--pay-for-it-once-the-upkeep-after-it-arrives)
+in the cookbook.
 
 `cast_during` is addendum, and it is the only condition here that reads a fact
 about a moment that has already passed — see

@@ -2387,6 +2387,10 @@ def change_control(
     previous = obj.controller
     obj.controller = pid
     obj.entered_turn = state.turn
+    # Echo's "if this came under your control since the beginning of your last
+    # upkeep" (702.30a) is asked again of the new controller -- and of the old
+    # one on a handback, for 302.6's reason above.
+    obj.control_timestamp = state.alloc_timestamp()
     # "…for as long as you control <this>" (611.2b): whoever began it no
     # longer does, and a later handback does not begin it again.
     end_source_bound(state, oid)

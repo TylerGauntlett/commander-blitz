@@ -828,6 +828,9 @@ CONDITIONS: dict[str, Entry] = {
     "gift_promised": ("A gift was promised as this spell was cast.", H_GIFT),
     "has_city_s_blessing": ("The player has the city's blessing (ascend).", "Ascend"),
     "has_flag": ("The source carries a word written by `set_flag`.", H_EXERTED),
+    "came_under_control_since_last_upkeep": ("The source came under its controller's control (arrived, or changed controller) "
+                                             "since the beginning of their last upkeep — the one before, during it (echo, 702.30a).",
+                                             "Echo — pay for it once, the upkeep after it arrives"),
     "has_turn_flag": ("The source carries a word written by `set_turn_flag` this turn.", H_EXERTED),
     "is_active_player": ("It is the given player's turn (\"during their turn\").",
                          '"During their turn" — whose turn a trigger means'),

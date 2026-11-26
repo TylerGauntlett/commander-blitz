@@ -14,7 +14,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Selectors](#selectors) | 84 |
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 80 |
-| [Conditions](#conditions) | 37 |
+| [Conditions](#conditions) | 38 |
 | [Trigger events](#trigger-events) | 68 |
 | [Trigger filters](#trigger-filters) | 41 |
 | [Static effects](#static-effects) | 116 |
@@ -441,6 +441,7 @@ Every head a condition may have: an effect's `if`, a trigger's intervening `cond
 | `all` | Every listed condition holds. | [Conditions](card-dsl.md#conditions) |
 | `any` | At least one listed condition holds. | [Conditions](card-dsl.md#conditions) |
 | `attacked_you_last_turn` | One of these players attacked you (not your planeswalker or battle) during their last completed turn. | [Conditions](card-dsl.md#conditions) |
+| `came_under_control_since_last_upkeep` | The source came under its controller's control (arrived, or changed controller) since the beginning of their last upkeep — the one before, during it (echo, 702.30a). | [Echo — pay for it once, the upkeep after it arrives](card-dsl-cookbook.md#echo--pay-for-it-once-the-upkeep-after-it-arrives) |
 | `cast_at_sorcery_timing` | This life of the object was cast at a time a sorcery could have been (307.1); false both ways if not cast. | ["If you cast it any time a sorcery couldn't have been cast"](card-dsl-cookbook.md#if-you-cast-it-any-time-a-sorcery-couldnt-have-been-cast) |
 | `cast_during` | The phase this spell was cast in (addendum). | [Addendum — the phase a spell was cast in](card-dsl-cookbook.md#addendum--the-phase-a-spell-was-cast-in) |
 | `cast_from_exile` | This spell was cast from exile (foretell, plot or any exile play permission). | [Conditions](card-dsl.md#conditions) |

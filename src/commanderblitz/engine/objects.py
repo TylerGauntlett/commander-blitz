@@ -576,6 +576,15 @@ class GameObject:
     #: it. Zero on an object that has never moved, which is older than
     #: anything that has.
     timestamp: int = 0
+    #: When this permanent last **changed controller** (800.4a), from
+    #: `GameState.alloc_timestamp`. Written by `primitives.change_control`, the
+    #: steal and the handback alike, and never by a zone change: arriving is
+    #: `timestamp`'s to record, so "when it came under its controller's
+    #: control" is the later of the two (`came_under_control_at`). A stale value
+    #: from an earlier trip is harmless for that reason -- the arrival that ended
+    #: the trip has a newer `timestamp`. Read by the
+    #: `came_under_control_since_last_upkeep` condition (echo, 702.30a).
+    control_timestamp: int = 0
     #: When a keyword counter of each kind was last put on this permanent
     #: (613.7), written by `primitives.add_counters`. A kind missing here
     #: arrived with the permanent ("enters with") and reads as `timestamp`.
@@ -1769,6 +1778,14 @@ class GameObject:
             and self.suspended_by is not None
             and self.counter(TIME_COUNTER) > 0
         )
+
+    def came_under_control_at(self) -> int:
+        """The timestamp of the moment this came under its current controller's control.
+
+        Its arrival in its zone or its last control change, whichever is later
+        -- see `control_timestamp`.
+        """
+        return max(self.timestamp, self.control_timestamp)
 
     def summoning_sick(self, turn: int) -> bool:
         """True if this creature has not been controlled since the turn began."""

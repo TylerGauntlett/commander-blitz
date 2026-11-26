@@ -7583,16 +7583,10 @@
             "event": "upkeep",
             "controller": "you",
             "condition": {
-              "not": {
-                "has_flag": "echo_paid"
-              }
+              "came_under_control_since_last_upkeep": true
             }
           },
           "effects": [
-            {
-              "op": "set_flag",
-              "flag": "echo_paid"
-            },
             {
               "op": "may",
               "prompt": "Pay Test Echoing Ox's echo cost?",

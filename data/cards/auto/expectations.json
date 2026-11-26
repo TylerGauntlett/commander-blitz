@@ -3155,6 +3155,14 @@
   "bone_saw": {
     "zone": "battlefield"
   },
+  "bone_shredder": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "bonebreaker_giant": {
     "zone": "battlefield"
   },
@@ -14185,6 +14193,13 @@
     "zone": "battlefield"
   },
   "kari_zev_skyship_raider": {
+    "zone": "battlefield"
+  },
+  "karmic_guide": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "karn_s_bastion": {

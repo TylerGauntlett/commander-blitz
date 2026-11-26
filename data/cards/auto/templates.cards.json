@@ -37531,6 +37531,96 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "else": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{2}{B}"
+              },
+              "player": "you",
+              "prompt": "Pay Bone Shredder's echo {2}{B}?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Echo {2}{B} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)",
+          "trigger": {
+            "condition": {
+              "came_under_control_since_last_upkeep": true
+            },
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "not_colors": [
+                  "B"
+                ],
+                "not_types": [
+                  "Artifact"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, destroy target nonartifact, nonblack creature.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "bone_shredder",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Bone Shredder",
+      "oracle_text": "Flying\nEcho {2}{B} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)\nWhen this creature enters, destroy target nonartifact, nonblack creature.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Minion"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -169614,6 +169704,105 @@
         "Legendary"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "protection",
+          "from_colors": [
+            "B"
+          ],
+          "kind": "static",
+          "text": "Flying, protection from black"
+        },
+        {
+          "effects": [
+            {
+              "else": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{3}{W}{W}"
+              },
+              "player": "you",
+              "prompt": "Pay Karmic Guide's echo {3}{W}{W}?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Echo {3}{W}{W} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)",
+          "trigger": {
+            "condition": {
+              "came_under_control_since_last_upkeep": true
+            },
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this creature enters, return target creature card from your graveyard to the battlefield.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "karmic_guide",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}{W}",
+      "name": "Karmic Guide",
+      "oracle_text": "Flying, protection from black\nEcho {3}{W}{W} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)\nWhen this creature enters, return target creature card from your graveyard to the battlefield.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Angel",
+        "Spirit"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]

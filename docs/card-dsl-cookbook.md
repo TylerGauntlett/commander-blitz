@@ -4808,6 +4808,45 @@ strictly: the printed N must be the card's.
 `last_counter_removed` is an ordinary trigger as well, for any printed "when
 the last <kind> counter is removed from it"; it needs `counter`.
 
+## Echo — pay for it once, the upkeep after it arrives
+
+```jsonc
+// Karmic Guide: "Echo {3}{W}{W} (At the beginning of your upkeep, if this came
+// under your control since the beginning of your last upkeep, sacrifice it
+// unless you pay its echo cost.)"
+{ "kind": "triggered",
+  "text": "Echo {3}{W}{W} (At the beginning of your upkeep, …)",
+  "trigger": { "event": "upkeep", "controller": "you",
+               "condition": { "came_under_control_since_last_upkeep": true } },
+  "effects": [ { "op": "may", "player": "you",
+                 "pay": { "mana": "{3}{W}{W}" },
+                 "prompt": "Pay echo {3}{W}{W}?",
+                 "else": [ { "op": "sacrifice", "objects": { "self_only": true } } ] } ] }
+```
+
+702.30a is one triggered ability, written the way cumulative upkeep is: the
+printed line is the ability's `text`, and its effect is `may` with a `pay` and a
+sacrificing `else`. A price the player cannot afford is not offered, so the
+`else` runs.
+
+The intervening-if is the `came_under_control_since_last_upkeep` condition,
+asked of the ability's own source. It compares when the permanent came under
+its controller's control (`GameObject.came_under_control_at`: its arrival, or
+its last `change_control`, whichever is later) with when that controller's last
+upkeep began (`PlayerState.upkeep_began_at`, stamped by `turn.begin_step`).
+During the controller's own upkeep "last" is the one before, so the trigger
+holds as it triggers and as it resolves. So:
+
+- the first upkeep after it enters asks, and every later one does not;
+- a `gain_control` re-arms it for the new controller, and a handback re-arms it
+  for the old one, because each is a change of control (800.4a);
+- an additional upkeep in the same turn is an upkeep of its own.
+
+The near miss is a `set_flag` written by the trigger and read as `{"not":
+{"has_flag": …}}`. It asks once, but a change of control does not clear a flag,
+so a stolen echo permanent would never be asked again. `entered_this_turn` is
+the other near miss, and it is already false by the next upkeep.
+
 ## "Whenever you remove a time counter" — `counter_removed`
 
 ```jsonc

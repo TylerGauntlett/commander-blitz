@@ -30952,12 +30952,12 @@
     },
     "Bone Shredder": {
       "edhrec_rank": 9157,
-      "gate": "template",
+      "gate": null,
       "name": "Bone Shredder",
-      "reason": "no template for: Echo {2}{B}",
+      "reason": "",
       "scryfall_id": "0fb5d4ce-516e-43fd-9de0-30f8517f7220",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bone Splinters": {
@@ -146102,12 +146102,12 @@
     },
     "Karmic Guide": {
       "edhrec_rank": 961,
-      "gate": "template",
+      "gate": null,
       "name": "Karmic Guide",
-      "reason": "no template for: Flying, protection from black",
+      "reason": "",
       "scryfall_id": "b26d50dd-54a1-43ce-9884-3999f698d97b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Karmic Justice": {
