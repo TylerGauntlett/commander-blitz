@@ -1,0 +1,47 @@
+{
+  "card": {
+    "id": "julian_bashir_frontier_doctor",
+    "name": "Julian Bashir, Frontier Doctor",
+    "oracle_text": "Seek out — Whenever you draw your second card each turn, put a +1/+1 counter on Julian Bashir.\nWhenever Julian Bashir attacks, return target creature card with mana value X or less from your graveyard to the battlefield, where X is Julian Bashir's power.",
+    "mana_cost": "{2}{W}",
+    "supertypes": ["Legendary"],
+    "types": ["Creature"],
+    "subtypes": ["Human", "Doctor"],
+    "power": 1,
+    "toughness": 1,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Seek out — Whenever you draw your second card each turn, put a +1/+1 counter on Julian Bashir.",
+        "trigger": {"event": "draw", "controller": "you", "nth": 2},
+        "effects": [
+          {"op": "add_counters", "counter": "+1/+1", "amount": {"const": 1}, "objects": {"self_only": true, "zone": "battlefield"}}
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever Julian Bashir attacks, return target creature card with mana value X or less from your graveyard to the battlefield, where X is Julian Bashir's power.",
+        "trigger": {"event": "attacks", "source": "self"},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "card_in_graveyard",
+            "count": 1,
+            "selector": {
+              "controller": "you",
+              "zone": "graveyard",
+              "types": ["Creature"],
+              "mana_value": {"op": "<=", "value": {"power_of": {"self": true}}}
+            }
+          }
+        ],
+        "effects": [
+          {"op": "return_from_graveyard", "controller": "you", "destination": "battlefield", "objects": {"target": "t1"}}
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
