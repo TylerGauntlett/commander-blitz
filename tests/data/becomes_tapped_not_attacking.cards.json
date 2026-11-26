@@ -1,0 +1,127 @@
+{
+  "_comment": "Shapes for tests/unit/triggers/test_becomes_tapped_not_attacking.py. `t_vc_watcher` is Verity Circle's first line with the 'may' dropped -- `attack_declaration: false` over creatures an opponent controls. `t_vc_wide_watcher` is the same line without the clause, the near miss that also draws off every non-vigilant attacker. `t_vc_only_attack_watcher` is `attack_declaration: true`, the declaration's tap alone.",
+  "cards": [
+    {
+      "id": "t_vc_watcher",
+      "name": "Test Verity Watcher",
+      "oracle_text": "Whenever a creature an opponent controls becomes tapped, if it isn't being declared as an attacker, draw a card.",
+      "mana_cost": "{2}{U}{U}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature an opponent controls becomes tapped, if it isn't being declared as an attacker, draw a card.",
+          "trigger": {
+            "event": "becomes_tapped",
+            "controller": "any",
+            "filter": {
+              "types": [
+                "Creature"
+              ],
+              "controller": "opponent"
+            },
+            "attack_declaration": false
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_vc_wide_watcher",
+      "name": "Test Verity Wide Watcher",
+      "oracle_text": "Whenever a creature an opponent controls becomes tapped, draw a card.",
+      "mana_cost": "{2}{U}{U}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature an opponent controls becomes tapped, draw a card.",
+          "trigger": {
+            "event": "becomes_tapped",
+            "controller": "any",
+            "filter": {
+              "types": [
+                "Creature"
+              ],
+              "controller": "opponent"
+            }
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_vc_only_attack_watcher",
+      "name": "Test Verity Attack Watcher",
+      "oracle_text": "Whenever a creature an opponent controls becomes tapped by being declared as an attacker, draw a card.",
+      "mana_cost": "{2}{U}{U}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature an opponent controls becomes tapped by being declared as an attacker, draw a card.",
+          "trigger": {
+            "event": "becomes_tapped",
+            "controller": "any",
+            "filter": {
+              "types": [
+                "Creature"
+              ],
+              "controller": "opponent"
+            },
+            "attack_declaration": true
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

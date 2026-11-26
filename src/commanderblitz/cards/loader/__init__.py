@@ -4427,6 +4427,19 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                     f"{where}: 'from_zones' names zones a card can be played "
                     f"from, from {sorted(origins)}, got {model.trigger.from_zones!r}"
                 )
+        if (
+            model.trigger.attack_declaration is not None
+            and model.trigger.event != "becomes_tapped"
+        ):
+            # Same reasoning as `mana_ability` above: only TAPPED says whether
+            # the tap was an attack declaration's, so anywhere else this would
+            # read as "if it isn't being declared as an attacker" and be a
+            # restriction that never applies.
+            raise DslError(
+                f"{where}: 'attack_declaration' only means anything on a "
+                f"becomes_tapped trigger, not on {model.trigger.event!r}"
+            )
+
         _validate_state_trigger(model, where)
         trigger = TriggerSpec(
             event=model.trigger.event,
@@ -4445,6 +4458,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             sacrificed_to_activate=model.trigger.sacrificed_to_activate,
             life_paid_to_activate=model.trigger.life_paid_to_activate,
             targeted_by=model.trigger.targeted_by,
+            attack_declaration=model.trigger.attack_declaration,
             nth=model.trigger.nth,
             max_per_turn=model.trigger.max_per_turn,
             batched=model.trigger.batched,

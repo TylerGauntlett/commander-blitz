@@ -1047,7 +1047,7 @@ def finish_attackers(state: GameState) -> Generator[Any, list[int]]:
     for oid in list(combat.attackers):
         c = chars(state, oid)
         if Keyword.VIGILANCE.value not in c.keywords:
-            tap_permanent(state, oid)
+            tap_permanent(state, oid, attack_declaration=True)
 
     if combat.attackers:
         # `fire`, not `emit`: "whenever you attack" listens for this, and the

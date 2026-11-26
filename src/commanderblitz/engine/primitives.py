@@ -1213,13 +1213,27 @@ def _has(state: GameState, oid: int, keyword: Keyword) -> bool:
 # ----------------------------------------------------------------------
 
 
-def tap_permanent(state: GameState, oid: int) -> bool:
+def tap_permanent(state: GameState, oid: int, *, attack_declaration: bool = False) -> bool:
+    """Tap a permanent and fire TAPPED, or do nothing to one already tapped.
+
+    ``attack_declaration`` is set by `combat` alone, for the tap rule 508.1f
+    makes part of declaring an attacker, and every TAPPED event says which it
+    was: "…becomes tapped, **if it isn't being declared as an attacker**"
+    (Verity Circle) is a trigger that must tell that tap from every other.
+    """
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield or obj.tapped:
         return False
     obj.tapped = True
     state.bump_chars()
-    fire(state, EventType.TAPPED, player=obj.controller, source=oid, oid=oid)
+    fire(
+        state,
+        EventType.TAPPED,
+        player=obj.controller,
+        source=oid,
+        oid=oid,
+        attack_declaration=attack_declaration,
+    )
     return True
 
 

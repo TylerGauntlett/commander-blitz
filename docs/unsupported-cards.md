@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**567 cards** blocked by **468** capabilities.
+**565 cards** blocked by **467** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -81,7 +81,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [suspend-cast-on-any-last-counter](#suspend-cast-on-any-last-counter) | 2 | 4274 | engine |
 | [switch-power-toughness](#switch-power-toughness) | 2 | 4984 | op |
 | [tapped-for-mana-trigger](#tapped-for-mana-trigger) | 2 | 1457 | trigger_event |
-| [tapped-not-by-attack-declaration](#tapped-not-by-attack-declaration) | 2 | 4324 | trigger_event |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [training](#training) | 2 | 8710 | keyword |
 | [turn-face-down](#turn-face-down) | 2 | 4820 | op |
@@ -2178,24 +2177,6 @@ Blocks **2** cards.
   - Whenever an opponent taps an artifact for mana, gain control of that artifact until the end of your next turn.
 - **C.A.M.P.** (rank 13900) — `c_a_m_p`
   - Whenever fortified land is tapped for mana, put a +1/+1 counter on target creature you control. If that creature shares a color with the mana that land produced, create a Junk token.
-
-</details>
-
-## tapped-not-by-attack-declaration
-
-Blocks **2** cards.
-
-- **(trigger_event)** a `becomes_tapped` trigger that can exclude taps caused by the creature being declared as an attacker (508.1f): the TAPPED event fired by the attack declaration must carry a marker (e.g. `cause: "attack_declaration"`) and the trigger needs a key such as `not_attack_declaration: true` to filter on it
-  <br>Why the existing vocabulary won't do: `becomes_tapped` maps to EventType.TAPPED, which `primitives.tap_permanent` fires with only player/source/oid, so an attack-declaration tap is indistinguishable from a tap for mana, a tap-cost or a `tap` op; trigger_keys (`not_cause`, `cause_controller`, `filter`) and `step_is` cannot tell them apart (a creature can be tapped for other reasons during the declare-attackers step), so the unfiltered trigger would wrongly grow Rhoda whenever an opponent attacks with a non-vigilant creature
-- **(trigger_event)** a `becomes_tapped` trigger that can exclude taps caused by the creature being declared as an attacker (508.1f): the TAPPED event fired by the attack declaration must carry a marker (e.g. `cause: "attack_declaration"`) and the trigger needs a key such as `not_attack_declaration: true` to filter on it
-  <br>Why the existing vocabulary won't do: `becomes_tapped` maps to EventType.TAPPED, which `primitives.tap_permanent` fires with only player/source/oid (combat's declaration calls the same primitive), so an attack-declaration tap is indistinguishable from a tap for mana, a tap cost or a `tap` op; `not_cause` is refused by the loader on anything but enters triggers, and `step_is` cannot tell them apart since a creature can be tapped for other reasons during the declare-attackers step, so the unfiltered trigger would wrongly draw whenever an opponent attacks with a non-vigilant creature
-
-<details><summary>Cards waiting on this</summary>
-
-- **Verity Circle** (rank 4324) — `verity_circle`
-  - Whenever a creature an opponent controls becomes tapped, if it isn't being declared as an attacker, you may draw a card.
-- **Rhoda, Geist Avenger** (rank 10481) — `rhoda_geist_avenger`
-  - Whenever a creature an opponent controls becomes tapped, if it isn't being declared as an attacker, put a +1/+1 counter on Rhoda.
 
 </details>
 

@@ -491,7 +491,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `becomes_level` | `became_level` | A Class reaches a level. | ["When this Class becomes level N"](card-dsl-cookbook.md#when-this-class-becomes-level-n) |
 | `becomes_monarch` | `became_monarch` | A player becomes the monarch. | [The monarch](card-dsl-cookbook.md#the-monarch) |
 | `becomes_monstrous` | `became_monstrous` | A creature becomes monstrous. | [Monstrosity, and holding creatures down](card-dsl-cookbook.md#monstrosity-and-holding-creatures-down) |
-| `becomes_tapped` | `tapped` | A permanent becomes tapped. | [Triggers](card-dsl.md#triggers) |
+| `becomes_tapped` | `tapped` | A permanent becomes tapped; `attack_declaration: false` drops the tap of being declared as an attacker. | [Triggers](card-dsl.md#triggers) |
 | `becomes_target` | `became_target` | A permanent or player becomes the target of a spell or ability; `targeted_by` narrows it to a spell, an ability or an activated ability. | [Triggers](card-dsl.md#triggers) |
 | `becomes_unattached` | `unattached` | An Aura or Equipment stops being attached to a permanent, however it came off, its own departure included; the subject is the attachment, and `{"binding": "host"}` the permanent it came off. | ["Whenever this Equipment becomes unattached from a permanent, sacrifice that permanent"](card-dsl-cookbook.md#whenever-this-equipment-becomes-unattached-from-a-permanent-sacrifice-that-permanent) |
 | `becomes_untapped` | `untapped` | A permanent becomes untapped. | [Triggers](card-dsl.md#triggers) |

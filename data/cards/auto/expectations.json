@@ -21853,6 +21853,10 @@
     },
     "zone": "battlefield"
   },
+  "rhoda_geist_avenger": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "rhonas_s_monument": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -29889,6 +29893,10 @@
         "first_strike"
       ]
     },
+    "zone": "battlefield"
+  },
+  "verity_circle": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "verix_bladewing": {

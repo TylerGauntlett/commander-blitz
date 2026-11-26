@@ -223022,12 +223022,12 @@
     },
     "Rhoda, Geist Avenger": {
       "edhrec_rank": 10481,
-      "gate": "template",
+      "gate": null,
       "name": "Rhoda, Geist Avenger",
-      "reason": "no template for: Partner with Timin, Youthful Geist",
+      "reason": "",
       "scryfall_id": "aae81a4a-652d-45fe-b702-6541bf0971de",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rhonas the Indomitable": {
@@ -303232,12 +303232,12 @@
     },
     "Verity Circle": {
       "edhrec_rank": 4324,
-      "gate": "template",
+      "gate": null,
       "name": "Verity Circle",
-      "reason": "no template for: Whenever a creature an opponent controls becomes tapped, if it isn't being declared as an ",
+      "reason": "",
       "scryfall_id": "58b0d8be-f2e7-4bc9-a700-ed4c06785ecf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Verix Bladewing": {

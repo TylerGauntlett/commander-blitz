@@ -6935,6 +6935,7 @@ and the filter keys are
     "sacrificed_to_activate": true,  // beside `mana_ability: false`: the cost sacrificed a permanent
     "life_paid_to_activate": true,   // beside `mana_ability: false`: the cost took life
     "targeted_by": "spell",          // `becomes_target` only: a spell, an ability, or an activated ability
+    "attack_declaration": false,     // `becomes_tapped` only: not the tap of being declared as an attacker
     "to_zones": ["graveyard", "exile"], // `leaves_battlefield` only: where it went
     "from_zones": ["exile"]          // `spell_cast` / `land_played`: where it was played from; `put_into_graveyard`: where it came from
   },
@@ -8049,6 +8050,25 @@ Brass, the painlands, Legolas's Quick Reflexes' granted trigger) are played for.
 "Becomes" is already right at the primitive: `tap_permanent` returns early on a
 permanent that is *already* tapped, so re-tapping one is not a second event —
 which is the whole of the distinction between being tapped and becoming tapped.
+
+`attack_declaration: false` is "…becomes tapped, **if it isn't being declared as
+an attacker**" — Verity Circle, Rhoda, Geist Avenger:
+
+```jsonc
+"trigger": {
+  "event": "becomes_tapped", "controller": "any",
+  "filter": { "types": ["Creature"], "controller": "opponent" },
+  "attack_declaration": false
+}
+```
+
+The tap rule 508.1f makes part of declaring an attacker is the only one `combat`
+marks, and every TAPPED event says whether it was that tap, so a creature tapped
+by a `tap` op, a tap cost or for mana in the declare attackers step still fires
+it. `true` keeps the declaration's tap alone. The loader refuses the key on any
+other event. The near misses are an intervening-if on `step_is`, which also
+drops every other tap in that step, and the bare trigger, which fires on every
+non-vigilant attacker an opponent sends.
 
 **`becomes_blocked` and `attacks_unblocked` are told from the attacker's side**,
 and they are a pair rather than two features: both are decided when the block

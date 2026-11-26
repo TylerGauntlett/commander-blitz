@@ -261865,6 +261865,100 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": 1,
+                  "destination": "hand",
+                  "op": "search_library",
+                  "player": {
+                    "target": "t1"
+                  },
+                  "selector": {
+                    "name": "Timin, Youthful Geist"
+                  },
+                  "shuffle": true
+                }
+              ],
+              "op": "may",
+              "player": {
+                "target": "t1"
+              },
+              "prompt": "Put Timin, Youthful Geist into your hand from your library?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player"
+            }
+          ],
+          "text": "Partner with Timin, Youthful Geist (When this creature enters, target player may put Timin into their hand from their library, then shuffle.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature an opponent controls becomes tapped, if it isn't being declared as an attacker, put a +1/+1 counter on Rhoda.",
+          "trigger": {
+            "attack_declaration": false,
+            "controller": "any",
+            "event": "becomes_tapped",
+            "filter": {
+              "controller": "opponent",
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "rhoda_geist_avenger",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Rhoda, Geist Avenger",
+      "oracle_text": "Partner with Timin, Youthful Geist (When this creature enters, target player may put Timin into their hand from their library, then shuffle.)\nVigilance\nWhenever a creature an opponent controls becomes tapped, if it isn't being declared as an attacker, put a +1/+1 counter on Rhoda.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_spells": {
             "colors": [
               "G"
@@ -359001,6 +359095,85 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "prompt": "Draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature an opponent controls becomes tapped, if it isn't being declared as an attacker, you may draw a card.",
+          "trigger": {
+            "attack_declaration": false,
+            "controller": "any",
+            "event": "becomes_tapped",
+            "filter": {
+              "controller": "opponent",
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{4}{U}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "tap"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "not_keywords": [
+                  "flying"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{4}{U}: Tap target creature without flying."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "verity_circle",
+      "mana_cost": "{2}{U}",
+      "name": "Verity Circle",
+      "oracle_text": "Whenever a creature an opponent controls becomes tapped, if it isn't being declared as an attacker, you may draw a card.\n{4}{U}: Tap target creature without flying.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
