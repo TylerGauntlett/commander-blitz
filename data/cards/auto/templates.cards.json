@@ -48186,6 +48186,90 @@
               "amount": {
                 "const": 1
               },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "officer_1_1_r"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more Officers you control deal combat damage to a player, you draw a card and create a 1/1 red Officer creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage",
+            "filter": {
+              "subtypes": [
+                "Officer"
+              ]
+            },
+            "per_player": true
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "tap_permanents": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "self_only": true
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, Tap an untapped creature you control: Captain Janeway can't be blocked this turn."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "captain_janeway_endgame",
+      "mana_cost": "{1}{U}{R}{W}",
+      "name": "Captain Janeway, Endgame",
+      "oracle_text": "Whenever one or more Officers you control deal combat damage to a player, you draw a card and create a 1/1 red Officer creature token.\n{2}, Tap an untapped creature you control: Captain Janeway can't be blocked this turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Officer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "controller": "you",
               "op": "create_token",
               "token": "treasure_token"
@@ -378885,6 +378969,72 @@
       "name": "Worf, Chief Tactical Officer",
       "oracle_text": "Vigilance (Attacking doesn't cause this creature to tap.)",
       "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Klingon",
+        "Warrior",
+        "Officer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Officer"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other Officers you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "officer_1_1_r"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Seek out — Whenever you draw your second card each turn, create a 1/1 red Officer creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw",
+            "nth": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "worf_son_of_mogh",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{1}{R}{W}",
+      "name": "Worf, Son of Mogh",
+      "oracle_text": "Menace\nOther Officers you control get +1/+1.\nSeek out — Whenever you draw your second card each turn, create a 1/1 red Officer creature token.",
+      "power": 3,
       "source": "auto",
       "subtypes": [
         "Klingon",

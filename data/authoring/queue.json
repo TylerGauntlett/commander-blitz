@@ -39812,12 +39812,12 @@
     },
     "Captain Janeway, Endgame": {
       "edhrec_rank": 23127,
-      "gate": "template",
+      "gate": null,
       "name": "Captain Janeway, Endgame",
-      "reason": "no template for: Whenever one or more Officers you control deal combat damage to a player, you draw a card ",
+      "reason": "",
       "scryfall_id": "1fc05320-c8f8-4acd-8bac-86c4156352d2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Captain Jean-Luc Picard": {
@@ -322682,12 +322682,12 @@
     },
     "Worf, Son of Mogh": {
       "edhrec_rank": 21622,
-      "gate": "template",
+      "gate": null,
       "name": "Worf, Son of Mogh",
-      "reason": "no template for: Other Officers you control get +1/+1",
+      "reason": "",
       "scryfall_id": "c15be084-e71b-4525-8e63-67d991c25b15",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Worf, Still Not Merry": {
