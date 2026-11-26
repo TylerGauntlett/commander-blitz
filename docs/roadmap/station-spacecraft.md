@@ -70,20 +70,15 @@ not hit by creature removal) and an artifact creature at it, and the loader
 still refusing a threshold out of order. The harvested cards pass their six
 gates.
 
-## Open questions
+## Decisions
 
-- **How a keyword threshold is written.** A gated `grant_keyword` static on
-  `self_only`, or a threshold field on the keyword entry itself? Recommended:
-  the gated static, because it reuses the static gate this item builds and
-  needs no new shape in `keywords`.
-- **Where the Spacecraft's number lives.** Inferred from the highest
-  threshold, or a card-level `station` field the loader checks against the
-  thresholds? Recommended: a card-level field, because the reminder text prints
-  the number and a Spacecraft whose top line is not a creature-gate would
-  otherwise be read wrongly.
-- **Is it an ADR.** Recommended: no; it extends the threshold 721 already
-  uses here to the homes the rule names, and the rules-coverage line moves to
-  the implemented table.
-- **Scope of the harvest.** The two precon cards only, or every Spacecraft
-  the template tier and one wave reach? Recommended: one template-tier
-  `--retry` and one `/author-cards` wave, the precon items' convention.
+The owner asked for whatever the Star Trek Commander cards need, which
+includes this item; each open question took its recommended answer.
+
+- **How a keyword threshold is written:** a gated `grant_keyword` static on
+  `self_only`; `keywords` gets no new shape.
+- **Where the Spacecraft's number lives:** a card-level `station` field the
+  loader checks against the card's charge thresholds.
+- **Is it an ADR:** no; the rules-coverage line moves to the implemented table.
+- **Scope of the harvest:** one template-tier `--retry` and one
+  `/author-cards` wave over the cards whose gap records name `station`.
