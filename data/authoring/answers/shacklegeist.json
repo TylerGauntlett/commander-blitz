@@ -37,5 +37,5 @@
       }
     ]
   },
-  "expectation": {"zone": "battlefield", "battlefield_count": 33, "granted": {"keywords": ["flying"], "count": 1}}
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
 }

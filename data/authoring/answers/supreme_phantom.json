@@ -1,0 +1,26 @@
+{
+  "card": {
+    "id": "supreme_phantom",
+    "name": "Supreme Phantom",
+    "oracle_text": "Flying\nOther Spirits you control get +1/+1.",
+    "mana_cost": "{1}{U}",
+    "types": ["Creature"],
+    "subtypes": ["Spirit"],
+    "power": 1,
+    "toughness": 3,
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "buff",
+        "affects": {"controller": "you", "subtypes": ["Spirit"], "exclude_self": true},
+        "power": {"const": 1},
+        "toughness": {"const": 1},
+        "text": "Other Spirits you control get +1/+1."
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
