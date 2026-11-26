@@ -4173,3 +4173,52 @@ class TestChishirosSpiritIsARedMenace:
         other = pool.get("spirit_2_2_c")
         assert other is not None
         assert not other.colors and not other.keywords
+
+
+class TestTheOfficerIsARedOneOne:
+    """Worf, Son of Mogh and Captain Janeway, Endgame: *"create a **1/1 red
+    Officer** creature token."*
+
+    The red 1/1s already in the pool (`devil_1_1_r`, `elemental_1_1_r`,
+    `gremlin_1_1_r`) have the right body and the wrong creature type, and both
+    cards count Officers: Worf's anthem pumps them and Janeway's trigger fires on
+    them, so a Devil would be a token neither card can see.
+    """
+
+    def test_it_is_a_one_one_red_officer(self, pool):
+        token = pool.get("officer_1_1_r")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["R"]
+        assert list(token.subtypes) == ["Officer"]
+        assert not token.keywords
+
+    def test_the_devil_is_still_a_separate_token(self, pool):
+        other = pool.get("devil_1_1_r")
+        assert other is not None
+        assert "Officer" not in other.subtypes
+
+
+class TestTheStargazerIllusionIsAColorlessArtifactFlier:
+    """U.S.S. Stargazer, Here and There: *"create a tapped and attacking **4/3
+    colorless Spacecraft Illusion artifact creature** token **with flying**."*
+
+    The pool's Illusions are blue creatures with no artifact type, and its
+    colorless artifact fliers (`golem_3_3_c_artifact_flying`) are the wrong body
+    and carry no Spacecraft subtype, which other Spacecraft cards search for.
+    """
+
+    def test_it_is_a_four_three_colorless_artifact_flier(self, pool):
+        token = pool.get("spacecraft_illusion_4_3_c_artifact_flying")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (4, 3)
+        assert not token.colors
+        assert "Artifact" in token.types
+        assert sorted(token.subtypes) == ["Illusion", "Spacecraft"]
+        assert list(token.keywords) == ["flying"]
+
+    def test_the_golem_is_still_a_separate_token(self, pool):
+        other = pool.get("golem_3_3_c_artifact_flying")
+        assert other is not None
+        assert (other.power, other.toughness) == (3, 3)
+        assert "Spacecraft" not in other.subtypes

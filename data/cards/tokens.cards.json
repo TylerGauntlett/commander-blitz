@@ -6936,6 +6936,47 @@
         "G"
       ],
       "is_token": true
+    },
+    {
+      "id": "officer_1_1_r",
+      "name": "Officer Token",
+      "oracle_text": "1/1 red Officer creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Officer"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "spacecraft_illusion_4_3_c_artifact_flying",
+      "name": "Spacecraft Illusion Token",
+      "oracle_text": "4/3 colorless Spacecraft Illusion artifact creature token with flying.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Spacecraft",
+        "Illusion"
+      ],
+      "power": 4,
+      "toughness": 3,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
     }
   ]
 }
