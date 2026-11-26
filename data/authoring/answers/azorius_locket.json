@@ -1,0 +1,79 @@
+{
+  "card": {
+    "abilities": [
+      {
+        "cost": {
+          "tap": true
+        },
+        "effects": [
+          {
+            "modes": [
+              {
+                "effects": [
+                  {
+                    "mana": "{W}",
+                    "op": "add_mana"
+                  }
+                ]
+              },
+              {
+                "effects": [
+                  {
+                    "mana": "{U}",
+                    "op": "add_mana"
+                  }
+                ]
+              }
+            ],
+            "op": "choose_mode"
+          }
+        ],
+        "is_mana_ability": true,
+        "kind": "activated",
+        "text": "{T}: Add {W} or {U}."
+      },
+      {
+        "kind": "activated",
+        "text": "{W/U}{W/U}{W/U}{W/U}, {T}, Sacrifice this artifact: Draw two cards.",
+        "cost": {
+          "mana": "{W/U}{W/U}{W/U}{W/U}",
+          "tap": true,
+          "sacrifice": {
+            "zone": "battlefield",
+            "controller": "you",
+            "self_only": true,
+            "count": 1
+          }
+        },
+        "effects": [
+          {
+            "op": "draw",
+            "player": "you",
+            "amount": {
+              "const": 2
+            }
+          }
+        ]
+      }
+    ],
+    "color_identity": [
+      "U",
+      "W"
+    ],
+    "colors": [],
+    "id": "azorius_locket",
+    "mana_cost": "{3}",
+    "name": "Azorius Locket",
+    "oracle_text": "{T}: Add {W} or {U}.\n{W/U}{W/U}{W/U}{W/U}, {T}, Sacrifice this artifact: Draw two cards.",
+    "types": [
+      "Artifact"
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    }
+  }
+}
