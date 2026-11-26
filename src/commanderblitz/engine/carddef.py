@@ -1502,9 +1502,11 @@ class Ability:
     #: `Game._activate` already does for whoever acts.
     activated_by: str = "you"
     #: A station symbol (721): ``(counter kind, N)`` -- this permanent has the
-    #: ability only while it has N or more of that counter. Read by
-    #: `characteristics.abilities_of`, which leaves the ability out below N, so
-    #: every reader that asks what a permanent can do agrees it is not there.
+    #: ability only while it has N or more of that counter. An activated,
+    #: triggered or static ability. Read by `characteristics.abilities_of`,
+    #: which leaves the ability out below N, and by :meth:`present_on` for the
+    #: walks over printed faces, so every reader that asks what a permanent can
+    #: do -- offer, collect a trigger, apply a static -- agrees it is not there.
     #: The loader keeps these abilities after every ungated one and in rising
     #: order, which is what keeps `abilities_of`'s indices stable: below a
     #: threshold the list only ever loses a tail.
@@ -1635,17 +1637,43 @@ class Ability:
         return self.kind is AbilityKind.STATIC
 
     def present_on(self, obj: GameObject) -> bool:
+        """Does ``obj`` have this printed ability, with every gate applied?
+
+        :meth:`designated_on` and :meth:`threshold_met_on` together. The
+        question the walks over printed faces ask (`_ability_statics`, the
+        player statics), which must drop exactly what `abilities_of` drops.
+        """
+        return self.designated_on(obj) and self.threshold_met_on(obj)
+
+    def designated_on(self, obj: GameObject) -> bool:
         """Does ``obj`` have this printed ability, given its designations?
 
         A Class's level (716.2b-c) and a Case's solved designation (719.3c) are
         the two: an ability printed under "Level N" needs the Class at N or
         higher, and a "Solved —" ability needs the Case solved. True for every
         ability carrying neither gate, which is every ability on every card
-        that is neither a Class nor a Case.
+        that is neither a Class nor a Case. These are the gates that keep the
+        ability's seat with a :meth:`latent` stand-in.
         """
         if self.level is not None and obj.class_level < self.level:
             return False
         return not self.solved or obj.solved
+
+    def threshold_met_on(self, obj: GameObject) -> bool:
+        """Has ``obj`` the counters this ability's station symbol asks for? (721)
+
+        "As long as this permanent has N or more charge counters on it, it has
+        [abilities]." Anywhere but the battlefield nothing is a permanent and a
+        card carries no counters, so the answer there is no -- a Planet in hand
+        has only its unstriated abilities, which is also what it prints. True
+        for an ability with no threshold.
+        """
+        if self.threshold is None:
+            return True
+        if not obj.on_battlefield:
+            return False
+        counter, at_least = self.threshold
+        return obj.counter(counter) >= at_least
 
     def latent(self) -> Ability:
         """The :attr:`AbilityKind.LATENT` stand-in that holds this ability's seat.
@@ -2086,6 +2114,13 @@ class CardDef:
     #: to it. Zero means no vanishing. The abilities are already on the card:
     #: the loader lowered them (`loader._vanishing_abilities`).
     vanishing: int = 0
+    #: Station's P/T box (721.2b) -- the N at which this Spacecraft is an
+    #: artifact creature with its printed power and toughness; below it, and
+    #: off the battlefield, it is a noncreature artifact with neither. Zero
+    #: means no box: every card but a Spacecraft, and a Spacecraft that prints
+    #: none (The Eternity Elevator). Read by `characteristics.station_creature`;
+    #: the loader holds it to one of the card's own charge-counter thresholds.
+    station: int = 0
     #: Madness -- the price of casting it out of the exile a discard sent it to.
     madness: ManaCost | None = None
     #: Miracle -- the price of casting it as the first card drawn this turn.

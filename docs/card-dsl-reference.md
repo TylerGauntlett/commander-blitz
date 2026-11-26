@@ -36,7 +36,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Mana rider ops](#mana-rider-ops) | 7 |
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
-| [Card-level rider keys](#card-level-rider-keys) | 24 |
+| [Card-level rider keys](#card-level-rider-keys) | 25 |
 | [Engine events](#engine-events) | 89 |
 
 ## Effect ops
@@ -1260,6 +1260,7 @@ Things a card says about itself that are neither a price nor a second face. Defi
 | `toxic` | Toxic N: the N, beside `toxic` in `keywords`. | [Toxic N](card-dsl-cookbook.md#toxic-n) |
 | `annihilator` | Annihilator N: the N, beside `annihilator` in `keywords`. | [Annihilator N](card-dsl-cookbook.md#annihilator-n) |
 | `vanishing` | Vanishing N: the time counters it enters with; the upkeep tick and the sacrifice are supplied. | [Vanishing — a permanent that counts itself out](card-dsl-cookbook.md#vanishing--a-permanent-that-counts-itself-out) |
+| `station` | Station's P/T box: the N at which this Spacecraft is an artifact creature with its printed P/T; one of its own charge thresholds. | [Spacecraft — station, the artifact creature at its number](card-dsl.md#spacecraft--station-the-artifact-creature-at-its-number) |
 | `morph_counter` | Megamorph: turns face up with a +1/+1 counter, beside `morph`. | [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest) |
 | `as_cast` | Named values fixed as the spell is cast, read by `spell_effects` as `{"binding": name}`. | ["As you cast this spell" — a value fixed at cast time](card-dsl-cookbook.md#as-you-cast-this-spell--a-value-fixed-at-cast-time) |
 

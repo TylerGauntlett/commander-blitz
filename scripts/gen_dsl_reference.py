@@ -1410,6 +1410,8 @@ RIDER_KEYS: dict[str, Entry] = {
     "annihilator": ("Annihilator N: the N, beside `annihilator` in `keywords`.", "Annihilator N"),
     "vanishing": ("Vanishing N: the time counters it enters with; the upkeep tick and the sacrifice are supplied.",
                   "Vanishing — a permanent that counts itself out"),
+    "station": ("Station's P/T box: the N at which this Spacecraft is an artifact creature with its printed P/T; one of its own charge thresholds.",
+                "Spacecraft — `station`, the artifact creature at its number"),
     "morph_counter": ("Megamorph: turns face up with a +1/+1 counter, beside `morph`.", H_MORPH),
     "as_cast": ("Named values fixed as the spell is cast, read by `spell_effects` as `{\"binding\": name}`.",
                 '"As you cast this spell" — a value fixed at cast time'),

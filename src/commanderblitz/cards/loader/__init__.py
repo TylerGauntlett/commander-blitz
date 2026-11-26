@@ -76,11 +76,12 @@ from commanderblitz.engine.mana import (
     compile_restriction,
     parse_mana_production,
 )
-from commanderblitz.engine.objects import TIME_COUNTER
+from commanderblitz.engine.objects import STATION_COUNTER, TIME_COUNTER
 from commanderblitz.engine.sagas import LORE, SAGA
 from commanderblitz.engine.structs import CONVOKED_BINDING
 from commanderblitz.engine.triggers import (
     BATCHED_EVENTS,
+    LEAVE_TRIGGERS,
     ORDINAL_FILTER_KEYS,
     STATE_TRIGGER,
     TRIGGER_EVENTS,
@@ -917,6 +918,54 @@ def _compile_vanishing(model: CardModel, where: str) -> int:
         raise DslError(
             f"{where}: 'vanishing' is only on permanent cards (702.63a) -- an "
             f"instant or sorcery never enters with its counters"
+        )
+    return n
+
+
+def _compile_station(model: CardModel, abilities: tuple[Ability, ...], where: str) -> int:
+    """A Spacecraft's ``station`` N (721.2b), or 0 for a card without a P/T box.
+
+    The refusals are the silent failures. The box switches the card into a
+    creature, so its printed line must be the noncreature one (a printed
+    Creature would be a creature below the number too) and it must print the
+    power and toughness it becomes. The N is the number of a striation the card
+    actually prints, on charge counters (702.184a): a box at a number no line
+    reaches is a Spacecraft that turns into a creature on a count nothing on
+    the card announces -- the reminder text and the striation agree on the
+    printed card, and here they are held to. And a noncreature card that prints
+    P/T beside its thresholds but writes no ``station`` would load as an
+    artifact that never becomes the creature it prints.
+    """
+    n = model.station
+    gated = {ability.threshold for ability in abilities if ability.threshold is not None}
+    noncreature = CardType.CREATURE.value not in model.types
+    if n is None:
+        if gated and noncreature and model.power is not None and model.toughness is not None:
+            raise DslError(
+                f"{where}: a noncreature card with printed P/T and station "
+                f"thresholds is a Spacecraft; write 'station', the N of its \"It's "
+                f"an artifact creature at N+\" (721.2b)"
+            )
+        return 0
+    if isinstance(n, bool) or not isinstance(n, int) or n < 1:
+        raise DslError(
+            f"{where}: 'station' is N, the charge counters at which it is an "
+            f"artifact creature -- a whole number of at least 1, got {n!r}"
+        )
+    if CardType.ARTIFACT.value not in model.types or not noncreature:
+        raise DslError(
+            f"{where}: 'station' is on a noncreature artifact (721.2b) -- write the "
+            f"printed type line, not the creature it becomes, got {list(model.types)}"
+        )
+    if model.power is None or model.toughness is None:
+        raise DslError(
+            f"{where}: 'station' makes it an artifact creature with its printed "
+            f"power and toughness, so the card must print both"
+        )
+    if (STATION_COUNTER, n) not in gated:
+        raise DslError(
+            f"{where}: 'station' {n} must be the number of one of the card's own "
+            f"striations on {STATION_COUNTER} counters, got thresholds {sorted(gated)}"
         )
     return n
 
@@ -1769,6 +1818,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     vanishing = _compile_vanishing(model, where)
     abilities = tuple(_compile_ability(a, i, where) for i, a in enumerate(model.abilities))
     _check_threshold_order(abilities, where)
+    station = _compile_station(model, abilities, where)
     if impending is not None:
         # The end-step tick, after every printed ability so their indices are
         # the printed order's and a threshold striation stays a suffix of the
@@ -3025,6 +3075,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         toxic=model.toxic,
         annihilator=model.annihilator,
         vanishing=vanishing,
+        station=station,
         madness=ManaCost.parse(model.madness) if model.madness else None,
         miracle=ManaCost.parse(model.miracle) if model.miracle else None,
         foretell=ManaCost.parse(model.foretell) if model.foretell else None,
@@ -3097,20 +3148,44 @@ def _compile_threshold(
 ) -> tuple[str, int] | None:
     """A station symbol's ``{"counter": "charge", "at_least": 12}``, or ``None``.
 
-    Activated abilities only. That is what the two Planets print, and it is
-    where the gate is honoured: `abilities_of` leaves the ability out, and
-    `legality`, the mana solver and the AI all read that list. A gated static or
-    trigger would also have to reach `_ability_statics`, the player statics and
-    the trigger collectors, which read printed faces -- so one is refused here
-    rather than loading as an ability that is always on.
+    On an activated, triggered or static ability: "as long as this permanent
+    has N or more charge counters on it, it has [abilities]" (721) names no
+    kind. Every reader agrees the ability is absent below N:
+    `characteristics.abilities_of` leaves it out, which is what legality, the
+    mana solver, the AI, the trigger collectors and `_battlefield_statics`
+    read, and `Ability.present_on` asks it for the walks over printed faces
+    (`_ability_statics`, the player statics). A keyword striation ("8+ |
+    Flying") is a gated ``grant_keyword`` static on ``self_only``.
+
+    Two homes are refused because the gate would read the wrong board. An
+    ability that works anywhere but the battlefield: a card there carries no
+    counters, so the ability could never be had. And a leaves-the-battlefield
+    trigger on the permanent itself: it looks back at the permanent as it left
+    (603.10a), but the gate reads the counters the card has now, which is none.
     """
     spec = model.threshold
     if spec is None:
         return None
-    if kind is not AbilityKind.ACTIVATED:
+    if kind not in (AbilityKind.ACTIVATED, AbilityKind.TRIGGERED, AbilityKind.STATIC):
         raise DslError(
-            f"{where}.threshold: only an activated ability may be gated on a counter "
-            f"count so far, not a {kind.value} one"
+            f"{where}.threshold: a station symbol gates an activated, triggered or "
+            f"static ability, not a {kind.value} one"
+        )
+    if list(model.active_zones) != [Zone.BATTLEFIELD.value]:
+        raise DslError(
+            f"{where}.threshold: a station symbol counts the permanent's counters, "
+            f"so the ability works on the battlefield only, not in {model.active_zones}"
+        )
+    trigger = model.trigger
+    if (
+        kind is AbilityKind.TRIGGERED
+        and trigger is not None
+        and trigger.source == "self"
+        and trigger.event in (*LEAVE_TRIGGERS, "sacrificed", "becomes_unattached")
+    ):
+        raise DslError(
+            f"{where}.threshold: a gated leaves-the-battlefield trigger would have to "
+            f"look back at the counters the permanent left with (603.10a); not supported"
         )
     unknown = set(spec) - {"counter", "at_least"}
     if unknown:
@@ -3780,7 +3855,10 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             )
 
     if kind is AbilityKind.STATIC:
-        return _compile_static(model, index, where)
+        static_ability = _compile_static(model, index, where)
+        if threshold is None:
+            return static_ability
+        return dataclasses.replace(static_ability, threshold=threshold)
 
     # An ability-level `condition` is compiled into `activation_condition`, and
     # only for an activated ability. On a triggered ability it used to load,

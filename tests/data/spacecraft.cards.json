@@ -1,0 +1,74 @@
+{
+  "_comment": "Station on a Spacecraft (721.2b) -- a 4/6 with its P/T box at 5+, a 3+ trigger, a 3+ player static, a 5+ keyword line and an 8+ self-buff, standing in for U.S.S. Prometheus, Uthros Research Craft and Exploration Broodship. Test-only.",
+  "cards": [
+    {
+      "id": "t_spacecraft",
+      "name": "Test Spacecraft",
+      "oracle_text": "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 5+.)\n3+ | Whenever you cast an artifact spell, draw a card.\n3+ | You may play an additional land on each of your turns.\n5+ | Flying, hexproof\n8+ | This Spacecraft gets +2/+0.",
+      "mana_cost": "{3}",
+      "types": ["Artifact"],
+      "subtypes": ["Spacecraft"],
+      "power": 4,
+      "toughness": 6,
+      "station": 5,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 5+.)",
+          "cost": {
+            "tap_permanents": {
+              "types": ["Creature"],
+              "exclude_self": true,
+              "as": "stationed"
+            }
+          },
+          "sorcery_speed_only": true,
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "charge",
+              "amount": {"power_of": {"binding": "stationed"}},
+              "objects": {"self_only": true}
+            }
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "3+ | Whenever you cast an artifact spell, draw a card.",
+          "threshold": {"counter": "charge", "at_least": 3},
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {"types": ["Artifact"]}
+          },
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        },
+        {
+          "kind": "static",
+          "text": "3+ | You may play an additional land on each of your turns.",
+          "threshold": {"counter": "charge", "at_least": 3},
+          "effect": "extra_land_drops",
+          "affects_player": "you",
+          "amount": {"const": 1}
+        },
+        {
+          "kind": "static",
+          "text": "5+ | Flying, hexproof",
+          "threshold": {"counter": "charge", "at_least": 5},
+          "effect": "grant_keyword",
+          "keywords": ["flying", "hexproof"],
+          "affects": {"self_only": true}
+        },
+        {
+          "kind": "static",
+          "text": "8+ | This Spacecraft gets +2/+0.",
+          "threshold": {"counter": "charge", "at_least": 8},
+          "effect": "buff",
+          "affects": {"self_only": true},
+          "power": {"const": 2},
+          "toughness": {"const": 0}
+        }
+      ]
+    }
+  ]
+}
