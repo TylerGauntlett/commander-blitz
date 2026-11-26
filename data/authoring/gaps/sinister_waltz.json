@@ -1,0 +1,24 @@
+{
+  "card_id": "sinister_waltz",
+  "name": "Sinister Waltz",
+  "oracle_text": "Choose three target creature cards in your graveyard. Return two of them at random to the battlefield and put the other on the bottom of your library.",
+  "blocked_sentences": [
+    "Choose three target creature cards in your graveyard. Return two of them at random to the battlefield and put the other on the bottom of your library."
+  ],
+  "needs": [
+    {
+      "capability": "exact_target_count",
+      "kind": "engine",
+      "what": "A fixed-size target spec (`count: 3`, no `up_to`, no `min_count`, not `optional`) must be declarable only when that many distinct legal targets exist (601.2c): with fewer than three creature cards in your graveyard Sinister Waltz cannot be cast at all. `targeting._spec_options` must return no choice when len(options) < count for a fixed count above 1, instead of offering combinations of min(count, len(options))",
+      "why_existing_wont_do": "The effect is expressible: a `card_in_graveyard` target t1 with `count: 3` and selector {zone: graveyard, controller: you, types: [Creature]}; then `return_from_graveyard` with destination battlefield, objects {target: t1, count: 2, random: true} and `as: returned`; then `put_on_top` with `bottom: true` and objects {target: t1, zone: graveyard, exclude_binding: returned}. But the `count > 1` branch of `targeting._spec_options` uses `size = min(count, len(options))`, so in the sandbox (two creature cards in your graveyard) the spell would be cast at two targets, return both and tuck none -- a position where the printed card is uncastable. Same engine gap as Hex. Spelling it `count: 3, up_to: true, min_count: 3` makes it correctly uncastable with two, which leads to the next need"
+    },
+    {
+      "capability": "sandbox_own_graveyard_creature_targets",
+      "kind": "engine",
+      "what": "The authoring sandbox (`cards/authoring/verify.py` `graveyard_target_props`) must add quiet creature cards to player 0's graveyard when a spell's mandatory `card_in_graveyard` creature target needs more than the two `OWN_GRAVEYARD_ROLES` hold -- here one more, so three are present and the playable gate can cast it",
+      "why_existing_wont_do": "`graveyard_target_props` pads creature-card targets only for seat 1 ('your graveyard already holds two'), and `spare_graveyard_roles` pads only for an `exile_from_graveyard` cost. With exact counting in place (need 1), a card requiring three target creature cards in your graveyard has no legal cast and fails gate 4 as 'not playable in the sandbox'. Once added, the ready answer above would assert {zone: graveyard, battlefield_count: 34, library_size: {0: 41}, graveyard_size: {0: 1}} (graveyard counts the sorcery itself: 3 creatures - 3 + Waltz = 1)"
+    }
+  ],
+  "closest_existing": ["aberrant_return", "return_from_graveyard", "put_on_top", "exclude_binding"],
+  "confidence": "high"
+}

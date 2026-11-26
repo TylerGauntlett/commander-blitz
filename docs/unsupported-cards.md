@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**559 cards** blocked by **465** capabilities.
+**562 cards** blocked by **466** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -20,11 +20,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-damage-by-source](#prevent-damage-by-source) | 11 | 2713 | op, replacement, static_effect |
 | [planechase](#planechase) | 10 | 5666 | engine |
 | [convoke](#convoke) | 7 | 5528 | engine, op, selector, static_effect |
+| [madness](#madness) | 7 | 3016 | condition, cost, engine, replacement, static_effect |
 | [voting](#voting) | 7 | 4565 | decision, op, static_effect |
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [the-ring-tempts-you](#the-ring-tempts-you) | 6 | 1136 | engine, op |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 6 | 2672 | selector, trigger_event |
-| [madness](#madness) | 5 | 3016 | condition, cost, engine, replacement, static_effect |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 5 | 714 | engine |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
@@ -59,6 +59,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
 | [echo](#echo) | 2 | 961 | keyword |
 | [encore](#encore) | 2 | 9330 | static_effect |
+| [exact-target-count](#exact-target-count) | 2 | 7243 | engine |
 | [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 2 | 5169 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 2 | 3531 | static_effect |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
@@ -227,7 +228,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [every-nonbasic-land-type](#every-nonbasic-land-type) | 1 | 2635 | engine |
 | [evolve](#evolve) | 1 | 6178 | trigger_event |
-| [exact-target-count](#exact-target-count) | 1 | 7243 | engine |
 | [except-first-draw-in-draw-step](#except-first-draw-in-draw-step) | 1 | 4633 | trigger_event |
 | [exile-bottom-of-library](#exile-bottom-of-library) | 1 | 4763 | selector |
 | [exile-cards-with-card-types-among-them](#exile-cards-with-card-types-among-them) | 1 | 9107 | selector |
@@ -411,6 +411,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [same-target-for-each-target-word](#same-target-for-each-target-word) | 1 | 5003 | engine |
 | [sandbox-low-mana-value-permanent](#sandbox-low-mana-value-permanent) | 1 | 14140 | engine |
+| [sandbox-own-graveyard-creature-targets](#sandbox-own-graveyard-creature-targets) | 1 | 11793 | engine |
 | [sandbox-resolve-own-triggers](#sandbox-resolve-own-triggers) | 1 | 13330 | engine |
 | [scavenge](#scavenge) | 1 | 11499 | static_effect |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
@@ -841,6 +842,46 @@ Blocks **7** cards.
 
 </details>
 
+## madness
+
+Blocks **7** cards.
+
+- **(replacement)** madness whose declined (or uncastable) card is moved from exile to its owner's graveyard, per 702.35a and the printed 'cast it for its madness cost or put it into your graveyard'
+  <br>Why the existing vocabulary won't do: The card-level `madness` key exists, but engine/replacements.py `_madness` deliberately leaves a declined madness card in exile (its docstring and the cookbook's 'madness exiles either way' row say so), and `_offer_cast` returning False never moves it to the graveyard. Writing `"madness": "{1}{R}"` would load but make a declined discard exile the card permanently, which the printed text and 702.35a contradict. The other two lines are expressible: an `attacks_if_able` static with `affects: {self_only: true}` (as Darksteel Juggernaut) and an `attacks` trigger with `discard` `whole_hand: true` then `draw` 3.
+- **(condition)** A condition that reads whether the spell was cast for its madness cost ("if this spell's madness cost was paid"), usable in an `if` inside `spell_effects`, analogous to `evoked` / `kicked` / `overloaded`
+  <br>Why the existing vocabulary won't do: `condition_keys` has `evoked`, `kicked`, `overloaded`, `cost_option`, but nothing for madness. `cast_from_exile` is the near miss and is not exact: any impulse-style permission that casts this card from exile would also satisfy it without the madness cost being paid. `_offer_cast` emits `madness=1` on the SPELL_CAST event but no condition reads it on resolution
+- **(engine)** A madness cost containing {X}: the player chooses X when casting for madness (107.3, 702.35), and that X is carried on the stack item so `{"x": true}` in the spell's effects reads it
+  <br>Why the existing vocabulary won't do: `replacements._offer_cast` builds `Cost(mana=card.madness)` and calls `stack.push_spell` without an `x`, so X defaults to 0 on every madness cast; a Madness {X}{R} card would always deal 0 damage when its madness cost was paid
+- **(static_effect)** a player-wide static (grant_madness) that gives every card you own matching a printed-characteristics filter ({types: [Creature], subtypes: [Vampire], owner: you}) in any zone other than the battlefield the madness keyword, with its madness cost equal to that card's own mana cost: discarding such a card exiles it instead, and the madness trigger then offers casting it for that cost or putting it into the graveyard
+  <br>Why the existing vocabulary won't do: `madness` exists only as a card-level cost key on the card carrying it, with a printed price. The granting statics are grant_miracle, grant_warp, grant_blitz, grants_flashback/grants_retrace and granted_alternative_cost, none of which hooks the discard replacement; granted_alternative_cost is just another cast-line price, so writing the card with it would let Vampires be cast normally rather than on discard. No static grants madness to cards outside the battlefield, and nothing expresses 'madness cost equal to its mana cost'
+- **(replacement)** Madness per 702.35a and the printed reminder: the discard exiles the card, and if the player declines (or cannot) cast it for its madness cost, the card is put into its owner's graveyard rather than left in exile. The cast offer should also be a triggered ability ('When you do') that uses the stack, not an inline question at discard time.
+  <br>Why the existing vocabulary won't do: The card-level `madness` key exists, but `engine/replacements._madness` deliberately leaves a declined madness card in exile ('a declined madness card is in exile, not the graveyard', also stated in card-dsl-cookbook.md and the rules-coverage row). That contradicts the printed 'or put it into your graveyard'. The mismatch matters most on this card, whose own power counts creature cards in all graveyards: a declined Necrogoyf should land in the graveyard and be counted. `_offer_cast` also asks inline during the discard instead of through a 'when you do' trigger. The other two lines can be written today: a static `set_pt` with power `{"count": {"controller": "any", "types": ["Creature"], "zone": "graveyard"}}` (Lord of Extinction / Haughty Djinn shape) and toughness const 4, plus an `upkeep` trigger with `controller: any` and `discard` on `{"binding": "event_player"}` (Seizan / Liliana's Reaver shape).
+- **(cost)** a madness cost that is a full cost node (mana plus pay_life), so 'Madness—{2}{B}, Pay 8 life' charges 8 life alongside the mana when the madness cast is taken
+  <br>Why the existing vocabulary won't do: The card-level `madness` key is `str | None` in cards/schema.py and the loader parses it with ManaCost.parse, so it holds mana only; writing just {2}{B} would drop the 8-life payment and make the card strictly cheaper than printed. `alternative_cost` takes a cost node but is offered from hand, not from the madness exile window
+- **(replacement)** madness whose declined (or uncastable) card is moved from exile to its owner's graveyard, per 702.35a
+  <br>Why the existing vocabulary won't do: engine/replacements.py `_madness` leaves a declined madness card in exile, so the card-level `madness` key would load but behave differently from the printed reminder text. The rest of the card is expressible.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Necrogoyf** (rank 3016) — `necrogoyf`
+  - Madness {1}{B}{B} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)
+- **Shadowgrange Archfiend** (rank 4336) — `shadowgrange_archfiend`
+  - Madness—{2}{B}, Pay 8 life
+  - You gain life equal to the greatest power among creatures sacrificed this way
+- **Stensia Masquerade** (rank 5579) — `stensia_masquerade`
+  - Madness {2}{R}
+- **Anje's Ravager** (rank 7479) — `anje_s_ravager`
+  - Madness {1}{R} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)
+- **Stromkirk Occultist** (rank 9783) — `stromkirk_occultist`
+  - Madness {1}{R}
+- **Avacyn's Judgment** (rank 10743) — `avacyn_s_judgment`
+  - Madness {X}{R} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)
+  - If this spell's madness cost was paid, it deals X damage divided as you choose among those permanents and/or players instead.
+- **Falkenrath Gorger** (rank 11202) — `falkenrath_gorger`
+  - Each Vampire creature card you own that isn't on the battlefield has madness. The madness cost is equal to its mana cost.
+
+</details>
+
 ## voting
 
 Blocks **7** cards.
@@ -991,40 +1032,6 @@ Blocks **6** cards.
   - Whenever you cast your first spell with {X} in its mana cost each turn, put X +1/+1 counters on Nev.
 - **Lattice Library** (rank 10607) — `lattice_library`
   - When this enchantment enters and whenever you cast your first spell with {X} in its mana cost each turn, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the number of study counters on this enchantment.
-
-</details>
-
-## madness
-
-Blocks **5** cards.
-
-- **(replacement)** madness whose declined (or uncastable) card is moved from exile to its owner's graveyard, per 702.35a and the printed 'cast it for its madness cost or put it into your graveyard'
-  <br>Why the existing vocabulary won't do: The card-level `madness` key exists, but engine/replacements.py `_madness` deliberately leaves a declined madness card in exile (its docstring and the cookbook's 'madness exiles either way' row say so), and `_offer_cast` returning False never moves it to the graveyard. Writing `"madness": "{1}{R}"` would load but make a declined discard exile the card permanently, which the printed text and 702.35a contradict. The other two lines are expressible: an `attacks_if_able` static with `affects: {self_only: true}` (as Darksteel Juggernaut) and an `attacks` trigger with `discard` `whole_hand: true` then `draw` 3.
-- **(condition)** A condition that reads whether the spell was cast for its madness cost ("if this spell's madness cost was paid"), usable in an `if` inside `spell_effects`, analogous to `evoked` / `kicked` / `overloaded`
-  <br>Why the existing vocabulary won't do: `condition_keys` has `evoked`, `kicked`, `overloaded`, `cost_option`, but nothing for madness. `cast_from_exile` is the near miss and is not exact: any impulse-style permission that casts this card from exile would also satisfy it without the madness cost being paid. `_offer_cast` emits `madness=1` on the SPELL_CAST event but no condition reads it on resolution
-- **(engine)** A madness cost containing {X}: the player chooses X when casting for madness (107.3, 702.35), and that X is carried on the stack item so `{"x": true}` in the spell's effects reads it
-  <br>Why the existing vocabulary won't do: `replacements._offer_cast` builds `Cost(mana=card.madness)` and calls `stack.push_spell` without an `x`, so X defaults to 0 on every madness cast; a Madness {X}{R} card would always deal 0 damage when its madness cost was paid
-- **(static_effect)** a player-wide static (grant_madness) that gives every card you own matching a printed-characteristics filter ({types: [Creature], subtypes: [Vampire], owner: you}) in any zone other than the battlefield the madness keyword, with its madness cost equal to that card's own mana cost: discarding such a card exiles it instead, and the madness trigger then offers casting it for that cost or putting it into the graveyard
-  <br>Why the existing vocabulary won't do: `madness` exists only as a card-level cost key on the card carrying it, with a printed price. The granting statics are grant_miracle, grant_warp, grant_blitz, grants_flashback/grants_retrace and granted_alternative_cost, none of which hooks the discard replacement; granted_alternative_cost is just another cast-line price, so writing the card with it would let Vampires be cast normally rather than on discard. No static grants madness to cards outside the battlefield, and nothing expresses 'madness cost equal to its mana cost'
-- **(replacement)** Madness per 702.35a and the printed reminder: the discard exiles the card, and if the player declines (or cannot) cast it for its madness cost, the card is put into its owner's graveyard rather than left in exile. The cast offer should also be a triggered ability ('When you do') that uses the stack, not an inline question at discard time.
-  <br>Why the existing vocabulary won't do: The card-level `madness` key exists, but `engine/replacements._madness` deliberately leaves a declined madness card in exile ('a declined madness card is in exile, not the graveyard', also stated in card-dsl-cookbook.md and the rules-coverage row). That contradicts the printed 'or put it into your graveyard'. The mismatch matters most on this card, whose own power counts creature cards in all graveyards: a declined Necrogoyf should land in the graveyard and be counted. `_offer_cast` also asks inline during the discard instead of through a 'when you do' trigger. The other two lines can be written today: a static `set_pt` with power `{"count": {"controller": "any", "types": ["Creature"], "zone": "graveyard"}}` (Lord of Extinction / Haughty Djinn shape) and toughness const 4, plus an `upkeep` trigger with `controller: any` and `discard` on `{"binding": "event_player"}` (Seizan / Liliana's Reaver shape).
-- **(cost)** a madness cost that is a full cost node (mana plus pay_life), so 'Madness—{2}{B}, Pay 8 life' charges 8 life alongside the mana when the madness cast is taken
-  <br>Why the existing vocabulary won't do: The card-level `madness` key is `str | None` in cards/schema.py and the loader parses it with ManaCost.parse, so it holds mana only; writing just {2}{B} would drop the 8-life payment and make the card strictly cheaper than printed. `alternative_cost` takes a cost node but is offered from hand, not from the madness exile window
-
-<details><summary>Cards waiting on this</summary>
-
-- **Necrogoyf** (rank 3016) — `necrogoyf`
-  - Madness {1}{B}{B} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)
-- **Shadowgrange Archfiend** (rank 4336) — `shadowgrange_archfiend`
-  - Madness—{2}{B}, Pay 8 life
-  - You gain life equal to the greatest power among creatures sacrificed this way
-- **Anje's Ravager** (rank 7479) — `anje_s_ravager`
-  - Madness {1}{R} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)
-- **Avacyn's Judgment** (rank 10743) — `avacyn_s_judgment`
-  - Madness {X}{R} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)
-  - If this spell's madness cost was paid, it deals X damage divided as you choose among those permanents and/or players instead.
-- **Falkenrath Gorger** (rank 11202) — `falkenrath_gorger`
-  - Each Vampire creature card you own that isn't on the battlefield has madness. The madness cost is equal to its mana cost.
 
 </details>
 
@@ -1760,6 +1767,24 @@ Blocks **2** cards.
   - Each outlaw creature card in your graveyard has encore {X}, where X is its mana value
 - **Wire Surgeons** (rank 20329) — `wire_surgeons`
   - Each artifact creature card in your graveyard has encore. Its encore cost is equal to its mana cost. (Exile it and pay its mana cost: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)
+
+</details>
+
+## exact-target-count
+
+Blocks **2** cards.
+
+- **(engine)** A fixed-size target spec (`count: 6`, no `up_to`, no `min_count`, not `optional`) must be declarable only when that many distinct legal targets exist (601.2c): with fewer than six creatures on the battlefield Hex cannot be cast at all. `targeting._spec_options` must return no choice when len(options) < count for a fixed count above 1, instead of offering combinations of min(count, len(options))
+  <br>Why the existing vocabulary won't do: Every printed word is expressible: a `permanent` target spec t1 with `count: 6` and selector {types: [Creature], zone: battlefield}, and `destroy` on {target: t1}. But `targeting._spec_options` builds `itertools.combinations(options, min(count, len(options)))` for a fixed count > 1, so the spell is offered with fewer targets than printed. Verified with a scratch run of verify(): the draft passed all six gates by casting Hex at the sandbox's FOUR creatures (battlefield_count 30, opponent_battlefield_count 3 including a dependent Aura), a position where the printed card is uncastable -- the shipped card would be strictly better than printed (a one-sided wipe of a small board). `up_to`/`min_count` describe 'up to six' / 'one to six', which are different cards
+- **(engine)** A fixed-size target spec (`count: 3`, no `up_to`, no `min_count`, not `optional`) must be declarable only when that many distinct legal targets exist (601.2c): with fewer than three creature cards in your graveyard Sinister Waltz cannot be cast at all. `targeting._spec_options` must return no choice when len(options) < count for a fixed count above 1, instead of offering combinations of min(count, len(options))
+  <br>Why the existing vocabulary won't do: The effect is expressible: a `card_in_graveyard` target t1 with `count: 3` and selector {zone: graveyard, controller: you, types: [Creature]}; then `return_from_graveyard` with destination battlefield, objects {target: t1, count: 2, random: true} and `as: returned`; then `put_on_top` with `bottom: true` and objects {target: t1, zone: graveyard, exclude_binding: returned}. But the `count > 1` branch of `targeting._spec_options` uses `size = min(count, len(options))`, so in the sandbox (two creature cards in your graveyard) the spell would be cast at two targets, return both and tuck none -- a position where the printed card is uncastable. Same engine gap as Hex. Spelling it `count: 3, up_to: true, min_count: 3` makes it correctly uncastable with two, which leads to the next need
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hex** (rank 7243) — `hex`
+  - Destroy six target creatures.
+- **Sinister Waltz** (rank 11793) — `sinister_waltz`
+  - Choose three target creature cards in your graveyard. Return two of them at random to the battlefield and put the other on the bottom of your library.
 
 </details>
 
@@ -4274,20 +4299,6 @@ Blocks **1** card.
 
 - **Watchful Radstag** (rank 6178) — `watchful_radstag`
   - Whenever this creature evolves, create a token that's a copy of it.
-
-</details>
-
-## exact-target-count
-
-Blocks **1** card.
-
-- **(engine)** A fixed-size target spec (`count: 6`, no `up_to`, no `min_count`, not `optional`) must be declarable only when that many distinct legal targets exist (601.2c): with fewer than six creatures on the battlefield Hex cannot be cast at all. `targeting._spec_options` must return no choice when len(options) < count for a fixed count above 1, instead of offering combinations of min(count, len(options))
-  <br>Why the existing vocabulary won't do: Every printed word is expressible: a `permanent` target spec t1 with `count: 6` and selector {types: [Creature], zone: battlefield}, and `destroy` on {target: t1}. But `targeting._spec_options` builds `itertools.combinations(options, min(count, len(options)))` for a fixed count > 1, so the spell is offered with fewer targets than printed. Verified with a scratch run of verify(): the draft passed all six gates by casting Hex at the sandbox's FOUR creatures (battlefield_count 30, opponent_battlefield_count 3 including a dependent Aura), a position where the printed card is uncastable -- the shipped card would be strictly better than printed (a one-sided wipe of a small board). `up_to`/`min_count` describe 'up to six' / 'one to six', which are different cards
-
-<details><summary>Cards waiting on this</summary>
-
-- **Hex** (rank 7243) — `hex`
-  - Destroy six target creatures.
 
 </details>
 
@@ -6904,6 +6915,20 @@ Blocks **1** card.
 
 - **Bloodchief's Thirst** (rank 14140) — `bloodchief_s_thirst`
   - Destroy target creature or planeswalker with mana value 2 or less. If this spell was kicked, instead destroy target creature or planeswalker.
+
+</details>
+
+## sandbox-own-graveyard-creature-targets
+
+Blocks **1** card.
+
+- **(engine)** The authoring sandbox (`cards/authoring/verify.py` `graveyard_target_props`) must add quiet creature cards to player 0's graveyard when a spell's mandatory `card_in_graveyard` creature target needs more than the two `OWN_GRAVEYARD_ROLES` hold -- here one more, so three are present and the playable gate can cast it
+  <br>Why the existing vocabulary won't do: `graveyard_target_props` pads creature-card targets only for seat 1 ('your graveyard already holds two'), and `spare_graveyard_roles` pads only for an `exile_from_graveyard` cost. With exact counting in place (need 1), a card requiring three target creature cards in your graveyard has no legal cast and fails gate 4 as 'not playable in the sandbox'. Once added, the ready answer above would assert {zone: graveyard, battlefield_count: 34, library_size: {0: 41}, graveyard_size: {0: 1}} (graveyard counts the sorcery itself: 3 creatures - 3 + Waltz = 1)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sinister Waltz** (rank 11793) — `sinister_waltz`
+  - Choose three target creature cards in your graveyard. Return two of them at random to the battlefield and put the other on the bottom of your library.
 
 </details>
 

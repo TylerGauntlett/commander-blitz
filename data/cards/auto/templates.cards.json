@@ -306247,6 +306247,144 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "condition": {
+                    "cmp": ">",
+                    "left": {
+                      "life_lost_this_turn": {
+                        "binding": "each_player"
+                      }
+                    },
+                    "right": {
+                      "const": 0
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "controller": "you",
+                      "op": "create_token",
+                      "token": "blood_token"
+                    }
+                  ]
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, create a Blood token for each player who lost life this turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "as": "strefan_put",
+                      "attacking": true,
+                      "controller": "you",
+                      "objects": {
+                        "chooser": "controller",
+                        "controller": "you",
+                        "count": 1,
+                        "not_types": [
+                          "Instant",
+                          "Sorcery"
+                        ],
+                        "subtypes": [
+                          "Vampire"
+                        ],
+                        "zone": "hand"
+                      },
+                      "op": "put_onto_battlefield",
+                      "tapped": true
+                    },
+                    {
+                      "duration": "until_end_of_turn",
+                      "keywords": [
+                        "indestructible"
+                      ],
+                      "objects": {
+                        "binding": "strefan_put",
+                        "count": "all"
+                      },
+                      "op": "grant_keyword"
+                    }
+                  ],
+                  "op": "may",
+                  "player": "you",
+                  "prompt": "Put a Vampire card from your hand onto the battlefield tapped and attacking?"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "sacrifice": {
+                  "controller": "you",
+                  "count": 2,
+                  "is_token": true,
+                  "subtypes": [
+                    "Blood"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "player": "you",
+              "prompt": "Sacrifice two Blood tokens?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Strefan attacks, you may sacrifice two Blood tokens. If you do, you may put a Vampire card from your hand onto the battlefield tapped and attacking. It gains indestructible until end of turn.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "strefan_maurer_progenitor",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{B}{R}",
+      "name": "Strefan, Maurer Progenitor",
+      "oracle_text": "Flying\nAt the beginning of your end step, create a Blood token for each player who lost life this turn.\nWhenever Strefan attacks, you may sacrifice two Blood tokens. If you do, you may put a Vampire card from your hand onto the battlefield tapped and attacking. It gains indestructible until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Noble"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -306867,6 +307005,58 @@
       "subtypes": [
         "Vampire",
         "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "discard": 1
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "subtypes": [
+                  "Vampire"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "activated",
+          "once_each_turn": true,
+          "text": "Discard a card: Vampires you control get +1/+1 until end of turn. Activate only once each turn."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "stromkirk_condemned",
+      "mana_cost": "{B}{B}",
+      "name": "Stromkirk Condemned",
+      "oracle_text": "Discard a card: Vampires you control get +1/+1 until end of turn. Activate only once each turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Horror"
       ],
       "toughness": 2,
       "types": [
@@ -353732,6 +353922,88 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature dealt damage by this creature this turn dies, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "any",
+            "event": "creature_dies",
+            "filter": {
+              "controller": "any",
+              "damaged_by": "self"
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}{R}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}{R}: This creature deals 1 damage to target creature."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "vampiric_dragon",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{6}{B}{R}",
+      "name": "Vampiric Dragon",
+      "oracle_text": "Flying\nWhenever a creature dealt damage by this creature this turn dies, put a +1/+1 counter on this creature.\n{1}{R}: This creature deals 1 damage to target creature.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Dragon"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
       ]
     },
     {

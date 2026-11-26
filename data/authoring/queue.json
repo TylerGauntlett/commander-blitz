@@ -266992,12 +266992,12 @@
     },
     "Strefan, Maurer Progenitor": {
       "edhrec_rank": 7291,
-      "gate": "template",
+      "gate": null,
       "name": "Strefan, Maurer Progenitor",
-      "reason": "no template for: At the beginning of your end step, create a Blood token for each player who lost life this",
+      "reason": "",
       "scryfall_id": "d467f448-7cad-4bb9-92b9-3529f1e5805f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Strength Bobblehead": {
@@ -267412,12 +267412,12 @@
     },
     "Stromkirk Condemned": {
       "edhrec_rank": 17451,
-      "gate": "template",
+      "gate": null,
       "name": "Stromkirk Condemned",
-      "reason": "no template for: Discard a card: Vampires you control get +1/+1 until end of turn. Activate only once each ",
+      "reason": "",
       "scryfall_id": "b0e0cecb-4f14-438e-a9d0-c6b19a4126c5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stromkirk Mentor": {
@@ -300952,12 +300952,12 @@
     },
     "Vampiric Dragon": {
       "edhrec_rank": 19529,
-      "gate": "template",
+      "gate": null,
       "name": "Vampiric Dragon",
-      "reason": "no template for: Whenever a creature dealt damage by this creature this turn dies, put a +1/+1 counter on t",
+      "reason": "",
       "scryfall_id": "6bf8eff8-6b39-4e5e-b8a9-1da53e837809",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vampiric Embrace": {

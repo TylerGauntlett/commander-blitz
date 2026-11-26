@@ -25606,6 +25606,10 @@
   "streetbreaker_wurm": {
     "zone": "battlefield"
   },
+  "strefan_maurer_progenitor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "strength_bobblehead": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -25659,6 +25663,13 @@
   },
   "stromkirk_captain": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "stromkirk_condemned": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "strong_back": {
@@ -29415,6 +29426,10 @@
       "id": "blood_token"
     },
     "zone": "graveyard"
+  },
+  "vampiric_dragon": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "vandalblast": {
     "opponent_battlefield_count": 5,

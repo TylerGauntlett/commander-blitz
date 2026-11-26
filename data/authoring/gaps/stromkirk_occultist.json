@@ -1,0 +1,20 @@
+{
+  "card_id": "stromkirk_occultist",
+  "name": "Stromkirk Occultist",
+  "oracle_text": "Trample\nWhenever this creature deals combat damage to a player, exile the top card of your library. Until end of turn, you may play that card.\nMadness {1}{R} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)",
+  "blocked_sentences": [
+    "Madness {1}{R}"
+  ],
+  "needs": [
+    {
+      "capability": "madness",
+      "kind": "replacement",
+      "what": "madness whose declined (or uncastable) card is moved from exile to its owner's graveyard, per 702.35a",
+      "why_existing_wont_do": "engine/replacements.py `_madness` leaves a declined madness card in exile, so the card-level `madness` key would load but behave differently from the printed reminder text. The rest of the card is expressible."
+    }
+  ],
+  "closest_existing": [
+    "madness"
+  ],
+  "confidence": "high"
+}

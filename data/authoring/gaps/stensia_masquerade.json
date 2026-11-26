@@ -1,0 +1,20 @@
+{
+  "card_id": "stensia_masquerade",
+  "name": "Stensia Masquerade",
+  "oracle_text": "Attacking creatures you control have first strike.\nWhenever a Vampire you control deals combat damage to a player, put a +1/+1 counter on it.\nMadness {2}{R} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)",
+  "blocked_sentences": [
+    "Madness {2}{R}"
+  ],
+  "needs": [
+    {
+      "capability": "madness",
+      "kind": "replacement",
+      "what": "madness whose declined (or uncastable) card is moved from exile to its owner's graveyard, per 702.35a",
+      "why_existing_wont_do": "engine/replacements.py `_madness` leaves a declined madness card in exile, so the card-level `madness` key would load but behave differently from the printed reminder text. The rest of the card is expressible."
+    }
+  ],
+  "closest_existing": [
+    "madness"
+  ],
+  "confidence": "high"
+}
