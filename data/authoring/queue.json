@@ -121732,12 +121732,12 @@
     },
     "Guinan, Ancient Advisor": {
       "edhrec_rank": 25182,
-      "gate": "template",
+      "gate": null,
       "name": "Guinan, Ancient Advisor",
-      "reason": "no template for: {1}, {T}: Put a +1/+1 counter on each creature you control that entered this turn. If you ",
+      "reason": "",
       "scryfall_id": "06fa6050-0f9d-46a2-9635-8d05899dbc49",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Guise of Fire": {
