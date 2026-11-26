@@ -1,0 +1,16 @@
+{
+  "card_id": "custodi_squire",
+  "name": "Custodi Squire",
+  "oracle_text": "Flying\nWill of the council — When this creature enters, starting with you, each player votes for an artifact, creature, or enchantment card in your graveyard. Return each card with the most votes or tied for most votes to your hand.",
+  "blocked_sentences": [
+    "Will of the council — When this creature enters, starting with you, each player votes for an artifact, creature, or enchantment card in your graveyard. Return each card with the most votes or tied for most votes to your hand."
+  ],
+  "needs": [{
+    "capability": "council_s_dilemma",
+    "kind": "op",
+    "what": "a vote op (rule 701.38): starting with the controller and going in turn order, each player (opponents included) chooses one card from a selector as a vote, here an artifact, creature or enchantment card in the controller's graveyard, without targeting; the tally is kept per candidate and the op binds 'each candidate with the most votes or tied for most' under an `as` so a following return-to-hand effect can act on that whole set",
+    "why_existing_wont_do": "for_each_player can walk the players in order, but no choose op lets a player other than the controller pick a card from the controller's graveyard as a vote, and no value or selector key counts how many players chose a given card, so neither the per-player vote nor the 'most votes or tied for most' set can be said; a plain return of one chosen card would drop the opponents' votes and the tie rule"
+  }],
+  "closest_existing": ["for_each_player", "choose_permanents", "return_to_hand"],
+  "confidence": "high"
+}

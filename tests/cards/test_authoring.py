@@ -913,6 +913,70 @@ class TestACipherSpellThatEncodedEndsInExile:
         assert not V.encoded_itself(plain, obj)
 
 
+def _self_returning_spell(*, when: bool) -> dict:
+    """ "Draw a card. If <when>, return it to its owner's hand." """
+    condition = (
+        {"exists": {"zone": "battlefield", "controller": "you", "types": ["Land"]}}
+        if when
+        else {"not": {"exists": {"zone": "battlefield", "controller": "you", "types": ["Land"]}}}
+    )
+    return {
+        "id": "auto_test_recurring_insight",
+        "name": "Auto Test Recurring Insight",
+        "oracle_text": (
+            "Draw a card. If you control a land, return Auto Test Recurring Insight "
+            "to its owner's hand."
+            if when
+            else "Draw a card. If you control no lands, return Auto Test Recurring "
+            "Insight to its owner's hand."
+        ),
+        "mana_cost": "{2}{U}",
+        "types": ["Sorcery"],
+        "colors": ["U"],
+        "color_identity": ["U"],
+        "spell_effects": [
+            {"op": "draw", "player": "you", "amount": {"const": 1}},
+            {
+                "op": "if",
+                "condition": condition,
+                "then": [{"op": "return_self_to_hand_on_resolution"}],
+            },
+        ],
+    }
+
+
+class TestASpellThatReturnedItselfEndsInHand:
+    """Gate 4 admits a hand for `return_self_to_hand_on_resolution` -- on the move.
+
+    "Return Haunting Imitation to its owner's hand" sits inside an `if`, so the
+    declaration alone cannot admit the hand: a spell whose condition failed
+    goes to its graveyard and must still be required to. The gate reads the
+    card's last move, from the stack to a hand as it resolved. Both halves are
+    asserted, because the second is what stops the first from being a weakened
+    gate.
+    """
+
+    def test_a_spell_that_returned_itself_clears_every_gate_in_hand(self, hand_written):
+        verdict = V.verify(_self_returning_spell(when=True), {"zone": "hand"}, hand_written)
+        assert verdict.ok, str(verdict)
+
+    def test_when_the_condition_fails_it_must_end_in_the_graveyard(self, hand_written):
+        payload = _self_returning_spell(when=False)
+        assert V.verify(payload, {"zone": "graveyard"}, hand_written).ok
+        assert not V.verify(payload, {"zone": "hand"}, hand_written).ok
+
+    def test_a_hand_without_the_declaration_admits_nothing(self, hand_written):
+        """A spell that never declared the op is not excused by being in a hand."""
+        returning = V.compile_card(V.CardModel.model_validate(_self_returning_spell(when=True)))
+        merged = V.CardRegistry({**{c.id: c for c in hand_written}, returning.id: returning})
+        game, oid, _, _ = V._cast(merged, returning)
+        obj = game.state.objects[oid]
+        assert obj.zone is V.Zone.HAND
+        assert V.returned_itself(game.state, returning, obj)
+        plain = V.compile_card(V.CardModel.model_validate(DIVINATION))
+        assert not V.returned_itself(game.state, plain, obj)
+
+
 class TestTheLegendaryProp:
     """What the sandbox gained, and what it was not allowed to cost."""
 

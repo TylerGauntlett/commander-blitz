@@ -1,0 +1,61 @@
+{
+  "_comment": "Shapes for tests/unit/zones/test_search_split_destinations.py. t_ssd_cultivate is Cultivate written as one split search (one basic onto the battlefield tapped, the other to hand); t_ssd_grave splits the other way, one to hand and the rest to the graveyard (Intuition's destinations, chosen by the searcher).",
+  "cards": [
+    {
+      "id": "t_ssd_cultivate",
+      "name": "Test Split Cultivate",
+      "oracle_text": "Search your library for up to two basic land cards, reveal those cards, put one onto the battlefield tapped and the other into your hand, then shuffle.",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "spell_effects": [
+        {
+          "op": "search_library",
+          "count": 2,
+          "selector": {
+            "types": [
+              "Land"
+            ],
+            "supertypes": [
+              "Basic"
+            ]
+          },
+          "reveal": true,
+          "destination": "battlefield",
+          "tapped": true,
+          "rest_to": "hand"
+        }
+      ]
+    },
+    {
+      "id": "t_ssd_grave",
+      "name": "Test Split Graveyard",
+      "oracle_text": "Search your library for three cards, put one of them into your hand and the rest into your graveyard, then shuffle.",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "spell_effects": [
+        {
+          "op": "search_library",
+          "count": 3,
+          "destination": "hand",
+          "rest_to": "graveyard"
+        }
+      ]
+    }
+  ]
+}

@@ -10,11 +10,11 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 191 |
+| [Effect ops](#effect-ops) | 192 |
 | [Selectors](#selectors) | 84 |
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 80 |
-| [Conditions](#conditions) | 37 |
+| [Conditions](#conditions) | 38 |
 | [Trigger events](#trigger-events) | 68 |
 | [Trigger filters](#trigger-filters) | 41 |
 | [Static effects](#static-effects) | 116 |
@@ -74,7 +74,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `reveal_until` | Cards | yes | Reveal from the top until `amount` cards match (default one), move them together (under `controller: you` if named), or offer one onto the battlefield with `destination` as the fallback (`may_destination`); bottom or shuffle the rest; `revealed_as` binds every card revealed. | [Cascade, ripple and reveal_until — walking a library](card-dsl-cookbook.md#cascade-ripple-and-reveal_until--walking-a-library) |
 | `ripple` | Cards |  | Ripple N: reveal the top N, cast any with the same name free. | [Cascade, ripple and reveal_until — walking a library](card-dsl-cookbook.md#cascade-ripple-and-reveal_until--walking-a-library) |
 | `scry` | Cards |  | Scry N; `chooser` separate from `player` is fateseal. | [Effect ops](card-dsl.md#effect-ops) |
-| `search_library` | Cards | yes | Search a library for cards matching a selector, then shuffle; `may_destination` (gated by `may_destination_if`) offers the found card onto the battlefield; `searcher: "you"` has the resolving player search another player's library. | [Effect ops](card-dsl.md#effect-ops) |
+| `search_library` | Cards | yes | Search a library for cards matching a selector, then shuffle; `may_destination` (gated by `may_destination_if`) offers the found card onto the battlefield; `rest_to` sends one found card to `destination` and the rest elsewhere; `searcher: "you"` has the resolving player search another player's library. | [Effect ops](card-dsl.md#effect-ops) |
 | `search_zones` | Cards | yes | One search over the union of two or more of your own zones. | [Effect ops](card-dsl.md#effect-ops) |
 | `shuffle` | Cards |  | Shuffle a library. | [Effect ops](card-dsl.md#effect-ops) |
 | `surveil` | Cards |  | Surveil N: look at the top cards, graveyard any of them; each surveiling player fires `surveils` once. | [Surveil — the surveil op and the surveils trigger](card-dsl-cookbook.md#surveil--the-surveil-op-and-the-surveils-trigger) |
@@ -199,7 +199,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `extra_land_drop` | Mana |  | A player may play an additional land this turn. | [Effect ops](card-dsl.md#effect-ops) |
 | `choose_new_targets` | Stack |  | Choose new targets for a spell or ability already on the stack (115.7). | ["You may choose new targets for target spell" — retargeting the original](card-dsl-cookbook.md#you-may-choose-new-targets-for-target-spell--retargeting-the-original) |
 | `copy_ability` | Stack |  | Copy an activated or triggered ability, by `target` or by `sid` ("copy that ability"); `new_targets` re-aims it. | [Effect ops](card-dsl.md#effect-ops) |
-| `copy_spell` | Stack |  | Copy a spell, or with `spells` each spell in a pool, or with `this_spell` the spell resolving; `new_targets` lets the copy be re-aimed. | ["You may choose new targets for the copy"](card-dsl-cookbook.md#you-may-choose-new-targets-for-the-copy) |
+| `copy_spell` | Stack |  | Copy a spell, or with `spells` each spell in a pool, or with `this_spell` the spell resolving; `new_targets` lets the copy be re-aimed; `except_` rewrites the copy's copiable values in `copy_permanent`'s vocabulary. | ["You may choose new targets for the copy"](card-dsl-cookbook.md#you-may-choose-new-targets-for-the-copy) |
 | `counter` | Stack | yes | Counter a spell or ability; `exiles` sends a spell it countered to exile instead of its owner's graveyard, `as` binds the cards it countered. | ["If that spell is countered this way, exile it instead"](card-dsl.md#if-that-spell-is-countered-this-way-exile-it-instead) |
 | `exile_spell_on_resolution` | Stack |  | A spell is exiled as it resolves instead of binned, linked to this source. | [Plot](card-dsl.md#plot) |
 | `grant_bloodthirst` | Stack |  | Give a spell bloodthirst N, judged as its permanent enters. | [Granting bloodthirst to a spell](card-dsl.md#granting-bloodthirst-to-a-spell) |
@@ -207,6 +207,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `grant_rebound` | Stack |  | Give a spell rebound as it resolves. | [Granting rebound to a spell that does not print it](card-dsl.md#granting-rebound-to-a-spell-that-does-not-print-it) |
 | `next_spell_gains_cascade` | Stack |  | The `player`'s (default you) next spell this turn matching `affects_spells` has cascade: the rules' cascade trigger, on the spell itself. | [A spell given cascade — next_spell_gains_cascade](card-dsl-cookbook.md#a-spell-given-cascade--next_spell_gains_cascade) |
 | `reflexive_trigger` | Stack |  | "When you do": queue a trigger off the preceding effect. | ["When you do" — reflexive triggered abilities](card-dsl-cookbook.md#when-you-do--reflexive-triggered-abilities) |
+| `return_self_to_hand_on_resolution` | Stack |  | The resolving instant or sorcery is put into its owner's hand as it finishes resolving instead of its graveyard. | ["Return <this card> to its owner's hand." -- return_self_to_hand_on_resolution](card-dsl-cookbook.md#return-this-card-to-its-owners-hand----return_self_to_hand_on_resolution) |
 | `return_spell_to_hand` | Stack |  | Return a spell from the stack to its owner's hand. | [Doing something to a spell that is not countering it](card-dsl.md#doing-something-to-a-spell-that-is-not-countering-it) |
 | `spell_enters_with_counters` | Stack |  | Promise a spell's permanent counters it enters with. | [Promising counters to the permanent a spell becomes](card-dsl.md#promising-counters-to-the-permanent-a-spell-becomes) |
 | `uncounterable_this_turn` | Stack |  | Until end of turn, the controller's spells matching `affects_spells` (`cast`: only ones they cast; `next_spell`: only the next one) can't be countered; outlives its source. | ["Creature spells you cast this turn can't be countered"](card-dsl-cookbook.md#creature-spells-you-cast-this-turn-cant-be-countered) |
@@ -441,6 +442,7 @@ Every head a condition may have: an effect's `if`, a trigger's intervening `cond
 | `all` | Every listed condition holds. | [Conditions](card-dsl.md#conditions) |
 | `any` | At least one listed condition holds. | [Conditions](card-dsl.md#conditions) |
 | `attacked_you_last_turn` | One of these players attacked you (not your planeswalker or battle) during their last completed turn. | [Conditions](card-dsl.md#conditions) |
+| `came_under_control_since_last_upkeep` | The source came under its controller's control (arrived, or changed controller) since the beginning of their last upkeep — the one before, during it (echo, 702.30a). | [Echo — pay for it once, the upkeep after it arrives](card-dsl-cookbook.md#echo--pay-for-it-once-the-upkeep-after-it-arrives) |
 | `cast_at_sorcery_timing` | This life of the object was cast at a time a sorcery could have been (307.1); false both ways if not cast. | ["If you cast it any time a sorcery couldn't have been cast"](card-dsl-cookbook.md#if-you-cast-it-any-time-a-sorcery-couldnt-have-been-cast) |
 | `cast_during` | The phase this spell was cast in (addendum). | [Addendum — the phase a spell was cast in](card-dsl-cookbook.md#addendum--the-phase-a-spell-was-cast-in) |
 | `cast_from_exile` | This spell was cast from exile (foretell, plot or any exile play permission). | [Conditions](card-dsl.md#conditions) |
@@ -491,7 +493,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `becomes_level` | `became_level` | A Class reaches a level. | ["When this Class becomes level N"](card-dsl-cookbook.md#when-this-class-becomes-level-n) |
 | `becomes_monarch` | `became_monarch` | A player becomes the monarch. | [The monarch](card-dsl-cookbook.md#the-monarch) |
 | `becomes_monstrous` | `became_monstrous` | A creature becomes monstrous. | [Monstrosity, and holding creatures down](card-dsl-cookbook.md#monstrosity-and-holding-creatures-down) |
-| `becomes_tapped` | `tapped` | A permanent becomes tapped. | [Triggers](card-dsl.md#triggers) |
+| `becomes_tapped` | `tapped` | A permanent becomes tapped; `attack_declaration: false` drops the tap of being declared as an attacker. | [Triggers](card-dsl.md#triggers) |
 | `becomes_target` | `became_target` | A permanent or player becomes the target of a spell or ability; `targeted_by` narrows it to a spell, an ability or an activated ability. | [Triggers](card-dsl.md#triggers) |
 | `becomes_unattached` | `unattached` | An Aura or Equipment stops being attached to a permanent, however it came off, its own departure included; the subject is the attachment, and `{"binding": "host"}` the permanent it came off. | ["Whenever this Equipment becomes unattached from a permanent, sacrifice that permanent"](card-dsl-cookbook.md#whenever-this-equipment-becomes-unattached-from-a-permanent-sacrifice-that-permanent) |
 | `becomes_untapped` | `untapped` | A permanent becomes untapped. | [Triggers](card-dsl.md#triggers) |
@@ -688,7 +690,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `player_protection` | yes |  | The player has protection from a quality: damage, targeting and enchanting by it. | [Protection](card-dsl-cookbook.md#protection) |
 | `plot_cost_reduction` | yes |  | Plotting a card from the player's hand costs N less generic mana. | [Plot](card-dsl.md#plot) |
 | `prevent_all_but` |  | yes | Prevent all but N of each instance of damage to matching permanents. | [Prevent all but N of that damage](card-dsl-cookbook.md#prevent-all-but-n-of-that-damage) |
-| `prevent_damage` |  | yes | Prevent damage dealt to matching permanents (absorb N, all of it, all of it as that many +1/+1 counters, all of it at the cost of N +1/+1 counters, or all of it and then `effects`) or N of each damage to a seat from a matching dealer. | [Absorb, which is not protection with a number](card-dsl-cookbook.md#absorb-which-is-not-protection-with-a-number) |
+| `prevent_damage` |  | yes | Prevent damage dealt to matching permanents (absorb N, all of it, all of it as that many +1/+1 counters, all of it at the cost of N +1/+1 counters, or all of it and then `effects`) or N of each damage to a seat from a matching dealer; `combat_only` or `noncombat_only` narrows it to combat or noncombat damage. | [Absorb, which is not protection with a number](card-dsl-cookbook.md#absorb-which-is-not-protection-with-a-number) |
 | `protection` |  | yes | Matching permanents have protection from a quality. | [Protection](card-dsl-cookbook.md#protection) |
 | `replace_counters` |  | yes | Counters put on matching permanents are replaced (doubled, redirected). | [Counters replaced on the way in](card-dsl.md#counters-replaced-on-the-way-in) |
 | `replace_damage` |  | yes | Damage dealt by or to matching permanents is multiplied, increased by N or redirected. | [Damage multiplied on the way out](card-dsl.md#damage-multiplied-on-the-way-out) |
@@ -823,7 +825,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 | `lose_keyword` | Matching permanents lose keywords and can't have or gain them. | [lose_keyword — the other kind of removal, at the other end of the pipeline](card-dsl-cookbook.md#lose_keyword--the-other-kind-of-removal-at-the-other-end-of-the-pipeline) |
 | `lure` | All creatures able to block a matching attacker do so (`blockers`: only those). | [Block requirements](card-dsl-cookbook.md#block-requirements) |
 | `prevent_all_but` | Prevent all but N of each instance of damage to matching permanents. | [Prevent all but N of that damage](card-dsl-cookbook.md#prevent-all-but-n-of-that-damage) |
-| `prevent_damage` | Prevent damage dealt to matching permanents (absorb N, all of it, all of it as that many +1/+1 counters, all of it at the cost of N +1/+1 counters, or all of it and then `effects`) or N of each damage to a seat from a matching dealer. | [Absorb, which is not protection with a number](card-dsl-cookbook.md#absorb-which-is-not-protection-with-a-number) |
+| `prevent_damage` | Prevent damage dealt to matching permanents (absorb N, all of it, all of it as that many +1/+1 counters, all of it at the cost of N +1/+1 counters, or all of it and then `effects`) or N of each damage to a seat from a matching dealer; `combat_only` or `noncombat_only` narrows it to combat or noncombat damage. | [Absorb, which is not protection with a number](card-dsl-cookbook.md#absorb-which-is-not-protection-with-a-number) |
 | `protection` | Matching permanents have protection from a quality. | [Protection](card-dsl-cookbook.md#protection) |
 | `replace_counters` | Counters put on matching permanents are replaced (doubled, redirected). | [Counters replaced on the way in](card-dsl.md#counters-replaced-on-the-way-in) |
 | `replace_damage` | Damage dealt by or to matching permanents is multiplied, increased by N or redirected. | [Damage multiplied on the way out](card-dsl.md#damage-multiplied-on-the-way-out) |

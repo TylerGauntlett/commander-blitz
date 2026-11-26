@@ -41,6 +41,7 @@ from commanderblitz.engine.effects.context import EffectContext
 from commanderblitz.engine.effects.selectors import matches
 from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
 from commanderblitz.engine.errors import CommanderBlitzError, DslError
+from commanderblitz.engine.events import EventType
 from commanderblitz.engine.game import Game
 from commanderblitz.engine.mana import ManaCost
 from commanderblitz.engine.sandbox import GameBuilder
@@ -1825,6 +1826,8 @@ def _play_once(registry: CardRegistry, card: CardDef) -> list[str]:
             spell_zones.add(Zone.LIBRARY)
         if encoded_itself(played, obj):
             spell_zones.add(Zone.EXILE)
+        if returned_itself(game.state, played, obj):
+            spell_zones.add(Zone.HAND)
         if obj.zone not in spell_zones:
             return [f"{card.id} is a spell but ended in {obj.zone.value}"]
     return []
@@ -1845,6 +1848,42 @@ def encoded_itself(played: CardDef, obj: Any) -> bool:
     if getattr(obj, "encoded_on", None) is None:
         return False
     return any(spec.get("op") == "encode" for spec in _walk_effect_specs(played.spell_effects))
+
+
+def returned_itself(state: Any, played: CardDef, obj: Any) -> bool:
+    """Did this spell put itself into its owner's hand as it resolved?
+
+    "Return Haunting Imitation to its owner's hand" is the
+    `return_self_to_hand_on_resolution` op, usually inside an `if`, so it is
+    admitted the way cipher is -- on what happened, not only on the
+    declaration: the card declares the op among its spell effects, and the
+    card's last move was the resolution itself, from the stack to a hand. A
+    spell whose condition failed goes to the graveyard and must still be
+    required to; one that merely finds itself in a hand some other way is not
+    excused. ``tests/cards/test_every_card_works.py`` reads this same
+    predicate, so the two harnesses cannot disagree about it.
+    """
+    if getattr(obj, "zone", None) is not Zone.HAND:
+        return False
+    if not any(
+        spec.get("op") == "return_self_to_hand_on_resolution"
+        for spec in _walk_effect_specs(played.spell_effects)
+    ):
+        return False
+    last = next(
+        (
+            e
+            for e in reversed(state.events)
+            if e.type == EventType.ZONE_CHANGE and e.data.get("oid") == obj.oid
+        ),
+        None,
+    )
+    return (
+        last is not None
+        and last.data.get("from") == Zone.STACK.value
+        and last.data.get("to") == Zone.HAND.value
+        and last.data.get("cause") == "resolved"
+    )
 
 
 def _play_and_check(registry: CardRegistry, card: CardDef, expectation: dict) -> list[str]:

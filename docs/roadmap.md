@@ -102,19 +102,20 @@ each heading; this table is generated from them.
 | [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) | L | high | A type-setting static ordered against later animations | 0 |
 | [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) | L | high | nothing | 0 |
 | [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) | M | high | A fixed target count is exact, not a ceiling | 0 |
-| [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) | L | high | nothing | 0 |
+| [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) | L | high | Voting: will of the council and council's dilemma, Every creature type means every creature type | 0 |
 | [The Ring tempts you](#the-ring-tempts-you) | M | high | nothing | 3 |
 | [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) | L, continuous | high | nothing | 0 |
 | [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) | L | high | Outcomes as data, Replays and sharing, Difficulty | 0 |
 | [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) | S | medium | nothing | 5 |
 | [Time Lord as one creature type](#time-lord-as-one-creature-type) | S | medium | nothing | 2 |
 | [Difficulty](#difficulty) | S | medium | nothing | 1 |
+| [A step trigger scoped to its own permanent fires](#a-step-trigger-scoped-to-its-own-permanent-fires) | S | medium | nothing | 0 |
 | [Gate the debug endpoint](#gate-the-debug-endpoint) | S | medium | nothing | 0 |
 | [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) | S | medium | nothing | 0 |
 | [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) | S | medium | nothing | 0 |
 | [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) | S | medium | nothing | 0 |
 | [Why a press is refused](#why-a-press-is-refused) | S | medium | nothing | 0 |
-| [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 10 |
+| [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 11 |
 | [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) | M | medium | nothing | 6 |
 | [Divided damage that may hit players](#divided-damage-that-may-hit-players) | M | medium | nothing | 6 |
 | [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) | M | medium | nothing | 5 |
@@ -123,6 +124,7 @@ each heading; this table is generated from them.
 | [Experience counters](#experience-counters) | M | medium | nothing | 3 |
 | [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) | M | medium | nothing | 2 |
 | [Distributing counters from a spell](#distributing-counters-from-a-spell) | M | medium | nothing | 2 |
+| [Every creature type means every creature type](#every-creature-type-means-every-creature-type) | M | medium | nothing | 2 |
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
 | [Rad counters](#rad-counters) | M | medium | nothing | 2 |
 | [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) | M | medium | nothing | 2 |
@@ -132,7 +134,6 @@ each heading; this table is generated from them.
 | [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) | M | medium | nothing | 1 |
 | [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) | M | medium | nothing | 1 |
 | [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) | M | medium | nothing | 1 |
-| [Every creature type means every creature type](#every-creature-type-means-every-creature-type) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
 | [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) | M | medium | nothing | 1 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
@@ -157,12 +158,12 @@ same list, and `/extend-roadmap` starts at the top of it.
 
 1. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
 2. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-3. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-4. [The Ring tempts you](#the-ring-tempts-you) — M, high
-5. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-6. [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) — S, medium
-7. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
-8. [Difficulty](#difficulty) — S, medium
+3. [The Ring tempts you](#the-ring-tempts-you) — M, high
+4. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+5. [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) — S, medium
+6. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
+7. [Difficulty](#difficulty) — S, medium
+8. [A step trigger scoped to its own permanent fires](#a-step-trigger-scoped-to-its-own-permanent-fires) — S, medium
 9. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
 10. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
 11. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
@@ -177,16 +178,16 @@ same list, and `/extend-roadmap` starts at the top of it.
 20. [Experience counters](#experience-counters) — M, medium
 21. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
 22. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-23. [Outcomes as data](#outcomes-as-data) — M, medium
-24. [Rad counters](#rad-counters) — M, medium
-25. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-26. [A type-setting static ordered against later animations](#a-type-setting-static-ordered-against-later-animations) — M, medium
-27. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-28. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-29. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
-30. [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) — M, medium
-31. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
-32. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
+23. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
+24. [Outcomes as data](#outcomes-as-data) — M, medium
+25. [Rad counters](#rad-counters) — M, medium
+26. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+27. [A type-setting static ordered against later animations](#a-type-setting-static-ordered-against-later-animations) — M, medium
+28. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+29. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+30. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
+31. [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) — M, medium
+32. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
 33. [Replays and sharing](#replays-and-sharing) — M, medium
 34. [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) — M, medium
 35. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
@@ -251,6 +252,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering)
 - [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — [A type-setting static ordered against later animations](#a-type-setting-static-ordered-against-later-animations)
 - [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling)
+- [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Every creature type means every creature type](#every-creature-type-means-every-creature-type)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -604,6 +606,56 @@ Trenzalore Clocktower's activated ability reached by the ability sandbox.
 - **Hand-written cards.** None print a Time Lord today; should the loader
   refuse `Time` and `Lord` as subtypes from now on, so a later card cannot
   bring the split back? Recommended: yes, a loader error naming "Time Lord".
+
+### A step trigger scoped to its own permanent fires
+
+Effort **S** · Impact **medium**, Mystic Remora, Darksteel Reactor and Krosan Cloudscraper never ask for their upkeep, so each plays as a different card · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+`triggers._matches` drops a trigger whose spec says `source: "self"` unless
+the event's subject (`_subject_oid`) or its `source` is the permanent holding
+the ability. A step event such as `upkeep` has neither: it is about a player,
+not an object. So an `upkeep` trigger written with `source: "self"` never
+fires, whatever its condition says.
+
+Three shipped cards in `data/cards/auto/templates.cards.json` carry that
+shape: Mystic Remora's cumulative upkeep, Darksteel Reactor's charge counter
+and Krosan Cloudscraper's cumulative upkeep. Each therefore plays as a
+stronger card than the printed one, with its upkeep cost never asked. The
+authoring gates cannot see it, because the sandbox never reaches an upkeep
+(`cards/authoring/verify.py`), so every expectation passes on a trigger
+that is dead. The echo work found it: `tests/unit/keywords/test_echo.py`
+writes its upkeep trigger without `source` for this reason.
+
+#### The change
+
+1. Decide where the fix lives (see **Open questions**), and make it there.
+2. If the engine keeps refusing the shape, the loader refuses it too, so a
+   new card cannot ship it: `source: "self"` on a trigger event that has no
+   subject object is a load error naming the event.
+3. Re-author or correct the three cards so their upkeep triggers fire, and
+   re-pin the golden pool.
+
+It does not change what `source: "self"` means on any event that has a
+subject.
+
+#### Gate
+
+A unit test under `tests/unit/triggers/` that steps each of the three
+shipped cards into its controller's upkeep and asserts the trigger goes on
+the stack, plus a loader test for whichever refusal step 2 adds;
+`tests/cards` stays green.
+
+#### Open questions
+
+- **Engine or data?** Either `_matches` treats `source: "self"` as satisfied
+  on a step event (a permanent's own "at the beginning of your upkeep" is
+  scoped to it by being on the battlefield), or the three cards drop
+  `source` and the loader refuses it on step events. Recommended: the
+  loader refusal plus the data fix, because it keeps one meaning for
+  `source: "self"` (this object is the event's subject) and makes the
+  mistake impossible to ship again.
 
 ### Granted flashback permissions without a per-turn cap
 
@@ -1263,6 +1315,60 @@ pass.
   cast line, where divided damage already sits, and the line in
   rules-coverage.md narrows to triggered abilities.
 
+### Every creature type means every creature type
+
+Effort **M** · Impact **medium**, every changeling and Maskwood Nexus misses the tribe of the deck it is in, Squirrels, Rats and Wolves among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+"Every creature type" is a closed list, `CHANGELING_SUBTYPES` in
+`cards/authoring/templates.py`, whose comment says it holds every creature
+type a shipped card mentions. It no longer does: Squirrel, Rat, Mouse,
+Hamster, Raccoon and Wolf are all named by shipped cards and none is on it.
+The changeling template copies the list into each card's `add_subtype`
+static (`subtypes`), so every changeling card, every changeling token in
+`data/cards/tokens.cards.json` and Maskwood Nexus's `off_battlefield` grant
+carry their own frozen copy, and nothing checks that copy against the types
+the pool actually reads.
+
+So a changeling is not a Squirrel to Squirrel Sovereign or Chatterfang, nor
+a Rat to Ogre Slumlord, and Maskwood Nexus does nothing for the Squirreled
+Away deck it ships in. Each new tribe a precon brings widens the hole.
+
+#### The change
+
+1. An `add_subtype` static can say `all_creature_types: true` instead of
+   listing subtypes; `characteristics._compute`, the `off_battlefield` grant
+   and the printed-type readers treat it as every creature type (205.3m)
+   rather than a list, so a selector or trigger naming any creature type
+   matches it.
+2. The changeling template and the authoring packet emit the flag; the
+   changeling cards, the changeling tokens and Maskwood Nexus move to it
+   through `--collect` (tokens by hand under `/extend-dsl` Tier 0), and
+   `CHANGELING_SUBTYPES` goes.
+3. The loader refuses `all_creature_types` beside `subtypes`.
+
+It does not change which creature types exist as words in the DSL, and it
+leaves "choose a creature type" cards (`chosen_type_of`) as they are.
+
+#### Gate
+
+A unit test under `tests/unit/statics/` that a changeling creature, a
+changeling card in hand and a creature under Maskwood Nexus each match a
+selector, a lord and a cast trigger naming Squirrel, Rat and a type no
+shipped card names; the six gates over every changeling card; and the
+golden pool re-pinned once.
+
+#### Open questions
+
+- **A flag or a complete list.** A flag the engine reads as every type, or
+  the full 205.3m list written into each card? Recommended: the flag, so the
+  card data stops carrying a list that can go stale and a new tribe needs no
+  re-authoring.
+- **Is it an ADR.** Recommended: no; it restores what changeling (702.73) and
+  the existing comment already promise, and its line goes in the "Type
+  changes" row of rules-coverage.md.
+
 ### Rad counters
 
 Effort **M** · Impact **medium**, every rad-counter card in the Fallout precons waits on it, Acquired Mutation and Megaton's Fate among them · Depends on nothing · Awaiting decisions.
@@ -1723,60 +1829,6 @@ lists the new keyword and static.
   per-token attack requirement naming the defending player, checked where
   `combat` validates declared attackers, rather than a goad, which would also
   forbid attacking its controller's other opponents and lasts the wrong time.
-
-### Every creature type means every creature type
-
-Effort **M** · Impact **medium**, every changeling and Maskwood Nexus misses the tribe of the deck it is in, Squirrels, Rats and Wolves among them · Depends on nothing · Awaiting decisions.
-
-#### Today
-
-"Every creature type" is a closed list, `CHANGELING_SUBTYPES` in
-`cards/authoring/templates.py`, whose comment says it holds every creature
-type a shipped card mentions. It no longer does: Squirrel, Rat, Mouse,
-Hamster, Raccoon and Wolf are all named by shipped cards and none is on it.
-The changeling template copies the list into each card's `add_subtype`
-static (`subtypes`), so every changeling card, every changeling token in
-`data/cards/tokens.cards.json` and Maskwood Nexus's `off_battlefield` grant
-carry their own frozen copy, and nothing checks that copy against the types
-the pool actually reads.
-
-So a changeling is not a Squirrel to Squirrel Sovereign or Chatterfang, nor
-a Rat to Ogre Slumlord, and Maskwood Nexus does nothing for the Squirreled
-Away deck it ships in. Each new tribe a precon brings widens the hole.
-
-#### The change
-
-1. An `add_subtype` static can say `all_creature_types: true` instead of
-   listing subtypes; `characteristics._compute`, the `off_battlefield` grant
-   and the printed-type readers treat it as every creature type (205.3m)
-   rather than a list, so a selector or trigger naming any creature type
-   matches it.
-2. The changeling template and the authoring packet emit the flag; the
-   changeling cards, the changeling tokens and Maskwood Nexus move to it
-   through `--collect` (tokens by hand under `/extend-dsl` Tier 0), and
-   `CHANGELING_SUBTYPES` goes.
-3. The loader refuses `all_creature_types` beside `subtypes`.
-
-It does not change which creature types exist as words in the DSL, and it
-leaves "choose a creature type" cards (`chosen_type_of`) as they are.
-
-#### Gate
-
-A unit test under `tests/unit/statics/` that a changeling creature, a
-changeling card in hand and a creature under Maskwood Nexus each match a
-selector, a lord and a cast trigger naming Squirrel, Rat and a type no
-shipped card names; the six gates over every changeling card; and the
-golden pool re-pinned once.
-
-#### Open questions
-
-- **A flag or a complete list.** A flag the engine reads as every type, or
-  the full 205.3m list written into each card? Recommended: the flag, so the
-  card data stops carrying a list that can go stale and a new tribe needs no
-  re-authoring.
-- **Is it an ADR.** Recommended: no; it restores what changeling (702.73) and
-  the existing comment already promise, and its line goes in the "Type
-  changes" row of rules-coverage.md.
 
 ### The authoring sandbox resolves a card's own triggers
 
@@ -4900,7 +4952,7 @@ whole-game test able to draw the deck.
 
 ### Spirit Squadron (Crimson Vow Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Every creature type means every creature type](#every-creature-type-means-every-creature-type).
 
 #### Today
 
@@ -4910,7 +4962,15 @@ coming-soon shell on the shelf: its row `voc_spirit_squadron` is in
 `GET /api/precons/upcoming` serves it.
 `python scripts/sync_precons.py --missing voc_spirit_squadron` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
+waits on. Two remain, and each waits on an item that is not yet decided:
+
+- **Voting.** Custodi Squire's will of the council ("each player votes for an
+  artifact, creature, or enchantment card in your graveyard") needs the
+  tally [voting](#voting-will-of-the-council-and-councils-dilemma) builds.
+- **Every creature type.** Mirror Entity is a changeling and grants "all
+  creature types" until end of turn, which a closed subtype list cannot say
+  ([changeling-every-type](#every-creature-type-means-every-creature-type)).
+- Nothing else: every other card on the list is native.
 
 #### The change
 

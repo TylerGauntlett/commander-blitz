@@ -4808,6 +4808,45 @@ strictly: the printed N must be the card's.
 `last_counter_removed` is an ordinary trigger as well, for any printed "when
 the last <kind> counter is removed from it"; it needs `counter`.
 
+## Echo — pay for it once, the upkeep after it arrives
+
+```jsonc
+// Karmic Guide: "Echo {3}{W}{W} (At the beginning of your upkeep, if this came
+// under your control since the beginning of your last upkeep, sacrifice it
+// unless you pay its echo cost.)"
+{ "kind": "triggered",
+  "text": "Echo {3}{W}{W} (At the beginning of your upkeep, …)",
+  "trigger": { "event": "upkeep", "controller": "you",
+               "condition": { "came_under_control_since_last_upkeep": true } },
+  "effects": [ { "op": "may", "player": "you",
+                 "pay": { "mana": "{3}{W}{W}" },
+                 "prompt": "Pay echo {3}{W}{W}?",
+                 "else": [ { "op": "sacrifice", "objects": { "self_only": true } } ] } ] }
+```
+
+702.30a is one triggered ability, written the way cumulative upkeep is: the
+printed line is the ability's `text`, and its effect is `may` with a `pay` and a
+sacrificing `else`. A price the player cannot afford is not offered, so the
+`else` runs.
+
+The intervening-if is the `came_under_control_since_last_upkeep` condition,
+asked of the ability's own source. It compares when the permanent came under
+its controller's control (`GameObject.came_under_control_at`: its arrival, or
+its last `change_control`, whichever is later) with when that controller's last
+upkeep began (`PlayerState.upkeep_began_at`, stamped by `turn.begin_step`).
+During the controller's own upkeep "last" is the one before, so the trigger
+holds as it triggers and as it resolves. So:
+
+- the first upkeep after it enters asks, and every later one does not;
+- a `gain_control` re-arms it for the new controller, and a handback re-arms it
+  for the old one, because each is a change of control (800.4a);
+- an additional upkeep in the same turn is an upkeep of its own.
+
+The near miss is a `set_flag` written by the trigger and read as `{"not":
+{"has_flag": …}}`. It asks once, but a change of control does not clear a flag,
+so a stolen echo permanent would never be asked again. `entered_this_turn` is
+the other near miss, and it is already false by the next upkeep.
+
 ## "Whenever you remove a time counter" — `counter_removed`
 
 ```jsonc
@@ -8316,6 +8355,33 @@ Retargeting is not a detail of one card. A copy that can only
 re-kill what the original killed is a strictly worse spell than the one printed,
 and it would look entirely normal on screen.
 
+#### "Copy it, except the copy is a 1/1 Spirit" — a spell copy with an exception
+
+```jsonc
+// Donal, Herald of Wings
+{ "op": "copy_spell", "sid": { "binding": "sid" },
+  "except_": { "power": 1, "toughness": 1, "add_subtypes": ["Spirit"] } }
+```
+
+`except_` on `copy_spell` is 707.9b for a spell: the copy's copiable values
+differ from the original's in exactly these ways. The vocabulary and every
+load-time refusal are `copy_permanent`'s `except_` (`COPY_EXCEPT_KEYS`:
+`power`/`toughness` as a pair, `add_subtypes` or `subtypes`, `add_types` or
+`types`, `colors`, `name`, `add_supertypes`, `remove_supertypes`,
+`add_keywords`, `no_mana_cost`); an empty one is refused. The values are written
+onto the copy's token object as its `copy_overrides`, so the copy is the
+excepted spell while it is on the stack and the token a copied permanent spell
+resolves into is the same object with the same values (707.10c, 608.3f). A
+`power` or `toughness` value expression is evaluated once, as the op resolves.
+
+"In addition to its other types" is `add_subtypes`; without those words it is
+`subtypes`, a replacement (205.1b). The near misses are `copy_permanent`, which
+makes a token from a permanent rather than copying a spell, and an `animate` or
+`become_copy` on the token after it enters, which is an effect on the token
+rather than its copiable values — a later copy of that token would be the full
+size. "Do this only once each turn" on the optional copy is a `set_turn_flag`
+inside the `may`, read by `has_turn_flag` before it (Cosmic Crucible).
+
 #### "You may choose new targets for target spell" — retargeting the original
 
 ```jsonc
@@ -10499,6 +10565,24 @@ since a flag nothing reads is a printed line that does nothing.
 `prevented_damage`, so burn and a fight still reach the Seraph. A
 `replace_damage` to zero is the near miss and is not a prevention: it fires no
 `DAMAGE_PREVENTED`, so "damage can't be prevented" would not see it.
+
+**`noncombat_only`** is its mirror: the shield answers every damage event that
+is not combat damage — burn, a fight, a dying token's ping — and lets the combat
+damage step through.
+
+```jsonc
+// Crystal Barricade: prevent all noncombat damage that would be dealt to other
+//                    creatures you control.
+{ "kind": "static", "effect": "prevent_damage", "prevent_all": true,
+  "noncombat_only": true,
+  "affects": { "controller": "you", "types": ["Creature"], "exclude_self": true } }
+```
+
+Every `prevent_damage` reader asks `characteristics.prevention_reaches`, so the
+flag narrows absorb, the counter and rider shields and the seat form alike. The
+loader refuses it beside `combat_only` (together they name no damage) and on any
+other static. Plain `prevent_all` is the near miss and a much stronger card: it
+also makes every shielded creature an unkillable blocker.
 
 So the op installs a `structs.DamageShield` on `GameState.damage_shields`, beside
 `block_prohibitions` and `unblockables` and cleared by the same cleanup hook. It
@@ -15413,6 +15497,39 @@ beside it.
 card back. **Not a `suspend` op in `spell_effects`**: the spell is already off
 the stack while they run, and is then moved to the graveyard regardless.
 
+## "Return <this card> to its owner's hand." -- return_self_to_hand_on_resolution
+
+```jsonc
+{ "op": "if",
+  "condition": { "not": { "exists": { "zone": "battlefield", "created_with": "self" } } },
+  "then": [{ "op": "return_self_to_hand_on_resolution" }] }
+```
+
+An instant or sorcery's own instruction to put itself into its owner's hand
+(Haunting Imitation: "If no creature cards were revealed this way, return
+Haunting Imitation to its owner's hand.", after a `for_each_player` whose
+body copies each revealed creature card, so "no creature cards were revealed"
+is "this spell made no token"). An effect op, not a card-level
+rider, so it sits wherever the printed sentence does, inside an `if` when the
+card prints a condition. It marks the resolving spell's object
+(`GameObject.returns_to_hand_on_resolution`) and `stack._place_after_resolution`
+moves the card to its owner's hand as the last step of the same resolution
+(608.2c, 608.2n). Being the card's own instruction, it wins over every rider
+that replaces only the graveyard (buyback, rebound, plot, cipher,
+`exiles_itself`, `tucks_itself`, a Foundry's exile); a card cast with flashback,
+or under a permission that exiles it, is still exiled (702.34a), and a spell
+countered on resolution for want of targets (608.2b) never ran the op and goes
+to its graveyard. The loader refuses it outside `spell_effects` and with any
+key beside `op`; on a permanent spell it does nothing. The authoring gate
+admits the hand only when the card declares the op and its last move was that
+resolution (`verify.returned_itself`).
+
+**Not `return_to_hand` over the card itself**: the spell is already off
+`state.stack` while its effects run and is then moved to the graveyard
+regardless. **Not `buyback`**, which is the same hand gated on a paid
+additional cost. **Not `return_spell_to_hand`**, which bounces a *target*
+spell off the stack.
+
 ## Airbend — "exile them, and their owners may cast them for {2}"
 
 ```jsonc
@@ -18330,6 +18447,35 @@ never arose. On `search_library` and `search_zones` the loader admits only
 and a `destination_if` beside it — `destination_if` matches the card's printed
 face and never asks. Wrapping the search in `if` + `may` is the near miss: it
 asks battlefield-or-hand before the card is found.
+
+### "Put one of them onto the battlefield tapped and the rest into your hand" — `rest_to`
+
+```jsonc
+// Cultivate -- "Search your library for up to two basic land cards, reveal those
+// cards, put one onto the battlefield tapped and the other into your hand, then
+// shuffle."
+{ "op": "search_library", "count": 2, "reveal": true,
+  "selector": { "types": ["Land"], "supertypes": ["Basic"] },
+  "destination": "battlefield", "tapped": true, "rest_to": "hand" }
+```
+
+`rest_to` on `search_library` or `search_zones` splits what one search found.
+The searcher picks up to `count` cards, then picks which one of them goes to
+`destination` (arriving `tapped` if set); every other found card goes to
+`rest_to`, untapped. A search that finds a single card sends it to
+`destination` without asking, and one that finds nothing moves nothing. It is
+still one search: one `LIBRARY_SEARCHED`, one `reveal`, one shuffle after both
+moves, and an `as` binding names every card that moved. Boreas Charger takes the
+same shape with a computed `count` ("a number of Plains cards equal to the
+difference").
+
+The loader admits `rest_to` values `"hand"`, `"graveyard"` and `"exile"`,
+refuses one equal to `destination`, a library `destination` (the shuffle would
+scramble it), and `may_destination` or `destination_if` beside it. Two chained
+`search_library` ops (count 1 to the battlefield with `shuffle: false`, then the
+rest to hand) is the near miss: two searches, two "up to" counts, and nothing
+stops the player taking every card to hand. On `look_at_top`, `rest_to` is the
+different idea of the cards looked at and not taken.
 
 ## A spell given cascade — `next_spell_gains_cascade`
 

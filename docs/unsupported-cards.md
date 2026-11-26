@@ -10,12 +10,12 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**560 cards** blocked by **465** capabilities.
+**558 cards** blocked by **462** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [rad-counters](#rad-counters) | 22 | 2709 | engine |
-| [council-s-dilemma](#council-s-dilemma) | 17 | 3539 | decision, op, trigger_event |
+| [council-s-dilemma](#council-s-dilemma) | 18 | 3539 | decision, op, trigger_event |
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 11 | 2713 | op, replacement, static_effect |
 | [planechase](#planechase) | 10 | 5666 | engine |
@@ -56,7 +56,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 2 | 15516 | selector |
 | [distribute-counters-spell](#distribute-counters-spell) | 2 | 4355 | op |
 | [divided-damage-any-target](#divided-damage-any-target) | 2 | 5125 | engine |
-| [echo](#echo) | 2 | 961 | keyword |
 | [encore](#encore) | 2 | 9330 | static_effect |
 | [exact-target-count](#exact-target-count) | 2 | 7243 | engine |
 | [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 2 | 5169 | static_effect |
@@ -381,7 +380,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-half-damage](#prevent-half-damage) | 1 | 1132 | static_effect |
 | [prevent-next-damage-from-chosen-source](#prevent-next-damage-from-chosen-source) | 1 | 1143 | op |
 | [prevent-next-n-damage-divided](#prevent-next-n-damage-divided) | 1 | 17017 | op |
-| [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [prevented-damage-source-binding](#prevented-damage-source-binding) | 1 | 3089 | value |
 | [prime-number](#prime-number) | 1 | 11527 | value |
 | [primo-the-indivisible](#primo-the-indivisible) | 1 | 11527 | token |
@@ -415,7 +413,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [scavenge](#scavenge) | 1 | 11499 | static_effect |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
-| [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [secret-number-guess](#secret-number-guess) | 1 | 13375 | decision |
 | [self-bounce-playable-gate](#self-bounce-playable-gate) | 1 | 10013 | engine |
 | [separate-permanents-into-piles](#separate-permanents-into-piles) | 1 | 5426 | op |
@@ -547,12 +544,14 @@ Blocks **22** cards.
 
 ## council-s-dilemma
 
-Blocks **17** cards.
+Blocks **18** cards.
 
 - **(op)** a vote op where each player (here secretly, revealed simultaneously) votes for a player, with the tally bound so later effects can read it per player: a value 'votes received by <each_player>' for 'draws a card for each vote they received', and a condition/player filter for 'received no votes' feeding a for_each_player whose may lets that player put a permanent card from their hand onto the battlefield
   <br>Why the existing vocabulary won't do: choose_player is made by one player only and binds a single choice; for_each_player wrapping choose_player has no way to aggregate the choices into a per-player vote count, and no value_key or condition reads votes received; join_forces collects payments, not choices
 - **(op)** a vote op (rule 701.38): starting with the spell's controller and going in turn order, each player chooses one object from a selector (here nonland permanents the controller doesn't control) as a vote, without targeting; the tally is kept per candidate, and the op binds 'each candidate with the most votes or tied for most' under an `as` so a following effect (exile) can act on that set
   <br>Why the existing vocabulary won't do: for_each_player with starting_with can walk the players, but choose_permanents has no per-player chooser (only as/max_total_power/objects/prompt) and no value key counts how many players chose a given object, so neither the per-player vote nor the 'most votes or tied' tally can be said; targeting would be wrong because Council's Judgment does not target (it beats hexproof/shroud)
+- **(op)** a vote op (rule 701.38): starting with the controller and going in turn order, each player (opponents included) chooses one card from a selector as a vote, here an artifact, creature or enchantment card in the controller's graveyard, without targeting; the tally is kept per candidate and the op binds 'each candidate with the most votes or tied for most' under an `as` so a following return-to-hand effect can act on that whole set
+  <br>Why the existing vocabulary won't do: for_each_player can walk the players in order, but no choose op lets a player other than the controller pick a card from the controller's graveyard as a vote, and no value or selector key counts how many players chose a given card, so neither the per-player vote nor the 'most votes or tied for most' set can be said; a plain return of one chosen card would drop the opponents' votes and the tie rule
 - **(op)** a vote op over named options (here 'fellowship' / 'aid'), every player voting, secretly and revealed simultaneously (secret council), that binds each voter's choice so later effects can (a) run per fellowship voter, with that voter choosing a creature they control, and (b) read the count of aid votes as an amount (repeat add_counters of +1/+1 on each creature you control once per aid vote)
   <br>Why the existing vocabulary won't do: choose_mode and choose_player are one player's choice; for_each_player wrapping choose_mode has no way to bind each player's chosen option for later reading, and no value_key counts votes for an option; join_forces collects mana payments, not choices
 - **(trigger_event)** a 'players finish voting' trigger event fired after any vote (council's dilemma / will of the council) completes, which binds the vote's record: each player's chosen option(s), so an effect can select 'each opponent who voted for a choice you voted for' (a player filter for for_each_player) and a value can count 'opponents who voted for a choice you didn't vote for' (the scry amount)
@@ -628,6 +627,8 @@ Blocks **17** cards.
   - For each Redhorn Pass vote, search your library for a basic land card and put it onto the battlefield tapped.
   - If you search your library this way, shuffle.
   - For each Mines of Moria vote, return a card from your graveyard to your hand.
+- **Custodi Squire** (rank 12678) — `custodi_squire`
+  - Will of the council — When this creature enters, starting with you, each player votes for an artifact, creature, or enchantment card in your graveyard. Return each card with the most votes or tied for most votes to your hand.
 - **Fateful Tempest** (rank 15065) — `fateful_tempest`
   - Council's dilemma — Starting with you, each player votes for past or present.
   - You mill a card for each past vote, then Fateful Tempest deals damage to each opponent equal to the total mana value of cards milled this way.
@@ -1712,24 +1713,6 @@ Blocks **2** cards.
   - Magma Opus deals 4 damage divided as you choose among any number of targets.
 - **Skarrgan Hellkite** (rank 13459) — `skarrgan_hellkite`
   - {3}{R}: This creature deals 2 damage divided as you choose among one or two targets. Activate only if this creature has a +1/+1 counter on it.
-
-</details>
-
-## echo
-
-Blocks **2** cards.
-
-- **(keyword)** Echo {cost}: a card-level keyword (702.30) that gives the permanent an upkeep trigger with an intervening-if 'this came under your control since the beginning of your last upkeep' (true after it enters or after a change of control, false once that upkeep has passed), which sacrifices it unless its controller pays the echo mana cost
-  <br>Why the existing vocabulary won't do: No echo key in card_level_cost_keys, card_level_rider_keys or keywords. An `upkeep` trigger with `may` pay {2}{B} else `sacrifice` is writable, but no condition_key reads 'came under your control since your last upkeep'; a `delayed_trigger` on self_enters with duration `until_it_fires` covers only the enter case and misses a change of control (gain_control), so it would be a narrower card
-- **(keyword)** Echo {cost}: a card-level keyword (702.30) that gives the permanent an upkeep trigger with an intervening-if 'this came under your control since the beginning of your last upkeep' (true after it enters or after a change of control, false once that upkeep has passed), which sacrifices it unless its controller pays the echo mana cost
-  <br>Why the existing vocabulary won't do: No echo key in card_level_cost_keys or keywords. An `upkeep` trigger with `may` pay {3}{W}{W} else `sacrifice` is writable, but no condition_key reads 'came under your control since your last upkeep': `entered_this_turn` is false by the next upkeep, and a `set_flag` on self_enters has no op to clear it after the first upkeep and misses control changes (gain_control), so the permanent would be asked to pay echo every upkeep or never
-
-<details><summary>Cards waiting on this</summary>
-
-- **Karmic Guide** (rank 961) — `karmic_guide`
-  - Echo {3}{W}{W} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)
-- **Bone Shredder** (rank 9157) — `bone_shredder`
-  - Echo {2}{B} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)
 
 </details>
 
@@ -6483,20 +6466,6 @@ Blocks **1** card.
 
 </details>
 
-## prevent-noncombat-damage
-
-Blocks **1** card.
-
-- **(static_effect)** a `noncombat_only: true` flag on the `prevent_damage` static (the mirror of `combat_only`), so `prevent_all` with affects {types: [Creature], controller: you, exclude_self: true} answers only when the damage is not combat damage
-  <br>Why the existing vocabulary won't do: The `prevent_damage` static with `prevent_all` prevents all damage, and `combat_only` narrows it to combat damage only; prevents_all_damage / prevented_damage in engine/characteristics.py read only `combat_only`, so there is no way to exempt combat damage, and plain `prevent_all` would wrongly also stop combat damage. The `prevent_damage_permanent` op is a one-shot with a duration, not a lasting static
-
-<details><summary>Cards waiting on this</summary>
-
-- **Crystal Barricade** (rank 2070) — `crystal_barricade`
-  - Prevent all noncombat damage that would be dealt to other creatures you control.
-
-</details>
-
 ## prevented-damage-source-binding
 
 Blocks **1** card.
@@ -6961,21 +6930,6 @@ Blocks **1** card.
 
 - **(decision)** a `chooser` on `search_library`/`search_zones` (a player spec, so it can be `{"target": ...}`) naming who picks from among the cards the search turned up -- the search itself is still performed and seen by the library's owner, but a *different*, targeted player makes the selection out of the revealed pool. Gifts Ungiven, Intuition and Plea for Power's kin all hang on it
   <br>Why the existing vocabulary won't do: `_search` (src/commanderblitz/engine/effects/ops_cards.py) hardcodes the asker: it iterates `select_players(ctx, spec.get("player", "you"))` and passes that same `pid` into `ask_objects(ctx, prompt, pool, 0, take, pid, "search")`, so the searcher is always the chooser. The selector's `chooser` key exists (selectors.py, and it accepts an arbitrary player spec) but a search never routes its selector through `pick_from_pool` -- the selector is only a match test via `_matches_in_zone` -- so writing `chooser` on a search's selector is silently ignored and the caster would pick their own card, which is the entire card. `two_piles` (ops_cards.py) is the only op whose first decision belongs to somebody else, and its splitter is `ctx.opponents()[0]` rather than a target, it reads `library[:amount]` off the top instead of a searched pool, and the *controller* still decides which pile is taken -- the opposite of "target opponent chooses one".
-
-<details><summary>Cards waiting on this</summary>
-
-- **Intuition** (rank 1971) — `intuition`
-  - Target opponent chooses one.
-  - Put that card into your hand and the rest into your graveyard.
-
-</details>
-
-## search-split-destinations
-
-Blocks **1** card.
-
-- **(op)** a second destination on `search_library`/`search_zones` for the found-but-not-chosen cards (e.g. `destination: "hand"` plus `rest: "graveyard"`), so one search reveals N, a chosen subset goes one place and the remainder another, with the shuffle still happening once at the end
-  <br>Why the existing vocabulary won't do: `_search` resolves one `DESTINATIONS[spec.get("destination", "hand")]` and hands every picked card to `_move_found` (ops_cards.py); cards that were revealed and not taken simply stay in the library. `look_at_top` is the only lookup with a remainder key, `rest_to_bottom` (ops_cards.py), and it is a boolean hardwired to `_bottom_in_random_order` -- bottom of library, never the graveyard -- besides reading the top N rather than searching. `two_piles` does carry `to`/`other`, but only over the top of the library and only as a pile split. Sequencing two ops instead is an approximation, not the card: `search_library` to the graveyard followed by a `return_from_graveyard` would put all three cards through the graveyard, firing `leaves_graveyard` and inflating `cards_to_graveyard_this_turn` from 2 to 3, and `search_library` to hand followed by a `discard` would emit two `discard` events (madness, discard triggers) for cards the printing never discards.
 
 <details><summary>Cards waiting on this</summary>
 

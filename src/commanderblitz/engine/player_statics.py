@@ -24,6 +24,7 @@ from .characteristics import (
     chars,
     compare_pt,
     is_chosen_player_spec,
+    prevention_reaches,
     resolve_chosen_color_list,
     resolve_chosen_colors,
     resolve_chosen_subtypes,
@@ -4076,7 +4077,7 @@ def prevented_player_damage(
             continue
         if static.get("affects_player") is None or static.get("prevent_all"):
             continue
-        if static.get("combat_only") and not is_combat:
+        if not prevention_reaches(static, is_combat=is_combat):
             continue
         if not _reaches_player(source_obj, static, pid):
             continue
