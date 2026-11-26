@@ -509,7 +509,15 @@ def _search(ctx: EffectContext, spec: Mapping[str, Any], zones: tuple[str, ...])
         to_top = spec.get("destination") == "library_top"
         if shuffles and to_top:
             shuffle_library(ctx.state, pid)
-        if picked and spec.get("may_destination"):
+        if picked and spec.get("rest_to"):
+            # "…reveal those cards, put **one of them** onto the battlefield
+            # tapped and **the rest** into your hand, then shuffle" (Boreas
+            # Charger, Cultivate). One search, one LIBRARY_SEARCHED, one
+            # shuffle: the split is a choice among the cards already found.
+            picked = yield from _move_found_split(
+                ctx, picked, pid, searcher, destination, spec, tapped
+            )
+        elif picked and spec.get("may_destination"):
             # "If an opponent controls more lands than you, you may put that
             # card onto the battlefield tapped. If you don't …, put it into your
             # hand. Then shuffle." (Scholar of New Horizons). Asked after the
@@ -530,6 +538,47 @@ def _search(ctx: EffectContext, spec: Mapping[str, Any], zones: tuple[str, ...])
     # `if` sees no objects rather than a stale name.
     if name := spec.get("as"):
         ctx.bindings[str(name)] = found
+
+
+def _move_found_split(
+    ctx: EffectContext,
+    picked: list[int],
+    pid: int,
+    searcher: int,
+    destination: Zone,
+    spec: Mapping[str, Any],
+    tapped: bool,
+):
+    """Send one of a search's cards to ``destination`` and the rest to ``rest_to``.
+
+    The searcher chooses which one after the cards are found and revealed; a
+    search that found a single card sends it to ``destination``, because "put
+    one of them there" is satisfied first and "the rest" is then empty. Exactly
+    one goes, never none: the printed "put one of them onto the battlefield"
+    leaves no room to keep every card in hand, which is what two chained
+    `search_library` ops (one of count 1, one of count N-1) would allow, along
+    with a second LIBRARY_SEARCHED and a second "up to" count.
+
+    Returns every card that moved, so an ``as`` binding names the whole find.
+    """
+    one = picked
+    if len(picked) > 1:
+        one = yield from ask_objects(
+            ctx,
+            f"Put one onto the {spec.get('destination', 'hand')}",
+            picked,
+            1,
+            1,
+            searcher,
+            "search",
+        )
+    moved = yield from _move_found(ctx, list(one[:1]), pid, destination, spec, tapped, "search")
+    rest = [oid for oid in picked if oid not in one[:1]]
+    rest_spec = {"destination": str(spec["rest_to"])}
+    moved_rest = yield from _move_found(
+        ctx, rest, pid, DESTINATIONS[str(spec["rest_to"])], rest_spec, False, "search"
+    )
+    return list(moved) + list(moved_rest)
 
 
 def _search_sharing(ctx: EffectContext, prompt: str, pool: list[int], take: int, pid: int):

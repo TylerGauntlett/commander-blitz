@@ -31732,12 +31732,12 @@
     },
     "Boreas Charger": {
       "edhrec_rank": 9811,
-      "gate": "template",
+      "gate": null,
       "name": "Boreas Charger",
-      "reason": "no template for: When this creature leaves the battlefield, choose an opponent who controls more lands than",
+      "reason": "",
       "scryfall_id": "3cab81be-47d7-4f76-b031-072ac1a7fbc2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Borg Queen, Perfection Manifest": {

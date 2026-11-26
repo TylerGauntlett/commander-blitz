@@ -176,7 +176,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                 "cards in it matching `selector`; `as` records them.",
                 "`discard`: `up_to`, `selector` and `as`"),
     "mill": ("Cards", "Put the top N cards of a library into its graveyard.", None),
-    "search_library": ("Cards", "Search a library for cards matching a selector, then shuffle; `may_destination` (gated by `may_destination_if`) offers the found card onto the battlefield; `searcher: \"you\"` has the resolving player search another player's library.",
+    "search_library": ("Cards", "Search a library for cards matching a selector, then shuffle; `may_destination` (gated by `may_destination_if`) offers the found card onto the battlefield; `rest_to` sends one found card to `destination` and the rest elsewhere; `searcher: \"you\"` has the resolving player search another player's library.",
                        None),
     "search_zones": ("Cards", "One search over the union of two or more of your own zones.", None),
     "look_at_top": ("Cards", "Look at the top N cards of any library; you take some (`chooser` says otherwise), onto the battlefield under `controller: you` if named, send the rest somewhere; `cast_free` or `cast_paying` casts the pick, free or at its mana cost; `total_mana_value` caps the picks' summed mana value.", None),

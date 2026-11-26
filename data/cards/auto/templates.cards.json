@@ -38443,6 +38443,94 @@
         {
           "effects": [
             {
+              "condition": {
+                "cmp": ">",
+                "left": {
+                  "max_count_of": {
+                    "objects": {
+                      "types": [
+                        "Land"
+                      ],
+                      "zone": "battlefield"
+                    },
+                    "player": "each_opponent"
+                  }
+                },
+                "right": {
+                  "lands_you_control": true
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "count": {
+                    "minus": [
+                      {
+                        "max_count_of": {
+                          "objects": {
+                            "types": [
+                              "Land"
+                            ],
+                            "zone": "battlefield"
+                          },
+                          "player": "each_opponent"
+                        }
+                      },
+                      {
+                        "lands_you_control": true
+                      }
+                    ]
+                  },
+                  "destination": "battlefield",
+                  "op": "search_library",
+                  "rest_to": "hand",
+                  "reveal": true,
+                  "selector": {
+                    "subtypes": [
+                      "Plains"
+                    ]
+                  },
+                  "tapped": true
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature leaves the battlefield, choose an opponent who controls more lands than you. Search your library for a number of Plains cards equal to the difference, reveal those cards, put one of them onto the battlefield tapped and the rest into your hand, then shuffle.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "boreas_charger",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Boreas Charger",
+      "oracle_text": "Flying\nWhen this creature leaves the battlefield, choose an opponent who controls more lands than you. Search your library for a number of Plains cards equal to the difference, reveal those cards, put one of them onto the battlefield tapped and the rest into your hand, then shuffle.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Pegasus"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 6
               },

@@ -4947,6 +4947,11 @@ into your hand" — the search takes `may_destination` instead, optionally gated
 by `may_destination_if`; see the cookbook's
 [`may_destination`](card-dsl-cookbook.md#you-may-put-that-card-onto-the-battlefield-if-you-dont---may_destination).
 The two are refused together.
+When one search's cards go to two places — "put one of them onto the battlefield
+tapped and the rest into your hand" — the search takes `rest_to`; see the
+cookbook's
+[`rest_to`](card-dsl-cookbook.md#put-one-of-them-onto-the-battlefield-tapped-and-the-rest-into-your-hand--rest_to).
+It is refused beside either key.
 
 ### Narrowing when a spell may be cast
 

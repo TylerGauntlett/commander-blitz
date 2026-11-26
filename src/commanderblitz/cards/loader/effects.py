@@ -4036,6 +4036,31 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
         if "tapped" in effect and not isinstance(effect["tapped"], bool):
             raise DslError(f"{where}: {op} 'tapped' is a boolean")
+    if "rest_to" in effect and op in ("search_library", "search_zones"):
+        # "…put one of them onto the battlefield tapped and the rest into your
+        # hand" (Boreas Charger). One found card to `destination`, the rest to
+        # `rest_to`. Each refusal is a second answer to "where does this card
+        # go" that would silently drop half the sentence, or a library
+        # destination the shuffle after the search would scramble.
+        rest = effect["rest_to"]
+        if rest not in ("hand", "graveyard", "exile"):
+            raise DslError(
+                f"{where}: {op} 'rest_to' is 'hand', 'graveyard' or 'exile', not {rest!r}"
+            )
+        first = str(effect.get("destination", "hand"))
+        if first == rest:
+            raise DslError(
+                f"{where}: {op} 'rest_to' {rest!r} is the 'destination' too; "
+                f"without a split, omit 'rest_to'"
+            )
+        if first.startswith("library"):
+            raise DslError(
+                f"{where}: {op} 'rest_to' splits the find between two zones the "
+                f"shuffle leaves alone; 'destination' {first!r} is not one"
+            )
+        for key in ("may_destination", "destination_if"):
+            if key in effect:
+                raise DslError(f"{where}: {op} takes 'rest_to' or {key!r}, not both")
     # Three axes, one op: a creature type (the default), a permanent type or a
     # card type. A near-miss word here would fall through to the creature-type
     # branch and ask the wrong question -- a card printing "choose a permanent

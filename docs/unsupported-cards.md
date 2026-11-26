@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**561 cards** blocked by **465** capabilities.
+**560 cards** blocked by **464** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -73,7 +73,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [revolt](#revolt) | 2 | 8154 | value |
 | [robot-token-3-3](#robot-token-3-3) | 2 | 5966 | token |
 | [scry-trigger](#scry-trigger) | 2 | 9218 | trigger_event |
-| [search-split-destinations](#search-split-destinations) | 2 | 1971 | op |
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 2 | 7077 | value |
 | [suspect](#suspect) | 2 | 4851 | op |
 | [suspend-cast-on-any-last-counter](#suspend-cast-on-any-last-counter) | 2 | 4274 | engine |
@@ -2027,25 +2026,6 @@ Blocks **2** cards.
 - **River Song** (rank 10400) — `river_song`
   - Meet in Reverse — You draw cards from the bottom of your library rather than the top.
   - Spoilers — Whenever an opponent scries, surveils, or searches their library, put a +1/+1 counter on River Song. Then River Song deals damage to that player equal to its power.
-
-</details>
-
-## search-split-destinations
-
-Blocks **2** cards.
-
-- **(op)** a split destination on `search_library` for the cards one search turned up: of the N found (here up to `minus[max_count_of lands over each_opponent, lands_you_control]`), exactly one chosen card goes to `destination: "battlefield"` with `tapped: true` and the rest go to a second destination (`rest_to: "hand"`), in one search with one LIBRARY_SEARCHED event and one shuffle at the end. The same shape is Cultivate, Kodama's Reach and Nissa's Pilgrimage ("put one onto the battlefield tapped and the rest into your hand")
-  <br>Why the existing vocabulary won't do: `_search` in engine/effects/ops_cards.py resolves a single `destination` (or a per-card `destination_if` that asks about the card's own characteristics, or a per-card yes/no `may_destination`), so it cannot say "one of them here, the rest there". Sequencing two `search_library` ops (battlefield count 1 with `shuffle: false`, then hand count N-1) fires LIBRARY_SEARCHED twice (Archivist of Oghma-style triggers fire twice) and lets the player take Plains to hand while putting none onto the battlefield, which the printed "put one of them onto the battlefield" forbids. Searching all N to hand then `put_onto_battlefield` one from hand moves the land hand-to-battlefield rather than library-to-battlefield and passes it through the hand. `may_destination` asks per card and could put several or none onto the battlefield. The "choose an opponent ... the difference" half is expressible as `{"minus": [{"max_count_of": {"objects": {"types": ["Land"], "zone": "battlefield"}, "player": "each_opponent"}}, {"lands_you_control": true}]}` gated by `cmp >`, since a search may always find fewer; only the split is missing
-- **(op)** a second destination on `search_library`/`search_zones` for the found-but-not-chosen cards (e.g. `destination: "hand"` plus `rest: "graveyard"`), so one search reveals N, a chosen subset goes one place and the remainder another, with the shuffle still happening once at the end
-  <br>Why the existing vocabulary won't do: `_search` resolves one `DESTINATIONS[spec.get("destination", "hand")]` and hands every picked card to `_move_found` (ops_cards.py); cards that were revealed and not taken simply stay in the library. `look_at_top` is the only lookup with a remainder key, `rest_to_bottom` (ops_cards.py), and it is a boolean hardwired to `_bottom_in_random_order` -- bottom of library, never the graveyard -- besides reading the top N rather than searching. `two_piles` does carry `to`/`other`, but only over the top of the library and only as a pile split. Sequencing two ops instead is an approximation, not the card: `search_library` to the graveyard followed by a `return_from_graveyard` would put all three cards through the graveyard, firing `leaves_graveyard` and inflating `cards_to_graveyard_this_turn` from 2 to 3, and `search_library` to hand followed by a `discard` would emit two `discard` events (madness, discard triggers) for cards the printing never discards.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Intuition** (rank 1971) — `intuition`
-  - Target opponent chooses one.
-  - Put that card into your hand and the rest into your graveyard.
-- **Boreas Charger** (rank 9811) — `boreas_charger`
-  - When this creature leaves the battlefield, choose an opponent who controls more lands than you. Search your library for a number of Plains cards equal to the difference, reveal those cards, put one of them onto the battlefield tapped and the rest into your hand, then shuffle.
 
 </details>
 

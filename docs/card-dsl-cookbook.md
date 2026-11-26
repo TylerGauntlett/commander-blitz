@@ -18388,6 +18388,35 @@ and a `destination_if` beside it — `destination_if` matches the card's printed
 face and never asks. Wrapping the search in `if` + `may` is the near miss: it
 asks battlefield-or-hand before the card is found.
 
+### "Put one of them onto the battlefield tapped and the rest into your hand" — `rest_to`
+
+```jsonc
+// Cultivate -- "Search your library for up to two basic land cards, reveal those
+// cards, put one onto the battlefield tapped and the other into your hand, then
+// shuffle."
+{ "op": "search_library", "count": 2, "reveal": true,
+  "selector": { "types": ["Land"], "supertypes": ["Basic"] },
+  "destination": "battlefield", "tapped": true, "rest_to": "hand" }
+```
+
+`rest_to` on `search_library` or `search_zones` splits what one search found.
+The searcher picks up to `count` cards, then picks which one of them goes to
+`destination` (arriving `tapped` if set); every other found card goes to
+`rest_to`, untapped. A search that finds a single card sends it to
+`destination` without asking, and one that finds nothing moves nothing. It is
+still one search: one `LIBRARY_SEARCHED`, one `reveal`, one shuffle after both
+moves, and an `as` binding names every card that moved. Boreas Charger takes the
+same shape with a computed `count` ("a number of Plains cards equal to the
+difference").
+
+The loader admits `rest_to` values `"hand"`, `"graveyard"` and `"exile"`,
+refuses one equal to `destination`, a library `destination` (the shuffle would
+scramble it), and `may_destination` or `destination_if` beside it. Two chained
+`search_library` ops (count 1 to the battlefield with `shuffle: false`, then the
+rest to hand) is the near miss: two searches, two "up to" counts, and nothing
+stops the player taking every card to hand. On `look_at_top`, `rest_to` is the
+different idea of the cards looked at and not taken.
+
 ## A spell given cascade — `next_spell_gains_cascade`
 
 ```jsonc
