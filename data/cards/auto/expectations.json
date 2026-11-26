@@ -4926,6 +4926,10 @@
     },
     "zone": "battlefield"
   },
+  "cmdr_troi_outgoing_empath": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "coalition_relic": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -5128,6 +5132,13 @@
       "1": 1
     },
     "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "commander_william_riker": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "commence_the_endgame": {
@@ -6289,6 +6300,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "data_exploring_humanity": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "dauntless_escort": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7278,6 +7296,13 @@
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "dr_pulaski_cynical_clinician": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
     },
     "zone": "battlefield"
   },
@@ -8342,6 +8367,10 @@
     "zone": "battlefield"
   },
   "enraged_revolutionary": {
+    "zone": "battlefield"
+  },
+  "ensign_harry_kim_operations": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "ensnared_by_the_mara": {

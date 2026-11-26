@@ -60277,6 +60277,96 @@
           },
           "effects": [
             {
+              "as": "troi_cast",
+              "op": "cast_from_hand",
+              "player": {
+                "target": "t1"
+              }
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "troi_cast"
+                }
+              },
+              "else": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "new_targets": true,
+                  "op": "copy_spell",
+                  "spells": {
+                    "binding": "troi_cast"
+                  }
+                }
+              ]
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": {
+                  "except": "you",
+                  "not": {
+                    "not": "active_player"
+                  }
+                }
+              }
+            }
+          ],
+          "text": "{T}: Target opponent whose turn it is may cast a spell from their hand without paying its mana cost. If they do, you copy that spell. You may choose new targets for the copy. If they don't, you draw a card."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "cmdr_troi_outgoing_empath",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{2}{U}{R}",
+      "name": "Cmdr. Troi, Outgoing Empath",
+      "oracle_text": "Vigilance\n{T}: Target opponent whose turn it is may cast a spell from their hand without paying its mana cost. If they do, you copy that spell. You may choose new targets for the copy. If they don't, you draw a card.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Betazoid",
+        "Human",
+        "Advisor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "modes": [
                 {
                   "effects": [
@@ -62670,6 +62760,75 @@
       "subtypes": [
         "Human",
         "Pilot"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "{1}, {T}: You and target opponent each draw two cards."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "commander_william_riker",
+      "keywords": [
+        "vigilance",
+        "haste"
+      ],
+      "mana_cost": "{1}{R}{W}",
+      "name": "Commander William Riker",
+      "oracle_text": "Vigilance, haste\n{1}, {T}: You and target opponent each draw two cards.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Officer"
       ],
       "supertypes": [
         "Legendary"
@@ -76354,6 +76513,51 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "discover"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Seek out — Whenever you draw your second card each turn, discover 4",
+          "trigger": {
+            "controller": "you",
+            "event": "draw",
+            "nth": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "data_exploring_humanity",
+      "mana_cost": "{4}{U}",
+      "name": "Data, Exploring Humanity",
+      "oracle_text": "Seek out — Whenever you draw your second card each turn, discover 4. (Exile cards from the top of your library until you exile a nonland card with mana value 4 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Android",
+        "Scientist"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "sacrifice": {
               "controller": "you",
@@ -87921,6 +88125,51 @@
         "Legendary"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Seek out — Whenever you draw your second card each turn, you gain 4 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw",
+            "nth": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "dr_pulaski_cynical_clinician",
+      "mana_cost": "{1}{W}",
+      "name": "Dr. Pulaski, Cynical Clinician",
+      "oracle_text": "Seek out — Whenever you draw your second card each turn, you gain 4 life.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Doctor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -100122,6 +100371,95 @@
         "Warrior"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature you control enters, if it has greater power than Ensign Kim, put a +1/+1 counter on Ensign Kim.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "power_of": {
+                  "binding": "subject"
+                }
+              },
+              "right": {
+                "power_of": {
+                  "self": true
+                }
+              }
+            },
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "remove_counters_from_among": {
+              "count": 2,
+              "counter": "+1/+1",
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, Remove two +1/+1 counters from among creatures you control: Draw a card."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "ensign_harry_kim_operations",
+      "mana_cost": "{1}{W}",
+      "name": "Ensign Harry Kim, Operations",
+      "oracle_text": "Whenever another creature you control enters, if it has greater power than Ensign Kim, put a +1/+1 counter on Ensign Kim.\n{2}, Remove two +1/+1 counters from among creatures you control: Draw a card.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Officer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]

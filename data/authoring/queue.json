@@ -49682,12 +49682,12 @@
     },
     "Cmdr. Troi, Outgoing Empath": {
       "edhrec_rank": 22015,
-      "gate": "template",
+      "gate": null,
       "name": "Cmdr. Troi, Outgoing Empath",
-      "reason": "no template for: {T}: Target opponent whose turn it is may cast a spell from their hand without paying its ",
+      "reason": "",
       "scryfall_id": "7cc079c8-9c00-439f-9e5d-08e7c8e2c5ed",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Co-Option Adjutant": {
@@ -51422,12 +51422,12 @@
     },
     "Commander William Riker": {
       "edhrec_rank": 21889,
-      "gate": "template",
+      "gate": null,
       "name": "Commander William Riker",
-      "reason": "no template for: {1}, {T}: You and target opponent each draw two cards",
+      "reason": "",
       "scryfall_id": "24f91f09-0f6b-4766-80bc-be545e509056",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Commander's Authority": {
@@ -62562,12 +62562,12 @@
     },
     "Data, Exploring Humanity": {
       "edhrec_rank": 19003,
-      "gate": "template",
+      "gate": null,
       "name": "Data, Exploring Humanity",
-      "reason": "no template for: Seek out — Whenever you draw your second card each turn, discover 4",
+      "reason": "",
       "scryfall_id": "2c769fc2-b234-4bb2-aac0-1373e6ad07d3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Data, New Life": {
@@ -73742,12 +73742,12 @@
     },
     "Dr. Pulaski, Cynical Clinician": {
       "edhrec_rank": 25306,
-      "gate": "template",
+      "gate": null,
       "name": "Dr. Pulaski, Cynical Clinician",
-      "reason": "no template for: Seek out — Whenever you draw your second card each turn, you gain 4 life",
+      "reason": "",
       "scryfall_id": "0c4ca596-211c-4681-b90e-c91e36fd3e5a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Drach'Nyen": {
@@ -85532,12 +85532,12 @@
     },
     "Ensign Harry Kim, Operations": {
       "edhrec_rank": 23822,
-      "gate": "template",
+      "gate": null,
       "name": "Ensign Harry Kim, Operations",
-      "reason": "no template for: Whenever another creature you control enters, if it has greater power than Ensign Kim, put",
+      "reason": "",
       "scryfall_id": "1ccd6aeb-e6f4-4673-b4f5-a4b66b869992",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ensign Pavel Chekov": {
