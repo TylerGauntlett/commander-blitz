@@ -5610,6 +5610,21 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         raise DslError(
             f"{where}: 'remove_counters' is read only by the 'prevent_damage' static"
         )
+    if model.noncombat_only:
+        # "Prevent all **noncombat** damage that would be dealt to other
+        # creatures you control" (Crystal Barricade): the mirror of
+        # `combat_only`, read by every `prevent_damage` reader and by nothing
+        # else, so anywhere else it is a printed line that does nothing.
+        if model.effect != "prevent_damage":
+            raise DslError(
+                f"{where}: 'noncombat_only' is read only by the 'prevent_damage' "
+                f"static, not by {model.effect!r}"
+            )
+        if model.combat_only:
+            raise DslError(
+                f"{where}: 'prevent_damage' takes 'combat_only' or "
+                f"'noncombat_only', not both -- together they prevent nothing"
+            )
     if model.prevent_all and model.effect != "prevent_damage":
         # A flag nothing reads is a printed line that does nothing.
         raise DslError(f"{where}: 'prevent_all' is read only by 'prevent_damage'")
@@ -8397,6 +8412,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["damage_source"] = dict(model.damage_source)
     if model.combat_only:
         static["combat_only"] = True
+    if model.noncombat_only:
+        static["noncombat_only"] = True
     if model.counter_multiplier is not None:
         static["counter_multiplier"] = model.counter_multiplier
     if model.counter_addend is not None:

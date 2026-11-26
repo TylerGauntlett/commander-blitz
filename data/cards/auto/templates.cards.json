@@ -70533,6 +70533,53 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "effect": "player_hexproof",
+          "kind": "static",
+          "text": "You have hexproof. (You can't be the target of spells or abilities your opponents control.)"
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "prevent_damage",
+          "kind": "static",
+          "noncombat_only": true,
+          "prevent_all": true,
+          "text": "Prevent all noncombat damage that would be dealt to other creatures you control."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "crystal_barricade",
+      "keywords": [
+        "defender"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Crystal Barricade",
+      "oracle_text": "Defender (This creature can't attack.)\nYou have hexproof. (You can't be the target of spells or abilities your opponents control.)\nPrevent all noncombat damage that would be dealt to other creatures you control.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Wall"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -90118,6 +90165,61 @@
       "mana_cost": "{1}{W}{U}",
       "name": "Drogskol Captain",
       "oracle_text": "Flying\nOther Spirit creatures you control get +1/+1 and have hexproof. (They can't be the targets of spells or abilities your opponents control.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Spirit"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "melee"
+          ],
+          "kind": "static",
+          "text": "Other Spirits you control have melee."
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Spirit"
+            ]
+          },
+          "effect": "prevent_damage",
+          "kind": "static",
+          "noncombat_only": true,
+          "prevent_all": true,
+          "text": "Prevent all noncombat damage that would be dealt to Spirits you control."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "drogskol_reinforcements",
+      "keywords": [
+        "melee"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Drogskol Reinforcements",
+      "oracle_text": "Melee (Whenever this creature attacks, it gets +1/+1 until end of turn for each opponent you attacked this combat.)\nOther Spirits you control have melee.\nPrevent all noncombat damage that would be dealt to Spirits you control.",
       "power": 2,
       "source": "auto",
       "subtypes": [

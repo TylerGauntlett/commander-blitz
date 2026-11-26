@@ -1408,6 +1408,11 @@ class AbilityModel(BaseModel):
     #: "combat damage" and Furnace of Rath does not, and the difference is a
     #: whole card; Seraph of the Sword's shield is the prevention twin.
     combat_only: bool = False
+    #: `prevent_damage` only: only damage that is **not** combat damage --
+    #: "prevent all **noncombat** damage that would be dealt to other creatures
+    #: you control" (Crystal Barricade). The mirror of `combat_only`; never
+    #: beside it, since the two together prevent nothing.
+    noncombat_only: bool = False
     counter_multiplier: int | None = None
     counter_addend: int | None = None
     #: `replace_counters`: which kind of counter the replacement is about --

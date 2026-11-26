@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**565 cards** blocked by **467** capabilities.
+**563 cards** blocked by **466** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -70,7 +70,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [pay-energy-x](#pay-energy-x) | 2 | 5122 | cost |
 | [plot](#plot) | 2 | 1873 | op |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
-| [prevent-noncombat-damage](#prevent-noncombat-damage) | 2 | 2070 | static_effect |
 | [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 2 | 1606 | op |
 | [revolt](#revolt) | 2 | 8154 | value |
 | [robot-token-3-3](#robot-token-3-3) | 2 | 5966 | token |
@@ -1973,24 +1972,6 @@ Blocks **2** cards.
   - Prevent all combat damage that would be dealt to you and planeswalkers you control this turn.
 - **You Look Upon the Tarrasque** (rank 8030) — `you_look_upon_the_tarrasque`
   - • Run and Hide — Prevent all combat damage that would be dealt to you and creatures you control this turn
-
-</details>
-
-## prevent-noncombat-damage
-
-Blocks **2** cards.
-
-- **(static_effect)** a `noncombat_only: true` flag on the `prevent_damage` static (the mirror of `combat_only`), so `prevent_all` with affects {types: [Creature], controller: you, exclude_self: true} answers only when the damage is not combat damage
-  <br>Why the existing vocabulary won't do: The `prevent_damage` static with `prevent_all` prevents all damage, and `combat_only` narrows it to combat damage only; prevents_all_damage / prevented_damage in engine/characteristics.py read only `combat_only`, so there is no way to exempt combat damage, and plain `prevent_all` would wrongly also stop combat damage. The `prevent_damage_permanent` op is a one-shot with a duration, not a lasting static
-- **(static_effect)** a noncombat_only flag on the prevent_damage static (the mirror of combat_only): with prevent_all and affects {controller: you, subtypes: [Spirit]}, it prevents damage to matching permanents only when the damage event is not combat damage
-  <br>Why the existing vocabulary won't do: The prevent_damage static carries combat_only (prevent only combat damage) and otherwise prevents all damage; prevented_damage/prevents_all_damage in engine/characteristics.py read only combat_only, so there is no way to exempt combat damage. Omitting the qualifier would also prevent combat damage to Spirits, which the card does not do. The other two lines (melee keyword, grant_keyword static over other Spirits you control) are expressible.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Crystal Barricade** (rank 2070) — `crystal_barricade`
-  - Prevent all noncombat damage that would be dealt to other creatures you control.
-- **Drogskol Reinforcements** (rank 7802) — `drogskol_reinforcements`
-  - Prevent all noncombat damage that would be dealt to Spirits you control.
 
 </details>
 

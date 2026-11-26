@@ -5794,6 +5794,10 @@
   "crystacean": {
     "zone": "battlefield"
   },
+  "crystal_barricade": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "crystal_grotto": {
     "zone": "battlefield"
   },
@@ -7459,6 +7463,10 @@
     "zone": "battlefield"
   },
   "drogskol_captain": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "drogskol_reinforcements": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

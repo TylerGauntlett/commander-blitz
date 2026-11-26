@@ -10500,6 +10500,24 @@ since a flag nothing reads is a printed line that does nothing.
 `replace_damage` to zero is the near miss and is not a prevention: it fires no
 `DAMAGE_PREVENTED`, so "damage can't be prevented" would not see it.
 
+**`noncombat_only`** is its mirror: the shield answers every damage event that
+is not combat damage — burn, a fight, a dying token's ping — and lets the combat
+damage step through.
+
+```jsonc
+// Crystal Barricade: prevent all noncombat damage that would be dealt to other
+//                    creatures you control.
+{ "kind": "static", "effect": "prevent_damage", "prevent_all": true,
+  "noncombat_only": true,
+  "affects": { "controller": "you", "types": ["Creature"], "exclude_self": true } }
+```
+
+Every `prevent_damage` reader asks `characteristics.prevention_reaches`, so the
+flag narrows absorb, the counter and rider shields and the seat form alike. The
+loader refuses it beside `combat_only` (together they name no damage) and on any
+other static. Plain `prevent_all` is the near miss and a much stronger card: it
+also makes every shielded creature an unkillable blocker.
+
 So the op installs a `structs.DamageShield` on `GameState.damage_shields`, beside
 `block_prohibitions` and `unblockables` and cleared by the same cleanup hook. It
 modifies nothing when it resolves — the damage does not exist yet — and the whole

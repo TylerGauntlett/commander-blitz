@@ -57692,12 +57692,12 @@
     },
     "Crystal Barricade": {
       "edhrec_rank": 2070,
-      "gate": "template",
+      "gate": null,
       "name": "Crystal Barricade",
-      "reason": "no template for: You have hexproof",
+      "reason": "",
       "scryfall_id": "77f6acd2-3b91-4bd7-996f-42c75b88ee87",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crystal Carapace": {
@@ -75542,12 +75542,12 @@
     },
     "Drogskol Reinforcements": {
       "edhrec_rank": 7802,
-      "gate": "template",
+      "gate": null,
       "name": "Drogskol Reinforcements",
-      "reason": "no template for: Other Spirits you control have melee",
+      "reason": "",
       "scryfall_id": "1f7116ff-8afa-429f-a868-8766d4a0dd18",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Drogskol Shieldmate": {
