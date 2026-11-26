@@ -1,0 +1,52 @@
+{
+  "card": {
+    "id": "flood_of_tears",
+    "name": "Flood of Tears",
+    "oracle_text": "Return all nonland permanents to their owners' hands. If you return four or more nontoken permanents you control this way, you may put a permanent card from your hand onto the battlefield.",
+    "mana_cost": "{4}{U}{U}",
+    "types": ["Sorcery"],
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "spell_effects": [
+      {
+        "op": "choose_permanents",
+        "as": "yours",
+        "objects": {"zone": "battlefield", "controller": "you", "is_token": false, "not_types": ["Land"], "count": "all"}
+      },
+      {
+        "op": "return_to_hand",
+        "objects": {"zone": "battlefield", "controller": "any", "not_types": ["Land"], "count": "all"}
+      },
+      {
+        "op": "if",
+        "condition": {
+          "cmp": ">=",
+          "left": {"count": {"binding": "yours", "zone": "hand"}},
+          "right": {"const": 4}
+        },
+        "then": [
+          {
+            "op": "may",
+            "prompt": "Put a permanent card from your hand onto the battlefield?",
+            "condition": {
+              "exists": {"zone": "hand", "controller": "you", "any_types": ["Artifact", "Battle", "Creature", "Enchantment", "Land", "Planeswalker"]}
+            },
+            "effects": [
+              {
+                "op": "put_onto_battlefield",
+                "objects": {"zone": "hand", "controller": "you", "any_types": ["Artifact", "Battle", "Creature", "Enchantment", "Land", "Planeswalker"], "count": 1, "chooser": "controller"}
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "battlefield_count": 30,
+    "opponent_battlefield_count": 2,
+    "hand_size": {"0": 3},
+    "graveyard_size": {"0": 3}
+  }
+}
