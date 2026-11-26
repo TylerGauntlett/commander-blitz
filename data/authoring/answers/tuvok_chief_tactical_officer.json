@@ -1,0 +1,52 @@
+{
+  "card": {
+    "id": "tuvok_chief_tactical_officer",
+    "name": "Tuvok, Chief Tactical Officer",
+    "oracle_text": "Flash\nWhen Tuvok enters during the declare attackers step, choose up to two target attacking creatures. For each of them, you may reselect which player or permanent that creature is attacking. (A creature can't attack its controller.)",
+    "mana_cost": "{2}{U}",
+    "supertypes": ["Legendary"],
+    "types": ["Creature"],
+    "subtypes": ["Vulcan", "Officer"],
+    "power": 2,
+    "toughness": 3,
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "keywords": ["flash"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When Tuvok enters during the declare attackers step, choose up to two target attacking creatures. For each of them, you may reselect which player or permanent that creature is attacking.",
+        "trigger": {
+          "event": "self_enters",
+          "source": "self",
+          "condition": {"step_is": "declare_attackers"}
+        },
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "count": 2,
+            "up_to": true,
+            "selector": {"zone": "battlefield", "types": ["Creature"], "attacking": true}
+          }
+        ],
+        "effects": [
+          {
+            "op": "for_each",
+            "objects": {"target": "t1"},
+            "effects": [
+              {
+                "op": "may",
+                "prompt": "Reselect which player or permanent this creature is attacking?",
+                "effects": [
+                  {"op": "redirect_attack", "objects": {"binding": "each"}}
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33, "hand_size": {"0": 1}}
+}
