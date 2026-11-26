@@ -72642,12 +72642,12 @@
     },
     "Dovin, Grand Arbiter": {
       "edhrec_rank": 15127,
-      "gate": "template",
+      "gate": null,
       "name": "Dovin, Grand Arbiter",
-      "reason": "no template for: +1: Until end of turn, whenever a creature you control deals combat damage to a player, pu",
+      "reason": "",
       "scryfall_id": "677c7b08-e80c-49ac-acfd-8feb9cde3c5d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dovin, Hand of Control": {
@@ -75502,12 +75502,12 @@
     },
     "Drogskol Captain": {
       "edhrec_rank": 8138,
-      "gate": "template",
+      "gate": null,
       "name": "Drogskol Captain",
-      "reason": "no template for: Other Spirit creatures you control get +1/+1 and have hexproof",
+      "reason": "",
       "scryfall_id": "c88e7e22-6300-4871-9af8-923eedfe4b32",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Drogskol Cavalry": {
@@ -94362,12 +94362,12 @@
     },
     "Field of Souls": {
       "edhrec_rank": 9852,
-      "gate": "template",
+      "gate": null,
       "name": "Field of Souls",
-      "reason": "no template for: Whenever a nontoken creature is put into your graveyard from the battlefield, create a 1/1",
+      "reason": "",
       "scryfall_id": "a264d5f2-9e27-4c41-a76e-0dc944c6dc74",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Field of the Dead": {

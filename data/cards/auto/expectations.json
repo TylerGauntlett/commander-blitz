@@ -7215,6 +7215,14 @@
     },
     "zone": "battlefield"
   },
+  "dovin_grand_arbiter": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "dr_madison_li": {
     "battlefield_count": 33,
     "hand_size": {
@@ -7448,6 +7456,10 @@
     "zone": "battlefield"
   },
   "drifting_meadow": {
+    "zone": "battlefield"
+  },
+  "drogskol_captain": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "dromoka_warrior": {
@@ -9325,6 +9337,10 @@
     "zone": "battlefield"
   },
   "field_of_ruin": {
+    "zone": "battlefield"
+  },
+  "field_of_souls": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "fields_of_strife": {
