@@ -3221,8 +3221,30 @@ def _covered(card: CardDef, line: str) -> bool:
                 f"it's {colour}" in lowered for colour in ("white", "blue", "black", "red", "green")
             ) and not exception.get("colors"):
                 continue
-            if "in addition to its other types" in lowered and not (
-                exception.get("add_types") or exception.get("add_subtypes")
+            in_addition = re.search(r"in addition to (?:its|her|his) other types", lowered)
+            if in_addition and not (
+                exception.get("add_types")
+                or exception.get("add_subtypes")
+                or exception.get("add_supertypes")
+            ):
+                continue
+            # "…she's a legendary Trill in addition to her other types" (Ezri
+            # Dax, Newly Joined): the Legendary is ``add_supertypes``, so a copy
+            # that is only a Trill cannot claim the sentence.
+            if re.search(r"\b(?:it's|she's|he's) a legendary\b", lowered) and "Legendary" not in (
+                exception.get("add_supertypes") or ()
+            ):
+                continue
+            # "…any creature card in your graveyard that was put there from the
+            # battlefield this turn" (Ezri again): the pool is the graveyard,
+            # narrowed to cards that arrived from the battlefield this turn.
+            copying = replacement.get("copying") or {}
+            if "in your graveyard" in lowered and not replacement.get("as_enters") and (
+                copying.get("zone") != "graveyard" or copying.get("controller") != "you"
+            ):
+                continue
+            if "put there from the battlefield this turn" in lowered and "from_battlefield" not in (
+                copying.get("graveyard_arrival_this_turn") or ()
             ):
                 continue
             # "…except it's an artifact" with no "in addition" (Machine God's

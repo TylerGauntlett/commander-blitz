@@ -1572,6 +1572,10 @@ class ReplacementModel(BaseModel):
     #: `self_enters_as_copy`: the pool of permanents that may be copied --
     #: ``{"zone": "battlefield", "subtypes": ["Equipment"]}`` for Masterwork of
     #: Ingenuity, ``{"zone": "battlefield", "types": ["Land"]}`` for Vesuva.
+    #: The pool may be cards rather than permanents -- ``{"zone": "graveyard",
+    #: "controller": "you", "types": ["Creature"], "graveyard_arrival_this_turn":
+    #: ["from_battlefield"]}`` for Ezri Dax, Newly Joined -- and the copy is
+    #: then of that card's copiable values as a card (707.2).
     #: Required on that event and meaningless on the other four.
     #:
     #: Always offered rather than forced: every printed card in this family says
@@ -1585,7 +1589,9 @@ class ReplacementModel(BaseModel):
     #: top of it, so the copy has them from the moment it arrives and loses
     #: them only when the copy itself ends. The other keys:
     #: ``remove_supertypes`` (`copy_permanent`'s spelling -- Spark Double's
-    #: "…and it isn't legendary"), ``name`` ("…except his name is Chameleon,
+    #: "…and it isn't legendary") and its other half ``add_supertypes`` (Ezri
+    #: Dax, Newly Joined's "…she's a legendary Trill in addition to her other
+    #: types"), ``name`` ("…except his name is Chameleon,
     #: Master of Disguise") and ``enters_with``, a list of ``{counter, amount,
     #: condition}`` judged against the copy as it enters (Spark Double's "an
     #: additional +1/+1 counter on it if it's a creature"); ``add_subtypes``,

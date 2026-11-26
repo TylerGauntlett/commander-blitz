@@ -4094,6 +4094,7 @@ The other keys, each a copiable value the copy carries until it ends:
 | `add_subtypes` | `copy_permanent`'s key of the same name: subtypes the copy has in addition to the copied ones, on `copying_add_subtypes` — Deceptive Frostkite's `["Dragon"]` |
 | `colors` | `copy_permanent`'s key of the same name: the copy's colours instead of the copied ones, on `copying_colors` |
 | `no_mana_cost` | `copy_permanent`'s key of the same name: the copy has no mana cost (202.1b), on `copying_no_mana_cost`; its mana value is 0 |
+| `add_supertypes` | `copy_permanent`'s key of the same name: supertypes the copy has in addition to the copied ones, on `copying_add_supertypes` — Ezri Dax, Newly Joined's "…she's a legendary Trill in addition to her other types" is `["Legendary"]` beside `add_subtypes: ["Trill"]`. The legend rule reads the result; refused beside a `remove_supertypes` naming the same supertype |
 | `remove_supertypes` | `copy_permanent`'s key of the same name: supertypes the copy does not take, on `copying_remove_supertypes`. The legend rule reads the result |
 | `name` | the name the copy keeps (`become_copy`'s `except_name`), on `copying_name` |
 | `enters_with` | counters the copy enters with, each `{counter, amount, condition}`, the fields `self_enters_with_counters` has; `amount` is a value expression in which `{"x": true}` is the X announced on casting (Altered Ego) |
@@ -4168,6 +4169,34 @@ battlefield with its characteristic-defining ability applied (604.3).
 say — that is zero to two. The `if` asks only when two other creature cards
 exist, and `may` then makes the mandatory pick of exactly two. `exclude_self`
 keeps a Mimeoplasm being reanimated out of its own pool: it is on its way in.
+
+#### A copy of a card in the graveyard
+
+```jsonc
+// Ezri Dax, Newly Joined
+{ "event": "self_enters_as_copy",
+  "copying": { "zone": "graveyard", "controller": "you", "types": ["Creature"],
+               "graveyard_arrival_this_turn": ["from_battlefield"] },
+  "except_": { "name": "Ezri Dax, Newly Joined",
+               "add_supertypes": ["Legendary"], "add_subtypes": ["Trill"] } }
+```
+
+`copying` is any standing selector, so with no `as_enters` the pool may be cards
+rather than permanents, and the "you may" is the replacement's own, asked as
+Clone's is. "…put there from the battlefield this turn" is the
+`graveyard_arrival_this_turn` selector key with `from_battlefield`: a discarded
+or milled creature card, or one that died on an earlier turn, is not in the
+pool. The model is a card, so the copy takes its copiable values as a card
+(707.2) and the card stays where it is. Applied as she enters (614.1c), the
+copied creature's own enters triggers see her arrive as the copy; the near miss,
+a `self_enters` trigger running `become_copy`, enters her as herself first and
+those triggers never fire. Declined, or with an empty pool, she enters as her
+printed card.
+
+The verifier holds the printed line to its halves: "in your graveyard" to a
+`zone: "graveyard"`, `controller: "you"` pool, "put there from the battlefield
+this turn" to `from_battlefield`, and "she's a legendary …" to `add_supertypes`
+naming Legendary.
 
 ### A permanent that becomes a copy, except it keeps this ability
 
