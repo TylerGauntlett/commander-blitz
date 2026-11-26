@@ -9750,6 +9750,17 @@
     },
     "zone": "battlefield"
   },
+  "flood_of_tears": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 3
+    },
+    "opponent_battlefield_count": 2,
+    "zone": "graveyard"
+  },
   "flood_plain": {
     "zone": "battlefield"
   },
@@ -10437,6 +10448,16 @@
   },
   "geier_reach_sanitarium": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "geist_of_saint_traft": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "hexproof"
+      ]
+    },
     "zone": "battlefield"
   },
   "geist_of_the_moors": {
@@ -11848,6 +11869,10 @@
   "hallowed_fountain": {
     "zone": "battlefield"
   },
+  "hallowed_spiritkeeper": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "halo_forager": {
     "battlefield_count": 33,
     "hand_size": {
@@ -12054,6 +12079,10 @@
     "zone": "battlefield"
   },
   "haunted_guardian": {
+    "zone": "battlefield"
+  },
+  "haunted_library": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "haunted_mire": {
@@ -14068,6 +14097,13 @@
     "zone": "battlefield"
   },
   "kami_of_old_stone": {
+    "zone": "battlefield"
+  },
+  "kami_of_the_crescent_moon": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "kami_of_whispered_hopes": {

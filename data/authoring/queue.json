@@ -98362,12 +98362,12 @@
     },
     "Flood of Tears": {
       "edhrec_rank": 4389,
-      "gate": "template",
+      "gate": null,
       "name": "Flood of Tears",
-      "reason": "no template for: Return all nonland permanents to their owners' hands. If you return four or more nontoken ",
+      "reason": "",
       "scryfall_id": "440383de-d56a-47dd-ba8a-fae61f57f83b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flood the Engine": {
@@ -106192,12 +106192,12 @@
     },
     "Geist of Saint Traft": {
       "edhrec_rank": 12131,
-      "gate": "template",
+      "gate": null,
       "name": "Geist of Saint Traft",
-      "reason": "no template for: Whenever attacks, create a 4/4 white Angel creature token with flying that's tapped and at",
+      "reason": "",
       "scryfall_id": "541b9d55-f237-4ff2-9e47-c58a381f0633",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Geist of the Archives": {
@@ -121672,12 +121672,12 @@
     },
     "Hallowed Spiritkeeper": {
       "edhrec_rank": 7944,
-      "gate": "template",
+      "gate": null,
       "name": "Hallowed Spiritkeeper",
-      "reason": "no template for: When this creature dies, create X 1/1 white Spirit creature tokens with flying, where X is",
+      "reason": "",
       "scryfall_id": "dc8037d5-79fa-47e3-9d3b-eb29643ecae7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Halls of Mist": {
@@ -123492,12 +123492,12 @@
     },
     "Haunted Library": {
       "edhrec_rank": 8912,
-      "gate": "template",
+      "gate": null,
       "name": "Haunted Library",
-      "reason": "no template for: Whenever a creature an opponent controls dies, you may pay {1}. If you do, create a 1/1 wh",
+      "reason": "",
       "scryfall_id": "72015ce0-0579-4776-a6a3-251f40c218ae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Haunted Mire": {
@@ -145652,12 +145652,12 @@
     },
     "Kami of the Crescent Moon": {
       "edhrec_rank": 1819,
-      "gate": "template",
+      "gate": null,
       "name": "Kami of the Crescent Moon",
-      "reason": "no template for: At the beginning of each player's draw step, that player draws an additional card",
+      "reason": "",
       "scryfall_id": "dd420010-6eaf-4853-8b7b-11de1157416b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kami of the Honored Dead": {
