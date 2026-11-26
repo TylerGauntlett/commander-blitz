@@ -2038,6 +2038,14 @@ def _matches(
         ):
             return False
 
+    # "…becomes tapped, **if it isn't being declared as an attacker**" (Verity
+    # Circle). `tap_permanent` puts the flag on every TAPPED event and only the
+    # declaration's own tap (508.1f) sets it, so this compares a real answer.
+    if spec.attack_declaration is not None and bool(
+        event.data.get("attack_declaration")
+    ) is not spec.attack_declaration:
+        return False
+
     # "Whenever you draw your **second** card each turn." An ordinal is a fact
     # about the draw that just happened, and `draw_cards` writes it onto the
     # event, so it is answered here -- once, where the ability queues -- and

@@ -256,7 +256,7 @@ This is the long tail, and where the build order comes from.
 | Disturb | shipped | `graveyard_cost` plus `graveyard_cast_transformed` -- the card is the back face from the moment it is cast | `graveyard_cast_transformed` |
 | Doctor's companion † | shipped | an **inert** `Keyword`, partner's shape — deck construction only. Kept apart from `partner` and `choose_a_background` because it builds a third deck: the other commander is a Time Lord Doctor, which prints nothing. The printed apostrophe folds onto the word through `KEYWORD_ALIASES` | `doctors_companion` |
 | Dredge | shipped | the `dredge` card field, offered by `replacements.draw` -- it replaces the draw rather than adding to it | `dredge` |
-| Echo | free | `upkeep` trigger with an intervening-if `{"not": {"has_flag": …}}`, `set_flag`, then `may` `pay` with a sacrifice `else` | `set_flag` |
+| Echo | shipped | `upkeep` trigger with the `came_under_control_since_last_upkeep` intervening-if, then `may` `pay` with a sacrifice `else`. The condition compares `GameObject.came_under_control_at` (arrival or `change_control`) with `PlayerState.upkeep_began_at`, so a change of control asks again — cashed by `test_echo.py` | — |
 | Embalm | shipped | activated from the **graveyard**, paying by exiling its own card, producing a token copy with an "except" clause | — |
 | Emerge | shipped | card-level field; one cast line per sacrificeable creature | `emerge` |
 | Entwine | shipped | `kicker` for the price, plus `all_if` on `choose_mode` for the both | `kicker` |

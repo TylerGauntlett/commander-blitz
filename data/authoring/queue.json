@@ -8512,12 +8512,12 @@
     },
     "Angel of Flight Alabaster": {
       "edhrec_rank": 13986,
-      "gate": "template",
+      "gate": null,
       "name": "Angel of Flight Alabaster",
-      "reason": "no template for: At the beginning of your upkeep, return target Spirit card from your graveyard to your han",
+      "reason": "",
       "scryfall_id": "dd39a1e1-9784-4cb0-b8ed-98e659b32edd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Angel of Fury": {
@@ -18522,12 +18522,12 @@
     },
     "Azorius Locket": {
       "edhrec_rank": 9268,
-      "gate": "template",
+      "gate": null,
       "name": "Azorius Locket",
-      "reason": "no template for: {W/U}{W/U}{W/U}{W/U}, {T}, Sacrifice this artifact: Draw two cards",
+      "reason": "",
       "scryfall_id": "f893f1e9-1d19-4220-9e0d-3f9c85d33837",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Azorius Ploy": {
@@ -23862,12 +23862,12 @@
     },
     "Benevolent Offering": {
       "edhrec_rank": 6584,
-      "gate": "template",
+      "gate": null,
       "name": "Benevolent Offering",
-      "reason": "no template for: Choose an opponent. You and that player each create three 1/1 white Spirit creature tokens",
+      "reason": "",
       "scryfall_id": "d080c35d-f2c6-4f4e-8f7c-305b319d4cde",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Benevolent River Spirit": {
@@ -30952,12 +30952,12 @@
     },
     "Bone Shredder": {
       "edhrec_rank": 9157,
-      "gate": "template",
+      "gate": null,
       "name": "Bone Shredder",
-      "reason": "no template for: Echo {2}{B}",
+      "reason": "",
       "scryfall_id": "0fb5d4ce-516e-43fd-9de0-30f8517f7220",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bone Splinters": {
@@ -31732,12 +31732,12 @@
     },
     "Boreas Charger": {
       "edhrec_rank": 9811,
-      "gate": "template",
+      "gate": null,
       "name": "Boreas Charger",
-      "reason": "no template for: When this creature leaves the battlefield, choose an opponent who controls more lands than",
+      "reason": "",
       "scryfall_id": "3cab81be-47d7-4f76-b031-072ac1a7fbc2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Borg Queen, Perfection Manifest": {
@@ -33842,12 +33842,12 @@
     },
     "Breath of the Sleepless": {
       "edhrec_rank": 14443,
-      "gate": "template",
+      "gate": null,
       "name": "Breath of the Sleepless",
-      "reason": "no template for: You may cast Spirit spells as though they had flash",
+      "reason": "",
       "scryfall_id": "30fb3567-f473-4131-a849-0cc0ec7be53e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Breathe Your Last": {
@@ -57692,12 +57692,12 @@
     },
     "Crystal Barricade": {
       "edhrec_rank": 2070,
-      "gate": "template",
+      "gate": null,
       "name": "Crystal Barricade",
-      "reason": "no template for: You have hexproof",
+      "reason": "",
       "scryfall_id": "77f6acd2-3b91-4bd7-996f-42c75b88ee87",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crystal Carapace": {
@@ -59192,12 +59192,12 @@
     },
     "Custodi Soulbinders": {
       "edhrec_rank": 13819,
-      "gate": "template",
+      "gate": null,
       "name": "Custodi Soulbinders",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it, where X is the number of other creatures",
+      "reason": "",
       "scryfall_id": "6a0dd7ba-673e-4f69-8cd3-806784501dc2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Custodi Soulcaller": {
@@ -71802,12 +71802,12 @@
     },
     "Donal, Herald of Wings": {
       "edhrec_rank": 9762,
-      "gate": "template",
+      "gate": null,
       "name": "Donal, Herald of Wings",
-      "reason": "no template for: Whenever you cast a nonlegendary creature spell with flying, you may copy it, except the c",
+      "reason": "",
       "scryfall_id": "70cf8d2b-5220-4fe9-b39d-6700f0b27cca",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Donald Blake, Guise of Thor": {
@@ -72642,12 +72642,12 @@
     },
     "Dovin, Grand Arbiter": {
       "edhrec_rank": 15127,
-      "gate": "template",
+      "gate": null,
       "name": "Dovin, Grand Arbiter",
-      "reason": "no template for: +1: Until end of turn, whenever a creature you control deals combat damage to a player, pu",
+      "reason": "",
       "scryfall_id": "677c7b08-e80c-49ac-acfd-8feb9cde3c5d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dovin, Hand of Control": {
@@ -75502,12 +75502,12 @@
     },
     "Drogskol Captain": {
       "edhrec_rank": 8138,
-      "gate": "template",
+      "gate": null,
       "name": "Drogskol Captain",
-      "reason": "no template for: Other Spirit creatures you control get +1/+1 and have hexproof",
+      "reason": "",
       "scryfall_id": "c88e7e22-6300-4871-9af8-923eedfe4b32",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Drogskol Cavalry": {
@@ -75542,12 +75542,12 @@
     },
     "Drogskol Reinforcements": {
       "edhrec_rank": 7802,
-      "gate": "template",
+      "gate": null,
       "name": "Drogskol Reinforcements",
-      "reason": "no template for: Melee",
+      "reason": "",
       "scryfall_id": "1f7116ff-8afa-429f-a868-8766d4a0dd18",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Drogskol Shieldmate": {
@@ -94362,12 +94362,12 @@
     },
     "Field of Souls": {
       "edhrec_rank": 9852,
-      "gate": "template",
+      "gate": null,
       "name": "Field of Souls",
-      "reason": "no template for: Whenever a nontoken creature is put into your graveyard from the battlefield, create a 1/1",
+      "reason": "",
       "scryfall_id": "a264d5f2-9e27-4c41-a76e-0dc944c6dc74",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Field of the Dead": {
@@ -98362,12 +98362,12 @@
     },
     "Flood of Tears": {
       "edhrec_rank": 4389,
-      "gate": "template",
+      "gate": null,
       "name": "Flood of Tears",
-      "reason": "no template for: Return all nonland permanents to their owners' hands. If you return four or more nontoken ",
+      "reason": "",
       "scryfall_id": "440383de-d56a-47dd-ba8a-fae61f57f83b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flood the Engine": {
@@ -106192,12 +106192,12 @@
     },
     "Geist of Saint Traft": {
       "edhrec_rank": 12131,
-      "gate": "template",
+      "gate": null,
       "name": "Geist of Saint Traft",
-      "reason": "no template for: Whenever attacks, create a 4/4 white Angel creature token with flying that's tapped and at",
+      "reason": "",
       "scryfall_id": "541b9d55-f237-4ff2-9e47-c58a381f0633",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Geist of the Archives": {
@@ -121672,12 +121672,12 @@
     },
     "Hallowed Spiritkeeper": {
       "edhrec_rank": 7944,
-      "gate": "template",
+      "gate": null,
       "name": "Hallowed Spiritkeeper",
-      "reason": "no template for: When this creature dies, create X 1/1 white Spirit creature tokens with flying, where X is",
+      "reason": "",
       "scryfall_id": "dc8037d5-79fa-47e3-9d3b-eb29643ecae7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Halls of Mist": {
@@ -123492,12 +123492,12 @@
     },
     "Haunted Library": {
       "edhrec_rank": 8912,
-      "gate": "template",
+      "gate": null,
       "name": "Haunted Library",
-      "reason": "no template for: Whenever a creature an opponent controls dies, you may pay {1}. If you do, create a 1/1 wh",
+      "reason": "",
       "scryfall_id": "72015ce0-0579-4776-a6a3-251f40c218ae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Haunted Mire": {
@@ -123602,12 +123602,12 @@
     },
     "Haunting Imitation": {
       "edhrec_rank": 14752,
-      "gate": "template",
+      "gate": null,
       "name": "Haunting Imitation",
-      "reason": "no template for: Each player reveals the top card of their library. For each creature card revealed this wa",
+      "reason": "",
       "scryfall_id": "8418fd80-2c92-40d4-87de-0c149f6815bc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Haunting Misery": {
@@ -145652,12 +145652,12 @@
     },
     "Kami of the Crescent Moon": {
       "edhrec_rank": 1819,
-      "gate": "template",
+      "gate": null,
       "name": "Kami of the Crescent Moon",
-      "reason": "no template for: At the beginning of each player's draw step, that player draws an additional card",
+      "reason": "",
       "scryfall_id": "dd420010-6eaf-4853-8b7b-11de1157416b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kami of the Honored Dead": {
@@ -146102,12 +146102,12 @@
     },
     "Karmic Guide": {
       "edhrec_rank": 961,
-      "gate": "template",
+      "gate": null,
       "name": "Karmic Guide",
-      "reason": "no template for: Flying, protection from black",
+      "reason": "",
       "scryfall_id": "b26d50dd-54a1-43ce-9884-3999f698d97b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Karmic Justice": {
@@ -149632,12 +149632,12 @@
     },
     "Kirtar's Wrath": {
       "edhrec_rank": 13266,
-      "gate": "template",
+      "gate": null,
       "name": "Kirtar's Wrath",
-      "reason": "no template for: Destroy all creatures. They can't be regenerated",
+      "reason": "",
       "scryfall_id": "fbbbbbf7-eaae-462e-a8eb-7f6a97703600",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kishla Skimmer": {
@@ -173372,12 +173372,12 @@
     },
     "Millicent, Restless Revenant": {
       "edhrec_rank": 10707,
-      "gate": "template",
+      "gate": null,
       "name": "Millicent, Restless Revenant",
-      "reason": "no template for: Affinity for Spirits",
+      "reason": "",
       "scryfall_id": "2b86b538-0766-440d-a2cd-f5d5bfcfb010",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Millikin": {
@@ -184172,12 +184172,12 @@
     },
     "Nebelgast Herald": {
       "edhrec_rank": 11169,
-      "gate": "template",
+      "gate": null,
       "name": "Nebelgast Herald",
-      "reason": "no template for: Whenever this creature or another Spirit you control enters, tap target creature an oppone",
+      "reason": "",
       "scryfall_id": "51173564-cd0e-410f-82fc-3d071e6f4d17",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nebelgast Intruder": {
@@ -196542,12 +196542,12 @@
     },
     "Oyobi, Who Split the Heavens": {
       "edhrec_rank": 12421,
-      "gate": "template",
+      "gate": null,
       "name": "Oyobi, Who Split the Heavens",
-      "reason": "no template for: Whenever you cast a Spirit or Arcane spell, create a 3/3 white Spirit creature token with ",
+      "reason": "",
       "scryfall_id": "8f279602-024a-44b6-9a36-465c16363cb5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ozai's Cruelty": {
@@ -206822,12 +206822,12 @@
     },
     "Priest of the Blessed Graf": {
       "edhrec_rank": 12327,
-      "gate": "template",
+      "gate": null,
       "name": "Priest of the Blessed Graf",
-      "reason": "no template for: At the beginning of your end step, create X 1/1 white Spirit creature tokens with flying, ",
+      "reason": "",
       "scryfall_id": "5b3947c1-f497-4407-ae29-287a490cceee",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Priest of the Blood Rite": {
@@ -208312,12 +208312,12 @@
     },
     "Promise of Bunrei": {
       "edhrec_rank": 11726,
-      "gate": "template",
+      "gate": null,
       "name": "Promise of Bunrei",
-      "reason": "no template for: When a creature you control dies, sacrifice this enchantment. If you do, create four 1/1 c",
+      "reason": "",
       "scryfall_id": "a40e9071-7b27-4070-bc3a-c095c2128953",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Promise of Loyalty": {
@@ -215862,12 +215862,12 @@
     },
     "Rattlechains": {
       "edhrec_rank": 10274,
-      "gate": "template",
+      "gate": null,
       "name": "Rattlechains",
-      "reason": "no template for: When this creature enters, target Spirit gains hexproof until end of turn",
+      "reason": "",
       "scryfall_id": "709f6376-9a33-4900-a7ae-00767fb9f9bf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rattleclaw Mystic": {
@@ -223022,12 +223022,12 @@
     },
     "Rhoda, Geist Avenger": {
       "edhrec_rank": 10481,
-      "gate": "template",
+      "gate": null,
       "name": "Rhoda, Geist Avenger",
-      "reason": "no template for: Partner with Timin, Youthful Geist",
+      "reason": "",
       "scryfall_id": "aae81a4a-652d-45fe-b702-6541bf0971de",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rhonas the Indomitable": {
@@ -241722,12 +241722,12 @@
     },
     "Shacklegeist": {
       "edhrec_rank": 12474,
-      "gate": "template",
+      "gate": null,
       "name": "Shacklegeist",
-      "reason": "no template for: This creature can block only creatures with flying",
+      "reason": "",
       "scryfall_id": "d69b40d5-25e7-4c59-b00a-aa7d7367504e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shackles": {
@@ -248652,12 +248652,12 @@
     },
     "Sire of the Storm": {
       "edhrec_rank": 16198,
-      "gate": "template",
+      "gate": null,
       "name": "Sire of the Storm",
-      "reason": "no template for: Whenever you cast a Spirit or Arcane spell, you may draw a card",
+      "reason": "",
       "scryfall_id": "bea64c04-6cd0-49e9-b4ba-1b50aab0a490",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Siren Lookout": {
@@ -257542,12 +257542,12 @@
     },
     "Spectral Arcanist": {
       "edhrec_rank": 12375,
-      "gate": "template",
+      "gate": null,
       "name": "Spectral Arcanist",
-      "reason": "no template for: When this creature enters, you may cast an instant or sorcery spell with mana value less t",
+      "reason": "",
       "scryfall_id": "8ac3ee2e-455e-4cf9-b1ec-6d260098574a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spectral Bears": {
@@ -257732,12 +257732,12 @@
     },
     "Spectral Shepherd": {
       "edhrec_rank": 15966,
-      "gate": "template",
+      "gate": null,
       "name": "Spectral Shepherd",
-      "reason": "no template for: {1}{U}: Return target Spirit you control to its owner's hand",
+      "reason": "",
       "scryfall_id": "89fd38be-8b2a-4ff4-8f51-e7d6971f7aef",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spectral Shield": {
@@ -268322,12 +268322,12 @@
     },
     "Sudden Salvation": {
       "edhrec_rank": 18247,
-      "gate": "template",
+      "gate": null,
       "name": "Sudden Salvation",
-      "reason": "no template for: Choose up to three target permanent cards in graveyards that were put there from the battl",
+      "reason": "",
       "scryfall_id": "7cbeb9bc-5731-4976-b59f-62935760b917",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sudden Setback": {
@@ -270592,12 +270592,12 @@
     },
     "Supreme Phantom": {
       "edhrec_rank": 9493,
-      "gate": "template",
+      "gate": null,
       "name": "Supreme Phantom",
-      "reason": "no template for: Other Spirits you control get +1/+1",
+      "reason": "",
       "scryfall_id": "cbf4ca25-73cc-45ba-bed5-dbaa517e8bb8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Supreme Verdict": {
@@ -287702,12 +287702,12 @@
     },
     "Timin, Youthful Geist": {
       "edhrec_rank": 9923,
-      "gate": "template",
+      "gate": null,
       "name": "Timin, Youthful Geist",
-      "reason": "no template for: Partner with Rhoda, Geist Avenger",
+      "reason": "",
       "scryfall_id": "8d58a295-f5cc-4d32-b314-a66a7c4a4636",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Timmerian Fiends": {
@@ -303232,12 +303232,12 @@
     },
     "Verity Circle": {
       "edhrec_rank": 4324,
-      "gate": "template",
+      "gate": null,
       "name": "Verity Circle",
-      "reason": "no template for: Whenever a creature an opponent controls becomes tapped, if it isn't being declared as an ",
+      "reason": "",
       "scryfall_id": "58b0d8be-f2e7-4bc9-a700-ed4c06785ecf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Verix Bladewing": {

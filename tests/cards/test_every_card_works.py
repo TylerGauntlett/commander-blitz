@@ -25,6 +25,7 @@ from commanderblitz.cards.authoring.verify import (
     encoded_itself,
     enter_sandbox_combat,
     graveyard_target_props,
+    returned_itself,
     sandbox_turn,
     spare_cards_in_hand,
     swap_in_artifact_body,
@@ -475,6 +476,10 @@ class TestEveryCardIsPlayable:
             # than restated so the twins cannot drift.
             if encoded_itself(played, obj):
                 spell_zones.add(Zone.EXILE)
+            # "Return <this card> to its owner's hand" -- the same predicate
+            # again, on what the resolution did rather than on the declaration.
+            if returned_itself(game.state, played, obj):
+                spell_zones.add(Zone.HAND)
             assert obj.zone in spell_zones, (
                 f"{card_id} is a spell but ended in {obj.zone.value}"
             )

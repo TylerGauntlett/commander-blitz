@@ -1,0 +1,49 @@
+{
+  "_comment": "Cards that exist only for the noncombat-only shield test (tests/unit/damage/test_prevent_noncombat_damage.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_noncombat_barricade` is Crystal Barricade's third line -- prevent all noncombat damage to OTHER creatures you control -- and `t_noncombat_absorber` is absorb 2 narrowed the same way, pinning that the flag narrows both forms of the static.",
+  "cards": [
+    {
+      "id": "t_noncombat_barricade",
+      "name": "Test Noncombat Barricade",
+      "oracle_text": "Prevent all noncombat damage that would be dealt to other creatures you control.",
+      "mana_cost": "{3}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Wall"],
+      "power": 0,
+      "toughness": 5,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Prevent all noncombat damage that would be dealt to other creatures you control.",
+          "effect": "prevent_damage",
+          "prevent_all": true,
+          "noncombat_only": true,
+          "affects": { "controller": "you", "types": ["Creature"], "exclude_self": true }
+        }
+      ]
+    },
+    {
+      "id": "t_noncombat_absorber",
+      "name": "Test Noncombat Absorber",
+      "oracle_text": "If a source would deal noncombat damage to this creature, prevent 2 of that damage.",
+      "mana_cost": "{2}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Spirit"],
+      "power": 2,
+      "toughness": 5,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If a source would deal noncombat damage to this creature, prevent 2 of that damage.",
+          "effect": "prevent_damage",
+          "amount": 2,
+          "noncombat_only": true,
+          "affects": { "self_only": true }
+        }
+      ]
+    }
+  ]
+}

@@ -93,6 +93,14 @@ class PlayerState:
     #: included -- extra turns too (500.7). Counted by `turn._untap_step`.
     #: Serra Avenger's "your first, second, or third turns of the game".
     turns_begun: int = 0
+    #: When this player's most recent upkeep step began, and the one before it,
+    #: from `GameState.alloc_timestamp` -- one stamp per upkeep step, so an
+    #: additional beginning phase is an upkeep of its own. Shifted by
+    #: `turn.begin_step` before anything in the step happens. Zero is "never",
+    #: older than every object. Read by the `came_under_control_since_last_upkeep`
+    #: condition (echo, 702.30a), against `GameObject.came_under_control_at`.
+    upkeep_began_at: int = 0
+    previous_upkeep_began_at: int = 0
 
     mulligans_taken: int = 0
     has_kept_hand: bool = False

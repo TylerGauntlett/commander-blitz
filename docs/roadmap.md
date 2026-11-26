@@ -54,8 +54,8 @@ each heading; this table is generated from them.
 | [Klingon Fury (Star Trek Commander)](#klingon-fury-star-trek-commander) | L | high | nothing | 0 |
 | [Landing Party (Star Trek Commander)](#landing-party-star-trek-commander) | L | high | nothing | 0 |
 | [We Are the Borg (Star Trek Commander)](#we-are-the-borg-star-trek-commander) | L | high | nothing | 0 |
-| [Prismari Artistry (Secrets of Strixhaven Commander)](#prismari-artistry-secrets-of-strixhaven-commander) | L | high | Divided damage that may hit players | 0 |
 | [Lorehold Spirit (Secrets of Strixhaven Commander)](#lorehold-spirit-secrets-of-strixhaven-commander) | L | high | Voting: will of the council and council's dilemma | 0 |
+| [Prismari Artistry (Secrets of Strixhaven Commander)](#prismari-artistry-secrets-of-strixhaven-commander) | L | high | Divided damage that may hit players | 0 |
 | [Quandrix Unlimited (Secrets of Strixhaven Commander)](#quandrix-unlimited-secrets-of-strixhaven-commander) | L | high | Distributing counters from a spell | 0 |
 | [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) | L | high | nothing | 0 |
 | [Dance of the Elements (Lorwyn Eclipsed Commander)](#dance-of-the-elements-lorwyn-eclipsed-commander) | L | high | Divided damage from a triggered or activated ability | 0 |
@@ -105,20 +105,21 @@ each heading; this table is generated from them.
 | [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) | L | high | A fixed target count is exact, not a ceiling, A land that sacrifices itself on entering | 0 |
 | [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) | L | high | nothing | 0 |
 | [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) | L | high | A type-setting static ordered against later animations | 0 |
+| [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) | L | high | Voting: will of the council and council's dilemma, Every creature type means every creature type | 0 |
 | [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) | M | high | A fixed target count is exact, not a ceiling | 0 |
-| [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) | L | high | nothing | 0 |
 | [The Ring tempts you](#the-ring-tempts-you) | M | high | nothing | 3 |
 | [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) | L, continuous | high | nothing | 0 |
 | [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) | L | high | Outcomes as data, Replays and sharing, Difficulty | 0 |
 | [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) | S | medium | nothing | 5 |
 | [Time Lord as one creature type](#time-lord-as-one-creature-type) | S | medium | nothing | 2 |
 | [Difficulty](#difficulty) | S | medium | nothing | 1 |
+| [A step trigger scoped to its own permanent fires](#a-step-trigger-scoped-to-its-own-permanent-fires) | S | medium | nothing | 0 |
 | [Gate the debug endpoint](#gate-the-debug-endpoint) | S | medium | nothing | 0 |
 | [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) | S | medium | nothing | 0 |
 | [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) | S | medium | nothing | 0 |
 | [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) | S | medium | nothing | 0 |
 | [Why a press is refused](#why-a-press-is-refused) | S | medium | nothing | 0 |
-| [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 10 |
+| [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 11 |
 | [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) | M | medium | nothing | 6 |
 | [Divided damage that may hit players](#divided-damage-that-may-hit-players) | M | medium | nothing | 6 |
 | [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) | M | medium | nothing | 5 |
@@ -127,6 +128,7 @@ each heading; this table is generated from them.
 | [Experience counters](#experience-counters) | M | medium | nothing | 3 |
 | [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) | M | medium | nothing | 2 |
 | [Distributing counters from a spell](#distributing-counters-from-a-spell) | M | medium | nothing | 2 |
+| [Every creature type means every creature type](#every-creature-type-means-every-creature-type) | M | medium | nothing | 2 |
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
 | [Rad counters](#rad-counters) | M | medium | nothing | 2 |
 | [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) | M | medium | nothing | 2 |
@@ -136,7 +138,6 @@ each heading; this table is generated from them.
 | [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) | M | medium | nothing | 1 |
 | [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) | M | medium | nothing | 1 |
 | [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) | M | medium | nothing | 1 |
-| [Every creature type means every creature type](#every-creature-type-means-every-creature-type) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
 | [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) | M | medium | nothing | 1 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
@@ -165,12 +166,12 @@ same list, and `/extend-roadmap` starts at the top of it.
 4. [We Are the Borg (Star Trek Commander)](#we-are-the-borg-star-trek-commander) — L, high
 5. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
 6. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-7. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-8. [The Ring tempts you](#the-ring-tempts-you) — M, high
-9. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-10. [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) — S, medium
-11. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
-12. [Difficulty](#difficulty) — S, medium
+7. [The Ring tempts you](#the-ring-tempts-you) — M, high
+8. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+9. [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) — S, medium
+10. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
+11. [Difficulty](#difficulty) — S, medium
+12. [A step trigger scoped to its own permanent fires](#a-step-trigger-scoped-to-its-own-permanent-fires) — S, medium
 13. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
 14. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
 15. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
@@ -185,16 +186,16 @@ same list, and `/extend-roadmap` starts at the top of it.
 24. [Experience counters](#experience-counters) — M, medium
 25. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
 26. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-27. [Outcomes as data](#outcomes-as-data) — M, medium
-28. [Rad counters](#rad-counters) — M, medium
-29. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-30. [A type-setting static ordered against later animations](#a-type-setting-static-ordered-against-later-animations) — M, medium
-31. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-32. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-33. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
-34. [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) — M, medium
-35. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
-36. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
+27. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
+28. [Outcomes as data](#outcomes-as-data) — M, medium
+29. [Rad counters](#rad-counters) — M, medium
+30. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+31. [A type-setting static ordered against later animations](#a-type-setting-static-ordered-against-later-animations) — M, medium
+32. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+33. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+34. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
+35. [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) — M, medium
+36. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
 37. [Replays and sharing](#replays-and-sharing) — M, medium
 38. [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) — M, medium
 39. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
@@ -209,8 +210,8 @@ same list, and `/extend-roadmap` starts at the top of it.
 
 **Blocked, and by what:**
 
-- [Prismari Artistry (Secrets of Strixhaven Commander)](#prismari-artistry-secrets-of-strixhaven-commander) — [Divided damage that may hit players](#divided-damage-that-may-hit-players)
 - [Lorehold Spirit (Secrets of Strixhaven Commander)](#lorehold-spirit-secrets-of-strixhaven-commander) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma)
+- [Prismari Artistry (Secrets of Strixhaven Commander)](#prismari-artistry-secrets-of-strixhaven-commander) — [Divided damage that may hit players](#divided-damage-that-may-hit-players)
 - [Quandrix Unlimited (Secrets of Strixhaven Commander)](#quandrix-unlimited-secrets-of-strixhaven-commander) — [Distributing counters from a spell](#distributing-counters-from-a-spell)
 - [Dance of the Elements (Lorwyn Eclipsed Commander)](#dance-of-the-elements-lorwyn-eclipsed-commander) — [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability)
 - [Counter Intelligence (Edge of Eternities Commander)](#counter-intelligence-edge-of-eternities-commander) — [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number)
@@ -258,6 +259,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering)
 - [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling), [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering)
 - [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — [A type-setting static ordered against later animations](#a-type-setting-static-ordered-against-later-animations)
+- [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Every creature type means every creature type](#every-creature-type-means-every-creature-type)
 - [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
@@ -612,6 +614,56 @@ Trenzalore Clocktower's activated ability reached by the ability sandbox.
 - **Hand-written cards.** None print a Time Lord today; should the loader
   refuse `Time` and `Lord` as subtypes from now on, so a later card cannot
   bring the split back? Recommended: yes, a loader error naming "Time Lord".
+
+### A step trigger scoped to its own permanent fires
+
+Effort **S** · Impact **medium**, Mystic Remora, Darksteel Reactor and Krosan Cloudscraper never ask for their upkeep, so each plays as a different card · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+`triggers._matches` drops a trigger whose spec says `source: "self"` unless
+the event's subject (`_subject_oid`) or its `source` is the permanent holding
+the ability. A step event such as `upkeep` has neither: it is about a player,
+not an object. So an `upkeep` trigger written with `source: "self"` never
+fires, whatever its condition says.
+
+Three shipped cards in `data/cards/auto/templates.cards.json` carry that
+shape: Mystic Remora's cumulative upkeep, Darksteel Reactor's charge counter
+and Krosan Cloudscraper's cumulative upkeep. Each therefore plays as a
+stronger card than the printed one, with its upkeep cost never asked. The
+authoring gates cannot see it, because the sandbox never reaches an upkeep
+(`cards/authoring/verify.py`), so every expectation passes on a trigger
+that is dead. The echo work found it: `tests/unit/keywords/test_echo.py`
+writes its upkeep trigger without `source` for this reason.
+
+#### The change
+
+1. Decide where the fix lives (see **Open questions**), and make it there.
+2. If the engine keeps refusing the shape, the loader refuses it too, so a
+   new card cannot ship it: `source: "self"` on a trigger event that has no
+   subject object is a load error naming the event.
+3. Re-author or correct the three cards so their upkeep triggers fire, and
+   re-pin the golden pool.
+
+It does not change what `source: "self"` means on any event that has a
+subject.
+
+#### Gate
+
+A unit test under `tests/unit/triggers/` that steps each of the three
+shipped cards into its controller's upkeep and asserts the trigger goes on
+the stack, plus a loader test for whichever refusal step 2 adds;
+`tests/cards` stays green.
+
+#### Open questions
+
+- **Engine or data?** Either `_matches` treats `source: "self"` as satisfied
+  on a step event (a permanent's own "at the beginning of your upkeep" is
+  scoped to it by being on the battlefield), or the three cards drop
+  `source` and the loader refuses it on step events. Recommended: the
+  loader refusal plus the data fix, because it keeps one meaning for
+  `source: "self"` (this object is the event's subject) and makes the
+  mistake impossible to ship again.
 
 ### Granted flashback permissions without a per-turn cap
 
@@ -1271,6 +1323,60 @@ pass.
   cast line, where divided damage already sits, and the line in
   rules-coverage.md narrows to triggered abilities.
 
+### Every creature type means every creature type
+
+Effort **M** · Impact **medium**, every changeling and Maskwood Nexus misses the tribe of the deck it is in, Squirrels, Rats and Wolves among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+"Every creature type" is a closed list, `CHANGELING_SUBTYPES` in
+`cards/authoring/templates.py`, whose comment says it holds every creature
+type a shipped card mentions. It no longer does: Squirrel, Rat, Mouse,
+Hamster, Raccoon and Wolf are all named by shipped cards and none is on it.
+The changeling template copies the list into each card's `add_subtype`
+static (`subtypes`), so every changeling card, every changeling token in
+`data/cards/tokens.cards.json` and Maskwood Nexus's `off_battlefield` grant
+carry their own frozen copy, and nothing checks that copy against the types
+the pool actually reads.
+
+So a changeling is not a Squirrel to Squirrel Sovereign or Chatterfang, nor
+a Rat to Ogre Slumlord, and Maskwood Nexus does nothing for the Squirreled
+Away deck it ships in. Each new tribe a precon brings widens the hole.
+
+#### The change
+
+1. An `add_subtype` static can say `all_creature_types: true` instead of
+   listing subtypes; `characteristics._compute`, the `off_battlefield` grant
+   and the printed-type readers treat it as every creature type (205.3m)
+   rather than a list, so a selector or trigger naming any creature type
+   matches it.
+2. The changeling template and the authoring packet emit the flag; the
+   changeling cards, the changeling tokens and Maskwood Nexus move to it
+   through `--collect` (tokens by hand under `/extend-dsl` Tier 0), and
+   `CHANGELING_SUBTYPES` goes.
+3. The loader refuses `all_creature_types` beside `subtypes`.
+
+It does not change which creature types exist as words in the DSL, and it
+leaves "choose a creature type" cards (`chosen_type_of`) as they are.
+
+#### Gate
+
+A unit test under `tests/unit/statics/` that a changeling creature, a
+changeling card in hand and a creature under Maskwood Nexus each match a
+selector, a lord and a cast trigger naming Squirrel, Rat and a type no
+shipped card names; the six gates over every changeling card; and the
+golden pool re-pinned once.
+
+#### Open questions
+
+- **A flag or a complete list.** A flag the engine reads as every type, or
+  the full 205.3m list written into each card? Recommended: the flag, so the
+  card data stops carrying a list that can go stale and a new tribe needs no
+  re-authoring.
+- **Is it an ADR.** Recommended: no; it restores what changeling (702.73) and
+  the existing comment already promise, and its line goes in the "Type
+  changes" row of rules-coverage.md.
+
 ### Rad counters
 
 Effort **M** · Impact **medium**, every rad-counter card in the Fallout precons waits on it, Acquired Mutation and Megaton's Fate among them · Depends on nothing · Awaiting decisions.
@@ -1732,60 +1838,6 @@ lists the new keyword and static.
   `combat` validates declared attackers, rather than a goad, which would also
   forbid attacking its controller's other opponents and lasts the wrong time.
 
-### Every creature type means every creature type
-
-Effort **M** · Impact **medium**, every changeling and Maskwood Nexus misses the tribe of the deck it is in, Squirrels, Rats and Wolves among them · Depends on nothing · Awaiting decisions.
-
-#### Today
-
-"Every creature type" is a closed list, `CHANGELING_SUBTYPES` in
-`cards/authoring/templates.py`, whose comment says it holds every creature
-type a shipped card mentions. It no longer does: Squirrel, Rat, Mouse,
-Hamster, Raccoon and Wolf are all named by shipped cards and none is on it.
-The changeling template copies the list into each card's `add_subtype`
-static (`subtypes`), so every changeling card, every changeling token in
-`data/cards/tokens.cards.json` and Maskwood Nexus's `off_battlefield` grant
-carry their own frozen copy, and nothing checks that copy against the types
-the pool actually reads.
-
-So a changeling is not a Squirrel to Squirrel Sovereign or Chatterfang, nor
-a Rat to Ogre Slumlord, and Maskwood Nexus does nothing for the Squirreled
-Away deck it ships in. Each new tribe a precon brings widens the hole.
-
-#### The change
-
-1. An `add_subtype` static can say `all_creature_types: true` instead of
-   listing subtypes; `characteristics._compute`, the `off_battlefield` grant
-   and the printed-type readers treat it as every creature type (205.3m)
-   rather than a list, so a selector or trigger naming any creature type
-   matches it.
-2. The changeling template and the authoring packet emit the flag; the
-   changeling cards, the changeling tokens and Maskwood Nexus move to it
-   through `--collect` (tokens by hand under `/extend-dsl` Tier 0), and
-   `CHANGELING_SUBTYPES` goes.
-3. The loader refuses `all_creature_types` beside `subtypes`.
-
-It does not change which creature types exist as words in the DSL, and it
-leaves "choose a creature type" cards (`chosen_type_of`) as they are.
-
-#### Gate
-
-A unit test under `tests/unit/statics/` that a changeling creature, a
-changeling card in hand and a creature under Maskwood Nexus each match a
-selector, a lord and a cast trigger naming Squirrel, Rat and a type no
-shipped card names; the six gates over every changeling card; and the
-golden pool re-pinned once.
-
-#### Open questions
-
-- **A flag or a complete list.** A flag the engine reads as every type, or
-  the full 205.3m list written into each card? Recommended: the flag, so the
-  card data stops carrying a list that can go stale and a new tribe needs no
-  re-authoring.
-- **Is it an ADR.** Recommended: no; it restores what changeling (702.73) and
-  the existing comment already promise, and its line goes in the "Type
-  changes" row of rules-coverage.md.
-
 ### The authoring sandbox resolves a card's own triggers
 
 Effort **M** · Impact **medium**, a card whose enters trigger sits under a castable ability, such as a Vehicle with crew, cannot prove its trigger, so Night Scythe in the Necron Dynasties precon waits on it · Depends on nothing · Awaiting decisions.
@@ -2133,6 +2185,66 @@ whole-game test able to draw the deck.
   this item back to `proposed`, and opens the pull request with the cards and
   capabilities done so far. This item stays until the deck is whole.
 
+### Lorehold Spirit (Secrets of Strixhaven Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma).
+
+#### Today
+
+Lorehold Spirit, the Secrets of Strixhaven Commander precon released 2026-04-24, is a
+coming-soon shell on the shelf: its row `soc_lorehold_spirit` is in
+`data/decks/sources.json` and there is no `data/decks/soc_lorehold_spirit.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing soc_lorehold_spirit` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+Every card on the list has been through `/author-cards` once. What is left
+is thirteen cards, each with a gap record naming what it waits on: Fateful
+Tempest on voting (its own item, which this one depends on); Conspiracy
+Theorist and Spirit of Resilience on a batched trigger that binds every card
+in the batch; Quintorius, Loremaster on a free cast that tucks the spell to
+the library's bottom; Serra Paragon on one graveyard-play limit shared by
+lands and spells, and on granting the card played that way an ability;
+Advanced Reconstruction, Ao, the Dawn Sky, Hofri Ghostforge, Karmic Guide
+(echo), Laelia, the Blade Reforged, Sevinne's Reclamation, Study Hall and
+Vanguard of the Restless on one capability each, named in their records.
+
+#### The change
+
+Lorehold Spirit ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck soc_lorehold_spirit`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
 ### Prismari Artistry (Secrets of Strixhaven Commander)
 
 Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Divided damage that may hit players](#divided-damage-that-may-hit-players) · Awaiting decisions.
@@ -2204,66 +2316,6 @@ whole-game test able to draw the deck.
   item, adding `adventure` to the two-faced layouts and refreshing the index
   in one reviewable change, because the refresh touches cards far outside
   this deck and its oracle-text changes need their own look.
-
-### Lorehold Spirit (Secrets of Strixhaven Commander)
-
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma).
-
-#### Today
-
-Lorehold Spirit, the Secrets of Strixhaven Commander precon released 2026-04-24, is a
-coming-soon shell on the shelf: its row `soc_lorehold_spirit` is in
-`data/decks/sources.json` and there is no `data/decks/soc_lorehold_spirit.deck.json`, so
-`GET /api/precons/upcoming` serves it.
-`python scripts/sync_precons.py --missing soc_lorehold_spirit` lists the cards the engine
-lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
-
-Every card on the list has been through `/author-cards` once. What is left
-is thirteen cards, each with a gap record naming what it waits on: Fateful
-Tempest on voting (its own item, which this one depends on); Conspiracy
-Theorist and Spirit of Resilience on a batched trigger that binds every card
-in the batch; Quintorius, Loremaster on a free cast that tucks the spell to
-the library's bottom; Serra Paragon on one graveyard-play limit shared by
-lands and spells, and on granting the card played that way an ability;
-Advanced Reconstruction, Ao, the Dawn Sky, Hofri Ghostforge, Karmic Guide
-(echo), Laelia, the Blade Reforged, Sevinne's Reclamation, Study Hall and
-Vanguard of the Restless on one capability each, named in their records.
-
-#### The change
-
-Lorehold Spirit ships native, card for card, as one batch of
-[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
-
-1. `/author-cards` by name over the `--missing` list.
-2. One `/extend-dsl` run per capability the gap records name, in the order
-   the most cards elsewhere in the catalog wait on it.
-3. Re-author until `--missing` is empty, then `--write-deck soc_lorehold_spirit`, the
-   dossier and the archetype, and the deck joins `PRECONS` in
-   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
-4. One `/author-cards` wave over the pending cards the new capabilities reach.
-
-It does not touch another precon's deck.
-
-#### Gate
-
-`tests/cards/test_precon_imports.py` over the new deck; one unit test under
-`tests/unit/` per capability; the manifest test and
-`tests/server/test_upcoming_precons.py` still green; and the sampled
-whole-game test able to draw the deck.
-
-#### Decisions
-
-- **Scope:** this precon only, taken to 100% in one pull request titled
-  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
-- **The editorial fields:** the run writes the dossier and picks the closest
-  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
-  archetype that visibly misplays the deck is a new item.
-- **A capability that needs a rules subsystem the engine does not have**
-  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
-  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
-  this item back to `proposed`, and opens the pull request with the cards and
-  capabilities done so far. This item stays until the deck is whole.
 
 ### Quandrix Unlimited (Secrets of Strixhaven Commander)
 
@@ -5022,6 +5074,63 @@ whole-game test able to draw the deck.
   this item back to `proposed`, and opens the pull request with the cards and
   capabilities done so far. This item stays until the deck is whole.
 
+### Spirit Squadron (Crimson Vow Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma), [Every creature type means every creature type](#every-creature-type-means-every-creature-type).
+
+#### Today
+
+Spirit Squadron, the Crimson Vow Commander precon released 2021-11-19, is a
+coming-soon shell on the shelf: its row `voc_spirit_squadron` is in
+`data/decks/sources.json` and there is no `data/decks/voc_spirit_squadron.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing voc_spirit_squadron` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+waits on. Two remain, and each waits on an item that is not yet decided:
+
+- **Voting.** Custodi Squire's will of the council ("each player votes for an
+  artifact, creature, or enchantment card in your graveyard") needs the
+  tally [voting](#voting-will-of-the-council-and-councils-dilemma) builds.
+- **Every creature type.** Mirror Entity is a changeling and grants "all
+  creature types" until end of turn, which a closed subtype list cannot say
+  ([changeling-every-type](#every-creature-type-means-every-creature-type)).
+- Nothing else: every other card on the list is native.
+
+#### The change
+
+Spirit Squadron ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck voc_spirit_squadron`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
 ### Vampiric Bloodline (Crimson Vow Commander)
 
 Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) · Awaiting decisions.
@@ -5101,55 +5210,6 @@ whole-game test able to draw the deck.
   tests that pin the exile are rewritten to pin the graveyard, and the two doc
   rows are rewritten to match. Then the other madness needs above are one
   `/extend-dsl` run each.
-
-### Spirit Squadron (Crimson Vow Commander)
-
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
-
-#### Today
-
-Spirit Squadron, the Crimson Vow Commander precon released 2021-11-19, is a
-coming-soon shell on the shelf: its row `voc_spirit_squadron` is in
-`data/decks/sources.json` and there is no `data/decks/voc_spirit_squadron.deck.json`, so
-`GET /api/precons/upcoming` serves it.
-`python scripts/sync_precons.py --missing voc_spirit_squadron` lists the cards the engine
-lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
-
-#### The change
-
-Spirit Squadron ships native, card for card, as one batch of
-[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
-
-1. `/author-cards` by name over the `--missing` list.
-2. One `/extend-dsl` run per capability the gap records name, in the order
-   the most cards elsewhere in the catalog wait on it.
-3. Re-author until `--missing` is empty, then `--write-deck voc_spirit_squadron`, the
-   dossier and the archetype, and the deck joins `PRECONS` in
-   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
-4. One `/author-cards` wave over the pending cards the new capabilities reach.
-
-It does not touch another precon's deck.
-
-#### Gate
-
-`tests/cards/test_precon_imports.py` over the new deck; one unit test under
-`tests/unit/` per capability; the manifest test and
-`tests/server/test_upcoming_precons.py` still green; and the sampled
-whole-game test able to draw the deck.
-
-#### Decisions
-
-- **Scope:** this precon only, taken to 100% in one pull request titled
-  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
-- **The editorial fields:** the run writes the dossier and picks the closest
-  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
-  archetype that visibly misplays the deck is a new item.
-- **A capability that needs a rules subsystem the engine does not have**
-  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
-  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
-  this item back to `proposed`, and opens the pull request with the cards and
-  capabilities done so far. This item stays until the deck is whole.
 
 ### Every precon native, one at a time, then every import
 

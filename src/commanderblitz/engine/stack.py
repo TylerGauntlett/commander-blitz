@@ -1442,6 +1442,27 @@ def _place_after_resolution(
         exiled_with = None
         tuck_to = None
         shuffles_in = False
+    # "Return Haunting Imitation to its owner's hand." The card's own
+    # instruction, written during `spell_effects` and carried out here as the
+    # last step of the same resolution, so -- like suspending -- it overrides
+    # every rider that only replaces the *graveyard*: buyback, rebound, plot,
+    # cipher, `exiles_itself`, `tucks_itself` and a Foundry's exile have no
+    # graveyard move left to replace. Flashback's exile is not one of those:
+    # 702.34a exiles the card "instead of putting it anywhere else any time it
+    # would leave the stack", so a card cast with flashback, or under a
+    # permission's exile rider, still goes to exile. A spell countered on
+    # resolution (608.2b) never ran its effects and was never marked.
+    if (
+        obj.returns_to_hand_on_resolution
+        and not card.is_permanent
+        and not suspends
+        and not ((flashback and card.graveyard_cast_exiles) or exiles_instead)
+    ):
+        destination = Zone.HAND
+        rebounds = plots = False
+        exiled_with = None
+        tuck_to = None
+        shuffles_in = False
     # Adventure (715.3c) and aftermath (702.127b): the fifth rider on this slot,
     # and the only one that has to read the **printed** card rather than the one
     # that just resolved -- `card` here is the second face, and the flags that

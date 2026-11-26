@@ -236,6 +236,32 @@ class TestTheAfterlifeSpiritIsWhiteAndBlack:
         assert sorted(other.colors) == ["W"]
 
 
+class TestOyobisSpiritIsAThreeThreeWhiteFlier:
+    """Oyobi, Who Split the Heavens: *"create a **3/3 white Spirit** creature
+    token with flying."*
+
+    `spirit_1_1_w_flying` has the colour, type and keyword at a third of the
+    size, and `angel_3_3_w_flying` has the body with the wrong creature type,
+    which every Spirit count and Spirit lord reads. Neither is Oyobi's token.
+    """
+
+    def test_it_exists(self, pool):
+        assert pool.get("spirit_3_3_w_flying") is not None
+
+    def test_it_is_a_three_three_white_flying_spirit(self, pool):
+        spirit = pool.get("spirit_3_3_w_flying")
+        assert (spirit.power, spirit.toughness) == (3, 3)
+        assert sorted(spirit.colors) == ["W"]
+        assert "Spirit" in spirit.subtypes
+        assert "flying" in spirit.keywords
+        assert spirit.is_creature and spirit.is_token
+
+    def test_the_angel_is_still_a_separate_token(self, pool):
+        other = pool.get("angel_3_3_w_flying")
+        assert other is not None
+        assert "Spirit" not in other.subtypes
+
+
 class TestTheAberrationsAngelsAreColorlessEldrazi:
     """Angelic Aberration: *"Create that many **4/4 colorless Eldrazi Angel**
     creature tokens with flying and vigilance."*

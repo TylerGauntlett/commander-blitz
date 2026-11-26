@@ -643,6 +643,11 @@ class TriggerModel(BaseModel):
     #: mints a Treasure off an opponent's tapper or your own equip is a
     #: strictly larger card.
     targeted_by: Literal["spell", "ability", "activated_ability"] | None = None
+    #: For ``becomes_tapped``: "…becomes tapped, **if it isn't being declared
+    #: as an attacker**" (Verity Circle, Rhoda, Geist Avenger). ``false`` drops
+    #: the tap rule 508.1f makes part of declaring an attacker, ``true`` keeps
+    #: only that tap, omitted is every tap.
+    attack_declaration: bool | None = None
     #: For ``draw``: "whenever you draw your **second** card each turn".  The
     #: ordinal that draw must have had for its player this turn.  For
     #: ``spell_cast``: "whenever an opponent casts their second spell each
@@ -1403,6 +1408,11 @@ class AbilityModel(BaseModel):
     #: "combat damage" and Furnace of Rath does not, and the difference is a
     #: whole card; Seraph of the Sword's shield is the prevention twin.
     combat_only: bool = False
+    #: `prevent_damage` only: only damage that is **not** combat damage --
+    #: "prevent all **noncombat** damage that would be dealt to other creatures
+    #: you control" (Crystal Barricade). The mirror of `combat_only`; never
+    #: beside it, since the two together prevent nothing.
+    noncombat_only: bool = False
     counter_multiplier: int | None = None
     counter_addend: int | None = None
     #: `replace_counters`: which kind of counter the replacement is about --

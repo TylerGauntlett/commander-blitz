@@ -10871,6 +10871,63 @@
         {
           "effects": [
             {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Spirit"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "At the beginning of your upkeep, return target Spirit card from your graveyard to your hand.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "angel_of_flight_alabaster",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{W}",
+      "name": "Angel of Flight Alabaster",
+      "oracle_text": "Flying\nAt the beginning of your upkeep, return target Spirit card from your graveyard to your hand.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Angel"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "objects": {
                 "controller": "any",
                 "count": "all",
@@ -23738,6 +23795,77 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W} or {U}."
+        },
+        {
+          "cost": {
+            "mana": "{W/U}{W/U}{W/U}{W/U}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{W/U}{W/U}{W/U}{W/U}, {T}, Sacrifice this artifact: Draw two cards."
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [],
+      "id": "azorius_locket",
+      "mana_cost": "{3}",
+      "name": "Azorius Locket",
+      "oracle_text": "{T}: Add {W} or {U}.\n{W/U}{W/U}{W/U}{W/U}, {T}, Sacrifice this artifact: Draw two cards.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "U",
         "W"
@@ -29669,6 +29797,98 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "benevolent_offering",
+      "mana_cost": "{3}{W}",
+      "name": "Benevolent Offering",
+      "oracle_text": "Choose an opponent. You and that player each create three 1/1 white Spirit creature tokens with flying.\nChoose an opponent. You gain 2 life for each creature you control and that player gains 2 life for each creature they control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "offered",
+          "op": "choose_player",
+          "players": "each_opponent",
+          "prompt": "Choose an opponent to also create three Spirit tokens"
+        },
+        {
+          "amount": {
+            "const": 3
+          },
+          "controller": "you",
+          "op": "create_token",
+          "token": "spirit_1_1_w_flying"
+        },
+        {
+          "amount": {
+            "const": 3
+          },
+          "controller": {
+            "binding": "offered"
+          },
+          "op": "create_token",
+          "token": "spirit_1_1_w_flying"
+        },
+        {
+          "as": "blessed",
+          "op": "choose_player",
+          "players": "each_opponent",
+          "prompt": "Choose an opponent to also gain life"
+        },
+        {
+          "amount": {
+            "times": [
+              {
+                "const": 2
+              },
+              {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            ]
+          },
+          "op": "gain_life",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "times": [
+              {
+                "const": 2
+              },
+              {
+                "count": {
+                  "controller": {
+                    "binding": "blessed"
+                  },
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            ]
+          },
+          "op": "gain_life",
+          "player": {
+            "binding": "blessed"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -37311,6 +37531,96 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "else": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{2}{B}"
+              },
+              "player": "you",
+              "prompt": "Pay Bone Shredder's echo {2}{B}?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Echo {2}{B} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)",
+          "trigger": {
+            "condition": {
+              "came_under_control_since_last_upkeep": true
+            },
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "not_colors": [
+                  "B"
+                ],
+                "not_types": [
+                  "Artifact"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, destroy target nonartifact, nonblack creature.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "bone_shredder",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Bone Shredder",
+      "oracle_text": "Flying\nEcho {2}{B} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)\nWhen this creature enters, destroy target nonartifact, nonblack creature.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Minion"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -38126,6 +38436,94 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "cmp": ">",
+                "left": {
+                  "max_count_of": {
+                    "objects": {
+                      "types": [
+                        "Land"
+                      ],
+                      "zone": "battlefield"
+                    },
+                    "player": "each_opponent"
+                  }
+                },
+                "right": {
+                  "lands_you_control": true
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "count": {
+                    "minus": [
+                      {
+                        "max_count_of": {
+                          "objects": {
+                            "types": [
+                              "Land"
+                            ],
+                            "zone": "battlefield"
+                          },
+                          "player": "each_opponent"
+                        }
+                      },
+                      {
+                        "lands_you_control": true
+                      }
+                    ]
+                  },
+                  "destination": "battlefield",
+                  "op": "search_library",
+                  "rest_to": "hand",
+                  "reveal": true,
+                  "selector": {
+                    "subtypes": [
+                      "Plains"
+                    ]
+                  },
+                  "tapped": true
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature leaves the battlefield, choose an opponent who controls more lands than you. Search your library for a number of Plains cards equal to the difference, reveal those cards, put one of them onto the battlefield tapped and the rest into your hand, then shuffle.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "boreas_charger",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Boreas Charger",
+      "oracle_text": "Flying\nWhen this creature leaves the battlefield, choose an opponent who controls more lands than you. Search your library for a number of Plains cards equal to the difference, reveal those cards, put one of them onto the battlefield tapped and the rest into your hand, then shuffle.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Pegasus"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -40607,6 +41005,73 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "subtypes": [
+              "Spirit"
+            ]
+          },
+          "effect": "cast_as_though_flash",
+          "kind": "static",
+          "text": "You may cast Spirit spells as though they had flash."
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "tap"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever you cast a creature spell during an opponent's turn, tap up to one target creature.",
+          "trigger": {
+            "condition": {
+              "is_your_turn": false
+            },
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "breath_of_the_sleepless",
+      "mana_cost": "{3}{U}",
+      "name": "Breath of the Sleepless",
+      "oracle_text": "You may cast Spirit spells as though they had flash.\nWhenever you cast a creature spell during an opponent's turn, tap up to one target creature.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -70246,6 +70711,53 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "effect": "player_hexproof",
+          "kind": "static",
+          "text": "You have hexproof. (You can't be the target of spells or abilities your opponents control.)"
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "prevent_damage",
+          "kind": "static",
+          "noncombat_only": true,
+          "prevent_all": true,
+          "text": "Prevent all noncombat damage that would be dealt to other creatures you control."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "crystal_barricade",
+      "keywords": [
+        "defender"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Crystal Barricade",
+      "oracle_text": "Defender (This creature can't attack.)\nYou have hexproof. (You can't be the target of spells or abilities your opponents control.)\nPrevent all noncombat damage that would be dealt to other creatures you control.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Wall"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -71977,6 +72489,66 @@
         "Cleric"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}{W}",
+            "remove_counters": {
+              "amount": 1,
+              "counter": "+1/+1"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "spirit_1_1_w_flying"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{W}, Remove a +1/+1 counter from this creature: Create a 1/1 white Spirit creature token with flying."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "custodi_soulbinders",
+      "mana_cost": "{3}{W}",
+      "name": "Custodi Soulbinders",
+      "oracle_text": "This creature enters with X +1/+1 counters on it, where X is the number of other creatures on the battlefield.\n{2}{W}, Remove a +1/+1 counter from this creature: Create a 1/1 white Spirit creature token with flying.",
+      "power": 0,
+      "replacements": [
+        {
+          "amount": {
+            "count": {
+              "controller": "any",
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Cleric"
+      ],
+      "toughness": 0,
       "types": [
         "Creature"
       ]
@@ -85873,6 +86445,90 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "condition": {
+                "not": {
+                  "has_turn_flag": "donal_herald_of_wings_copied"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "effects": [
+                    {
+                      "except_": {
+                        "add_subtypes": [
+                          "Spirit"
+                        ],
+                        "power": 1,
+                        "toughness": 1
+                      },
+                      "op": "copy_spell",
+                      "sid": {
+                        "binding": "sid"
+                      }
+                    },
+                    {
+                      "flag": "donal_herald_of_wings_copied",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "set_turn_flag"
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Copy that spell?"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a nonlegendary creature spell with flying, you may copy it, except the copy is a 1/1 Spirit in addition to its other types. Do this only once each turn. (The copy becomes a token.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "keywords": [
+                "flying"
+              ],
+              "not_supertypes": [
+                "Legendary"
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "donal_herald_of_wings",
+      "mana_cost": "{2}{U}{U}",
+      "name": "Donal, Herald of Wings",
+      "oracle_text": "Whenever you cast a nonlegendary creature spell with flying, you may copy it, except the copy is a 1/1 Spirit in addition to its other types. Do this only once each turn. (The copy becomes a token.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -86646,6 +87302,107 @@
       "mana_cost": "{2}{W}{U}",
       "name": "Dovin Baan",
       "oracle_text": "+1: Until your next turn, up to one target creature gets -3/-0 and its activated abilities can't be activated.\n−1: You gain 2 life and draw a card.\n−7: You get an emblem with \"Your opponents can't untap more than two permanents during their untap steps.\"",
+      "source": "auto",
+      "subtypes": [
+        "Dovin"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "loyalty",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "Until end of turn, whenever a creature you control deals combat damage to a player, put a loyalty counter on Dovin.",
+              "trigger": {
+                "controller": "you",
+                "event": "deals_combat_damage_to_player"
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Until end of turn, whenever a creature you control deals combat damage to a player, put a loyalty counter on Dovin."
+        },
+        {
+          "cost": {
+            "loyalty": -1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "thopter_1_1_c_flying"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "−1: Create a 1/1 colorless Thopter artifact creature token with flying. You gain 1 life."
+        },
+        {
+          "cost": {
+            "loyalty": -7
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 10
+              },
+              "destination": "hand",
+              "objects": {
+                "count": 3
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "activated",
+          "text": "−7: Look at the top ten cards of your library. Put three of them into your hand and the rest on the bottom of your library in a random order."
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "dovin_grand_arbiter",
+      "loyalty": 3,
+      "mana_cost": "{1}{W}{U}",
+      "name": "Dovin, Grand Arbiter",
+      "oracle_text": "+1: Until end of turn, whenever a creature you control deals combat damage to a player, put a loyalty counter on Dovin.\n−1: Create a 1/1 colorless Thopter artifact creature token with flying. You gain 1 life.\n−7: Look at the top ten cards of your library. Put three of them into your hand and the rest on the bottom of your library in a random order.",
       "source": "auto",
       "subtypes": [
         "Dovin"
@@ -89611,6 +90368,129 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Spirit"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other Spirit creatures you control get +1/+1 and have hexproof.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Spirit"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "hexproof"
+          ],
+          "kind": "static",
+          "text": "Other Spirit creatures you control get +1/+1 and have hexproof."
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "drogskol_captain",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{W}{U}",
+      "name": "Drogskol Captain",
+      "oracle_text": "Flying\nOther Spirit creatures you control get +1/+1 and have hexproof. (They can't be the targets of spells or abilities your opponents control.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Spirit"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "melee"
+          ],
+          "kind": "static",
+          "text": "Other Spirits you control have melee."
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Spirit"
+            ]
+          },
+          "effect": "prevent_damage",
+          "kind": "static",
+          "noncombat_only": true,
+          "prevent_all": true,
+          "text": "Prevent all noncombat damage that would be dealt to Spirits you control."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "drogskol_reinforcements",
+      "keywords": [
+        "melee"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Drogskol Reinforcements",
+      "oracle_text": "Melee (Whenever this creature attacks, it gets +1/+1 until end of turn for each opponent you attacked this combat.)\nOther Spirits you control have melee.\nPrevent all noncombat damage that would be dealt to Spirits you control.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -110110,6 +110990,46 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "spirit_1_1_w_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a nontoken creature is put into your graveyard from the battlefield, create a 1/1 white Spirit creature token with flying.",
+          "trigger": {
+            "controller": "any",
+            "event": "creature_dies",
+            "filter": {
+              "is_token": false,
+              "owner": "you"
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "field_of_souls",
+      "mana_cost": "{2}{W}{W}",
+      "name": "Field of Souls",
+      "oracle_text": "Whenever a nontoken creature is put into your graveyard from the battlefield, create a 1/1 white Spirit creature token with flying.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -114362,6 +115282,102 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "flood_of_tears",
+      "mana_cost": "{4}{U}{U}",
+      "name": "Flood of Tears",
+      "oracle_text": "Return all nonland permanents to their owners' hands. If you return four or more nontoken permanents you control this way, you may put a permanent card from your hand onto the battlefield.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "yours",
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "is_token": false,
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "choose_permanents"
+        },
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "return_to_hand"
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "binding": "yours",
+                "zone": "hand"
+              }
+            },
+            "right": {
+              "const": 4
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "condition": {
+                "exists": {
+                  "any_types": [
+                    "Artifact",
+                    "Battle",
+                    "Creature",
+                    "Enchantment",
+                    "Land",
+                    "Planeswalker"
+                  ],
+                  "controller": "you",
+                  "zone": "hand"
+                }
+              },
+              "effects": [
+                {
+                  "objects": {
+                    "any_types": [
+                      "Artifact",
+                      "Battle",
+                      "Creature",
+                      "Enchantment",
+                      "Land",
+                      "Planeswalker"
+                    ],
+                    "chooser": "controller",
+                    "controller": "you",
+                    "count": 1,
+                    "zone": "hand"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ],
+              "op": "may",
+              "prompt": "Put a permanent card from your hand onto the battlefield?"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -122248,6 +123264,72 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "geist_angel",
+              "attacking": true,
+              "op": "create_token",
+              "tapped": true,
+              "token": "angel_4_4_w_flying"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "geist_angel"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "delay",
+              "step": "end_of_combat",
+              "text": "Exile that token at end of combat."
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Geist of Saint Traft attacks, create a 4/4 white Angel creature token with flying that's tapped and attacking. Exile that token at end of combat.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "geist_of_saint_traft",
+      "keywords": [
+        "hexproof"
+      ],
+      "mana_cost": "{1}{W}{U}",
+      "name": "Geist of Saint Traft",
+      "oracle_text": "Hexproof (This creature can't be the target of spells or abilities your opponents control.)\nWhenever Geist of Saint Traft attacks, create a 4/4 white Angel creature token with flying that's tapped and attacking. Exile that token at end of combat.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Cleric"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -139533,6 +140615,55 @@
         {
           "effects": [
             {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "graveyard"
+                }
+              },
+              "op": "create_token",
+              "token": "spirit_1_1_w_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, create X 1/1 white Spirit creature tokens with flying, where X is the number of creature cards in your graveyard.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "hallowed_spiritkeeper",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{1}{W}{W}",
+      "name": "Hallowed Spiritkeeper",
+      "oracle_text": "Vigilance\nWhen this creature dies, create X 1/1 white Spirit creature tokens with flying, where X is the number of creature cards in your graveyard.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Avatar"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "effects": [
                 {
                   "ability": "halo_forager_cast",
@@ -141652,6 +142783,57 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "controller": "you",
+                  "op": "create_token",
+                  "token": "spirit_1_1_w_flying"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{1}"
+              },
+              "player": "you",
+              "prompt": "Pay {1} to create a 1/1 white Spirit creature token with flying?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature an opponent controls dies, you may pay {1}. If you do, create a 1/1 white Spirit creature token with flying.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "dies",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "haunted_library",
+      "mana_cost": "{1}{W}",
+      "name": "Haunted Library",
+      "oracle_text": "Whenever a creature an opponent controls dies, you may pay {1}. If you do, create a 1/1 white Spirit creature token with flying.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -141771,6 +142953,94 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "haunting_imitation",
+      "mana_cost": "{2}{U}",
+      "name": "Haunting Imitation",
+      "oracle_text": "Each player reveals the top card of their library. For each creature card revealed this way, create a token that's a copy of that card, except it's 1/1, it's a Spirit in addition to its other types, and it has flying. If no creature cards were revealed this way, return Haunting Imitation to its owner's hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "as": "revealed",
+              "objects": {
+                "player": {
+                  "binding": "each_player"
+                },
+                "zone": "library"
+              },
+              "op": "snapshot"
+            },
+            {
+              "objects": {
+                "binding": "revealed"
+              },
+              "op": "reveal"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "revealed",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "library"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "controller": "you",
+                  "except_": {
+                    "add_keywords": [
+                      "flying"
+                    ],
+                    "add_subtypes": [
+                      "Spirit"
+                    ],
+                    "power": 1,
+                    "toughness": 1
+                  },
+                  "objects": {
+                    "binding": "revealed",
+                    "zone": "library"
+                  },
+                  "op": "copy_permanent"
+                }
+              ]
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_player"
+        },
+        {
+          "condition": {
+            "not": {
+              "exists": {
+                "created_with": "self",
+                "zone": "battlefield"
+              }
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "op": "return_self_to_hand_on_resolution"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -167465,6 +168735,51 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each player's draw step, that player draws an additional card.",
+          "trigger": {
+            "controller": "any",
+            "event": "draw_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "kami_of_the_crescent_moon",
+      "mana_cost": "{U}{U}",
+      "name": "Kami of the Crescent Moon",
+      "oracle_text": "At the beginning of each player's draw step, that player draws an additional card.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "controller": "you"
           },
@@ -168649,6 +169964,105 @@
         "Legendary"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "protection",
+          "from_colors": [
+            "B"
+          ],
+          "kind": "static",
+          "text": "Flying, protection from black"
+        },
+        {
+          "effects": [
+            {
+              "else": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{3}{W}{W}"
+              },
+              "player": "you",
+              "prompt": "Pay Karmic Guide's echo {3}{W}{W}?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Echo {3}{W}{W} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)",
+          "trigger": {
+            "condition": {
+              "came_under_control_since_last_upkeep": true
+            },
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this creature enters, return target creature card from your graveyard to the battlefield.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "karmic_guide",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}{W}",
+      "name": "Karmic Guide",
+      "oracle_text": "Flying, protection from black\nEcho {3}{W}{W} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)\nWhen this creature enters, return target creature card from your graveyard to the battlefield.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Angel",
+        "Spirit"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -174158,6 +175572,74 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "kirtar_s_wrath",
+      "mana_cost": "{4}{W}{W}",
+      "name": "Kirtar's Wrath",
+      "oracle_text": "Destroy all creatures. They can't be regenerated.\nThreshold — If there are seven or more cards in your graveyard, instead destroy all creatures, then create two 1/1 white Spirit creature tokens with flying. Creatures destroyed this way can't be regenerated.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "controller": "you",
+                "zone": "graveyard"
+              }
+            },
+            "right": {
+              "const": 7
+            }
+          },
+          "else": [
+            {
+              "no_regeneration": true,
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "no_regeneration": true,
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "token": "spirit_1_1_w_flying"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -203203,6 +204685,111 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "spirit_1_1_w_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Millicent or another nontoken Spirit you control dies or deals combat damage to a player, create a 1/1 white Spirit creature token with flying.",
+          "trigger": {
+            "controller": "you",
+            "event": "dies",
+            "filter": {
+              "any_of": [
+                {
+                  "self_only": true
+                },
+                {
+                  "exclude_self": true,
+                  "is_token": false,
+                  "subtypes": [
+                    "Spirit"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "spirit_1_1_w_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Millicent or another nontoken Spirit you control dies or deals combat damage to a player, create a 1/1 white Spirit creature token with flying.",
+          "trigger": {
+            "controller": "you",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "any_of": [
+                {
+                  "self_only": true
+                },
+                {
+                  "exclude_self": true,
+                  "is_token": false,
+                  "subtypes": [
+                    "Spirit"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "cost_reduction": {
+        "count": {
+          "controller": "you",
+          "subtypes": [
+            "Spirit"
+          ],
+          "zone": "battlefield"
+        }
+      },
+      "id": "millicent_restless_revenant",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{W}{U}",
+      "name": "Millicent, Restless Revenant",
+      "oracle_text": "Affinity for Spirits (This spell costs {1} less to cast for each Spirit you control.)\nFlying\nWhenever Millicent or another nontoken Spirit you control dies or deals combat damage to a player, create a 1/1 white Spirit creature token with flying.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mill": 1,
             "tap": true
@@ -215036,6 +216623,68 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "tap"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature or another Spirit you control enters, tap target creature an opponent controls.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "subtypes": [
+                "Spirit"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "nebelgast_herald",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Nebelgast Herald",
+      "oracle_text": "Flash\nFlying\nWhenever this creature or another Spirit you control enters, tap target creature an opponent controls.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -231595,6 +233244,66 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "spirit_3_3_w_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a Spirit or Arcane spell, create a 3/3 white Spirit creature token with flying.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_of": [
+                {
+                  "subtypes": [
+                    "Spirit"
+                  ]
+                },
+                {
+                  "subtypes": [
+                    "Arcane"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "oyobi_who_split_the_heavens",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{6}{W}",
+      "name": "Oyobi, Who Split the Heavens",
+      "oracle_text": "Flying\nWhenever you cast a Spirit or Arcane spell, create a 3/3 white Spirit creature token with flying.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "any_types": [
               "Artifact",
@@ -242716,6 +244425,66 @@
           "effects": [
             {
               "amount": {
+                "player_count": {
+                  "cmp": ">",
+                  "objects": {
+                    "types": [
+                      "Land"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "player": "each_opponent",
+                  "than": {
+                    "count": {
+                      "controller": "you",
+                      "types": [
+                        "Land"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  }
+                }
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "spirit_1_1_w_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, create X 1/1 white Spirit creature tokens with flying, where X is the number of opponents who control more lands than you.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "priest_of_the_blessed_graf",
+      "mana_cost": "{2}{W}",
+      "name": "Priest of the Blessed Graf",
+      "oracle_text": "At the beginning of your end step, create X 1/1 white Spirit creature tokens with flying, where X is the number of opponents who control more lands than you.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Cleric"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "creatures_died_this_turn": "you"
               },
               "counter": "+1/+1",
@@ -245914,6 +247683,60 @@
       "oracle_text": "At the beginning of your end step, you may sacrifice a non-Demon creature. If you do, populate. (Create a token that's a copy of a creature token you control.)",
       "second_face": "foul_rebirth_promise_of_aclazotz",
       "second_face_zone": "hand",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "sacrificed",
+              "objects": {
+                "self_only": true
+              },
+              "op": "sacrifice"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "sacrificed"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 4
+                  },
+                  "op": "create_token",
+                  "token": "spirit_1_1_c"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "When a creature you control dies, sacrifice this enchantment. If you do, create four 1/1 colorless Spirit creature tokens.",
+          "trigger": {
+            "event": "creature_dies",
+            "filter": {
+              "controller": "you"
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "promise_of_bunrei",
+      "mana_cost": "{2}{W}",
+      "name": "Promise of Bunrei",
+      "oracle_text": "When a creature you control dies, sacrifice this enchantment. If you do, create four 1/1 colorless Spirit creature tokens.",
       "source": "auto",
       "types": [
         "Enchantment"
@@ -253467,6 +255290,77 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "hexproof"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "subtypes": [
+                  "Spirit"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, target Spirit gains hexproof until end of turn.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "subtypes": [
+              "Spirit"
+            ]
+          },
+          "effect": "cast_as_though_flash",
+          "kind": "static",
+          "text": "You may cast Spirit spells as though they had flash."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "rattlechains",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Rattlechains",
+      "oracle_text": "Flash\nFlying\nWhen this creature enters, target Spirit gains hexproof until end of turn.\nYou may cast Spirit spells as though they had flash.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -260515,6 +262409,100 @@
         "Legendary"
       ],
       "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": 1,
+                  "destination": "hand",
+                  "op": "search_library",
+                  "player": {
+                    "target": "t1"
+                  },
+                  "selector": {
+                    "name": "Timin, Youthful Geist"
+                  },
+                  "shuffle": true
+                }
+              ],
+              "op": "may",
+              "player": {
+                "target": "t1"
+              },
+              "prompt": "Put Timin, Youthful Geist into your hand from your library?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player"
+            }
+          ],
+          "text": "Partner with Timin, Youthful Geist (When this creature enters, target player may put Timin into their hand from their library, then shuffle.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature an opponent controls becomes tapped, if it isn't being declared as an attacker, put a +1/+1 counter on Rhoda.",
+          "trigger": {
+            "attack_declaration": false,
+            "controller": "any",
+            "event": "becomes_tapped",
+            "filter": {
+              "controller": "opponent",
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "rhoda_geist_avenger",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Rhoda, Geist Avenger",
+      "oracle_text": "Partner with Timin, Youthful Geist (When this creature enters, target player may put Timin into their hand from their library, then shuffle.)\nVigilance\nWhenever a creature an opponent controls becomes tapped, if it isn't being declared as an attacker, put a +1/+1 counter on Rhoda.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -279935,6 +281923,80 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "attackers": {
+            "keywords": [
+              "flying"
+            ]
+          },
+          "effect": "can_block_only",
+          "kind": "static",
+          "text": "This creature can block only creatures with flying."
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "count": 2,
+              "subtypes": [
+                "Spirit"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "tap"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Tap two untapped Spirits you control: Tap target creature you don't control."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "shacklegeist",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Shacklegeist",
+      "oracle_text": "Flying\nThis creature can block only creatures with flying.\nTap two untapped Spirits you control: Tap target creature you don't control.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -289102,6 +291164,69 @@
         "Eldrazi"
       ],
       "toughness": 7,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "prompt": "Draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a Spirit or Arcane spell, you may draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_of": [
+                {
+                  "subtypes": [
+                    "Spirit"
+                  ]
+                },
+                {
+                  "subtypes": [
+                    "Arcane"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "sire_of_the_storm",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{U}{U}",
+      "name": "Sire of the Storm",
+      "oracle_text": "Flying\nWhenever you cast a Spirit or Arcane spell, you may draw a card.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -298514,6 +300639,68 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "exiles": true,
+              "objects": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "controller": "any",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "count": {
+                      "controller": "you",
+                      "subtypes": [
+                        "Spirit"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  }
+                },
+                "zone": "graveyard"
+              },
+              "op": "cast_from_hand",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, you may cast an instant or sorcery spell with mana value less than or equal to the number of Spirits you control from a graveyard without paying its mana cost. If that spell would be put into a graveyard, exile it instead.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "spectral_arcanist",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{U}",
+      "name": "Spectral Arcanist",
+      "oracle_text": "Flying\nWhen this creature enters, you may cast an instant or sorcery spell with mana value less than or equal to the number of Spirits you control from a graveyard without paying its mana cost. If that spell would be put into a graveyard, exile it instead.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Wizard"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -298634,6 +300821,62 @@
         "Pirate"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}{U}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Spirit"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}{U}: Return target Spirit you control to its owner's hand."
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "spectral_shepherd",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Spectral Shepherd",
+      "oracle_text": "Flying\n{1}{U}: Return target Spirit you control to its owner's hand.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -308252,6 +310495,74 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "sudden_salvation",
+      "mana_cost": "{2}{W}{W}",
+      "name": "Sudden Salvation",
+      "oracle_text": "Choose up to three target permanent cards in graveyards that were put there from the battlefield this turn. Return them to the battlefield tapped under their owners' control. You draw a card for each opponent who controls one or more of those permanents.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "returned",
+          "controller": "owner",
+          "destination": "battlefield",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_from_graveyard",
+          "tapped": true
+        },
+        {
+          "amount": {
+            "player_count": {
+              "cmp": ">=",
+              "objects": {
+                "binding": "returned",
+                "zone": "battlefield"
+              },
+              "player": "each_opponent",
+              "than": {
+                "const": 1
+              }
+            }
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "targets": [
+        {
+          "count": 3,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Battle",
+              "Creature",
+              "Enchantment",
+              "Land",
+              "Planeswalker"
+            ],
+            "controller": "any",
+            "graveyard_arrival_this_turn": [
+              "from_battlefield"
+            ],
+            "zone": "graveyard"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -311638,6 +313949,50 @@
         "Human",
         "Rogue",
         "Villain"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Spirit"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other Spirits you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "supreme_phantom",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Supreme Phantom",
+      "oracle_text": "Flying\nOther Spirits you control get +1/+1.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
       ],
       "toughness": 3,
       "types": [
@@ -337657,6 +340012,102 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": 1,
+                  "destination": "hand",
+                  "op": "search_library",
+                  "player": {
+                    "target": "t1"
+                  },
+                  "selector": {
+                    "name": "Rhoda, Geist Avenger"
+                  },
+                  "shuffle": true
+                }
+              ],
+              "op": "may",
+              "player": {
+                "target": "t1"
+              },
+              "prompt": "Put Rhoda, Geist Avenger into your hand from your library?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player"
+            }
+          ],
+          "text": "Partner with Rhoda, Geist Avenger (When this creature enters, target player may put Rhoda into their hand from their library, then shuffle.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "tap"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of each combat, tap up to one target creature.",
+          "trigger": {
+            "controller": "any",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "timin_youthful_geist",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{U}",
+      "name": "Timin, Youthful Geist",
+      "oracle_text": "Partner with Rhoda, Geist Avenger (When this creature enters, target player may put Rhoda into their hand from their library, then shuffle.)\nFlying\nAt the beginning of each combat, tap up to one target creature.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -357195,6 +359646,85 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "prompt": "Draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature an opponent controls becomes tapped, if it isn't being declared as an attacker, you may draw a card.",
+          "trigger": {
+            "attack_declaration": false,
+            "controller": "any",
+            "event": "becomes_tapped",
+            "filter": {
+              "controller": "opponent",
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{4}{U}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "tap"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "not_keywords": [
+                  "flying"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{4}{U}: Tap target creature without flying."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "verity_circle",
+      "mana_cost": "{2}{U}",
+      "name": "Verity Circle",
+      "oracle_text": "Whenever a creature an opponent controls becomes tapped, if it isn't being declared as an attacker, you may draw a card.\n{4}{U}: Tap target creature without flying.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {

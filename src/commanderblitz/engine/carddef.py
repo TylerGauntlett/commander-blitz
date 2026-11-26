@@ -1007,6 +1007,16 @@ class TriggerSpec:
     #: written also fired off an opponent's tapper, a fight ability, and your
     #: own equip.
     targeted_by: str | None = None
+    #: ``becomes_tapped`` only: "…becomes tapped, **if it isn't being declared
+    #: as an attacker**" (Verity Circle).  ``False`` fires on every tap but the
+    #: one 508.1f makes part of an attack declaration, ``True`` on that tap
+    #: alone, ``None`` on every tap.  Read off the TAPPED event's
+    #: ``attack_declaration``, which `combat` sets on the declaration's own
+    #: taps; a tap during the declare attackers step for any other reason (an
+    #: attack cost, a mana ability) is not one.  No condition can stand in for
+    #: it, since by the time an intervening "if" is read the tap is over and
+    #: ``step_is`` cannot say why it happened.
+    attack_declaration: bool | None = None
     #: ``draw`` and ``spell_cast`` only: "whenever you draw your **second**
     #: card each turn", "whenever an opponent casts their **second** spell each
     #: turn".  The ordinal the draw or cast must have had for its player this

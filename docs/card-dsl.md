@@ -4947,6 +4947,11 @@ into your hand" — the search takes `may_destination` instead, optionally gated
 by `may_destination_if`; see the cookbook's
 [`may_destination`](card-dsl-cookbook.md#you-may-put-that-card-onto-the-battlefield-if-you-dont---may_destination).
 The two are refused together.
+When one search's cards go to two places — "put one of them onto the battlefield
+tapped and the rest into your hand" — the search takes `rest_to`; see the
+cookbook's
+[`rest_to`](card-dsl-cookbook.md#put-one-of-them-onto-the-battlefield-tapped-and-the-rest-into-your-hand--rest_to).
+It is refused beside either key.
 
 ### Narrowing when a spell may be cast
 
@@ -6813,6 +6818,7 @@ The form list is
 { "no_monarch": true }                        // …and the vacancy, which is not its negation
 { "has_flag": "renowned" }                    // a word written by `set_flag`, for the game
 { "has_turn_flag": "exerted" }                // …and one written by `set_turn_flag`, for the turn
+{ "came_under_control_since_last_upkeep": true }   // echo (702.30a)
 { "cast_during": "your_main" }                // addendum — the phase the spell was *cast* in
 { "was_cast": true }                          // 603.6e — *this* arrival was a resolving spell
 { "cast_at_sorcery_timing": false }           // 307.1 — cast any time a sorcery couldn't have been
@@ -6875,6 +6881,14 @@ they are two keys over two stores rather than one key with a duration — see
 in the cookbook. Both ask about the ability's own source, which is the only thing that can
 have become the word.
 
+`came_under_control_since_last_upkeep` is echo's intervening-if, asked of the
+ability's own source: true from its arrival or its last change of control until
+one of its controller's upkeeps has begun since, and during that upkeep "last"
+is the one before. A flag cannot stand in, because a change of control does not
+clear one — see
+[Echo](card-dsl-cookbook.md#echo--pay-for-it-once-the-upkeep-after-it-arrives)
+in the cookbook.
+
 `cast_during` is addendum, and it is the only condition here that reads a fact
 about a moment that has already passed — see
 [Addendum](card-dsl-cookbook.md#addendum--the-phase-a-spell-was-cast-in) in the cookbook.
@@ -6935,6 +6949,7 @@ and the filter keys are
     "sacrificed_to_activate": true,  // beside `mana_ability: false`: the cost sacrificed a permanent
     "life_paid_to_activate": true,   // beside `mana_ability: false`: the cost took life
     "targeted_by": "spell",          // `becomes_target` only: a spell, an ability, or an activated ability
+    "attack_declaration": false,     // `becomes_tapped` only: not the tap of being declared as an attacker
     "to_zones": ["graveyard", "exile"], // `leaves_battlefield` only: where it went
     "from_zones": ["exile"]          // `spell_cast` / `land_played`: where it was played from; `put_into_graveyard`: where it came from
   },
@@ -8049,6 +8064,25 @@ Brass, the painlands, Legolas's Quick Reflexes' granted trigger) are played for.
 "Becomes" is already right at the primitive: `tap_permanent` returns early on a
 permanent that is *already* tapped, so re-tapping one is not a second event —
 which is the whole of the distinction between being tapped and becoming tapped.
+
+`attack_declaration: false` is "…becomes tapped, **if it isn't being declared as
+an attacker**" — Verity Circle, Rhoda, Geist Avenger:
+
+```jsonc
+"trigger": {
+  "event": "becomes_tapped", "controller": "any",
+  "filter": { "types": ["Creature"], "controller": "opponent" },
+  "attack_declaration": false
+}
+```
+
+The tap rule 508.1f makes part of declaring an attacker is the only one `combat`
+marks, and every TAPPED event says whether it was that tap, so a creature tapped
+by a `tap` op, a tap cost or for mana in the declare attackers step still fires
+it. `true` keeps the declaration's tap alone. The loader refuses the key on any
+other event. The near misses are an intervening-if on `step_is`, which also
+drops every other tap in that step, and the bare trigger, which fires on every
+non-vigilant attacker an opponent sends.
 
 **`becomes_blocked` and `attacks_unblocked` are told from the attacker's side**,
 and they are a pair rather than two features: both are decided when the block

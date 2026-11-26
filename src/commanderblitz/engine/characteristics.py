@@ -3742,6 +3742,23 @@ def keyword_as_it_enters(state: GameState, oid: int, keyword: str) -> bool:
     return False
 
 
+def prevention_reaches(static: Mapping[str, Any], *, is_combat: bool) -> bool:
+    """Whether a `prevent_damage` static's combat clause names this damage.
+
+    ``combat_only`` -- "prevent all **combat** damage" (Seraph of the Sword) --
+    answers combat damage alone, and ``noncombat_only`` -- "prevent all
+    **noncombat** damage" (Crystal Barricade) -- everything else: burn, a
+    fight, a dying Devil's ping. Neither is all damage. The loader refuses the
+    two together. Every `prevent_damage` reader asks this one question, so a
+    shield cannot be narrowed for one of its forms and not another.
+    """
+    if static.get("combat_only"):
+        return is_combat
+    if static.get("noncombat_only"):
+        return not is_combat
+    return True
+
+
 def prevented_damage(state: GameState, oid: int, *, is_combat: bool = False) -> int:
     """How much damage from **each source** this permanent prevents -- absorb.
 
@@ -3763,7 +3780,7 @@ def prevented_damage(state: GameState, oid: int, *, is_combat: bool = False) -> 
             continue
         if not _matches(state, obj, source_obj, static.get("affects")):
             continue
-        if static.get("combat_only") and not is_combat:
+        if not prevention_reaches(static, is_combat=is_combat):
             continue
         if static.get("prevent_all"):
             # A total shield is answered by `prevents_all_damage` below, not by
@@ -3808,7 +3825,7 @@ def prevents_all_damage(state: GameState, oid: int, *, is_combat: bool = False) 
         # reason: it prevents the same damage and then gives Khârn away.
         and not static.get("remove_counters")
         and not static.get("effects")
-        and (is_combat or not static.get("combat_only"))
+        and prevention_reaches(static, is_combat=is_combat)
         and _matches(state, obj, source_obj, static.get("affects"))
         for source_obj, static in _battlefield_statics(state)
         if static.get("effect") == "prevent_damage"
@@ -3837,7 +3854,7 @@ def damage_into_counters(
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "prevent_damage" or not static.get("counter"):
             continue
-        if static.get("combat_only") and not is_combat:
+        if not prevention_reaches(static, is_combat=is_combat):
             continue
         if _matches(state, obj, source_obj, static.get("affects")):
             return source_obj, static["counter"]
@@ -3868,7 +3885,7 @@ def damage_removes_counters(
         spec = static.get("remove_counters")
         if static.get("effect") != "prevent_damage" or not spec:
             continue
-        if static.get("combat_only") and not is_combat:
+        if not prevention_reaches(static, is_combat=is_combat):
             continue
         if _matches(state, obj, source_obj, static.get("affects")):
             return source_obj, str(spec["counter"]), int(spec.get("amount", 1))
@@ -3897,7 +3914,7 @@ def damage_prevented_with_effects(
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "prevent_damage" or not static.get("effects"):
             continue
-        if static.get("combat_only") and not is_combat:
+        if not prevention_reaches(static, is_combat=is_combat):
             continue
         if _matches(state, obj, source_obj, static.get("affects")):
             return source_obj, static

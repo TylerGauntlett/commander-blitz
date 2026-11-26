@@ -1,0 +1,71 @@
+{
+  "_comment": "Cards that exist only for tests/unit/casting/test_return_self_to_hand_on_resolution.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_return_self_if_alone` gains 2 life so the test can see its effects ran, and returns itself only while its caster controls no creature, so the test can flip the condition; `t_return_self_kill` has a target, so the test can make it fizzle; `t_return_self_exiles` prints `exiles_itself` beside the op; `t_return_self_flashback` can be cast with flashback.",
+  "cards": [
+    {
+      "id": "t_return_self_if_alone",
+      "name": "Test Return Self If Alone",
+      "oracle_text": "You gain 2 life. If you control no creatures, return Test Return Self If Alone to its owner's hand.",
+      "mana_cost": "{1}{W}",
+      "types": ["Sorcery"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "spell_effects": [
+        { "op": "gain_life", "player": "you", "amount": { "const": 2 } },
+        {
+          "op": "if",
+          "condition": { "not": { "exists": { "zone": "battlefield", "controller": "you", "types": ["Creature"] } } },
+          "then": [{ "op": "return_self_to_hand_on_resolution" }]
+        }
+      ]
+    },
+    {
+      "id": "t_return_self_kill",
+      "name": "Test Return Self Kill",
+      "oracle_text": "Destroy target creature. Return Test Return Self Kill to its owner's hand.",
+      "mana_cost": "{B}",
+      "types": ["Instant"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": { "zone": "battlefield", "controller": "any", "types": ["Creature"] }
+        }
+      ],
+      "spell_effects": [
+        { "op": "destroy", "objects": { "target": "t1" } },
+        { "op": "return_self_to_hand_on_resolution" }
+      ]
+    },
+    {
+      "id": "t_return_self_exiles",
+      "name": "Test Return Self Exiles",
+      "oracle_text": "You gain 2 life. Return Test Return Self Exiles to its owner's hand. Exile Test Return Self Exiles.",
+      "mana_cost": "{W}",
+      "types": ["Sorcery"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "exiles_itself": true,
+      "spell_effects": [
+        { "op": "gain_life", "player": "you", "amount": { "const": 2 } },
+        { "op": "return_self_to_hand_on_resolution" }
+      ]
+    },
+    {
+      "id": "t_return_self_flashback",
+      "name": "Test Return Self Flashback",
+      "oracle_text": "You gain 2 life. Return Test Return Self Flashback to its owner's hand.\nFlashback {W}",
+      "mana_cost": "{W}",
+      "types": ["Sorcery"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "graveyard_cost": { "mana": "{W}" },
+      "spell_effects": [
+        { "op": "gain_life", "player": "you", "amount": { "const": 2 } },
+        { "op": "return_self_to_hand_on_resolution" }
+      ]
+    }
+  ]
+}
