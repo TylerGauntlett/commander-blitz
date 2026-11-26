@@ -1,0 +1,22 @@
+{
+  "card_id": "boreas_charger",
+  "name": "Boreas Charger",
+  "oracle_text": "Flying\nWhen this creature leaves the battlefield, choose an opponent who controls more lands than you. Search your library for a number of Plains cards equal to the difference, reveal those cards, put one of them onto the battlefield tapped and the rest into your hand, then shuffle.",
+  "blocked_sentences": [
+    "When this creature leaves the battlefield, choose an opponent who controls more lands than you. Search your library for a number of Plains cards equal to the difference, reveal those cards, put one of them onto the battlefield tapped and the rest into your hand, then shuffle."
+  ],
+  "needs": [
+    {
+      "capability": "search_split_destinations",
+      "kind": "op",
+      "what": "a split destination on `search_library` for the cards one search turned up: of the N found (here up to `minus[max_count_of lands over each_opponent, lands_you_control]`), exactly one chosen card goes to `destination: \"battlefield\"` with `tapped: true` and the rest go to a second destination (`rest_to: \"hand\"`), in one search with one LIBRARY_SEARCHED event and one shuffle at the end. The same shape is Cultivate, Kodama's Reach and Nissa's Pilgrimage (\"put one onto the battlefield tapped and the rest into your hand\")",
+      "why_existing_wont_do": "`_search` in engine/effects/ops_cards.py resolves a single `destination` (or a per-card `destination_if` that asks about the card's own characteristics, or a per-card yes/no `may_destination`), so it cannot say \"one of them here, the rest there\". Sequencing two `search_library` ops (battlefield count 1 with `shuffle: false`, then hand count N-1) fires LIBRARY_SEARCHED twice (Archivist of Oghma-style triggers fire twice) and lets the player take Plains to hand while putting none onto the battlefield, which the printed \"put one of them onto the battlefield\" forbids. Searching all N to hand then `put_onto_battlefield` one from hand moves the land hand-to-battlefield rather than library-to-battlefield and passes it through the hand. `may_destination` asks per card and could put several or none onto the battlefield. The \"choose an opponent ... the difference\" half is expressible as `{\"minus\": [{\"max_count_of\": {\"objects\": {\"types\": [\"Land\"], \"zone\": \"battlefield\"}, \"player\": \"each_opponent\"}}, {\"lands_you_control\": true}]}` gated by `cmp >`, since a search may always find fewer; only the split is missing"
+    }
+  ],
+  "closest_existing": [
+    "search_library",
+    "look_at_top",
+    "put_onto_battlefield"
+  ],
+  "confidence": "high"
+}
