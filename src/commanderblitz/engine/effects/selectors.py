@@ -19,6 +19,7 @@ from typing import TYPE_CHECKING, Any
 from ..characteristics import (
     PARITIES,
     _base_pt,
+    abilities_of,
     chars,
     creature_types_of,
     enchanted_by,
@@ -305,6 +306,13 @@ SELECTOR_KEYS = frozenset(
         "blocking",
         "is_commander",
         "is_token",
+        #: "Destroy up to X target artifacts **without mana abilities**" --
+        #: Midnight Arsonist. 605.1a: does the object have an activated mana
+        #: ability right now. Read off `abilities_of`, so a granted mana ability
+        #: counts and one the object has lost does not; a land's intrinsic
+        #: 305.6 abilities count too. `not_keywords` is the near miss and
+        #: cannot say it: a mana ability is not a keyword.
+        "has_mana_ability",
         "power",
         #: "…each with **base** power or toughness 1 or less" -- Angelic
         #: Aberration. 613.2 layer 7a/7b: the copiable size, before
@@ -1289,6 +1297,10 @@ def matches(
         return False
     if "is_token" in selector and bool(obj.is_token) != bool(selector["is_token"]):
         return False
+    if "has_mana_ability" in selector:
+        has = any(a.is_mana_ability for a in abilities_of(state, oid))
+        if has != bool(selector["has_mana_ability"]):
+            return False
     if "damaged" in selector and bool(obj.damage > 0) != bool(selector["damaged"]):
         return False
     if "damaged_by" in selector:
@@ -2433,6 +2445,8 @@ def validate_selector(selector: Any, where: str) -> None:
             f"{where}: 'that_targets' narrows a 'spell', 'ability_on_stack' or "
             f"'spell_or_ability' target and means nothing on any other selector"
         )
+    if "has_mana_ability" in selector and not isinstance(selector["has_mana_ability"], bool):
+        raise DslError(f"{where}.has_mana_ability: must be true or false")
     zone = selector.get("zone")
     if zone is not None and zone not in ZONE_NAMES:
         raise DslError(f"{where}: unknown zone {zone!r}")

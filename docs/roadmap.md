@@ -101,7 +101,7 @@ each heading; this table is generated from them.
 | [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) | L | high | A land that sacrifices itself on entering | 0 |
 | [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) | L | high | A type-setting static ordered against later animations | 0 |
 | [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) | L | high | nothing | 0 |
-| [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) | M | high | nothing | 0 |
+| [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) | M | high | A fixed target count is exact, not a ceiling | 0 |
 | [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) | L | high | nothing | 0 |
 | [The Ring tempts you](#the-ring-tempts-you) | M | high | nothing | 3 |
 | [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) | L, continuous | high | nothing | 0 |
@@ -121,11 +121,11 @@ each heading; this table is generated from them.
 | [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) | M | medium | nothing | 4 |
 | [Secret choices](#secret-choices) | M | medium | nothing | 4 |
 | [Experience counters](#experience-counters) | M | medium | nothing | 3 |
+| [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) | M | medium | nothing | 2 |
 | [Distributing counters from a spell](#distributing-counters-from-a-spell) | M | medium | nothing | 2 |
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
 | [Rad counters](#rad-counters) | M | medium | nothing | 2 |
 | [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) | M | medium | nothing | 2 |
-| [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) | M | medium | nothing | 1 |
 | [A type-setting static ordered against later animations](#a-type-setting-static-ordered-against-later-animations) | M | medium | nothing | 1 |
 | [Brackets, derived from the list](#brackets-derived-from-the-list) | M | medium | nothing | 1 |
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | nothing | 1 |
@@ -157,48 +157,47 @@ same list, and `/extend-roadmap` starts at the top of it.
 
 1. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
 2. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-3. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
-4. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-5. [The Ring tempts you](#the-ring-tempts-you) — M, high
-6. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-7. [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) — S, medium
-8. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
-9. [Difficulty](#difficulty) — S, medium
-10. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-11. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
-12. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
-13. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-14. [Why a press is refused](#why-a-press-is-refused) — S, medium
-15. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-16. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
-17. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-18. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
-19. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
-20. [Secret choices](#secret-choices) — M, medium
-21. [Experience counters](#experience-counters) — M, medium
+3. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
+4. [The Ring tempts you](#the-ring-tempts-you) — M, high
+5. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+6. [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) — S, medium
+7. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
+8. [Difficulty](#difficulty) — S, medium
+9. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+10. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
+11. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
+12. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+13. [Why a press is refused](#why-a-press-is-refused) — S, medium
+14. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+15. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
+16. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
+17. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+18. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+19. [Secret choices](#secret-choices) — M, medium
+20. [Experience counters](#experience-counters) — M, medium
+21. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
 22. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
 23. [Outcomes as data](#outcomes-as-data) — M, medium
 24. [Rad counters](#rad-counters) — M, medium
 25. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-26. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
-27. [A type-setting static ordered against later animations](#a-type-setting-static-ordered-against-later-animations) — M, medium
-28. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-29. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-30. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
-31. [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) — M, medium
-32. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
-33. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
-34. [Replays and sharing](#replays-and-sharing) — M, medium
-35. [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) — M, medium
-36. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-37. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-38. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-39. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-40. [Archidekt import](#archidekt-import) — S, low
-41. [Sound](#sound) — S, low
-42. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
-43. [A draw replaced by something other than more draws](#a-draw-replaced-by-something-other-than-more-draws) — M, low
-44. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
+26. [A type-setting static ordered against later animations](#a-type-setting-static-ordered-against-later-animations) — M, medium
+27. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+28. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+29. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
+30. [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) — M, medium
+31. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
+32. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
+33. [Replays and sharing](#replays-and-sharing) — M, medium
+34. [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) — M, medium
+35. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+36. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+37. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+38. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+39. [Archidekt import](#archidekt-import) — S, low
+40. [Sound](#sound) — S, low
+41. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
+42. [A draw replaced by something other than more draws](#a-draw-replaced-by-something-other-than-more-draws) — M, low
+43. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
 
 **Blocked, and by what:**
 
@@ -251,6 +250,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering), [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma)
 - [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering)
 - [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — [A type-setting static ordered against later animations](#a-type-setting-static-ordered-against-later-animations)
+- [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -4820,7 +4820,7 @@ whole-game test able to draw the deck.
 
 ### Vampiric Bloodline (Crimson Vow Commander)
 
-Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) · Awaiting decisions.
 
 #### Today
 
@@ -4830,7 +4830,24 @@ coming-soon shell on the shelf: its row `voc_vampiric_bloodline` is in
 `GET /api/precons/upcoming` serves it.
 `python scripts/sync_precons.py --missing voc_vampiric_bloodline` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
+waits on. They fall into three groups:
+
+- **Madness.** `replacements._madness` leaves a madness card its owner declines
+  to cast in exile, and `docs/rules-coverage.md` and the cookbook's "madness
+  exiles either way" row record that as the engine's reading. 702.35a and the
+  printed reminder text put it into the graveyard instead. Anje's Ravager,
+  Stensia Masquerade and Stromkirk Occultist wait on that alone. Avacyn's
+  Judgment also needs an `{X}` madness cost and an "if this spell's madness
+  cost was paid" condition; Shadowgrange Archfiend a madness cost with
+  `pay_life` in it and the greatest last-known power among sacrificed
+  creatures; Falkenrath Gorger a static that grants madness.
+- **Exact target counts.** Sinister Waltz's "three target creature cards"
+  needs `targeting._spec_options` to refuse a short set
+  ([exact-target-count](#a-fixed-target-count-is-exact-not-a-ceiling)), and
+  then the authoring sandbox (`cards/authoring/verify.py`,
+  `graveyard_target_props`) to put a third creature card in its own graveyard
+  so the playable gate can cast it.
+- Nothing else: every other card on the list is native.
 
 #### The change
 
@@ -4866,6 +4883,20 @@ whole-game test able to draw the deck.
   own item through `/plan-feature`, adds it to this item's `depends_on`, sets
   this item back to `proposed`, and opens the pull request with the cards and
   capabilities done so far. This item stays until the deck is whole.
+
+#### Open questions
+
+- **A declined madness card.** The engine's madness exiles the card whether or
+  not it is cast, and that reading is written into `rules-coverage.md`, the
+  cookbook and `tests/unit/replacement/test_draw_and_discard_replacements.py`,
+  so changing it reverses a recorded rules decision, which the run will not do
+  unattended. Should a declined (or uncastable) madness card go to its owner's
+  graveyard? Recommended: yes, as 702.35a and every printed reminder text say
+  ("cast it for its madness cost or put it into your graveyard"); the move is
+  one line in `replacements._madness` after `_offer_cast` returns false, the
+  tests that pin the exile are rewritten to pin the graveyard, and the two doc
+  rows are rewritten to match. Then the other madness needs above are one
+  `/extend-dsl` run each.
 
 ### Spirit Squadron (Crimson Vow Commander)
 

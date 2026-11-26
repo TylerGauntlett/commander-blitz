@@ -827,6 +827,18 @@
   "ancient_crab": {
     "zone": "battlefield"
   },
+  "ancient_craving": {
+    "hand_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 37
+    },
+    "life": {
+      "0": 37
+    },
+    "zone": "graveyard"
+  },
   "ancient_gold_dragon": {
     "battlefield_count": 33,
     "hand_size": {
@@ -1501,6 +1513,14 @@
     "zone": "battlefield"
   },
   "arrogant_vampire": {
+    "zone": "battlefield"
+  },
+  "arterial_alchemy": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "blood_token"
+    },
     "zone": "battlefield"
   },
   "artifact_mutation": {
@@ -2910,6 +2930,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "bloodlord_of_vaasgoth": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bloodrite_invoker": {
     "battlefield_count": 33,
     "life": {
@@ -2940,6 +2964,13 @@
   "bloodstone_cameo": {
     "zone": "battlefield"
   },
+  "bloodsworn_steward": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "bloodthirster": {
     "battlefield_count": 33,
     "granted": {
@@ -2967,6 +2998,14 @@
     "life": {
       "0": 40,
       "1": 40
+    },
+    "zone": "battlefield"
+  },
+  "bloodtithe_harvester": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "blood_token"
     },
     "zone": "battlefield"
   },
@@ -5587,6 +5626,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "crimson_honor_guard": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "crimson_kobolds": {
     "zone": "battlefield"
   },
@@ -6068,6 +6115,10 @@
       "amount": 10,
       "kind": "ice"
     },
+    "zone": "battlefield"
+  },
+  "dark_impostor": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "dark_ritual": {
@@ -12927,6 +12978,18 @@
   "imperious_inkmage": {
     "zone": "battlefield"
   },
+  "imposing_grandeur": {
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 0
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "imposing_sovereign": {
     "zone": "battlefield"
   },
@@ -16331,6 +16394,15 @@
       "graveyard"
     ]
   },
+  "markov_enforcer": {
+    "battlefield_count": 34,
+    "opponent_battlefield_count": 5,
+    "tokens": {
+      "count": 1,
+      "id": "blood_token"
+    },
+    "zone": "battlefield"
+  },
   "marneus_calgar": {
     "battlefield_count": 33,
     "hand_size": {
@@ -16848,6 +16920,11 @@
     },
     "zone": "battlefield"
   },
+  "midnight_arsonist": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "midnight_assassin": {
     "zone": "battlefield"
   },
@@ -17168,6 +17245,9 @@
   "moat_piranhas": {
     "zone": "battlefield"
   },
+  "mob_rule": {
+    "zone": "graveyard"
+  },
   "mobilized_district": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -17237,6 +17317,10 @@
     "zone": "battlefield"
   },
   "molimo_maro_sorcerer": {
+    "zone": "battlefield"
+  },
+  "molten_echoes": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "molten_exhale": {
@@ -18177,6 +18261,13 @@
     ]
   },
   "nip_gwyllion": {
+    "zone": "battlefield"
+  },
+  "nirkana_revenant": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "nissa_leyline_tamer": {
@@ -22710,6 +22801,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "scion_of_opulence": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "scion_of_ugin": {
     "zone": "battlefield"
   },
@@ -25520,6 +25615,10 @@
   "streetbreaker_wurm": {
     "zone": "battlefield"
   },
+  "strefan_maurer_progenitor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "strength_bobblehead": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -25573,6 +25672,13 @@
   },
   "stromkirk_captain": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "stromkirk_condemned": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "strong_back": {
@@ -28949,6 +29055,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "underworld_connections": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "underworld_dreams": {
     "battlefield_count": 33,
     "life": {
@@ -29155,6 +29268,15 @@
     },
     "zone": "battlefield"
   },
+  "urge_to_feed": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "urianger_augurelt": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -29329,6 +29451,10 @@
       "id": "blood_token"
     },
     "zone": "graveyard"
+  },
+  "vampiric_dragon": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "vandalblast": {
     "opponent_battlefield_count": 5,

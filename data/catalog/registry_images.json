@@ -663,6 +663,10 @@
     "artist": "James Paick",
     "scryfall_id": "7c2ca68b-15fb-4691-b549-268df92ca413"
   },
+  "ancient_craving": {
+    "artist": "Rob Alexander",
+    "scryfall_id": "e3a46159-2a91-4c89-87d7-13b52bfb0fdf"
+  },
   "ancient_den": {
     "artist": "Rob Alexander",
     "scryfall_id": "d9a7b0f6-97f9-4937-865c-e25c142c3ed7"
@@ -1206,6 +1210,10 @@
   "arrogant_vampire": {
     "artist": "Zina Saunders",
     "scryfall_id": "6234f60f-8793-4214-a484-0f1acd290801"
+  },
+  "arterial_alchemy": {
+    "artist": "Caio Monteiro",
+    "scryfall_id": "37f1279a-4dc1-469b-9fbe-62f51eb8db24"
   },
   "artifact_mutation": {
     "artist": "Jos\u00e9 Parodi",
@@ -2455,6 +2463,10 @@
     "artist": "Cynthia Sheppard",
     "scryfall_id": "4fcc913e-f736-460a-b24b-022fa2e861b9"
   },
+  "bloodlord_of_vaasgoth": {
+    "artist": "Greg Staples",
+    "scryfall_id": "510c65ea-7c9f-461f-b038-ef119db1ca30"
+  },
   "bloodrite_invoker": {
     "artist": "Svetlin Velinov",
     "scryfall_id": "0b332d26-ca9a-458d-9dbc-41f1cf5c4c6a"
@@ -2475,6 +2487,10 @@
     "artist": "Tony Szczudlo",
     "scryfall_id": "f9db32fa-64b2-4ef6-88f2-28e758d420bb"
   },
+  "bloodsworn_steward": {
+    "artist": "Daarken",
+    "scryfall_id": "539b5715-965a-4066-b75b-c4bb952ad65f"
+  },
   "bloodthirster": {
     "artist": "Games Workshop",
     "scryfall_id": "adf71a83-bd87-4d5d-a5d1-b794d1fd4c4b"
@@ -2494,6 +2510,10 @@
   "bloodthrone_vampire": {
     "artist": "Steve Argyle",
     "scryfall_id": "1efd76f1-4dc8-4689-aeeb-3923d9d1910a"
+  },
+  "bloodtithe_harvester": {
+    "artist": "Lucas Graciano",
+    "scryfall_id": "5d0fb1bd-5020-45b7-8046-c586e3056058"
   },
   "bloodtracker": {
     "artist": "Magali Villeneuve",
@@ -4655,6 +4675,10 @@
     "artist": "Nicholas Gregory",
     "scryfall_id": "3acc522b-6297-455e-8bb5-6187061496d0"
   },
+  "crimson_honor_guard": {
+    "artist": "Kieran Yanner",
+    "scryfall_id": "7ac7b366-a967-4efb-9254-a4ec423d63a7"
+  },
   "crimson_kobolds": {
     "artist": "Anson Maddocks",
     "scryfall_id": "13696657-aeef-4add-9a3b-8137fce01fe3"
@@ -5022,6 +5046,10 @@
   "dark_depths": {
     "artist": "Viacom",
     "scryfall_id": "09c224c7-418d-4b64-9d56-a87e4ff631ab"
+  },
+  "dark_impostor": {
+    "artist": "Johannes Voss",
+    "scryfall_id": "bd9384c2-1b55-4da3-91f1-db3d65e98a85"
   },
   "dark_ritual": {
     "artist": "MSCHF",
@@ -10833,6 +10861,10 @@
     "artist": "Nathaniel Himawan",
     "scryfall_id": "d5df1c3f-2536-4476-b8cd-34b026c38366"
   },
+  "imposing_grandeur": {
+    "artist": "Mila Pesic",
+    "scryfall_id": "8d236055-d524-4312-9c6f-eddb34703e3e"
+  },
   "imposing_sovereign": {
     "artist": "Scott M. Fischer",
     "scryfall_id": "0f672328-3361-498e-a9f4-2d8e69a8b072"
@@ -13610,6 +13642,10 @@
     "artist": "David Palumbo",
     "scryfall_id": "332380e9-ed94-4b6b-a0f1-7f05d13dbc5b"
   },
+  "markov_enforcer": {
+    "artist": "Wisnu Tan",
+    "scryfall_id": "768e4488-1c3b-4ccb-abf8-fd168655d7de"
+  },
   "markov_patrician": {
     "artist": "Jana Schirmer & Johannes Voss",
     "scryfall_id": "29c3d3f7-5e28-4fec-8422-87856fcd1e8e"
@@ -14002,6 +14038,10 @@
     "artist": "Mateus Manhanini",
     "scryfall_id": "5b5b87ba-c6cc-4f25-a5c9-22464a41de65"
   },
+  "midnight_arsonist": {
+    "artist": "Campbell White",
+    "scryfall_id": "470ab356-71bc-44f2-a51b-dc5568edf24b"
+  },
   "midnight_assassin": {
     "artist": "Christina Davis",
     "scryfall_id": "35efbe43-6e3e-4c08-8450-0c16c5e1ff7d"
@@ -14270,6 +14310,10 @@
     "artist": "Rudy Siswanto",
     "scryfall_id": "543b3f69-19be-494b-928f-e16b92560e35"
   },
+  "mob_rule": {
+    "artist": "Jakub Kasper",
+    "scryfall_id": "8b04c928-9ee5-4e39-962e-4686e25b5c33"
+  },
   "mobilized_district": {
     "artist": "Jedd Chevrier",
     "scryfall_id": "c7921b97-083b-480a-a7df-f2ab82e6f8fb"
@@ -14321,6 +14365,10 @@
   "molimo_maro_sorcerer": {
     "artist": "Mark Zug",
     "scryfall_id": "6c5d3eba-e456-47c2-992b-a97ba66e9676"
+  },
+  "molten_echoes": {
+    "artist": "Zoltan Boros",
+    "scryfall_id": "461d9f1c-53a4-48a6-bafb-0e70099f276c"
   },
   "molten_exhale": {
     "artist": "Nathaniel Himawan",
@@ -15146,6 +15194,10 @@
   "nip_gwyllion": {
     "artist": "Alex Horley-Orlandelli",
     "scryfall_id": "019ad92d-8803-4569-98c8-4a7416799cfc"
+  },
+  "nirkana_revenant": {
+    "artist": "Andrew MacLean",
+    "scryfall_id": "d53ab62b-7f22-49e4-b8af-9062eb782ef7"
   },
   "nissa_leyline_tamer": {
     "artist": "Justyna Dura",
@@ -18957,6 +19009,10 @@
     "artist": "Eric Fortune",
     "scryfall_id": "937c75ac-b7cf-4af5-a7b7-9e90f43fa1a5"
   },
+  "scion_of_opulence": {
+    "artist": "Chris Rallis",
+    "scryfall_id": "d5af4995-f29f-4c4a-a2ed-a0e6ba94f334"
+  },
   "scion_of_ugin": {
     "artist": "Cliff Childs",
     "scryfall_id": "284bc13a-e75a-4946-aaa2-e1f9d53ea47c"
@@ -21385,6 +21441,10 @@
     "artist": "Greg Hildebrandt",
     "scryfall_id": "d5313054-91a5-401c-84d1-03a2cd265060"
   },
+  "strefan_maurer_progenitor": {
+    "artist": "Cabrol",
+    "scryfall_id": "d467f448-7cad-4bb9-92b9-3529f1e5805f"
+  },
   "strength_bobblehead": {
     "artist": "Nikola Matkovic",
     "scryfall_id": "271424ac-1f2b-4419-baca-bc9f0a862221"
@@ -21428,6 +21488,10 @@
   "stromkirk_captain": {
     "artist": "Jana Schirmer & Johannes Voss",
     "scryfall_id": "50112fc8-82f7-438b-bd35-12b7b3182bdf"
+  },
+  "stromkirk_condemned": {
+    "artist": "Magali Villeneuve",
+    "scryfall_id": "b0e0cecb-4f14-438e-a9d0-c6b19a4126c5"
   },
   "stromkirk_noble": {
     "artist": "James Ryman",
@@ -24092,6 +24156,10 @@
     "artist": "Dan Berger & Eric Talbot",
     "scryfall_id": "49c8b2ed-95bf-4a85-a0d7-6d7c01fc086d"
   },
+  "underworld_connections": {
+    "artist": "Yeong-Hao Han",
+    "scryfall_id": "1df71add-7bb6-4687-bb69-cf4450adb7dc"
+  },
   "underworld_dreams": {
     "artist": "Mark Riddick",
     "scryfall_id": "a549b913-556a-4aeb-899e-438ff6874f56"
@@ -24239,6 +24307,10 @@
   "ureni_of_the_unwritten": {
     "artist": "Valera Lutfullina",
     "scryfall_id": "f54ecbf1-83df-4486-bd6a-7d1f173b6863"
+  },
+  "urge_to_feed": {
+    "artist": "Johann Bodin",
+    "scryfall_id": "6f56b179-dedf-44fc-952a-dec22f30af49"
   },
   "urianger_augurelt": {
     "artist": "Vilhelmas Banys",
@@ -24431,6 +24503,10 @@
   "vampires_vengeance": {
     "artist": "Chris Cold",
     "scryfall_id": "6d6552c0-0466-43cf-afd9-903029ead0b6"
+  },
+  "vampiric_dragon": {
+    "artist": "Gary Ruddell",
+    "scryfall_id": "6bf8eff8-6b39-4e5e-b8a9-1da53e837809"
   },
   "vampiric_rites": {
     "artist": "Anastasia Ovchinnikova",

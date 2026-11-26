@@ -8212,12 +8212,12 @@
     },
     "Ancient Craving": {
       "edhrec_rank": 5771,
-      "gate": "template",
+      "gate": null,
       "name": "Ancient Craving",
-      "reason": "no template for: You draw three cards and you lose 3 life",
+      "reason": "",
       "scryfall_id": "e3a46159-2a91-4c89-87d7-13b52bfb0fdf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ancient Excavation": {
@@ -13942,12 +13942,12 @@
     },
     "Arterial Alchemy": {
       "edhrec_rank": 10373,
-      "gate": "template",
+      "gate": null,
       "name": "Arterial Alchemy",
-      "reason": "no template for: When this enchantment enters, create a Blood token for each opponent you have",
+      "reason": "",
       "scryfall_id": "37f1279a-4dc1-469b-9fbe-62f51eb8db24",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Arterial Flow": {
@@ -28842,12 +28842,12 @@
     },
     "Bloodlord of Vaasgoth": {
       "edhrec_rank": 8594,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodlord of Vaasgoth",
-      "reason": "no template for: Bloodthirst 3",
+      "reason": "",
       "scryfall_id": "510c65ea-7c9f-461f-b038-ef119db1ca30",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodlust Inciter": {
@@ -29102,12 +29102,12 @@
     },
     "Bloodsworn Steward": {
       "edhrec_rank": 8144,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodsworn Steward",
-      "reason": "no template for: Commander creatures you control get +2/+2 and have haste",
+      "reason": "",
       "scryfall_id": "539b5715-965a-4066-b75b-c4bb952ad65f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodtallow Candle": {
@@ -29212,12 +29212,12 @@
     },
     "Bloodtithe Harvester": {
       "edhrec_rank": 7904,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodtithe Harvester",
-      "reason": "no template for: When this creature enters, create a Blood token",
+      "reason": "",
       "scryfall_id": "5d0fb1bd-5020-45b7-8046-c586e3056058",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodtracker": {
@@ -56102,12 +56102,12 @@
     },
     "Crimson Honor Guard": {
       "edhrec_rank": 16721,
-      "gate": "template",
+      "gate": null,
       "name": "Crimson Honor Guard",
-      "reason": "no template for: At the beginning of each player's end step, this creature deals 4 damage to that player un",
+      "reason": "",
       "scryfall_id": "7ac7b366-a967-4efb-9254-a4ec423d63a7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crimson Kobolds": {
@@ -61022,12 +61022,12 @@
     },
     "Dark Impostor": {
       "edhrec_rank": 10597,
-      "gate": "template",
+      "gate": null,
       "name": "Dark Impostor",
-      "reason": "no template for: {4}{B}{B}: Exile target creature and put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "bd9384c2-1b55-4da3-91f1-db3d65e98a85",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dark Inquiry": {
@@ -134882,12 +134882,12 @@
     },
     "Imposing Grandeur": {
       "edhrec_rank": 6498,
-      "gate": "template",
+      "gate": null,
       "name": "Imposing Grandeur",
-      "reason": "no template for: Each player may discard their hand and draw cards equal to the greatest mana value of a co",
+      "reason": "",
       "scryfall_id": "8d236055-d524-4312-9c6f-eddb34703e3e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Imposing Sovereign": {
@@ -167982,12 +167982,12 @@
     },
     "Markov Enforcer": {
       "edhrec_rank": 8707,
-      "gate": "template",
+      "gate": null,
       "name": "Markov Enforcer",
-      "reason": "no template for: Whenever this creature or another Vampire you control enters, this creature fights up to o",
+      "reason": "",
       "scryfall_id": "768e4488-1c3b-4ccb-abf8-fd168655d7de",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Markov Purifier": {
@@ -172682,12 +172682,12 @@
     },
     "Midnight Arsonist": {
       "edhrec_rank": 14386,
-      "gate": "template",
+      "gate": null,
       "name": "Midnight Arsonist",
-      "reason": "no template for: When this creature enters, destroy up to X target artifacts without mana abilities, where ",
+      "reason": "",
       "scryfall_id": "470ab356-71bc-44f2-a51b-dc5568edf24b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Midnight Assassin": {
@@ -176872,12 +176872,12 @@
     },
     "Mob Rule": {
       "edhrec_rank": 3362,
-      "gate": "template",
+      "gate": null,
       "name": "Mob Rule",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "8b04c928-9ee5-4e39-962e-4686e25b5c33",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mob Verdict": {
@@ -177612,12 +177612,12 @@
     },
     "Molten Echoes": {
       "edhrec_rank": 2391,
-      "gate": "template",
+      "gate": null,
       "name": "Molten Echoes",
-      "reason": "no template for: As this enchantment enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "461d9f1c-53a4-48a6-bafb-0e70099f276c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Molten Exhale": {
@@ -187602,12 +187602,12 @@
     },
     "Nirkana Revenant": {
       "edhrec_rank": 2861,
-      "gate": "template",
+      "gate": null,
       "name": "Nirkana Revenant",
-      "reason": "no template for: Whenever you tap a Swamp for mana, add an additional {B}",
+      "reason": "",
       "scryfall_id": "d53ab62b-7f22-49e4-b8af-9062eb782ef7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nishoba Brawler": {
@@ -235692,12 +235692,12 @@
     },
     "Scion of Opulence": {
       "edhrec_rank": 10611,
-      "gate": "template",
+      "gate": null,
       "name": "Scion of Opulence",
-      "reason": "no template for: Whenever this creature or another nontoken Vampire you control dies, create a Treasure tok",
+      "reason": "",
       "scryfall_id": "d5af4995-f29f-4c4a-a2ed-a0e6ba94f334",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scion of Stygia": {
@@ -266992,12 +266992,12 @@
     },
     "Strefan, Maurer Progenitor": {
       "edhrec_rank": 7291,
-      "gate": "template",
+      "gate": null,
       "name": "Strefan, Maurer Progenitor",
-      "reason": "no template for: At the beginning of your end step, create a Blood token for each player who lost life this",
+      "reason": "",
       "scryfall_id": "d467f448-7cad-4bb9-92b9-3529f1e5805f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Strength Bobblehead": {
@@ -267412,12 +267412,12 @@
     },
     "Stromkirk Condemned": {
       "edhrec_rank": 17451,
-      "gate": "template",
+      "gate": null,
       "name": "Stromkirk Condemned",
-      "reason": "no template for: Discard a card: Vampires you control get +1/+1 until end of turn. Activate only once each ",
+      "reason": "",
       "scryfall_id": "b0e0cecb-4f14-438e-a9d0-c6b19a4126c5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stromkirk Mentor": {
@@ -297442,12 +297442,12 @@
     },
     "Underworld Connections": {
       "edhrec_rank": 4963,
-      "gate": "template",
+      "gate": null,
       "name": "Underworld Connections",
-      "reason": "no template for: Enchanted land has \"{T}, Pay 1 life: Draw a card.\"",
+      "reason": "",
       "scryfall_id": "1df71add-7bb6-4687-bb69-cf4450adb7dc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Underworld Dreams": {
@@ -299452,12 +299452,12 @@
     },
     "Urge to Feed": {
       "edhrec_rank": 11537,
-      "gate": "template",
+      "gate": null,
       "name": "Urge to Feed",
-      "reason": "no template for: Target creature gets -3/-3 until end of turn. You may tap any number of untapped Vampire c",
+      "reason": "",
       "scryfall_id": "6f56b179-dedf-44fc-952a-dec22f30af49",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Urgent Exorcism": {
@@ -300952,12 +300952,12 @@
     },
     "Vampiric Dragon": {
       "edhrec_rank": 19529,
-      "gate": "template",
+      "gate": null,
       "name": "Vampiric Dragon",
-      "reason": "no template for: Whenever a creature dealt damage by this creature this turn dies, put a +1/+1 counter on t",
+      "reason": "",
       "scryfall_id": "6bf8eff8-6b39-4e5e-b8a9-1da53e837809",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vampiric Embrace": {

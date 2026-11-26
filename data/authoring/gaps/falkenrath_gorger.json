@@ -1,0 +1,16 @@
+{
+  "card_id": "falkenrath_gorger",
+  "name": "Falkenrath Gorger",
+  "oracle_text": "Each Vampire creature card you own that isn't on the battlefield has madness. The madness cost is equal to its mana cost. (If you discard a card with madness, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)",
+  "blocked_sentences": [
+    "Each Vampire creature card you own that isn't on the battlefield has madness. The madness cost is equal to its mana cost."
+  ],
+  "needs": [{
+    "capability": "madness",
+    "kind": "static_effect",
+    "what": "a player-wide static (grant_madness) that gives every card you own matching a printed-characteristics filter ({types: [Creature], subtypes: [Vampire], owner: you}) in any zone other than the battlefield the madness keyword, with its madness cost equal to that card's own mana cost: discarding such a card exiles it instead, and the madness trigger then offers casting it for that cost or putting it into the graveyard",
+    "why_existing_wont_do": "`madness` exists only as a card-level cost key on the card carrying it, with a printed price. The granting statics are grant_miracle, grant_warp, grant_blitz, grants_flashback/grants_retrace and granted_alternative_cost, none of which hooks the discard replacement; granted_alternative_cost is just another cast-line price, so writing the card with it would let Vampires be cast normally rather than on discard. No static grants madness to cards outside the battlefield, and nothing expresses 'madness cost equal to its mana cost'"
+  }],
+  "closest_existing": ["grant_miracle", "granted_alternative_cost", "madness"],
+  "confidence": "high"
+}

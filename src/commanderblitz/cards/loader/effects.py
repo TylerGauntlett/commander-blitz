@@ -1494,9 +1494,17 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: spell_enters_with_counters needs 'counters', a map of "
                 f"counter kind to amount (e.g. {{'+1/+1': 2}})"
             )
+    if op == "grant_bloodthirst":
+        amount = effect.get("amount")
+        if not isinstance(amount, int) or isinstance(amount, bool) or amount < 1:
+            raise DslError(
+                f"{where}: grant_bloodthirst needs 'amount', a positive integer "
+                f"(the N of bloodthirst N)"
+            )
     if op in (
         "grant_rebound",
         "grant_plot",
+        "grant_bloodthirst",
         "spell_enters_with_counters",
         "exile_spell_on_resolution",
     ):

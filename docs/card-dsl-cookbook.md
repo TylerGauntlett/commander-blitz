@@ -17147,6 +17147,26 @@ every zone, plus "Another card name": a library holds only its owner's cards
 that is a real choice. No new `DecisionKind`: `ask_mode`, tagged
 `choose_card_name`; the heuristic agent names what its library holds most of.
 
+## "Artifacts without mana abilities" — `has_mana_ability: false`
+
+    Midnight Arsonist — "When this creature enters, destroy up to X target
+    artifacts without mana abilities, where X is the number of Vampires you
+    control."
+
+```jsonc
+"targets": [{ "id": "t1", "kind": "permanent", "up_to": true,
+  "count": { "count": { "zone": "battlefield", "controller": "you", "subtypes": ["Vampire"] } },
+  "selector": { "zone": "battlefield", "types": ["Artifact"], "has_mana_ability": false } }]
+```
+
+`has_mana_ability` is a selector key, `true` or `false`, and anything else is
+refused at load. It asks whether the object has an activated mana ability
+(605.1a) right now, read off `characteristics.abilities_of`: a mana ability
+another permanent grants counts, one the object has lost does not, and a land's
+intrinsic 305.6 ability counts. `not_keywords` is the near miss and cannot say
+it, since a mana ability is not a keyword; `tapped_permanent`'s
+`any_mana_ability` is a different thing, the widening of a mana-ability rider.
+
 ## Odd or even — `parity`
 
     Kianne, Corrupted Memory — "As long as Kianne's power is even, you may cast
