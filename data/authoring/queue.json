@@ -8212,12 +8212,12 @@
     },
     "Ancient Craving": {
       "edhrec_rank": 5771,
-      "gate": "template",
+      "gate": null,
       "name": "Ancient Craving",
-      "reason": "no template for: You draw three cards and you lose 3 life",
+      "reason": "",
       "scryfall_id": "e3a46159-2a91-4c89-87d7-13b52bfb0fdf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ancient Excavation": {
@@ -13942,12 +13942,12 @@
     },
     "Arterial Alchemy": {
       "edhrec_rank": 10373,
-      "gate": "template",
+      "gate": null,
       "name": "Arterial Alchemy",
-      "reason": "no template for: When this enchantment enters, create a Blood token for each opponent you have",
+      "reason": "",
       "scryfall_id": "37f1279a-4dc1-469b-9fbe-62f51eb8db24",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Arterial Flow": {
@@ -29102,12 +29102,12 @@
     },
     "Bloodsworn Steward": {
       "edhrec_rank": 8144,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodsworn Steward",
-      "reason": "no template for: Commander creatures you control get +2/+2 and have haste",
+      "reason": "",
       "scryfall_id": "539b5715-965a-4066-b75b-c4bb952ad65f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodtallow Candle": {

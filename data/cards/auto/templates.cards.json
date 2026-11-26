@@ -10330,6 +10330,38 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "ancient_craving",
+      "mana_cost": "{3}{B}",
+      "name": "Ancient Craving",
+      "oracle_text": "You draw three cards and you lose 3 life.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "lose_life",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -17738,6 +17770,127 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "player_count": "each_opponent"
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "blood_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, create a Blood token for each opponent you have",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Blood"
+            ]
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Equipment"
+          ],
+          "text": "Blood tokens you control are Equipment in addition to their other types and have \"Equipped creature gets +2/+0\" and equip {2}"
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Blood"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Blood tokens you control are Equipment in addition to their other types and have \"Equipped creature gets +2/+0\" and equip {2}"
+        },
+        {
+          "ability": 1,
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Blood"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Blood tokens you control are Equipment in addition to their other types and have \"Equipped creature gets +2/+0\" and equip {2}"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "grantable_abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Equipped creature gets +2/+0",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "id": "arterial_alchemy",
+      "mana_cost": "{2}{R}",
+      "name": "Arterial Alchemy",
+      "oracle_text": "When this enchantment enters, create a Blood token for each opponent you have. (It's an artifact with \"{1}, {T}, Discard a card, Sacrifice this token: Draw a card.\")\nBlood tokens you control are Equipment in addition to their other types and have \"Equipped creature gets +2/+0\" and equip {2}.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -35310,6 +35463,66 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "is_commander": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Commander creatures you control get +2/+2 and have haste.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "is_commander": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Commander creatures you control get +2/+2 and have haste."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "bloodsworn_steward",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{R}{R}",
+      "name": "Bloodsworn Steward",
+      "oracle_text": "Flying\nCommander creatures you control get +2/+2 and have haste.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Knight"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {

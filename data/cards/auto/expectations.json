@@ -827,6 +827,18 @@
   "ancient_crab": {
     "zone": "battlefield"
   },
+  "ancient_craving": {
+    "hand_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 37
+    },
+    "life": {
+      "0": 37
+    },
+    "zone": "graveyard"
+  },
   "ancient_gold_dragon": {
     "battlefield_count": 33,
     "hand_size": {
@@ -1501,6 +1513,14 @@
     "zone": "battlefield"
   },
   "arrogant_vampire": {
+    "zone": "battlefield"
+  },
+  "arterial_alchemy": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "blood_token"
+    },
     "zone": "battlefield"
   },
   "artifact_mutation": {
@@ -2938,6 +2958,13 @@
     "zone": "battlefield"
   },
   "bloodstone_cameo": {
+    "zone": "battlefield"
+  },
+  "bloodsworn_steward": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "bloodthirster": {

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**553 cards** blocked by **463** capabilities.
+**556 cards** blocked by **463** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -37,6 +37,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-permanent-cost](#exile-permanent-cost) | 3 | 6544 | cost |
 | [experience-counters](#experience-counters) | 3 | 1480 | engine |
 | [goad](#goad) | 3 | 6258 | op |
+| [madness](#madness) | 3 | 3016 | condition, engine, replacement |
 | [omen](#omen) | 3 | 3355 | cost, engine |
 | [remove-bound-counter-kind](#remove-bound-counter-kind) | 3 | 4274 | op |
 | [secret-choice](#secret-choice) | 3 | 3483 | decision |
@@ -47,6 +48,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [all-creature-types](#all-creature-types) | 2 | 958 | static_effect |
 | [attach-enchant-legality](#attach-enchant-legality) | 2 | 1540 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
+| [bloodthirst](#bloodthirst) | 2 | 6438 | keyword, op |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-from-library-top-unrestricted](#cast-from-library-top-unrestricted) | 2 | 1913 | static_effect |
 | [casualty](#casualty) | 2 | 11576 | static_effect |
@@ -121,7 +123,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [become-copy-until-your-next-turn](#become-copy-until-your-next-turn) | 1 | 13431 | op |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [blocking-equipped-creature](#blocking-equipped-creature) | 1 | 8137 | selector |
-| [bloodthirst](#bloodthirst) | 1 | 6438 | keyword |
 | [cant-attack-this-turn](#cant-attack-this-turn) | 1 | 2358 | op |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cant-block](#cant-block) | 1 | 7526 | op |
@@ -307,7 +308,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [look-at-top-attacking](#look-at-top-attacking) | 1 | 7846 | op |
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
-| [madness](#madness) | 1 | 3016 | replacement |
 | [mana-ability-leading-rider](#mana-ability-leading-rider) | 1 | 4080 | engine |
 | [mana-cant-pay-generic](#mana-cant-pay-generic) | 1 | 3861 | value |
 | [mana-doubling-replacement](#mana-doubling-replacement) | 1 | 1807 | replacement |
@@ -1321,6 +1321,31 @@ Blocks **3** cards.
 
 </details>
 
+## madness
+
+Blocks **3** cards.
+
+- **(replacement)** madness whose declined (or uncastable) card is moved from exile to its owner's graveyard, per 702.35a and the printed 'cast it for its madness cost or put it into your graveyard'
+  <br>Why the existing vocabulary won't do: The card-level `madness` key exists, but engine/replacements.py `_madness` deliberately leaves a declined madness card in exile (its docstring and the cookbook's 'madness exiles either way' row say so), and `_offer_cast` returning False never moves it to the graveyard. Writing `"madness": "{1}{R}"` would load but make a declined discard exile the card permanently, which the printed text and 702.35a contradict. The other two lines are expressible: an `attacks_if_able` static with `affects: {self_only: true}` (as Darksteel Juggernaut) and an `attacks` trigger with `discard` `whole_hand: true` then `draw` 3.
+- **(condition)** A condition that reads whether the spell was cast for its madness cost ("if this spell's madness cost was paid"), usable in an `if` inside `spell_effects`, analogous to `evoked` / `kicked` / `overloaded`
+  <br>Why the existing vocabulary won't do: `condition_keys` has `evoked`, `kicked`, `overloaded`, `cost_option`, but nothing for madness. `cast_from_exile` is the near miss and is not exact: any impulse-style permission that casts this card from exile would also satisfy it without the madness cost being paid. `_offer_cast` emits `madness=1` on the SPELL_CAST event but no condition reads it on resolution
+- **(engine)** A madness cost containing {X}: the player chooses X when casting for madness (107.3, 702.35), and that X is carried on the stack item so `{"x": true}` in the spell's effects reads it
+  <br>Why the existing vocabulary won't do: `replacements._offer_cast` builds `Cost(mana=card.madness)` and calls `stack.push_spell` without an `x`, so X defaults to 0 on every madness cast; a Madness {X}{R} card would always deal 0 damage when its madness cost was paid
+- **(replacement)** Madness per 702.35a and the printed reminder: the discard exiles the card, and if the player declines (or cannot) cast it for its madness cost, the card is put into its owner's graveyard rather than left in exile. The cast offer should also be a triggered ability ('When you do') that uses the stack, not an inline question at discard time.
+  <br>Why the existing vocabulary won't do: The card-level `madness` key exists, but `engine/replacements._madness` deliberately leaves a declined madness card in exile ('a declined madness card is in exile, not the graveyard', also stated in card-dsl-cookbook.md and the rules-coverage row). That contradicts the printed 'or put it into your graveyard'. The mismatch matters most on this card, whose own power counts creature cards in all graveyards: a declined Necrogoyf should land in the graveyard and be counted. `_offer_cast` also asks inline during the discard instead of through a 'when you do' trigger. The other two lines can be written today: a static `set_pt` with power `{"count": {"controller": "any", "types": ["Creature"], "zone": "graveyard"}}` (Lord of Extinction / Haughty Djinn shape) and toughness const 4, plus an `upkeep` trigger with `controller: any` and `discard` on `{"binding": "event_player"}` (Seizan / Liliana's Reaver shape).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Necrogoyf** (rank 3016) — `necrogoyf`
+  - Madness {1}{B}{B} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)
+- **Anje's Ravager** (rank 7479) — `anje_s_ravager`
+  - Madness {1}{R} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)
+- **Avacyn's Judgment** (rank 10743) — `avacyn_s_judgment`
+  - Madness {X}{R} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)
+  - If this spell's madness cost was paid, it deals X damage divided as you choose among those permanents and/or players instead.
+
+</details>
+
 ## omen
 
 Blocks **3** cards.
@@ -1524,6 +1549,24 @@ Blocks **2** cards.
   - Whenever you discard one or more nonland cards, you may exile one of them from your graveyard. If you do, you may cast it this turn
 - **Spirit of Resilience** (rank 13273) — `spirit_of_resilience`
   - Whenever one or more cards leave your graveyard, put a +1/+1 counter on this creature, then you may have this creature become a copy of an artifact or creature card from among those cards until end of turn
+
+</details>
+
+## bloodthirst
+
+Blocks **2** cards.
+
+- **(op)** a spell_cast-triggered op that grants the cast creature spell a conditional enters-with-counters replacement (bloodthirst N): the permanent it becomes enters with N +1/+1 counters if an opponent was dealt damage this turn, with the condition judged AS IT ENTERS (702.54a), not when the trigger resolves
+  <br>Why the existing vocabulary won't do: spell_enters_with_counters is the closest: it writes cast_enters_with onto the spell, but its `counters` amount is evaluated when the trigger resolves and it carries no condition, so damage dealt to an opponent after the trigger resolves but before the Vampire spell resolves would be missed. Bloodthirst on the Bloodlord itself is a self_enters_with_counters replacement with a damage_taken_this_turn condition, but nothing hands that replacement to another spell
+- **(keyword)** bloodthirst N (702.54) as a grantable keyword with a magnitude: a static that gives other colorless creatures you control 'bloodthirst 2', so each enters with two additional +1/+1 counters if an opponent was dealt damage this turn (checked at the moment it enters)
+  <br>Why the existing vocabulary won't do: bloodthirst is not in `keywords`. The nearest is the `enters_with_additional_counters` static (affects {controller: you, types: [Creature], colorless: true, exclude_self: true}, counter +1/+1, amount 2), but its condition can only read `static_condition_keys`/`static_value_keys`, and neither has a reading of damage dealt to opponents this turn (`damage_taken_this_turn` is in `value_keys` only, not the static value language). Even with that, the creatures would not actually HAVE bloodthirst, which matters for keyword-reading effects. The first sentence is expressible (you_attack trigger, choose_mode of two cant_block effects over creatures with mana_value {parity: odd|even}, duration this_turn).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Twins of Discord** (rank 6438) — `twins_of_discord`
+  - Each other colorless creature you control has bloodthirst 2
+- **Bloodlord of Vaasgoth** (rank 8594) — `bloodlord_of_vaasgoth`
+  - Whenever you cast a Vampire creature spell, it gains bloodthirst 3.
 
 </details>
 
@@ -2743,20 +2786,6 @@ Blocks **1** card.
 
 - **Plasma Caster** (rank 8137) — `plasma_caster`
   - Pay {E}{E}: Choose target creature that's blocking equipped creature. Flip a coin. If you win the flip, exile the chosen creature. Otherwise, this Equipment deals 1 damage to it.
-
-</details>
-
-## bloodthirst
-
-Blocks **1** card.
-
-- **(keyword)** bloodthirst N (702.54) as a grantable keyword with a magnitude: a static that gives other colorless creatures you control 'bloodthirst 2', so each enters with two additional +1/+1 counters if an opponent was dealt damage this turn (checked at the moment it enters)
-  <br>Why the existing vocabulary won't do: bloodthirst is not in `keywords`. The nearest is the `enters_with_additional_counters` static (affects {controller: you, types: [Creature], colorless: true, exclude_self: true}, counter +1/+1, amount 2), but its condition can only read `static_condition_keys`/`static_value_keys`, and neither has a reading of damage dealt to opponents this turn (`damage_taken_this_turn` is in `value_keys` only, not the static value language). Even with that, the creatures would not actually HAVE bloodthirst, which matters for keyword-reading effects. The first sentence is expressible (you_attack trigger, choose_mode of two cant_block effects over creatures with mana_value {parity: odd|even}, duration this_turn).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Twins of Discord** (rank 6438) — `twins_of_discord`
-  - Each other colorless creature you control has bloodthirst 2
 
 </details>
 
@@ -5393,20 +5422,6 @@ Blocks **1** card.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
-
-</details>
-
-## madness
-
-Blocks **1** card.
-
-- **(replacement)** Madness per 702.35a and the printed reminder: the discard exiles the card, and if the player declines (or cannot) cast it for its madness cost, the card is put into its owner's graveyard rather than left in exile. The cast offer should also be a triggered ability ('When you do') that uses the stack, not an inline question at discard time.
-  <br>Why the existing vocabulary won't do: The card-level `madness` key exists, but `engine/replacements._madness` deliberately leaves a declined madness card in exile ('a declined madness card is in exile, not the graveyard', also stated in card-dsl-cookbook.md and the rules-coverage row). That contradicts the printed 'or put it into your graveyard'. The mismatch matters most on this card, whose own power counts creature cards in all graveyards: a declined Necrogoyf should land in the graveyard and be counted. `_offer_cast` also asks inline during the discard instead of through a 'when you do' trigger. The other two lines can be written today: a static `set_pt` with power `{"count": {"controller": "any", "types": ["Creature"], "zone": "graveyard"}}` (Lord of Extinction / Haughty Djinn shape) and toughness const 4, plus an `upkeep` trigger with `controller: any` and `discard` on `{"binding": "event_player"}` (Seizan / Liliana's Reaver shape).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Necrogoyf** (rank 3016) — `necrogoyf`
-  - Madness {1}{B}{B} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)
 
 </details>
 

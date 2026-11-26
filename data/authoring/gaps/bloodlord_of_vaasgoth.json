@@ -1,0 +1,14 @@
+{
+  "card_id": "bloodlord_of_vaasgoth",
+  "name": "Bloodlord of Vaasgoth",
+  "oracle_text": "Bloodthirst 3 (If an opponent was dealt damage this turn, this creature enters with three +1/+1 counters on it.)\nFlying\nWhenever you cast a Vampire creature spell, it gains bloodthirst 3.",
+  "blocked_sentences": ["Whenever you cast a Vampire creature spell, it gains bloodthirst 3."],
+  "needs": [{
+    "capability": "bloodthirst",
+    "kind": "op",
+    "what": "a spell_cast-triggered op that grants the cast creature spell a conditional enters-with-counters replacement (bloodthirst N): the permanent it becomes enters with N +1/+1 counters if an opponent was dealt damage this turn, with the condition judged AS IT ENTERS (702.54a), not when the trigger resolves",
+    "why_existing_wont_do": "spell_enters_with_counters is the closest: it writes cast_enters_with onto the spell, but its `counters` amount is evaluated when the trigger resolves and it carries no condition, so damage dealt to an opponent after the trigger resolves but before the Vampire spell resolves would be missed. Bloodthirst on the Bloodlord itself is a self_enters_with_counters replacement with a damage_taken_this_turn condition, but nothing hands that replacement to another spell"
+  }],
+  "closest_existing": ["spell_enters_with_counters", "self_enters_with_counters"],
+  "confidence": "high"
+}
