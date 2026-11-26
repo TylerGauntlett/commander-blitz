@@ -1,0 +1,60 @@
+{
+  "card": {
+    "id": "u_s_s_defiant_tough_little_ship",
+    "name": "U.S.S. Defiant, Tough Little Ship",
+    "oracle_text": "When U.S.S. Defiant enters, destroy up to one target artifact or enchantment.\nStation (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 5+.)\n5+ | Flying, hexproof",
+    "mana_cost": "{6}",
+    "colors": [],
+    "color_identity": [],
+    "supertypes": ["Legendary"],
+    "types": ["Artifact"],
+    "subtypes": ["Spacecraft"],
+    "power": 7,
+    "toughness": 4,
+    "station": 5,
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "When U.S.S. Defiant enters, destroy up to one target artifact or enchantment.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "count": 1,
+            "optional": true,
+            "selector": {"any_types": ["Artifact", "Enchantment"], "zone": "battlefield"}
+          }
+        ],
+        "effects": [{"op": "destroy", "objects": {"target": "t1"}}]
+      },
+      {
+        "kind": "activated",
+        "text": "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 5+.)",
+        "cost": {"tap_permanents": {"types": ["Creature"], "exclude_self": true, "as": "stationed"}},
+        "sorcery_speed_only": true,
+        "effects": [
+          {
+            "op": "add_counters",
+            "counter": "charge",
+            "amount": {"power_of": {"binding": "stationed"}},
+            "objects": {"self_only": true}
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "text": "5+ | Flying, hexproof",
+        "threshold": {"counter": "charge", "at_least": 5},
+        "effect": "grant_keyword",
+        "keywords": ["flying", "hexproof"],
+        "affects": {"self_only": true}
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5
+  }
+}
