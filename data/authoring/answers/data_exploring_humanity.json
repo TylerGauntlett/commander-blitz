@@ -1,0 +1,24 @@
+{
+  "card": {
+    "id": "data_exploring_humanity",
+    "name": "Data, Exploring Humanity",
+    "oracle_text": "Seek out — Whenever you draw your second card each turn, discover 4. (Exile cards from the top of your library until you exile a nonland card with mana value 4 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+    "mana_cost": "{4}{U}",
+    "types": ["Artifact", "Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Android", "Scientist"],
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "power": 4,
+    "toughness": 4,
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Seek out — Whenever you draw your second card each turn, discover 4",
+        "trigger": {"event": "draw", "controller": "you", "nth": 2},
+        "effects": [{"op": "discover", "amount": {"const": 4}}]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33, "hand_size": {"0": 1}}
+}

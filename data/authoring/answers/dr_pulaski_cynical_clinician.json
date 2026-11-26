@@ -1,0 +1,30 @@
+{
+  "card": {
+    "id": "dr_pulaski_cynical_clinician",
+    "name": "Dr. Pulaski, Cynical Clinician",
+    "oracle_text": "Seek out — Whenever you draw your second card each turn, you gain 4 life.",
+    "mana_cost": "{1}{W}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Human", "Doctor"],
+    "power": 2,
+    "toughness": 2,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Seek out — Whenever you draw your second card each turn, you gain 4 life.",
+        "trigger": {"event": "draw", "controller": "you", "nth": 2},
+        "effects": [
+          {"op": "gain_life", "player": "you", "amount": {"const": 4}}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "life": {"0": 40}
+  }
+}
