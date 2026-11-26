@@ -16390,6 +16390,15 @@
       "graveyard"
     ]
   },
+  "markov_enforcer": {
+    "battlefield_count": 34,
+    "opponent_battlefield_count": 5,
+    "tokens": {
+      "count": 1,
+      "id": "blood_token"
+    },
+    "zone": "battlefield"
+  },
   "marneus_calgar": {
     "battlefield_count": 33,
     "hand_size": {
@@ -17299,6 +17308,10 @@
     "zone": "battlefield"
   },
   "molimo_maro_sorcerer": {
+    "zone": "battlefield"
+  },
+  "molten_echoes": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "molten_exhale": {
@@ -18239,6 +18252,13 @@
     ]
   },
   "nip_gwyllion": {
+    "zone": "battlefield"
+  },
+  "nirkana_revenant": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "nissa_leyline_tamer": {
@@ -22769,6 +22789,10 @@
     "zone": "battlefield"
   },
   "scion_of_oona": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "scion_of_opulence": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

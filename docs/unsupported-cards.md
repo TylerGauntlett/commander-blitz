@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**558 cards** blocked by **464** capabilities.
+**559 cards** blocked by **465** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -24,11 +24,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [rooms](#rooms) | 6 | 4163 | engine |
 | [the-ring-tempts-you](#the-ring-tempts-you) | 6 | 1136 | engine, op |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 6 | 2672 | selector, trigger_event |
+| [madness](#madness) | 5 | 3016 | condition, cost, engine, replacement, static_effect |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 5 | 714 | engine |
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
 | [face-down-characteristics](#face-down-characteristics) | 4 | 5733 | op |
-| [madness](#madness) | 4 | 3016 | condition, engine, replacement, static_effect |
 | [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
@@ -283,6 +283,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
 | [graveyard-trigger-cast-self](#graveyard-trigger-cast-self) | 1 | 15353 | op |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
+| [greatest-snapshot-power](#greatest-snapshot-power) | 1 | 4336 | value |
 | [harmonize](#harmonize) | 1 | 7442 | cost |
 | [has-mana-ability-selector](#has-mana-ability-selector) | 1 | 14386 | selector |
 | [has-suspend-selector](#has-suspend-selector) | 1 | 10715 | selector |
@@ -993,6 +994,40 @@ Blocks **6** cards.
 
 </details>
 
+## madness
+
+Blocks **5** cards.
+
+- **(replacement)** madness whose declined (or uncastable) card is moved from exile to its owner's graveyard, per 702.35a and the printed 'cast it for its madness cost or put it into your graveyard'
+  <br>Why the existing vocabulary won't do: The card-level `madness` key exists, but engine/replacements.py `_madness` deliberately leaves a declined madness card in exile (its docstring and the cookbook's 'madness exiles either way' row say so), and `_offer_cast` returning False never moves it to the graveyard. Writing `"madness": "{1}{R}"` would load but make a declined discard exile the card permanently, which the printed text and 702.35a contradict. The other two lines are expressible: an `attacks_if_able` static with `affects: {self_only: true}` (as Darksteel Juggernaut) and an `attacks` trigger with `discard` `whole_hand: true` then `draw` 3.
+- **(condition)** A condition that reads whether the spell was cast for its madness cost ("if this spell's madness cost was paid"), usable in an `if` inside `spell_effects`, analogous to `evoked` / `kicked` / `overloaded`
+  <br>Why the existing vocabulary won't do: `condition_keys` has `evoked`, `kicked`, `overloaded`, `cost_option`, but nothing for madness. `cast_from_exile` is the near miss and is not exact: any impulse-style permission that casts this card from exile would also satisfy it without the madness cost being paid. `_offer_cast` emits `madness=1` on the SPELL_CAST event but no condition reads it on resolution
+- **(engine)** A madness cost containing {X}: the player chooses X when casting for madness (107.3, 702.35), and that X is carried on the stack item so `{"x": true}` in the spell's effects reads it
+  <br>Why the existing vocabulary won't do: `replacements._offer_cast` builds `Cost(mana=card.madness)` and calls `stack.push_spell` without an `x`, so X defaults to 0 on every madness cast; a Madness {X}{R} card would always deal 0 damage when its madness cost was paid
+- **(static_effect)** a player-wide static (grant_madness) that gives every card you own matching a printed-characteristics filter ({types: [Creature], subtypes: [Vampire], owner: you}) in any zone other than the battlefield the madness keyword, with its madness cost equal to that card's own mana cost: discarding such a card exiles it instead, and the madness trigger then offers casting it for that cost or putting it into the graveyard
+  <br>Why the existing vocabulary won't do: `madness` exists only as a card-level cost key on the card carrying it, with a printed price. The granting statics are grant_miracle, grant_warp, grant_blitz, grants_flashback/grants_retrace and granted_alternative_cost, none of which hooks the discard replacement; granted_alternative_cost is just another cast-line price, so writing the card with it would let Vampires be cast normally rather than on discard. No static grants madness to cards outside the battlefield, and nothing expresses 'madness cost equal to its mana cost'
+- **(replacement)** Madness per 702.35a and the printed reminder: the discard exiles the card, and if the player declines (or cannot) cast it for its madness cost, the card is put into its owner's graveyard rather than left in exile. The cast offer should also be a triggered ability ('When you do') that uses the stack, not an inline question at discard time.
+  <br>Why the existing vocabulary won't do: The card-level `madness` key exists, but `engine/replacements._madness` deliberately leaves a declined madness card in exile ('a declined madness card is in exile, not the graveyard', also stated in card-dsl-cookbook.md and the rules-coverage row). That contradicts the printed 'or put it into your graveyard'. The mismatch matters most on this card, whose own power counts creature cards in all graveyards: a declined Necrogoyf should land in the graveyard and be counted. `_offer_cast` also asks inline during the discard instead of through a 'when you do' trigger. The other two lines can be written today: a static `set_pt` with power `{"count": {"controller": "any", "types": ["Creature"], "zone": "graveyard"}}` (Lord of Extinction / Haughty Djinn shape) and toughness const 4, plus an `upkeep` trigger with `controller: any` and `discard` on `{"binding": "event_player"}` (Seizan / Liliana's Reaver shape).
+- **(cost)** a madness cost that is a full cost node (mana plus pay_life), so 'Madness—{2}{B}, Pay 8 life' charges 8 life alongside the mana when the madness cast is taken
+  <br>Why the existing vocabulary won't do: The card-level `madness` key is `str | None` in cards/schema.py and the loader parses it with ManaCost.parse, so it holds mana only; writing just {2}{B} would drop the 8-life payment and make the card strictly cheaper than printed. `alternative_cost` takes a cost node but is offered from hand, not from the madness exile window
+
+<details><summary>Cards waiting on this</summary>
+
+- **Necrogoyf** (rank 3016) — `necrogoyf`
+  - Madness {1}{B}{B} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)
+- **Shadowgrange Archfiend** (rank 4336) — `shadowgrange_archfiend`
+  - Madness—{2}{B}, Pay 8 life
+  - You gain life equal to the greatest power among creatures sacrificed this way
+- **Anje's Ravager** (rank 7479) — `anje_s_ravager`
+  - Madness {1}{R} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)
+- **Avacyn's Judgment** (rank 10743) — `avacyn_s_judgment`
+  - Madness {X}{R} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)
+  - If this spell's madness cost was paid, it deals X damage divided as you choose among those permanents and/or players instead.
+- **Falkenrath Gorger** (rank 11202) — `falkenrath_gorger`
+  - Each Vampire creature card you own that isn't on the battlefield has madness. The madness cost is equal to its mana cost.
+
+</details>
+
 ## self-sacrificing-permanent-gate
 
 Blocks **5** cards.
@@ -1101,35 +1136,6 @@ Blocks **4** cards.
 - **Missy** (rank 9707) — `missy`
   - Whenever another nonartifact creature dies, return it to the battlefield under your control face down and tapped. It's a 2/2 Cyberman artifact creature
   - At the beginning of your end step, each opponent faces a villainous choice — Each artifact creature you control deals 1 damage to that opponent, or you draw a card and chaos ensues
-
-</details>
-
-## madness
-
-Blocks **4** cards.
-
-- **(replacement)** madness whose declined (or uncastable) card is moved from exile to its owner's graveyard, per 702.35a and the printed 'cast it for its madness cost or put it into your graveyard'
-  <br>Why the existing vocabulary won't do: The card-level `madness` key exists, but engine/replacements.py `_madness` deliberately leaves a declined madness card in exile (its docstring and the cookbook's 'madness exiles either way' row say so), and `_offer_cast` returning False never moves it to the graveyard. Writing `"madness": "{1}{R}"` would load but make a declined discard exile the card permanently, which the printed text and 702.35a contradict. The other two lines are expressible: an `attacks_if_able` static with `affects: {self_only: true}` (as Darksteel Juggernaut) and an `attacks` trigger with `discard` `whole_hand: true` then `draw` 3.
-- **(condition)** A condition that reads whether the spell was cast for its madness cost ("if this spell's madness cost was paid"), usable in an `if` inside `spell_effects`, analogous to `evoked` / `kicked` / `overloaded`
-  <br>Why the existing vocabulary won't do: `condition_keys` has `evoked`, `kicked`, `overloaded`, `cost_option`, but nothing for madness. `cast_from_exile` is the near miss and is not exact: any impulse-style permission that casts this card from exile would also satisfy it without the madness cost being paid. `_offer_cast` emits `madness=1` on the SPELL_CAST event but no condition reads it on resolution
-- **(engine)** A madness cost containing {X}: the player chooses X when casting for madness (107.3, 702.35), and that X is carried on the stack item so `{"x": true}` in the spell's effects reads it
-  <br>Why the existing vocabulary won't do: `replacements._offer_cast` builds `Cost(mana=card.madness)` and calls `stack.push_spell` without an `x`, so X defaults to 0 on every madness cast; a Madness {X}{R} card would always deal 0 damage when its madness cost was paid
-- **(static_effect)** a player-wide static (grant_madness) that gives every card you own matching a printed-characteristics filter ({types: [Creature], subtypes: [Vampire], owner: you}) in any zone other than the battlefield the madness keyword, with its madness cost equal to that card's own mana cost: discarding such a card exiles it instead, and the madness trigger then offers casting it for that cost or putting it into the graveyard
-  <br>Why the existing vocabulary won't do: `madness` exists only as a card-level cost key on the card carrying it, with a printed price. The granting statics are grant_miracle, grant_warp, grant_blitz, grants_flashback/grants_retrace and granted_alternative_cost, none of which hooks the discard replacement; granted_alternative_cost is just another cast-line price, so writing the card with it would let Vampires be cast normally rather than on discard. No static grants madness to cards outside the battlefield, and nothing expresses 'madness cost equal to its mana cost'
-- **(replacement)** Madness per 702.35a and the printed reminder: the discard exiles the card, and if the player declines (or cannot) cast it for its madness cost, the card is put into its owner's graveyard rather than left in exile. The cast offer should also be a triggered ability ('When you do') that uses the stack, not an inline question at discard time.
-  <br>Why the existing vocabulary won't do: The card-level `madness` key exists, but `engine/replacements._madness` deliberately leaves a declined madness card in exile ('a declined madness card is in exile, not the graveyard', also stated in card-dsl-cookbook.md and the rules-coverage row). That contradicts the printed 'or put it into your graveyard'. The mismatch matters most on this card, whose own power counts creature cards in all graveyards: a declined Necrogoyf should land in the graveyard and be counted. `_offer_cast` also asks inline during the discard instead of through a 'when you do' trigger. The other two lines can be written today: a static `set_pt` with power `{"count": {"controller": "any", "types": ["Creature"], "zone": "graveyard"}}` (Lord of Extinction / Haughty Djinn shape) and toughness const 4, plus an `upkeep` trigger with `controller: any` and `discard` on `{"binding": "event_player"}` (Seizan / Liliana's Reaver shape).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Necrogoyf** (rank 3016) — `necrogoyf`
-  - Madness {1}{B}{B} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)
-- **Anje's Ravager** (rank 7479) — `anje_s_ravager`
-  - Madness {1}{R} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)
-- **Avacyn's Judgment** (rank 10743) — `avacyn_s_judgment`
-  - Madness {X}{R} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)
-  - If this spell's madness cost was paid, it deals X damage divided as you choose among those permanents and/or players instead.
-- **Falkenrath Gorger** (rank 11202) — `falkenrath_gorger`
-  - Each Vampire creature card you own that isn't on the battlefield has madness. The madness cost is equal to its mana cost.
 
 </details>
 
@@ -5070,6 +5076,21 @@ Blocks **1** card.
 
 - **Rootha, Mastering the Moment** (rank 11566) — `rootha_mastering_the_moment`
   - At the beginning of combat on your turn, if you've cast an instant or sorcery spell this turn, create an X/X blue and red Elemental creature token with flying and haste, where X is the greatest mana value among instant and sorcery spells you've cast this turn.
+
+</details>
+
+## greatest-snapshot-power
+
+Blocks **1** card.
+
+- **(value)** a value giving the GREATEST power among a list of snapshots (the per-player list `sacrifice` with `players` + `snapshot` writes), i.e. max rather than sum over last-known powers
+  <br>Why the existing vocabulary won't do: `power_of` over the list binding sums it (Reign of the Pit's 'total power'), which overcounts with two or more opponents; `extreme_value` resolves a selector pool by oid and reads current characteristics, which after the sacrifice are the graveyard card's printed power, not last-known; `max` takes a fixed list of expressions, not a binding list
+
+<details><summary>Cards waiting on this</summary>
+
+- **Shadowgrange Archfiend** (rank 4336) — `shadowgrange_archfiend`
+  - Madness—{2}{B}, Pay 8 life
+  - You gain life equal to the greatest power among creatures sacrificed this way
 
 </details>
 

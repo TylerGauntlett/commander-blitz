@@ -167982,12 +167982,12 @@
     },
     "Markov Enforcer": {
       "edhrec_rank": 8707,
-      "gate": "template",
+      "gate": null,
       "name": "Markov Enforcer",
-      "reason": "no template for: Whenever this creature or another Vampire you control enters, this creature fights up to o",
+      "reason": "",
       "scryfall_id": "768e4488-1c3b-4ccb-abf8-fd168655d7de",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Markov Purifier": {
@@ -177612,12 +177612,12 @@
     },
     "Molten Echoes": {
       "edhrec_rank": 2391,
-      "gate": "template",
+      "gate": null,
       "name": "Molten Echoes",
-      "reason": "no template for: As this enchantment enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "461d9f1c-53a4-48a6-bafb-0e70099f276c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Molten Exhale": {
@@ -187602,12 +187602,12 @@
     },
     "Nirkana Revenant": {
       "edhrec_rank": 2861,
-      "gate": "template",
+      "gate": null,
       "name": "Nirkana Revenant",
-      "reason": "no template for: Whenever you tap a Swamp for mana, add an additional {B}",
+      "reason": "",
       "scryfall_id": "d53ab62b-7f22-49e4-b8af-9062eb782ef7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nishoba Brawler": {
@@ -235692,12 +235692,12 @@
     },
     "Scion of Opulence": {
       "edhrec_rank": 10611,
-      "gate": "template",
+      "gate": null,
       "name": "Scion of Opulence",
-      "reason": "no template for: Whenever this creature or another nontoken Vampire you control dies, create a Treasure tok",
+      "reason": "",
       "scryfall_id": "d5af4995-f29f-4c4a-a2ed-a0e6ba94f334",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scion of Stygia": {
