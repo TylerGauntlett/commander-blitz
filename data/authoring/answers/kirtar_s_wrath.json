@@ -1,0 +1,42 @@
+{
+  "card": {
+    "id": "kirtar_s_wrath",
+    "name": "Kirtar's Wrath",
+    "oracle_text": "Destroy all creatures. They can't be regenerated.\nThreshold — If there are seven or more cards in your graveyard, instead destroy all creatures, then create two 1/1 white Spirit creature tokens with flying. Creatures destroyed this way can't be regenerated.",
+    "mana_cost": "{4}{W}{W}",
+    "types": ["Sorcery"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "spell_effects": [
+      {
+        "op": "if",
+        "condition": {
+          "cmp": ">=",
+          "left": {"count": {"controller": "you", "zone": "graveyard"}},
+          "right": {"const": 7}
+        },
+        "then": [
+          {
+            "op": "destroy",
+            "no_regeneration": true,
+            "objects": {"zone": "battlefield", "controller": "any", "types": ["Creature"], "count": "all"}
+          },
+          {"op": "create_token", "token": "spirit_1_1_w_flying", "amount": {"const": 2}}
+        ],
+        "else": [
+          {
+            "op": "destroy",
+            "no_regeneration": true,
+            "objects": {"zone": "battlefield", "controller": "any", "types": ["Creature"], "count": "all"}
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "graveyard",
+    "battlefield_count": 30,
+    "opponent_battlefield_count": 4,
+    "graveyard_size": {"0": 5}
+  }
+}
