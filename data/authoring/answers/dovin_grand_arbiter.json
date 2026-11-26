@@ -1,0 +1,61 @@
+{
+  "card": {
+    "id": "dovin_grand_arbiter",
+    "name": "Dovin, Grand Arbiter",
+    "oracle_text": "+1: Until end of turn, whenever a creature you control deals combat damage to a player, put a loyalty counter on Dovin.\n−1: Create a 1/1 colorless Thopter artifact creature token with flying. You gain 1 life.\n−7: Look at the top ten cards of your library. Put three of them into your hand and the rest on the bottom of your library in a random order.",
+    "mana_cost": "{1}{W}{U}",
+    "types": ["Planeswalker"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Dovin"],
+    "colors": ["U", "W"],
+    "color_identity": ["U", "W"],
+    "loyalty": 3,
+    "abilities": [
+      {
+        "kind": "activated",
+        "cost": {"loyalty": 1},
+        "text": "+1: Until end of turn, whenever a creature you control deals combat damage to a player, put a loyalty counter on Dovin.",
+        "effects": [
+          {
+            "op": "delayed_trigger",
+            "duration": "this_turn",
+            "text": "Until end of turn, whenever a creature you control deals combat damage to a player, put a loyalty counter on Dovin.",
+            "trigger": {"controller": "you", "event": "deals_combat_damage_to_player"},
+            "effects": [
+              {"op": "add_counters", "counter": "loyalty", "amount": {"const": 1}, "objects": {"self_only": true}}
+            ]
+          }
+        ]
+      },
+      {
+        "kind": "activated",
+        "cost": {"loyalty": -1},
+        "text": "−1: Create a 1/1 colorless Thopter artifact creature token with flying. You gain 1 life.",
+        "effects": [
+          {"op": "create_token", "token": "thopter_1_1_c_flying", "amount": {"const": 1}},
+          {"op": "gain_life", "amount": {"const": 1}, "player": "you"}
+        ]
+      },
+      {
+        "kind": "activated",
+        "cost": {"loyalty": -7},
+        "text": "−7: Look at the top ten cards of your library. Put three of them into your hand and the rest on the bottom of your library in a random order.",
+        "effects": [
+          {
+            "op": "look_at_top",
+            "amount": {"const": 10},
+            "player": "you",
+            "destination": "hand",
+            "objects": {"count": 3},
+            "rest_to_bottom": true
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "counters": {"kind": "loyalty", "amount": 3}
+  }
+}
