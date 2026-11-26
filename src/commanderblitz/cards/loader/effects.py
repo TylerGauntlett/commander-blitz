@@ -1494,9 +1494,17 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: spell_enters_with_counters needs 'counters', a map of "
                 f"counter kind to amount (e.g. {{'+1/+1': 2}})"
             )
+    if op == "grant_bloodthirst":
+        amount = effect.get("amount")
+        if not isinstance(amount, int) or isinstance(amount, bool) or amount < 1:
+            raise DslError(
+                f"{where}: grant_bloodthirst needs 'amount', a positive integer "
+                f"(the N of bloodthirst N)"
+            )
     if op in (
         "grant_rebound",
         "grant_plot",
+        "grant_bloodthirst",
         "spell_enters_with_counters",
         "exile_spell_on_resolution",
     ):
@@ -1716,13 +1724,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
     if "any_order" in effect:
         # "…on the bottom of their library **in any order**" (Teferi's Puzzle
-        # Box, 401.4). Only `put_on_top` reads it; on another op it would load
-        # and leave the order to the pool, which is the misreading it exists to
+        # Box, 401.4). `put_on_top` reads it, and `two_piles` for the pile it
+        # bottoms (its own guard holds that); on another op it would load and
+        # leave the order to the pool, which is the misreading it exists to
         # stop.
-        if op != "put_on_top":
+        if op not in ("put_on_top", "two_piles"):
             raise DslError(
                 f"{where}: 'any_order' arranges cards put into a library, and only "
-                f"put_on_top reads it, not {op!r}"
+                f"put_on_top and two_piles read it, not {op!r}"
             )
         if not isinstance(effect["any_order"], bool):
             raise DslError(f"{where}: 'any_order' is true or false")
@@ -1833,6 +1842,22 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             # One card shares a type with itself vacuously, so the clause would
             # be decoration on a card that reads as if it constrained something.
             raise DslError(f"{where}: 'share_subtype' needs a 'count' above 1; got {count}")
+    if "searcher" in effect:
+        # "For each player, search that player's library for a nonland card and
+        # exile it" (Jace, Architect of Thought): the resolving player looks
+        # through every library. "you" is the one value; absent, a library's
+        # owner searches it. The cards it finds are somebody else's, so a
+        # search that puts them onto the battlefield would also have to say
+        # under whose control, which no card here does yet: refused.
+        if op != "search_library":
+            raise DslError(f"{where}: 'searcher' only applies to search_library, not {op!r}")
+        if effect["searcher"] != "you":
+            raise DslError(f"{where}: 'searcher' is \"you\", got {effect['searcher']!r}")
+        if effect.get("destination") == "battlefield" or effect.get("may_destination"):
+            raise DslError(
+                f"{where}: a search by 'searcher' moves another player's cards, and "
+                f"onto the battlefield it would need to say under whose control"
+            )
     if "distinct_names" in effect:
         # "…for up to five Dragon cards **that each have different names**"
         # (Tiamat). The mirror of `share_subtype` above, and guarded the same
@@ -5569,6 +5594,28 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             # would hand out the free cast a life-priced card never gives.
             raise DslError(f"{where}: cast_from_hand's 'pay_life_instead' is true or false")
 
+    if op == "two_piles":
+        # Each pile goes to a named place, and a misspelt one would only fail
+        # as the spell resolves. "…the other on the bottom of your library in
+        # any order" (Jace, Architect of Thought) is `any_order` beside
+        # `other: "library_bottom"`; any other pile goes somewhere unordered,
+        # or to the top, where 401.4's arrangement is not what the card says.
+        for key, default in (("to", "hand"), ("other", "graveyard")):
+            where_to = effect.get(key, default)
+            if where_to not in ("hand", "graveyard", "exile", "library_bottom"):
+                raise DslError(
+                    f"{where}: two_piles' {key!r} is hand, graveyard, exile or "
+                    f"library_bottom, not {where_to!r}"
+                )
+        any_order = effect.get("any_order", False)
+        if not isinstance(any_order, bool):
+            raise DslError(f"{where}: two_piles' 'any_order' is true or false")
+        if any_order and effect.get("other") != "library_bottom":
+            raise DslError(
+                f"{where}: two_piles' 'any_order' arranges the other pile on the "
+                f"bottom of the library, so it needs 'other': 'library_bottom'"
+            )
+
     if op == "animate":
         # "Becomes a 4/4 creature" is the whole point, and an animation with no
         # size would silently make a 0/0 that dies to state-based actions the
@@ -5589,9 +5636,13 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # 4/4" is the same words aimed at a *target*: the Vehicle half is a
         # `{"target": …}` pool narrowed to `subtypes: ["Vehicle"]`, so every
         # object it can reach prints a size of its own (301.7), and the other
-        # half is a sized animate over `not_subtypes: ["Vehicle"]`. A pool
-        # that is not a target narrowed that way is still refused: nothing
-        # else guarantees a printed size.
+        # half is a sized animate over `not_subtypes: ["Vehicle"]`. Armed and
+        # Armored's "Vehicles you control become artifact creatures until end
+        # of turn" is the same guarantee over a selector: a pool narrowed to
+        # `subtypes: ["Vehicle"]` reaches only Vehicles, whether it targets or
+        # not. A pool that is not narrowed that way is still refused: nothing
+        # else guarantees a printed size. A binding is refused too, because
+        # what it names was chosen by another effect's filter.
         sized = ("power" in effect, "toughness" in effect)
         becomes_creature = "Creature" in (effect.get("types") or ("Creature",))
         keep_pt = effect.get("keep_pt", False)
@@ -5607,12 +5658,12 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             isinstance(pool, Mapping)
             and (
                 pool.get("self_only")
-                or ("target" in pool and pool.get("subtypes") == ["Vehicle"])
+                or ("binding" not in pool and pool.get("subtypes") == ["Vehicle"])
             )
         ):
             raise DslError(
                 f"{where}: 'keep_pt' animates the Vehicle itself ('objects' self_only) "
-                f"or a target narrowed to Vehicles ('target' with subtypes [\"Vehicle\"])"
+                f"or a target or selector narrowed to Vehicles (subtypes [\"Vehicle\"])"
             )
         if not keep_pt and sized != (True, True) and (becomes_creature or any(sized)):
             raise DslError(

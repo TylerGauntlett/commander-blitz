@@ -1,0 +1,79 @@
+{
+  "_comment": "Shapes for tests/unit/triggers/test_modified_trigger_filter.py. t_mt_mourner is One with the Kami's dies trigger and t_mt_drummer Akki Battle Squad's attack trigger, each reduced to a modified creature you control and gaining 1 life so the test reads a life total. The creatures, Auras and Equipment are tests/data/enchanted_by.cards.json's and tests/data/attached_to_host.cards.json's.",
+  "cards": [
+    {
+      "id": "t_mt_mourner",
+      "name": "Test Modified Mourner",
+      "oracle_text": "Whenever a modified creature you control dies, you gain 1 life.",
+      "mana_cost": "{R}",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a modified creature you control dies, you gain 1 life.",
+          "trigger": {
+            "event": "dies",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Creature"
+              ],
+              "modified": true
+            }
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "amount": 1
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_mt_drummer",
+      "name": "Test Modified Drummer",
+      "oracle_text": "Whenever a modified creature you control attacks, you gain 1 life.",
+      "mana_cost": "{R}",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a modified creature you control attacks, you gain 1 life.",
+          "trigger": {
+            "event": "attacks",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Creature"
+              ],
+              "modified": true
+            }
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "amount": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

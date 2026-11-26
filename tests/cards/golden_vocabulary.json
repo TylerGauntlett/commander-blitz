@@ -81,6 +81,7 @@
   ],
   "COST_REDUCTION_FILTER_KEYS": [
    "any_of",
+   "modified",
    "zone"
   ],
   "COST_REDUCTION_KEYS": [
@@ -1183,6 +1184,7 @@
   "gain_life",
   "goad",
   "grant_ability",
+  "grant_bloodthirst",
   "grant_flash_permission",
   "grant_graveyard_cast",
   "grant_keyword",

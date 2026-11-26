@@ -15,8 +15,9 @@ two animations over the one target: a `keep_pt` one narrowed to
 **Why the loader still refuses a wider pool.** `keep_pt` on a pool that can
 reach a permanent with no printed size would make a 0/0 that 704.5f bins. A
 `self_only` crew is held to its card's printed size by the linking pass; a
-target narrowed to Vehicles reaches only permanents that print one. Anything
-else -- a mass pool of Vehicles, an unnarrowed target -- is refused.
+target narrowed to Vehicles reaches only permanents that print one, and so
+does a selector narrowed the same way (`test_animate_vehicles_keep_pt.py`).
+Anything else -- an unnarrowed target, a binding -- is refused.
 """
 
 from __future__ import annotations

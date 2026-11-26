@@ -176,7 +176,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                 "cards in it matching `selector`; `as` records them.",
                 "`discard`: `up_to`, `selector` and `as`"),
     "mill": ("Cards", "Put the top N cards of a library into its graveyard.", None),
-    "search_library": ("Cards", "Search a library for cards matching a selector, then shuffle; `may_destination` (gated by `may_destination_if`) offers the found card onto the battlefield.",
+    "search_library": ("Cards", "Search a library for cards matching a selector, then shuffle; `may_destination` (gated by `may_destination_if`) offers the found card onto the battlefield; `searcher: \"you\"` has the resolving player search another player's library.",
                        None),
     "search_zones": ("Cards", "One search over the union of two or more of your own zones.", None),
     "look_at_top": ("Cards", "Look at the top N cards of any library; you take some (`chooser` says otherwise), onto the battlefield under `controller: you` if named, send the rest somewhere; `cast_free` or `cast_paying` casts the pick, free or at its mana cost; `total_mana_value` caps the picks' summed mana value.", None),
@@ -197,7 +197,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                     '"Return the exiled card" from a token — `link_exiled`'),
     "put_on_top": ("Cards", "Put objects on top (or bottom) of their owners' libraries; `from_top` is the depth; `any_order` lets the owner arrange them, `random_order` shuffles only them.",
                    None),
-    "two_piles": ("Cards", "Separate cards into two piles; an opponent chooses one.", "Two piles"),
+    "two_piles": ("Cards", "Separate cards into two piles; an opponent chooses one. `to`/`other` name where each pile goes; `any_order` lets the owner arrange a bottomed pile.", "Two piles"),
     "explore": ("Cards", "Explore: reveal the top card, land to hand or a +1/+1 counter.",
                 "Explore"),
     "connive": ("Cards", "Connive: draw, discard, +1/+1 counter if a nonland was discarded.",
@@ -372,7 +372,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "grant_protection": ("Modify", "Permanents or players gain protection for a duration.",
                          "Granting protection"),
     "set_pt": ("Modify", "Set base power and toughness for a duration.", None),
-    "animate": ("Modify", "A permanent becomes a creature, or another type (types, P/T, colors), for a duration; `exact` replaces, `keep_colors` keeps the colours, a non-creature animation may omit P/T, `keep_pt` keeps a Vehicle's own size (on itself, or on a target narrowed to Vehicles).",
+    "animate": ("Modify", "A permanent becomes a creature, or another type (types, P/T, colors), for a duration; `exact` replaces, `keep_colors` keeps the colours, a non-creature animation may omit P/T, `keep_pt` keeps a Vehicle's own size (on itself, or on a target or selector narrowed to Vehicles).",
                 "Creature-lands"),
     "add_subtype": ("Modify", "Permanents gain a subtype in addition to their others, "
                     "for good, for a duration, or `while_counter` (with `counter`) for as long "
@@ -469,6 +469,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                       "Granting rebound to a spell that does not print it"),
     "spell_enters_with_counters": ("Stack", "Promise a spell's permanent counters it enters with.",
                                    "Promising counters to the permanent a spell becomes"),
+    "grant_bloodthirst": ("Stack", "Give a spell bloodthirst N, judged as its permanent enters.",
+                          "Granting bloodthirst to a spell"),
     "return_spell_to_hand": ("Stack", "Return a spell from the stack to its owner's hand.",
                              "Doing something to a spell that is not countering it"),
     "reflexive_trigger": ("Stack", "\"When you do\": queue a trigger off the preceding effect.",
@@ -595,6 +597,8 @@ SELECTORS: dict[str, Entry] = {
     "haunted_by": ("Haunted by the named card.", "Haunt — the exile link pointing the other way"),
     "is_commander": ("Is (or is not) a commander.", None),
     "is_token": ("Is (or is not) a token.", None),
+    "has_mana_ability": ("Has (or has no) mana ability right now, granted ones included and lost ones not (605.1a).",
+                         '"Artifacts without mana abilities" — `has_mana_ability: false`'),
     "keywords": ("Has all of these keywords.", None),
     "mana_cost": ("Printed mana cost is one of these.", None),
     "mana_value": ("A comparison on mana value, or its `parity`.", "Odd or even — `parity`"),
@@ -1230,6 +1234,8 @@ COST_REDUCTION: dict[str, Entry] = {
 
 COST_REDUCTION_FILTER: dict[str, Entry] = {
     "any_of": ("Count an *or* of characteristics.", "A reduction that counts an *or* of characteristics"),
+    "modified": ("A counter, an Equipment, or an Aura you control on it (700.9).",
+                 "A reduction that counts modified creatures"),
     "zone": ("Count in a zone other than the battlefield.", "Counting filters, and the `zone` key"),
 }
 

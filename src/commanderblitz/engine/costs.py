@@ -2996,7 +2996,16 @@ def pay_mana(
         for grant in spent.grants:
             if grant.spell_types and not (set(grant.spell_types) & chars(state, obj.oid).types):
                 continue
+            # "…to cast **your commander**" -- Opal Palace. A commander the
+            # payer owns, asked of the spell as it is paid for, as above.
+            if grant.commander_only and not (obj.is_commander and obj.owner == pid):
+                continue
             obj.mana_granted_keywords.update(grant.keywords)
+            if grant.command_zone_cast_counters is not None:
+                obj.cast_enters_with_command_casts = (
+                    *obj.cast_enters_with_command_casts,
+                    grant.command_zone_cast_counters,
+                )
         # "When you spend this mana to cast your commander, …" -- Study Hall.
         # Asked here for the grant's reason: the spell is what the filter is
         # about, and only this payment knows which mana paid for it.

@@ -651,6 +651,17 @@ class ManaKeywordGrant(NamedTuple):
 
     keywords: tuple[str, ...] = ()
     spell_types: tuple[str, ...] = ()
+    #: "If you spend this mana to cast **your commander**" (Opal Palace): the
+    #: grant goes only to a spell that is a commander the payer owns.
+    commander_only: bool = False
+    #: "…it enters with a number of additional +1/+1 counters on it equal to the
+    #: number of times it's been cast from the command zone this game" (Opal
+    #: Palace): the counter kind, staged on the spell as
+    #: `GameObject.cast_enters_with_command_casts` and counted by
+    #: `zones._enter_battlefield` as it arrives, when the tally already holds
+    #: this cast -- `Game` bumps it after payment, so a count taken here would
+    #: be one short.
+    command_zone_cast_counters: str | None = None
 
 
 class ManaSpendTrigger(NamedTuple):

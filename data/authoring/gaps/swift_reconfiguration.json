@@ -1,0 +1,23 @@
+{
+  "card_id": "swift_reconfiguration",
+  "name": "Swift Reconfiguration",
+  "oracle_text": "Flash\nEnchant creature or Vehicle\nEnchanted permanent is a Vehicle artifact with crew 5 and it loses all other card types. (It's not a creature unless it's crewed.)",
+  "blocked_sentences": [
+    "Enchanted permanent is a Vehicle artifact with crew 5 and it loses all other card types. (It's not a creature unless it's crewed.)"
+  ],
+  "needs": [
+    {
+      "capability": "type_setting_in_timestamp_order",
+      "kind": "engine",
+      "what": "a layer-4 type-setting static (\"is a Vehicle artifact ... loses all other card types\") that is ordered by timestamp against later animations, so that the granted Crew 5 ability's \"becomes an artifact creature until end of turn\" (an `animate` adding Creature, with a later timestamp than the Aura) still makes the enchanted permanent a creature after it is crewed (613.7)",
+      "why_existing_wont_do": "The `set_types` static (types: [\"Artifact\"], plus an `add_subtype` static for Vehicle and a `grant_ability` static handing over a crew ability whose cost is tap_permanents total_power 5 and whose effect is `animate`) would load, but `derive_characteristics` applies every `set_types` static AFTER all animations and replaces the type set wholesale (`types = set(static.get(\"types\"))`), so the crew animation's Creature type is always erased: the enchanted permanent could be crewed and never become a creature, a silently wrong card"
+    }
+  ],
+  "closest_existing": [
+    "set_types",
+    "add_subtype",
+    "grant_ability",
+    "animate"
+  ],
+  "confidence": "high"
+}

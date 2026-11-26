@@ -14348,6 +14348,58 @@
       ]
     },
     {
+      "id": "t_thirst_lord",
+      "name": "Test Thirst Lord",
+      "oracle_text": "Whenever you cast a Vampire creature spell, it gains bloodthirst 3.",
+      "mana_cost": "{2}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast a Vampire creature spell, it gains bloodthirst 3.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Creature"
+              ],
+              "subtypes": [
+                "Vampire"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "grant_bloodthirst",
+              "amount": 3
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_thirst_fledgling",
+      "name": "Test Thirst Fledgling",
+      "oracle_text": "",
+      "mana_cost": "{2}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Vampire"
+      ],
+      "power": 2,
+      "toughness": 2
+    },
+    {
       "id": "t_glory_sprinter",
       "name": "Test Glory Sprinter",
       "oracle_text": "",

@@ -1,0 +1,18 @@
+{
+  "card_id": "anje_s_ravager",
+  "name": "Anje's Ravager",
+  "oracle_text": "This creature attacks each combat if able.\nWhenever this creature attacks, discard your hand, then draw three cards.\nMadness {1}{R} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)",
+  "blocked_sentences": [
+    "Madness {1}{R} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)"
+  ],
+  "needs": [
+    {
+      "capability": "madness",
+      "kind": "replacement",
+      "what": "madness whose declined (or uncastable) card is moved from exile to its owner's graveyard, per 702.35a and the printed 'cast it for its madness cost or put it into your graveyard'",
+      "why_existing_wont_do": "The card-level `madness` key exists, but engine/replacements.py `_madness` deliberately leaves a declined madness card in exile (its docstring and the cookbook's 'madness exiles either way' row say so), and `_offer_cast` returning False never moves it to the graveyard. Writing `\"madness\": \"{1}{R}\"` would load but make a declined discard exile the card permanently, which the printed text and 702.35a contradict. The other two lines are expressible: an `attacks_if_able` static with `affects: {self_only: true}` (as Darksteel Juggernaut) and an `attacks` trigger with `discard` `whole_hand: true` then `draw` 3."
+    }
+  ],
+  "closest_existing": ["madness"],
+  "confidence": "high"
+}

@@ -1,0 +1,48 @@
+{
+  "_comment": "Shapes for tests/unit/mana/test_mana_enters_with_command_casts.py. t_op_palace is Opal Palace with its rider mana fixed to {W}, so the test pays a {1}{W} commander without a colour choice.",
+  "cards": [
+    {
+      "id": "t_op_palace",
+      "name": "Test Opal Palace",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}: Add {W}. If you spend this mana to cast your commander, it enters with a number of additional +1/+1 counters on it equal to the number of times it's been cast from the command zone this game.",
+      "types": [
+        "Land"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}"
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{1}, {T}: Add {W}. If you spend this mana to cast your commander, it enters with a number of additional +1/+1 counters on it equal to the number of times it's been cast from the command zone this game.",
+          "is_mana_ability": true,
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{W}"
+            }
+          ],
+          "mana_grant": {
+            "commander_only": true,
+            "enters_with_command_zone_casts": "+1/+1"
+          }
+        }
+      ]
+    }
+  ]
+}

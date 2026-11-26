@@ -1296,6 +1296,48 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "access_denied",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Access Denied",
+      "oracle_text": "Counter target spell. Create X 1/1 colorless Thopter artifact creature tokens with flying, where X is that spell's mana value.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "countered",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "op": "counter",
+          "target": "t1"
+        },
+        {
+          "amount": {
+            "mana_value_of": {
+              "binding": "countered"
+            }
+          },
+          "op": "create_token",
+          "token": "thopter_1_1_c_flying"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -3085,6 +3127,103 @@
         {
           "effects": [
             {
+              "count": 1,
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Plains"
+                ],
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this Vehicle attacks, if defending player controls more lands than you, search your library for a basic Plains card, put it onto the battlefield tapped, then shuffle.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "count": {
+                  "controller": {
+                    "binding": "defender"
+                  },
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "right": {
+                "lands_you_control": true
+              }
+            },
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 2"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "aerial_surveyor",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Aerial Surveyor",
+      "oracle_text": "Flying\nWhenever this Vehicle attacks, if defending player controls more lands than you, search your library for a basic Plains card, put it onto the battlefield tapped, then shuffle.\nCrew 2",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "condition": {
                 "cmp": ">=",
                 "left": {
@@ -3173,6 +3312,47 @@
         "Legendary"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Vehicle"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "Vehicles you control have flying."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "aeronaut_admiral",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Aeronaut Admiral",
+      "oracle_text": "Flying\nVehicles you control have flying.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pilot"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -6057,6 +6237,62 @@
       ],
       "types": [
         "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "modified": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            },
+            {
+              "op": "extra_combat"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more modified creatures you control attack, untap all modified creatures you control. After this phase, there is an additional combat phase. This ability triggers only once each turn",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "filter": {
+              "modified": true,
+              "types": [
+                "Creature"
+              ]
+            },
+            "max_per_turn": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "akki_battle_squad",
+      "mana_cost": "{5}{R}",
+      "name": "Akki Battle Squad",
+      "oracle_text": "Whenever one or more modified creatures you control attack, untap all modified creatures you control. After this phase, there is an additional combat phase. This ability triggers only once each turn. (Equipment, Auras you control, and counters are modifications.)",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Samurai"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -10094,6 +10330,38 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "ancient_craving",
+      "mana_cost": "{3}{B}",
+      "name": "Ancient Craving",
+      "oracle_text": "You draw three cards and you lose 3 life.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "lose_life",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -13839,6 +14107,62 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "destination": "hand",
+              "objects": {
+                "any_types": [
+                  "Artifact",
+                  "Enchantment"
+                ],
+                "count": 1,
+                "optional": true
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, look at the top four cards of your library. You may reveal an artifact or enchantment card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "arcanist_s_owl",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{W/U}{W/U}{W/U}{W/U}",
+      "name": "Arcanist's Owl",
+      "oracle_text": "Flying\nWhen this creature enters, look at the top four cards of your library. You may reveal an artifact or enchantment card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Bird"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -16591,6 +16915,67 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "armed_and_armored",
+      "mana_cost": "{1}{W}",
+      "name": "Armed and Armored",
+      "oracle_text": "Vehicles you control become artifact creatures until end of turn. Choose a Dwarf you control. Attach any number of Equipment you control to it.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "keep_pt": true,
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "subtypes": [
+              "Vehicle"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "animate",
+          "types": [
+            "Artifact",
+            "Creature"
+          ]
+        },
+        {
+          "as": "dwarf",
+          "objects": {
+            "controller": "you",
+            "count": 1,
+            "subtypes": [
+              "Dwarf"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "choose_permanents",
+          "prompt": "Choose a Dwarf you control"
+        },
+        {
+          "attachment": {
+            "controller": "you",
+            "count": "any",
+            "subtypes": [
+              "Equipment"
+            ],
+            "zone": "battlefield"
+          },
+          "objects": {
+            "binding": "dwarf"
+          },
+          "op": "attach"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -17388,6 +17773,127 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "player_count": "each_opponent"
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "blood_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, create a Blood token for each opponent you have",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Blood"
+            ]
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Equipment"
+          ],
+          "text": "Blood tokens you control are Equipment in addition to their other types and have \"Equipped creature gets +2/+0\" and equip {2}"
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Blood"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Blood tokens you control are Equipment in addition to their other types and have \"Equipped creature gets +2/+0\" and equip {2}"
+        },
+        {
+          "ability": 1,
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Blood"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Blood tokens you control are Equipment in addition to their other types and have \"Equipped creature gets +2/+0\" and equip {2}"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "grantable_abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Equipped creature gets +2/+0",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "id": "arterial_alchemy",
+      "mana_cost": "{2}{R}",
+      "name": "Arterial Alchemy",
+      "oracle_text": "When this enchantment enters, create a Blood token for each opponent you have. (It's an artifact with \"{1}, {T}, Discard a card, Sacrifice this token: Draw a card.\")\nBlood tokens you control are Equipment in addition to their other types and have \"Equipped creature gets +2/+0\" and equip {2}.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "G",
         "R"
@@ -17706,6 +18212,74 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, double the number of +1/+1 counters on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "ascendant_acolyte",
+      "mana_cost": "{4}{G}",
+      "name": "Ascendant Acolyte",
+      "oracle_text": "This creature enters with a +1/+1 counter on it for each +1/+1 counter among other creatures you control.\nAt the beginning of your upkeep, double the number of +1/+1 counters on this creature.",
+      "power": 1,
+      "replacements": [
+        {
+          "amount": {
+            "counters_on": {
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Monk"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -34597,6 +35171,71 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": 3,
+              "op": "grant_bloodthirst"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a Vampire creature spell, it gains bloodthirst 3.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "subtypes": [
+                "Vampire"
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "bloodlord_of_vaasgoth",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{B}{B}",
+      "name": "Bloodlord of Vaasgoth",
+      "oracle_text": "Bloodthirst 3 (If an opponent was dealt damage this turn, this creature enters with three +1/+1 counters on it.)\nFlying\nWhenever you cast a Vampire creature spell, it gains bloodthirst 3.",
+      "power": 3,
+      "replacements": [
+        {
+          "amount": 3,
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "damage_taken_this_turn": "opponent"
+            },
+            "right": {
+              "const": 0
+            }
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Warrior"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{8}"
           },
@@ -34894,6 +35533,66 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "is_commander": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Commander creatures you control get +2/+2 and have haste.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "is_commander": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Commander creatures you control get +2/+2 and have haste."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "bloodsworn_steward",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{R}{R}",
+      "name": "Bloodsworn Steward",
+      "oracle_text": "Flying\nCommander creatures you control get +2/+2 and have haste.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Knight"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "objects": {
@@ -35162,6 +35861,119 @@
         "Knight"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "blood_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create a Blood token. (It's an artifact with \"{1}, {T}, Discard a card, Sacrifice this token: Draw a card.\")",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "times": [
+                  {
+                    "const": -2
+                  },
+                  {
+                    "count": {
+                      "controller": "you",
+                      "is_token": true,
+                      "subtypes": [
+                        "Blood"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  }
+                ]
+              },
+              "toughness": {
+                "times": [
+                  {
+                    "const": -2
+                  },
+                  {
+                    "count": {
+                      "controller": "you",
+                      "is_token": true,
+                      "subtypes": [
+                        "Blood"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  }
+                ]
+              }
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{T}, Sacrifice this creature: Target creature gets -X/-X until end of turn, where X is twice the number of Blood tokens you control. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "bloodtithe_harvester",
+      "mana_cost": "{B}{R}",
+      "name": "Bloodtithe Harvester",
+      "oracle_text": "When this creature enters, create a Blood token. (It's an artifact with \"{1}, {T}, Discard a card, Sacrifice this token: Draw a card.\")\n{T}, Sacrifice this creature: Target creature gets -X/-X until end of turn, where X is twice the number of Blood tokens you control. Activate only as a sorcery.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vampire"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -36516,6 +37328,105 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "germ",
+              "controller": "you",
+              "op": "create_token",
+              "token": "germ_0_0_b"
+            },
+            {
+              "objects": {
+                "binding": "germ"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Living weapon (When this Equipment enters, create a 0/0 black Phyrexian Germ creature token, then attach this to it.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "any",
+              "types": [
+                "Creature"
+              ],
+              "zone": "graveyard"
+            }
+          },
+          "text": "Equipped creature gets +X/+X, where X is the number of creature cards in all graveyards.",
+          "toughness": {
+            "count": {
+              "controller": "any",
+              "types": [
+                "Creature"
+              ],
+              "zone": "graveyard"
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "bonehoard",
+      "mana_cost": "{4}",
+      "name": "Bonehoard",
+      "oracle_text": "Living weapon (When this Equipment enters, create a 0/0 black Phyrexian Germ creature token, then attach this to it.)\nEquipped creature gets +X/+X, where X is the number of creature cards in all graveyards.\nEquip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -54449,6 +55360,93 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "spirit_2_2_r_menace"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an Aura or Equipment you control enters, create a 2/2 red Spirit creature token with menace.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "any_of": [
+                {
+                  "subtypes": [
+                    "Aura"
+                  ]
+                },
+                {
+                  "subtypes": [
+                    "Equipment"
+                  ]
+                }
+              ],
+              "controller": "you"
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "modified": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, put a +1/+1 counter on each modified creature you control. (Equipment, Auras you control, and counters are modifications.)",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "chishiro_the_shattered_blade",
+      "mana_cost": "{2}{R}{G}",
+      "name": "Chishiro, the Shattered Blade",
+      "oracle_text": "Whenever an Aura or Equipment you control enters, create a 2/2 red Spirit creature token with menace.\nAt the beginning of your end step, put a +1/+1 counter on each modified creature you control. (Equipment, Auras you control, and counters are modifications.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Snake",
+        "Samurai"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -59647,6 +60645,83 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "collision_of_realms",
+      "mana_cost": "{6}{R}",
+      "name": "Collision of Realms",
+      "oracle_text": "Each player shuffles all creatures they own into their library. Each player who shuffled a nontoken creature into their library this way reveals cards from the top of their library until they reveal a creature card, then puts that card onto the battlefield and the rest on the bottom of their library in a random order.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "shuffled_in",
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "put_on_top"
+        },
+        {
+          "effects": [
+            {
+              "op": "shuffle",
+              "player": {
+                "binding": "each_player"
+              }
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_player"
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "binding": "shuffled_in",
+                  "is_token": false,
+                  "owner": {
+                    "binding": "each_player"
+                  }
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "destination": "battlefield",
+                  "op": "reveal_until",
+                  "player": {
+                    "binding": "each_player"
+                  },
+                  "rest_to_bottom": true,
+                  "selector": {
+                    "is_token": false,
+                    "types": [
+                      "Creature"
+                    ]
+                  }
+                }
+              ]
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_player",
+          "starting_with": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -59871,6 +60946,77 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "mana": "{W}{W}{W}",
+              "op": "add_mana",
+              "persists_until_end_of_turn": true,
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this Vehicle attacks, add {W}{W}{W} and you gain 3 life. Until end of turn, you don't lose this mana as steps and phases end.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 6,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 6"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "id": "colossal_plow",
+      "mana_cost": "{2}",
+      "name": "Colossal Plow",
+      "oracle_text": "Whenever this Vehicle attacks, add {W}{W}{W} and you gain 3 life. Until end of turn, you don't lose this mana as steps and phases end.\nCrew 6 (Tap any number of creatures you control with total power 6 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -61779,6 +62925,126 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "label": "Put a +1/+1 counter on target creature with a counter on it."
+                },
+                {
+                  "effects": [
+                    {
+                      "condition": {
+                        "exists": {
+                          "controller": "you",
+                          "enchanted_by": true,
+                          "types": [
+                            "Creature"
+                          ],
+                          "zone": "battlefield"
+                        }
+                      },
+                      "op": "if",
+                      "then": [
+                        {
+                          "amount": {
+                            "const": 1
+                          },
+                          "op": "draw",
+                          "player": "you"
+                        }
+                      ]
+                    }
+                  ],
+                  "label": "Draw a card if you control an enchanted creature."
+                },
+                {
+                  "effects": [
+                    {
+                      "condition": {
+                        "exists": {
+                          "controller": "you",
+                          "equipped": true,
+                          "types": [
+                            "Creature"
+                          ],
+                          "zone": "battlefield"
+                        }
+                      },
+                      "op": "if",
+                      "then": [
+                        {
+                          "amount": {
+                            "const": 1
+                          },
+                          "controller": "you",
+                          "op": "create_token",
+                          "token": "spirit_1_1_c"
+                        }
+                      ]
+                    }
+                  ],
+                  "label": "Create a 1/1 colorless Spirit creature token if you control an equipped creature."
+                }
+              ],
+              "op": "choose_mode",
+              "or_more": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "mode": 0,
+              "selector": {
+                "has_counters": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of your end step, choose one or more —\n• Put a +1/+1 counter on target creature with a counter on it.\n• Draw a card if you control an enchanted creature.\n• Create a 1/1 colorless Spirit creature token if you control an equipped creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "concord_with_the_kami",
+      "mana_cost": "{3}{G}",
+      "name": "Concord with the Kami",
+      "oracle_text": "At the beginning of your end step, choose one or more —\n• Put a +1/+1 counter on target creature with a counter on it.\n• Draw a card if you control an enchanted creature.\n• Create a 1/1 colorless Spirit creature token if you control an equipped creature.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -67508,6 +68774,68 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "not": {
+                  "exists": {
+                    "controller": {
+                      "binding": "event_player"
+                    },
+                    "is_commander": true,
+                    "zone": "battlefield"
+                  }
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 4
+                  },
+                  "op": "damage",
+                  "player": {
+                    "binding": "event_player"
+                  }
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each player's end step, this creature deals 4 damage to that player unless they control a commander.",
+          "trigger": {
+            "controller": "any",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "crimson_honor_guard",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{3}{R}{R}",
+      "name": "Crimson Honor Guard",
+      "oracle_text": "Trample\nAt the beginning of each player's end step, this creature deals 4 damage to that player unless they control a commander.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Knight"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -72291,6 +73619,100 @@
     },
     {
       "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "dance_of_the_manse",
+      "mana_cost": "{X}{W}{U}",
+      "name": "Dance of the Manse",
+      "oracle_text": "Return up to X target artifact and/or non-Aura enchantment cards each with mana value X or less from your graveyard to the battlefield. If X is 6 or more, those permanents are 4/4 creatures in addition to their other types.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_from_graveyard"
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "x": true
+            },
+            "right": {
+              "const": 6
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "duration": "permanent",
+              "objects": {
+                "target": "t1",
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 4
+              },
+              "toughness": {
+                "const": 4
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": {
+            "x": true
+          },
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "any_of": [
+              {
+                "types": [
+                  "Artifact"
+                ]
+              },
+              {
+                "not_subtypes": [
+                  "Aura"
+                ],
+                "types": [
+                  "Enchantment"
+                ]
+              }
+            ],
+            "controller": "you",
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "x": true
+              }
+            },
+            "zone": "graveyard"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "R"
       ],
       "colors": [
@@ -73019,6 +74441,80 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{4}{B}{B}"
+          },
+          "effects": [
+            {
+              "link": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{4}{B}{B}: Exile target creature and put a +1/+1 counter on this creature."
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "grant_exiled_abilities",
+          "kind": "static",
+          "text": "This creature has all activated abilities of all creature cards exiled with it.",
+          "types": [
+            "Creature"
+          ]
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "dark_impostor",
+      "mana_cost": "{2}{B}",
+      "name": "Dark Impostor",
+      "oracle_text": "{4}{B}{B}: Exile target creature and put a +1/+1 counter on this creature.\nThis creature has all activated abilities of all creature cards exiled with it.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Assassin"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -93575,6 +95071,84 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted creature has \"{T}: Create X 1/1 red Elemental creature tokens with haste, where X is this creature's power. Exile them at the beginning of the next end step.\""
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "self": true
+                }
+              },
+              "as": "mastery_elementals",
+              "controller": "you",
+              "op": "create_token",
+              "token": "elemental_1_1_r_haste"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "mastery_elementals",
+                    "count": "all"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Exile them at the beginning of the next end step."
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Create X 1/1 red Elemental creature tokens with haste, where X is this creature's power. Exile them at the beginning of the next end step."
+        }
+      ],
+      "id": "elemental_mastery",
+      "mana_cost": "{3}{R}",
+      "name": "Elemental Mastery",
+      "oracle_text": "Enchant creature\nEnchanted creature has \"{T}: Create X 1/1 red Elemental creature tokens with haste, where X is this creature's power. Exile them at the beginning of the next end step.\"",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -128841,6 +130415,98 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}{R}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Land"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{R}, Sacrifice a land: Put a +1/+1 counter on this creature."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "counters_on": {
+                      "counter": "+1/+1",
+                      "objects": {
+                        "self_only": true
+                      }
+                    }
+                  },
+                  "op": "damage",
+                  "target": "t1"
+                }
+              ],
+              "op": "may",
+              "prompt": "Have Goblin Razerunners deal damage equal to its +1/+1 counters to the target?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "types": [
+                  "Planeswalker"
+                ]
+              }
+            }
+          ],
+          "text": "At the beginning of your end step, you may have this creature deal damage equal to the number of +1/+1 counters on it to target player or planeswalker.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "goblin_razerunners",
+      "mana_cost": "{2}{R}{R}",
+      "name": "Goblin Razerunners",
+      "oracle_text": "{1}{R}, Sacrifice a land: Put a +1/+1 counter on this creature.\nAt the beginning of your end step, you may have this creature deal damage equal to the number of +1/+1 counters on it to target player or planeswalker.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Warrior"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -138630,6 +140296,67 @@
         "Spirit"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}{W}{U}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Enchantment"
+                ],
+                "controller": "you",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{1}{W}{U}, {T}: Return target artifact or enchantment card from your graveyard to your hand."
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "hanna_ship_s_navigator",
+      "mana_cost": "{1}{W}{U}",
+      "name": "Hanna, Ship's Navigator",
+      "oracle_text": "{1}{W}{U}, {T}: Return target artifact or enchantment card from your graveyard to your hand.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -152544,6 +154271,101 @@
         {
           "effects": [
             {
+              "destination": "hand",
+              "objects": {
+                "target": "gy_card"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "gy_card",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "any_of": [
+                  {
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Vehicle"
+                    ]
+                  }
+                ],
+                "controller": "you",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 2
+                  }
+                },
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever this Vehicle attacks, return target creature or Vehicle card with mana value 2 or less from your graveyard to your hand.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 2"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "imperial_recovery_unit",
+      "mana_cost": "{2}{W}",
+      "name": "Imperial Recovery Unit",
+      "oracle_text": "Whenever this Vehicle attacks, return target creature or Vehicle card with mana value 2 or less from your graveyard to your hand.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 2
               },
@@ -152583,6 +154405,76 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "imposing_grandeur",
+      "mana_cost": "{4}{R}",
+      "name": "Imposing Grandeur",
+      "oracle_text": "Each player may discard their hand and draw cards equal to the greatest mana value of a commander they own on the battlefield or in the command zone.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "op": "discard",
+                  "player": {
+                    "binding": "each_player"
+                  },
+                  "whole_hand": true
+                },
+                {
+                  "amount": {
+                    "extreme_value": {
+                      "objects": {
+                        "union": [
+                          {
+                            "is_commander": true,
+                            "owner": {
+                              "binding": "each_player"
+                            },
+                            "zone": "battlefield"
+                          },
+                          {
+                            "is_commander": true,
+                            "player": {
+                              "binding": "each_player"
+                            },
+                            "zone": "command"
+                          }
+                        ]
+                      },
+                      "of": "mana_value",
+                      "pick": "greatest"
+                    }
+                  },
+                  "op": "draw",
+                  "player": {
+                    "binding": "each_player"
+                  }
+                }
+              ],
+              "op": "may",
+              "player": {
+                "binding": "each_player"
+              },
+              "prompt": "Discard your hand and draw cards?"
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_player"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -152700,6 +154592,106 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 3,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 3"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 3,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 3"
+        }
+      ],
+      "id": "imposter_mech",
+      "mana_cost": "{1}{U}",
+      "name": "Imposter Mech",
+      "oracle_text": "You may have this Vehicle enter as a copy of a creature an opponent controls, except it's a Vehicle artifact with crew 3 and it loses all other card types.\nCrew 3",
+      "power": 3,
+      "replacements": [
+        {
+          "copying": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "event": "self_enters_as_copy",
+          "except_": {
+            "add_abilities": [
+              0
+            ],
+            "add_subtypes": [
+              "Vehicle"
+            ],
+            "set_types": [
+              "Artifact"
+            ]
+          }
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -157509,6 +159501,86 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "modified": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Modified creatures you control have haste. (Equipment, Auras you control, and counters are modifications.)"
+        },
+        {
+          "cost": {
+            "remove_counters": {
+              "amount": 1,
+              "counter": "+1/+1"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "once_each_turn": true,
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Remove a +1/+1 counter from this enchantment: Put a +1/+1 counter on target creature you control. Activate only as a sorcery and only once each turn."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "invigorating_hot_spring",
+      "mana_cost": "{1}{R}{G}",
+      "name": "Invigorating Hot Spring",
+      "oracle_text": "This enchantment enters with four +1/+1 counters on it.\nModified creatures you control have haste. (Equipment, Auras you control, and counters are modifications.)\nRemove a +1/+1 counter from this enchantment: Put a +1/+1 counter on target creature you control. Activate only as a sorcery and only once each turn.",
+      "replacements": [
+        {
+          "amount": 4,
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -158320,6 +160392,92 @@
       ],
       "toughness": 5,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever this creature or a commander you control attacks alone, return target artifact card from your graveyard to the battlefield.",
+          "trigger": {
+            "condition": {
+              "all": [
+                {
+                  "cmp": "==",
+                  "left": {
+                    "count": {
+                      "binding": "attackers"
+                    }
+                  },
+                  "right": {
+                    "const": 1
+                  }
+                },
+                {
+                  "exists": {
+                    "any_of": [
+                      {
+                        "self_only": true
+                      },
+                      {
+                        "controller": "you",
+                        "is_commander": true
+                      }
+                    ],
+                    "binding": "attackers"
+                  }
+                }
+              ]
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "ironsoul_enforcer",
+      "mana_cost": "{4}{W}",
+      "name": "Ironsoul Enforcer",
+      "oracle_text": "Whenever this creature or a commander you control attacks alone, return target artifact card from your graveyard to the battlefield.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Samurai"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },
@@ -159465,6 +161623,110 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "duration": "until_your_next_turn",
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "subject"
+                  },
+                  "op": "pump",
+                  "power": {
+                    "const": -1
+                  },
+                  "toughness": {
+                    "const": 0
+                  }
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "Until your next turn, whenever a creature an opponent controls attacks, it gets -1/-0 until end of turn.",
+              "trigger": {
+                "controller": "opponent",
+                "event": "attacks"
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Until your next turn, whenever a creature an opponent controls attacks, it gets -1/-0 until end of turn."
+        },
+        {
+          "cost": {
+            "loyalty": -2
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "any_order": true,
+              "op": "two_piles",
+              "other": "library_bottom",
+              "to": "hand"
+            }
+          ],
+          "kind": "activated",
+          "text": "−2: Reveal the top three cards of your library. An opponent separates those cards into two piles. Put one pile into your hand and the other on the bottom of your library in any order."
+        },
+        {
+          "cost": {
+            "loyalty": -8
+          },
+          "effects": [
+            {
+              "as": "found",
+              "count": 1,
+              "destination": "exile",
+              "op": "search_library",
+              "player": "each_player",
+              "searcher": "you",
+              "selector": {
+                "not_types": [
+                  "Land"
+                ]
+              }
+            },
+            {
+              "objects": {
+                "binding": "found",
+                "count": "any"
+              },
+              "op": "play_exiled"
+            }
+          ],
+          "kind": "activated",
+          "text": "−8: For each player, search that player's library for a nonland card and exile it, then that player shuffles. You may cast those cards without paying their mana costs."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "jace_architect_of_thought",
+      "loyalty": 4,
+      "mana_cost": "{2}{U}{U}",
+      "name": "Jace, Architect of Thought",
+      "oracle_text": "+1: Until your next turn, whenever a creature an opponent controls attacks, it gets -1/-0 until end of turn.\n−2: Reveal the top three cards of your library. An opponent separates those cards into two piles. Put one pile into your hand and the other on the bottom of your library in any order.\n−8: For each player, search that player's library for a nonland card and exile it, then that player shuffles. You may cast those cards without paying their mana costs.",
+      "source": "auto",
+      "subtypes": [
+        "Jace"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
       ]
     },
     {
@@ -164602,6 +166864,76 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "opponent",
+                "enchanted_by": {
+                  "controller": "you"
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "goad"
+            },
+            {
+              "amount": {
+                "count": {
+                  "controller": "opponent",
+                  "enchanted_by": {
+                    "controller": "you"
+                  },
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, goad each creature your opponents control that's enchanted by an Aura you control. Put a +1/+1 counter on Kaima for each creature goaded this way",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "kaima_the_fractured_calm",
+      "mana_cost": "{2}{R}{G}",
+      "name": "Kaima, the Fractured Calm",
+      "oracle_text": "At the beginning of your end step, goad each creature your opponents control that's enchanted by an Aura you control. Put a +1/+1 counter on Kaima for each creature goaded this way. (Until your next turn, the goaded creatures attack each combat if able and attack a player other than you if able.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -165013,6 +167345,99 @@
         "Spirit"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "playable_this_turn": true,
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a modified creature you control attacks, exile the top card of your library. You may play that card this turn.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "binding": "subject",
+                "modified": true
+              }
+            },
+            "controller": "you",
+            "event": "attacks",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            },
+            "recheck": false
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever you cast a spell from exile, put a +1/+1 counter on target creature you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "from_zones": [
+              "exile"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "kami_of_celebration",
+      "mana_cost": "{4}{R}",
+      "name": "Kami of Celebration",
+      "oracle_text": "Whenever a modified creature you control attacks, exile the top card of your library. You may play that card this turn. (Equipment, Auras you control, and counters are modifications.)\nWhenever you cast a spell from exile, put a +1/+1 counter on target creature you control.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -166803,6 +169228,141 @@
       "subtypes": [
         "Human",
         "Scientist"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}{U}"
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keep_pt": true,
+              "keywords": [
+                "flying"
+              ],
+              "objects": {
+                "subtypes": [
+                  "Vehicle"
+                ],
+                "target": "t1"
+              },
+              "op": "animate",
+              "types": [
+                "Artifact",
+                "Creature"
+              ]
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "flying"
+              ],
+              "objects": {
+                "not_subtypes": [
+                  "Vehicle"
+                ],
+                "target": "t1"
+              },
+              "op": "animate",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              },
+              "types": [
+                "Artifact",
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "not_types": [
+                  "Creature"
+                ],
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}{U}: Until end of turn, target noncreature artifact you control becomes an artifact creature and gains flying. If it's not a Vehicle, it has base power and toughness 1/1 until end of turn."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 3,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "not_types": [
+                  "Creature"
+                ],
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "At the beginning of your upkeep, put a +1/+1 counter on each of up to three target noncreature artifacts.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "katsumasa_the_animator",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{U}{U}",
+      "name": "Katsumasa, the Animator",
+      "oracle_text": "Flying\n{2}{U}: Until end of turn, target noncreature artifact you control becomes an artifact creature and gains flying. If it's not a Vehicle, it has base power and toughness 1/1 until end of turn.\nAt the beginning of your upkeep, put a +1/+1 counter on each of up to three target noncreature artifacts.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Moonfolk",
+        "Artificer"
       ],
       "supertypes": [
         "Legendary"
@@ -173888,6 +176448,171 @@
       "uncounterable": true
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Equipped creature gets +2/+2 and has menace.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "menace"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +2/+2 and has menace."
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": {
+                  "binding": "event_player"
+                },
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "goad"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature or equipped creature deals combat damage to a player, goad each creature that player controls.",
+          "trigger": {
+            "controller": "you",
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": {
+                  "binding": "event_player"
+                },
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "goad"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature or equipped creature deals combat damage to a player, goad each creature that player controls.",
+          "trigger": {
+            "controller": "any",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "is_attached": true
+          },
+          "effect": "set_types",
+          "kind": "static",
+          "text": "Reconfigure {4}",
+          "types": [
+            "Artifact"
+          ]
+        },
+        {
+          "cost": {
+            "mana": "{4}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "reconfigure_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "reconfigure_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Reconfigure {4}"
+        },
+        {
+          "cost": {
+            "mana": "{4}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "unattach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Reconfigure {4}"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "komainu_battle_armor",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Komainu Battle Armor",
+      "oracle_text": "Menace\nEquipped creature gets +2/+2 and has menace.\nWhenever this creature or equipped creature deals combat damage to a player, goad each creature that player controls.\nReconfigure {4} ({4}: Attach to target creature you control; or unattach from a creature. Reconfigure only as a sorcery. While attached, this isn't a creature.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Equipment",
+        "Dog"
+      ],
+      "toughness": 2,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -174279,6 +177004,114 @@
     {
       "abilities": [
         {
+          "ability": 0,
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "all": [
+              {
+                "exists": {
+                  "enchanted_by": true,
+                  "self_only": true
+                }
+              },
+              {
+                "exists": {
+                  "attached_to": {
+                    "self_only": true
+                  },
+                  "controller": "any",
+                  "subtypes": [
+                    "Equipment"
+                  ]
+                }
+              },
+              {
+                "exists": {
+                  "has_counters": true,
+                  "self_only": true
+                }
+              }
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "As long as Kosei is enchanted, equipped, and has a counter on it, Kosei has \"Whenever Kosei deals combat damage to an opponent, you draw that many cards and Kosei deals that much damage to each other opponent.\""
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "damage",
+              "player": {
+                "except": "you",
+                "not": {
+                  "binding": "defender"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Kosei deals combat damage to an opponent, you draw that many cards and Kosei deals that much damage to each other opponent.",
+          "trigger": {
+            "condition": {
+              "cmp": "<",
+              "left": {
+                "player_count": {
+                  "except": "you",
+                  "not": {
+                    "binding": "defender"
+                  }
+                }
+              },
+              "right": {
+                "player_count": "each_opponent"
+              }
+            },
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "kosei_penitent_warlord",
+      "mana_cost": "{1}{G}{G}",
+      "name": "Kosei, Penitent Warlord",
+      "oracle_text": "As long as Kosei is enchanted, equipped, and has a counter on it, Kosei has \"Whenever Kosei deals combat damage to an opponent, you draw that many cards and Kosei deals that much damage to each other opponent.\"",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Ogre",
+        "Samurai"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -174434,6 +177267,112 @@
         "Legendary"
       ],
       "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "ability": 0,
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Vehicle"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Vehicles you control have crew 2"
+        },
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "lifelink",
+                "vigilance"
+              ],
+              "objects": {
+                "target": "t1",
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Artifact",
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of combat on your turn, target artifact creature you control gains lifelink and vigilance until end of turn",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 2"
+        }
+      ],
+      "id": "kotori_pilot_prodigy",
+      "mana_cost": "{1}{W}{U}",
+      "name": "Kotori, Pilot Prodigy",
+      "oracle_text": "Vehicles you control have crew 2.\nAt the beginning of combat on your turn, target artifact creature you control gains lifelink and vigilance until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Moonfolk",
+        "Pilot"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -189858,6 +192797,86 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "binding": "subject"
+                }
+              },
+              "defender_of": {
+                "binding": "subject"
+              },
+              "op": "damage",
+              "source_object": {
+                "binding": "subject"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever equipped creature attacks, it deals damage equal to its power to the player or planeswalker it's attacking.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {3}"
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "mage_slayer",
+      "mana_cost": "{1}{R}{G}",
+      "name": "Mage Slayer",
+      "oracle_text": "Whenever equipped creature attacks, it deals damage equal to its power to the player or planeswalker it's attacking.\nEquip {3}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -193809,6 +196828,89 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "fight",
+              "other": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature or another Vampire you control enters, this creature fights up to one target creature an opponent controls.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "subtypes": [
+                "Vampire"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "op": "create_token",
+              "token": "blood_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature dealt damage by this creature this turn dies, create a Blood token. (It's an artifact with \"{1}, {T}, Discard a card, Sacrifice this token: Draw a card.\")",
+          "trigger": {
+            "controller": "any",
+            "event": "creature_dies",
+            "filter": {
+              "controller": "any",
+              "damaged_by": "self"
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "markov_enforcer",
+      "mana_cost": "{4}{R}{R}",
+      "name": "Markov Enforcer",
+      "oracle_text": "Whenever this creature or another Vampire you control enters, this creature fights up to one target creature an opponent controls.\nWhenever a creature dealt damage by this creature this turn dies, create a Blood token. (It's an artifact with \"{1}, {T}, Discard a card, Sacrifice this token: Draw a card.\")",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Soldier"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -199345,6 +202447,68 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Vampire"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "has_mana_ability": false,
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "When this creature enters, destroy up to X target artifacts without mana abilities, where X is the number of Vampires you control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "midnight_arsonist",
+      "mana_cost": "{3}{R}",
+      "name": "Midnight Arsonist",
+      "oracle_text": "When this creature enters, destroy up to X target artifacts without mana abilities, where X is the number of Vampires you control.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vampire"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -203435,6 +206599,108 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "mob_rule",
+      "mana_cost": "{4}{R}{R}",
+      "name": "Mob Rule",
+      "oracle_text": "Choose one —\n• Gain control of all creatures with power 4 or greater until end of turn. Untap those creatures. They gain haste until end of turn.\n• Gain control of all creatures with power 3 or less until end of turn. Untap those creatures. They gain haste until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "as": "mob_big",
+                  "duration": "until_end_of_turn",
+                  "objects": {
+                    "controller": "any",
+                    "count": "all",
+                    "power": {
+                      "op": ">=",
+                      "value": {
+                        "const": 4
+                      }
+                    },
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "gain_control",
+                  "player": "you"
+                },
+                {
+                  "objects": {
+                    "binding": "mob_big"
+                  },
+                  "op": "untap"
+                },
+                {
+                  "duration": "until_end_of_turn",
+                  "keyword": "haste",
+                  "objects": {
+                    "binding": "mob_big"
+                  },
+                  "op": "grant_keyword"
+                }
+              ],
+              "label": "Gain control of all creatures with power 4 or greater until end of turn. Untap those creatures. They gain haste until end of turn."
+            },
+            {
+              "effects": [
+                {
+                  "as": "mob_small",
+                  "duration": "until_end_of_turn",
+                  "objects": {
+                    "controller": "any",
+                    "count": "all",
+                    "power": {
+                      "op": "<=",
+                      "value": {
+                        "const": 3
+                      }
+                    },
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "gain_control",
+                  "player": "you"
+                },
+                {
+                  "objects": {
+                    "binding": "mob_small"
+                  },
+                  "op": "untap"
+                },
+                {
+                  "duration": "until_end_of_turn",
+                  "keyword": "haste",
+                  "objects": {
+                    "binding": "mob_small"
+                  },
+                  "op": "grant_keyword"
+                }
+              ],
+              "label": "Gain control of all creatures with power 3 or less until end of turn. Untap those creatures. They gain haste until end of turn."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -204328,6 +207594,92 @@
       "toughness": 0,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "choose_type",
+              "prompt": "Choose a creature type"
+            }
+          ],
+          "kind": "triggered",
+          "text": "As this enchantment enters, choose a creature type.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "as": "echo_copy",
+              "controller": "you",
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "copy_permanent"
+            },
+            {
+              "duration": "permanent",
+              "keywords": [
+                "haste"
+              ],
+              "objects": {
+                "binding": "echo_copy",
+                "count": "all"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "echo_copy",
+                    "count": "all"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Exile it at the beginning of the next end step."
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a nontoken creature you control of the chosen type enters, create a token that's a copy of that creature. That token gains haste. Exile it at the beginning of the next end step.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "is_token": false,
+              "subtypes": [
+                {
+                  "chosen_type_of": "self"
+                }
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "molten_echoes",
+      "mana_cost": "{2}{R}{R}",
+      "name": "Molten Echoes",
+      "oracle_text": "As this enchantment enters, choose a creature type.\nWhenever a nontoken creature you control of the chosen type enters, create a token that's a copy of that creature. That token gains haste. Exile it at the beginning of the next end step.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -209533,6 +212885,62 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "myr_1_1_c"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{1}"
+              },
+              "player": "you",
+              "prompt": "Pay {1} to create a 1/1 colorless Myr artifact creature token?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an artifact spell, you may pay {1}. If you do, create a 1/1 colorless Myr artifact creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "types": [
+                "Artifact"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "myrsmith",
+      "mana_cost": "{1}{W}",
+      "name": "Myrsmith",
+      "oracle_text": "Whenever you cast an artifact spell, you may pay {1}. If you do, create a 1/1 colorless Myr artifact creature token.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -215753,6 +219161,64 @@
         "Hag"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "add_mana": "{B}",
+          "affects_player": "you",
+          "effect": "add_mana_on_tap",
+          "kind": "static",
+          "tapped_permanent": {
+            "subtypes": [
+              "Swamp"
+            ]
+          },
+          "text": "Whenever you tap a Swamp for mana, add an additional {B}."
+        },
+        {
+          "cost": {
+            "mana": "{B}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{B}: This creature gets +1/+1 until end of turn."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "nirkana_revenant",
+      "mana_cost": "{4}{B}{B}",
+      "name": "Nirkana Revenant",
+      "oracle_text": "Whenever you tap a Swamp for mana, add an additional {B}.\n{B}: This creature gets +1/+1 until end of turn.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Shade"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -223325,6 +226791,71 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_had": true
+              },
+              "op": "create_token",
+              "token": "spirit_1_1_c"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever enchanted creature or another modified creature you control dies, create X 1/1 colorless Spirit creature tokens, where X is that creature's power. (Equipment, Auras you control, and counters are modifications.)",
+          "trigger": {
+            "controller": "any",
+            "event": "creature_dies",
+            "filter": {
+              "any_of": [
+                {
+                  "attached": true
+                },
+                {
+                  "controller": "you",
+                  "modified": true
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "one_with_the_kami",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{3}{G}",
+      "name": "One with the Kami",
+      "oracle_text": "Flash\nEnchant creature you control\nWhenever enchanted creature or another modified creature you control dies, create X 1/1 colorless Spirit creature tokens, where X is that creature's power. (Equipment, Auras you control, and counters are modifications.)",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -223790,6 +227321,52 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "in_commander_identity": true,
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "mana_grant": {
+            "commander_only": true,
+            "enters_with_command_zone_casts": "+1/+1"
+          },
+          "text": "{1}, {T}: Add one mana of any color in your commander's color identity. If you spend this mana to cast your commander, it enters with a number of additional +1/+1 counters on it equal to the number of times it's been cast from the command zone this game."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "opal_palace",
+      "name": "Opal Palace",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}: Add one mana of any color in your commander's color identity. If you spend this mana to cast your commander, it enters with a number of additional +1/+1 counters on it equal to the number of times it's been cast from the command zone this game.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -224645,6 +228222,112 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "add_counters"
+            },
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "counters_on": {
+                    "counter": "+1/+1",
+                    "objects": {
+                      "binding": "subject"
+                    }
+                  }
+                },
+                "right": {
+                  "const": 3
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever enchanted creature attacks, put a +1/+1 counter on it. Then if it has three or more +1/+1 counters on it, sacrifice this Aura.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "count": 2,
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When you sacrifice this Aura, search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle.",
+          "trigger": {
+            "event": "sacrificed",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "ordeal_of_nylea",
+      "mana_cost": "{1}{G}",
+      "name": "Ordeal of Nylea",
+      "oracle_text": "Enchant creature\nWhenever enchanted creature attacks, put a +1/+1 counter on it. Then if it has three or more +1/+1 counters on it, sacrifice this Aura.\nWhen you sacrifice this Aura, search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -224919,6 +228602,70 @@
       "toughness": 2,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}."
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "modified": true,
+            "self_only": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "As long as this creature is modified, it has \"{T}: Add {G}{G}.\" (Equipment, Auras you control, and counters are modifications.)"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}{G}."
+        }
+      ],
+      "id": "orochi_merge_keeper",
+      "mana_cost": "{1}{G}",
+      "name": "Orochi Merge-Keeper",
+      "oracle_text": "{T}: Add {G}.\nAs long as this creature is modified, it has \"{T}: Add {G}{G}.\" (Equipment, Auras you control, and counters are modifications.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Snake",
+        "Druid"
+      ],
+      "toughness": 1,
+      "types": [
         "Creature"
       ]
     },
@@ -227785,6 +231532,69 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "op": "discard",
+              "player": "you",
+              "whole_hand": true
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, discard your hand, then draw three cards.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "graveyard_cast": "graveyard",
+      "graveyard_cost": {
+        "exile_from_graveyard": {
+          "count": 8,
+          "exclude_self": true
+        },
+        "mana": "{R}{R}"
+      },
+      "id": "ox_of_agonas",
+      "mana_cost": "{3}{R}{R}",
+      "name": "Ox of Agonas",
+      "oracle_text": "When this creature enters, discard your hand, then draw three cards.\nEscape—{R}{R}, Exile eight other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)\nThis creature escapes with a +1/+1 counter on it.",
+      "power": 4,
+      "replacements": [
+        {
+          "amount": 1,
+          "condition": {
+            "escaped": true
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Ox"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "any_types": [
               "Artifact",
@@ -229492,6 +233302,82 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "attacking": true,
+              "op": "create_token",
+              "token": "angel_4_4_w_flying_vigilance"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Parhelion II attacks, create two 4/4 white Angel creature tokens with flying and vigilance that are attacking.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 4,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 4"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "parhelion_ii",
+      "keywords": [
+        "flying",
+        "first_strike",
+        "vigilance"
+      ],
+      "mana_cost": "{6}{W}{W}",
+      "name": "Parhelion II",
+      "oracle_text": "Flying, first strike, vigilance\nWhenever Parhelion II attacks, create two 4/4 white Angel creature tokens with flying and vigilance that are attacking.\nCrew 4 (Tap any number of creatures you control with total power 4 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -230227,6 +234113,89 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}{W}"
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "subtypes": [
+                  "Vehicle"
+                ],
+                "target": "t1"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "subtypes": [
+                  "Vehicle"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}{W}: Another target Vehicle you control becomes an artifact creature until end of turn."
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 4,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 4"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "id": "peacewalker_colossus",
+      "mana_cost": "{3}",
+      "name": "Peacewalker Colossus",
+      "oracle_text": "{1}{W}: Another target Vehicle you control becomes an artifact creature until end of turn.\nCrew 4 (Tap any number of creatures you control with total power 4 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 6,
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -239725,6 +243694,64 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, put a +1/+1 counter on each other creature you control",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "cost_reduction": {
+        "count": {
+          "controller": "opponent",
+          "types": [
+            "Creature"
+          ],
+          "zone": "battlefield"
+        }
+      },
+      "id": "primeval_protector",
+      "mana_cost": "{10}{G}",
+      "name": "Primeval Protector",
+      "oracle_text": "This spell costs {1} less to cast for each creature your opponents control.\nWhen this creature enters, put a +1/+1 counter on each other creature you control.",
+      "power": 10,
+      "source": "auto",
+      "subtypes": [
+        "Avatar"
+      ],
+      "toughness": 10,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -240905,6 +244932,83 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "pilot_1_1_c_crew2"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more Vehicles you control attack, create a 1/1 colorless Pilot creature token with \"This token crews Vehicles as though its power were 2 greater.\"",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "binding": "attackers",
+                "subtypes": [
+                  "Vehicle"
+                ]
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 2"
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "prodigy_s_prototype",
+      "mana_cost": "{1}{W}{U}",
+      "name": "Prodigy's Prototype",
+      "oracle_text": "Whenever one or more Vehicles you control attack, create a 1/1 colorless Pilot creature token with \"This token crews Vehicles as though its power were 2 greater.\"\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -246270,6 +250374,72 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "affects_spells": {
+            "types": [
+              "Artifact"
+            ]
+          },
+          "effect": "cast_as_though_flash",
+          "kind": "static",
+          "text": "You may cast historic spells as though they had flash"
+        },
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "supertypes": [
+              "Legendary"
+            ]
+          },
+          "effect": "cast_as_though_flash",
+          "kind": "static",
+          "text": "You may cast historic spells as though they had flash"
+        },
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "subtypes": [
+              "Saga"
+            ]
+          },
+          "effect": "cast_as_though_flash",
+          "kind": "static",
+          "text": "You may cast historic spells as though they had flash"
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "raff_capashen_ship_s_mage",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{2}{W}{U}",
+      "name": "Raff Capashen, Ship's Mage",
+      "oracle_text": "Flash\nFlying\nYou may cast historic spells as though they had flash. (Artifacts, legendaries, and Sagas are historic.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -246851,6 +251021,82 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "objects": {
+                "count": 1,
+                "optional": true,
+                "types": [
+                  "Land"
+                ]
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this Vehicle attacks, look at the top card of your library. If it's a land card, you may put it onto the battlefield tapped.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 3,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 4
+              },
+              "toughness": {
+                "const": 4
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 3"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "raiders_karve",
+      "mana_cost": "{3}",
+      "name": "Raiders' Karve",
+      "oracle_text": "Whenever this Vehicle attacks, look at the top card of your library. If it's a land card, you may put it onto the battlefield tapped.\nCrew 3 (Tap any number of creatures you control with total power 3 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -252364,6 +256610,59 @@
     },
     {
       "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "release_to_memory",
+      "mana_cost": "{3}{W}",
+      "name": "Release to Memory",
+      "oracle_text": "Exile target opponent's graveyard. For each creature card exiled this way, create a 1/1 colorless Spirit creature token.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "exiled",
+          "objects": {
+            "count": "all",
+            "player": {
+              "target": "t1"
+            },
+            "zone": "graveyard"
+          },
+          "op": "exile"
+        },
+        {
+          "amount": {
+            "count": {
+              "binding": "exiled",
+              "types": [
+                "Creature"
+              ],
+              "zone": "exile"
+            }
+          },
+          "controller": "you",
+          "op": "create_token",
+          "token": "spirit_1_1_c"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "opponent"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -256826,6 +261125,66 @@
         "Druid"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "discard",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Draw a card, then discard a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an artifact spell, you may draw a card. If you do, discard a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "types": [
+                "Artifact"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "riddlesmith",
+      "mana_cost": "{1}{U}",
+      "name": "Riddlesmith",
+      "oracle_text": "Whenever you cast an artifact spell, you may draw a card. If you do, discard a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -269394,6 +273753,82 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature or another nontoken Vampire you control dies, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+          "trigger": {
+            "controller": "you",
+            "event": "dies",
+            "filter": {
+              "is_token": false,
+              "subtypes": [
+                "Vampire"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{R}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 2,
+              "types": [
+                "Artifact"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "playable_this_turn": true,
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{R}, Sacrifice two artifacts: Exile the top card of your library. You may play that card this turn."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "scion_of_opulence",
+      "mana_cost": "{2}{R}",
+      "name": "Scion of Opulence",
+      "oracle_text": "Whenever this creature or another nontoken Vampire you control dies, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")\n{R}, Sacrifice two artifacts: Exile the top card of your library. You may play that card this turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Noble"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "scion_of_ugin",
@@ -278786,6 +283221,98 @@
         "Creature"
       ],
       "uncounterable": true
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature has haste and \"At the beginning of your upkeep, destroy this creature. Reveal cards from the top of your library until you reveal a creature card. Put that card onto the battlefield and attach Shifting Shadow to it, then put all other cards revealed this way on the bottom of your library in a random order.\""
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted creature has haste and \"At the beginning of your upkeep, destroy this creature. Reveal cards from the top of your library until you reveal a creature card. Put that card onto the battlefield and attach Shifting Shadow to it, then put all other cards revealed this way on the bottom of your library in a random order.\""
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "destroy"
+            },
+            {
+              "as": "shadowed",
+              "destination": "battlefield",
+              "objects": {
+                "types": [
+                  "Creature"
+                ]
+              },
+              "op": "reveal_until",
+              "player": "you",
+              "rest_to_bottom": true
+            },
+            {
+              "attachment": {
+                "granter": true
+              },
+              "objects": {
+                "binding": "shadowed"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, destroy this creature. Reveal cards from the top of your library until you reveal a creature card. Put that card onto the battlefield and attach Shifting Shadow to it, then put all other cards revealed this way on the bottom of your library in a random order.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "id": "shifting_shadow",
+      "mana_cost": "{2}{R}",
+      "name": "Shifting Shadow",
+      "oracle_text": "Enchant creature\nEnchanted creature has haste and \"At the beginning of your upkeep, destroy this creature. Reveal cards from the top of your library until you reveal a creature card. Put that card onto the battlefield and attach Shifting Shadow to it, then put all other cards revealed this way on the bottom of your library in a random order.\"",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
     },
     {
       "abilities": [
@@ -288870,6 +293397,58 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "smoke_spirits_aid",
+      "mana_cost": "{X}{R}",
+      "name": "Smoke Spirits' Aid",
+      "oracle_text": "For each of up to X target creatures, create a red Aura enchantment token named Smoke Blessing attached to that creature. Those tokens have enchant creature and \"When enchanted creature dies, it deals 1 damage to its controller and you create a Treasure token.\"",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "attached_to": {
+                "binding": "each"
+              },
+              "op": "create_token",
+              "token": "smoke_blessing"
+            }
+          ],
+          "objects": {
+            "target": "t1"
+          },
+          "op": "for_each"
+        }
+      ],
+      "targets": [
+        {
+          "count": {
+            "x": true
+          },
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -289435,6 +294014,121 @@
         "Vehicle"
       ],
       "toughness": 5,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "discard",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Draw a card, then discard a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this Vehicle attacks or blocks, you may draw a card. If you do, discard a card.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "discard",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Draw a card, then discard a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this Vehicle attacks or blocks, you may draw a card. If you do, discard a card.",
+          "trigger": {
+            "event": "blocks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 1,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 3
+              },
+              "toughness": {
+                "const": 3
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 1"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "smuggler_s_copter",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}",
+      "name": "Smuggler's Copter",
+      "oracle_text": "Flying\nWhenever this Vehicle attacks or blocks, you may draw a card. If you do, discard a card.\nCrew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 3,
       "types": [
         "Artifact"
       ]
@@ -292508,6 +297202,47 @@
     },
     {
       "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "soul_s_majesty",
+      "mana_cost": "{4}{G}",
+      "name": "Soul's Majesty",
+      "oracle_text": "Draw cards equal to the power of target creature you control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "power_of": {
+              "target": "t1"
+            }
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "B"
       ],
       "colors": [
@@ -293444,6 +298179,68 @@
         "Cleric"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "keyword": "indestructible",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "power": {
+                  "op": ">=",
+                  "value": {
+                    "const": 5
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}: Target creature with power 5 or greater gains indestructible until end of turn."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "spearbreaker_behemoth",
+      "keywords": [
+        "indestructible"
+      ],
+      "mana_cost": "{5}{G}{G}",
+      "name": "Spearbreaker Behemoth",
+      "oracle_text": "Indestructible\n{1}: Target creature with power 5 or greater gains indestructible until end of turn.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Beast"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -301577,6 +306374,144 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "condition": {
+                    "cmp": ">",
+                    "left": {
+                      "life_lost_this_turn": {
+                        "binding": "each_player"
+                      }
+                    },
+                    "right": {
+                      "const": 0
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "controller": "you",
+                      "op": "create_token",
+                      "token": "blood_token"
+                    }
+                  ]
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, create a Blood token for each player who lost life this turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "as": "strefan_put",
+                      "attacking": true,
+                      "controller": "you",
+                      "objects": {
+                        "chooser": "controller",
+                        "controller": "you",
+                        "count": 1,
+                        "not_types": [
+                          "Instant",
+                          "Sorcery"
+                        ],
+                        "subtypes": [
+                          "Vampire"
+                        ],
+                        "zone": "hand"
+                      },
+                      "op": "put_onto_battlefield",
+                      "tapped": true
+                    },
+                    {
+                      "duration": "until_end_of_turn",
+                      "keywords": [
+                        "indestructible"
+                      ],
+                      "objects": {
+                        "binding": "strefan_put",
+                        "count": "all"
+                      },
+                      "op": "grant_keyword"
+                    }
+                  ],
+                  "op": "may",
+                  "player": "you",
+                  "prompt": "Put a Vampire card from your hand onto the battlefield tapped and attacking?"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "sacrifice": {
+                  "controller": "you",
+                  "count": 2,
+                  "is_token": true,
+                  "subtypes": [
+                    "Blood"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "player": "you",
+              "prompt": "Sacrifice two Blood tokens?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Strefan attacks, you may sacrifice two Blood tokens. If you do, you may put a Vampire card from your hand onto the battlefield tapped and attacking. It gains indestructible until end of turn.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "strefan_maurer_progenitor",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{B}{R}",
+      "name": "Strefan, Maurer Progenitor",
+      "oracle_text": "Flying\nAt the beginning of your end step, create a Blood token for each player who lost life this turn.\nWhenever Strefan attacks, you may sacrifice two Blood tokens. If you do, you may put a Vampire card from your hand onto the battlefield tapped and attacking. It gains indestructible until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Noble"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -302197,6 +307132,58 @@
       "subtypes": [
         "Vampire",
         "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "discard": 1
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "subtypes": [
+                  "Vampire"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "activated",
+          "once_each_turn": true,
+          "text": "Discard a card: Vampires you control get +1/+1 until end of turn. Activate only once each turn."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "stromkirk_condemned",
+      "mana_cost": "{B}{B}",
+      "name": "Stromkirk Condemned",
+      "oracle_text": "Discard a card: Vampires you control get +1/+1 until end of turn. Activate only once each turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Horror"
       ],
       "toughness": 2,
       "types": [
@@ -306864,6 +311851,99 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "times": [
+                  {
+                    "const": 2
+                  },
+                  {
+                    "count": {
+                      "controller": "you",
+                      "subtypes": [
+                        "Vehicle"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  }
+                ]
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker"
+                ],
+                "controller": "opponent",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this Vehicle enters, it deals damage equal to twice the number of Vehicles you control to target creature or planeswalker an opponent controls.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 4,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "keep_pt": true,
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 4"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "surgehacker_mech",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{4}",
+      "name": "Surgehacker Mech",
+      "oracle_text": "Menace\nWhen this Vehicle enters, it deals damage equal to twice the number of Vehicles you control to target creature or planeswalker an opponent controls.\nCrew 4",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -335621,6 +340701,86 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, put a +1/+1 counter on target creature you control.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{4}",
+            "mana_reduction": {
+              "count": {
+                "controller": "you",
+                "modified": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}, {T}: Draw a card. This ability costs {1} less to activate for each modified creature you control."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "towashi_guide_bot",
+      "mana_cost": "{4}",
+      "name": "Towashi Guide-Bot",
+      "oracle_text": "When this creature enters, put a +1/+1 counter on target creature you control.\n{4}, {T}: Draw a card. This ability costs {1} less to activate for each modified creature you control. (Equipment, Auras you control, and counters are modifications.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -342816,6 +347976,126 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}",
+            "remove_counters": {
+              "amount": 1,
+              "counter": "+1/+1"
+            }
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "damage",
+                      "target": "t1"
+                    }
+                  ],
+                  "label": "Ulasht deals 1 damage to target creature."
+                },
+                {
+                  "effects": [
+                    {
+                      "op": "create_token",
+                      "player": "you",
+                      "token": "saproling_1_1_g"
+                    }
+                  ],
+                  "label": "Create a 1/1 green Saproling creature token."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "mode": 0,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}, Remove a +1/+1 counter from Ulasht: Choose one —\n• Ulasht deals 1 damage to target creature.\n• Create a 1/1 green Saproling creature token."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "ulasht_the_hate_seed",
+      "mana_cost": "{2}{R}{G}",
+      "name": "Ulasht, the Hate Seed",
+      "oracle_text": "Ulasht enters with a +1/+1 counter on it for each other red creature you control and a +1/+1 counter on it for each other green creature you control.\n{1}, Remove a +1/+1 counter from Ulasht: Choose one —\n• Ulasht deals 1 damage to target creature.\n• Create a 1/1 green Saproling creature token.",
+      "power": 0,
+      "replacements": [
+        {
+          "amount": {
+            "sum": [
+              {
+                "count": {
+                  "colors": [
+                    "R"
+                  ],
+                  "controller": "you",
+                  "exclude_self": true,
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              {
+                "count": {
+                  "colors": [
+                    "G"
+                  ],
+                  "controller": "you",
+                  "exclude_self": true,
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            ]
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Hellion",
+        "Hydra"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -344611,6 +349891,67 @@
     {
       "abilities": [
         {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted land has \"{T}, Pay 1 life: Draw a card.\""
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "pay_life": 1,
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Pay 1 life: Draw a card."
+        }
+      ],
+      "id": "underworld_connections",
+      "mana_cost": "{1}{B}{B}",
+      "name": "Underworld Connections",
+      "oracle_text": "Enchant land\nEnchanted land has \"{T}, Pay 1 life: Draw a card.\"",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -345748,6 +351089,89 @@
     {
       "abilities": [
         {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted creature has \"Whenever this creature attacks, it deals X damage to defending player, where X is the number of cards in their hand.\""
+        },
+        {
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Aura is put into your graveyard from the battlefield, return it to your hand.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "cards_in_hand": {
+                  "binding": "defender"
+                }
+              },
+              "op": "damage",
+              "player": {
+                "binding": "defender"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, it deals X damage to defending player, where X is the number of cards in their hand.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "unquenchable_fury",
+      "mana_cost": "{2}{R}",
+      "name": "Unquenchable Fury",
+      "oracle_text": "Enchant creature\nEnchanted creature has \"Whenever this creature attacks, it deals X damage to defending player, where X is the number of cards in their hand.\"\nWhen this Aura is put into your graveyard from the battlefield, return it to your hand.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -346780,6 +352204,82 @@
       "toughness": 7,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "urge_to_feed",
+      "mana_cost": "{B}{B}",
+      "name": "Urge to Feed",
+      "oracle_text": "Target creature gets -3/-3 until end of turn. You may tap any number of untapped Vampire creatures you control. If you do, put a +1/+1 counter on each of those Vampires.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "until_end_of_turn",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "pump",
+          "power": {
+            "const": -3
+          },
+          "toughness": {
+            "const": -3
+          }
+        },
+        {
+          "as": "fed",
+          "objects": {
+            "controller": "you",
+            "count": "any",
+            "subtypes": [
+              "Vampire"
+            ],
+            "tapped": false,
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "choose_permanents",
+          "prompt": "You may tap any number of untapped Vampire creatures you control"
+        },
+        {
+          "objects": {
+            "binding": "fed"
+          },
+          "op": "tap"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "counter": "+1/+1",
+          "objects": {
+            "binding": "fed"
+          },
+          "op": "add_counters"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -348689,6 +354189,88 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature dealt damage by this creature this turn dies, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "any",
+            "event": "creature_dies",
+            "filter": {
+              "controller": "any",
+              "damaged_by": "self"
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}{R}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}{R}: This creature deals 1 damage to target creature."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "vampiric_dragon",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{6}{B}{R}",
+      "name": "Vampiric Dragon",
+      "oracle_text": "Flying\nWhenever a creature dealt damage by this creature this turn dies, put a +1/+1 counter on this creature.\n{1}{R}: This creature deals 1 damage to target creature.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Dragon"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B",
         "W"
@@ -349395,6 +354977,63 @@
       "toughness": 6,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "vastwood_surge",
+      "kicker": "{4}",
+      "mana_cost": "{3}{G}",
+      "name": "Vastwood Surge",
+      "oracle_text": "Kicker {4} (You may pay an additional {4} as you cast this spell.)\nSearch your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle. If this spell was kicked, put two +1/+1 counters on each creature you control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 2,
+          "destination": "battlefield",
+          "op": "search_library",
+          "player": "you",
+          "selector": {
+            "supertypes": [
+              "Basic"
+            ],
+            "types": [
+              "Land"
+            ]
+          },
+          "tapped": true
+        },
+        {
+          "condition": {
+            "kicked": true
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -357821,6 +363460,50 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true,
+            "tapped": false
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "hexproof"
+          ],
+          "kind": "static",
+          "text": "This creature has hexproof as long as it's untapped. (It can't be the target of spells or abilities your opponents control.)"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "cost_reduction": {
+        "count": {
+          "controller": "you",
+          "modified": true,
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "id": "walking_skyscraper",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{8}",
+      "name": "Walking Skyscraper",
+      "oracle_text": "This spell costs {1} less to cast for each modified creature you control. (Equipment, Auras you control, and counters are modifications.)\nTrample\nThis creature has hexproof as long as it's untapped. (It can't be the target of spells or abilities your opponents control.)",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "toughness": 8,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -360957,6 +366640,102 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 5
+              },
+              "destination": "hand",
+              "objects": {
+                "any_of": [
+                  {
+                    "types": [
+                      "Artifact"
+                    ]
+                  },
+                  {
+                    "supertypes": [
+                      "Legendary"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Saga"
+                    ]
+                  }
+                ],
+                "count": 1,
+                "optional": true
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Weatherlight deals combat damage to a player, look at the top five cards of your library. You may reveal a historic card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 3,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 4
+              },
+              "toughness": {
+                "const": 5
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 3"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "weatherlight",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}",
+      "name": "Weatherlight",
+      "oracle_text": "Flying\nWhenever Weatherlight deals combat damage to a player, look at the top five cards of your library. You may reveal a historic card from among them and put it into your hand. Put the rest on the bottom of your library in a random order. (Artifacts, legendaries, and Sagas are historic.)\nCrew 3",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact"
       ]
     },
     {

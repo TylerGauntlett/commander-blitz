@@ -1039,11 +1039,11 @@ class TestPiasAetherjetIsAnXXFlyingVehicle:
                              "keep_pt": True, "power": {"const": 3},
                              "toughness": {"const": 3}})
 
-    def test_keep_pt_on_anything_but_itself_is_refused(self):
+    def test_keep_pt_on_a_pool_wider_than_vehicles_is_refused(self):
         from commanderblitz.engine.errors import DslError
 
         with pytest.raises(DslError, match="self_only"):
-            self._crew_with({"objects": {"zone": "battlefield", "subtypes": ["Vehicle"]},
+            self._crew_with({"objects": {"zone": "battlefield", "types": ["Artifact"]},
                              "keep_pt": True})
 
     def test_a_creature_animation_with_no_size_is_still_refused(self):
@@ -4124,3 +4124,26 @@ class TestPathToTheWorldTreesBearIsABear:
         other = pool.get("wolf_2_2_g")
         assert other is not None
         assert list(other.subtypes) == ["Wolf"]
+
+
+class TestChishirosSpiritIsARedMenace:
+    """Chishiro, the Shattered Blade: *"create a **2/2 red** Spirit creature
+    token **with menace**."*
+
+    The near misses are `spirit_2_2_c`, the same body colorless and without
+    menace, and the black 2/2 menace tokens (`pirate_2_2_b_menace`), the right
+    keyword on the wrong colour and creature type.
+    """
+
+    def test_it_is_a_two_two_red_spirit_with_menace(self, pool):
+        token = pool.get("spirit_2_2_r_menace")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 2)
+        assert sorted(token.colors) == ["R"]
+        assert list(token.subtypes) == ["Spirit"]
+        assert list(token.keywords) == ["menace"]
+
+    def test_the_colorless_spirit_is_still_a_separate_token(self, pool):
+        other = pool.get("spirit_2_2_c")
+        assert other is not None
+        assert not other.colors and not other.keywords

@@ -270,6 +270,27 @@ boolean, a `count` above 1 — plus one more: the two together are refused, sinc
 they stage the pool differently and whichever ran would silently drop the other
 half of the sentence.
 
+`searcher: "you"` is who looks and picks when it is not the library's owner.
+`player` names the libraries and, without the key, each owner searches their
+own (Tempt with Discovery). Jace, Architect of Thought's "for each player,
+search that player's library for a nonland card and exile it, then that player
+shuffles" is the resolving player searching all of them:
+
+```jsonc
+{ "op": "search_library", "player": "each_player", "searcher": "you",
+  "selector": { "not_types": ["Land"] }, "count": 1, "destination": "exile",
+  "as": "found" }
+```
+
+The owner still shuffles, the cards go to the owner's zones, and the
+`searches_library` event names the searcher as its player and the owner as
+`owner`. `cant_search_library` (Ashiok, Dream Render) stops a player searching
+their own library, so it does not bar a search of somebody else's. The near
+miss is the same op inside `for_each_player` with no `searcher`, which hands
+each opponent the choice of what is taken from them. Refused on any other op,
+with any value but `"you"`, and with a `battlefield` destination or a
+`may_destination`, where the card would also have to say under whose control.
+
 `look_at_top` is `search_library` with the pool bounded to the top `amount`
 cards, and the bound is the card:
 
@@ -2111,6 +2132,29 @@ selector is, `count` included; the loader refuses anything but a boolean.
 | `{"subtypes": ["Equipment"], "attached_to": …}` | counts the Equipment, so a creature wearing two counts twice |
 | `attached` | names the one permanent the ability's own source is attached to |
 
+### "Whenever a modified creature you control…" — `modified` in a trigger filter
+
+```jsonc
+// One with the Kami: "…or another modified creature you control dies…"
+{ "kind": "triggered",
+  "trigger": { "event": "dies", "controller": "you",
+               "filter": { "types": ["Creature"], "modified": true } },
+  "effects": [ … ] }
+```
+
+700.9 asked of the trigger's subject, with "its controller" the permanent's own:
+a counter, any Equipment, or an Aura its controller controls. Live, through
+`characteristics.is_modified_printed`, on an event about a permanent still on
+the battlefield (Akki Battle Squad's attack). On `dies`, `leaves_battlefield`
+and `sacrificed` the subject has already shed its attachments and counters, so
+the filter reads the `was_modified` snapshot `zones.move_object` puts on the
+event (`triggers.departed_modified`, 603.10a). `true` only.
+
+| Near miss | Why not |
+|---|---|
+| `{"any_of": [{"has_counters": true}, {"enchanted_by": "you"}]}` | misses the Equipment limb, and on a departure reads counters already cleared |
+| `attached` | names the one permanent the ability's own source is attached to |
+
 ### "For each Aura that was attached to it" — `auras_had`
 
 ```jsonc
@@ -2293,6 +2337,27 @@ filter, not a one-shot owed to one spell. Yuna's sentence is this op inside a
 `delayed_trigger` with `duration: "once_this_turn"` on `spell_cast`, ridden on a
 mana ability — see
 [the mana-rider recipe](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback).
+
+### Granting bloodthirst to a spell
+
+```jsonc
+{ "op": "grant_bloodthirst", "amount": 3 }
+```
+
+"Whenever you cast a Vampire creature spell, **it gains bloodthirst 3**"
+(Bloodlord of Vaasgoth). Bloodthirst N (702.54a) is "if an opponent was dealt
+damage this turn, this permanent enters with N +1/+1 counters on it", a
+replacement judged **as the permanent enters**. So the op stages N on the
+spell's object (`GameObject.cast_bloodthirst`), carried like
+`spell_enters_with_counters`' promise, and `zones._enter_battlefield` asks the
+question on the arrival and adds the counters to the one placement. Damage dealt
+with the spell still on the stack counts; damage to the spell's controller does
+not. Instances add (702.54c). `amount` is required, a positive integer; the
+spell is named as `grant_rebound` names one.
+
+`spell_enters_with_counters` is the near miss: it evaluates its amount as the op
+resolves and takes no condition, so it gives the counters on a turn nobody was
+hurt and misses damage dealt after the trigger resolved.
 
 ## Value expressions
 
@@ -3689,6 +3754,24 @@ The near misses: `deals_combat_damage` is combat only; `deals_damage_to_player`
 is the player half only and misses a fight or a blocked creature; lifelink is a
 static that gains as the damage is dealt, not a trigger on the stack.
 
+### A reduction that counts modified creatures
+
+```jsonc
+// Walking Skyscraper -- "costs {1} less to cast for each modified creature you control"
+"cost_reduction": {
+  "count": { "controller": "you", "types": ["Creature"], "modified": true }
+}
+```
+
+700.9: a counter of any kind, any Equipment attached, or an Aura its
+controller controls. `has_counters` and `enchanted_by` say two of the limbs and
+nothing in a reduction filter says the Equipment, so an `any_of` of the two
+would leave the equipped creature uncounted. The key is `true` alone, as in a
+static's filter, and is read through `characteristics.is_modified_printed`, the
+static filter's reader: every limb is board state, and a creature with all
+three is still one creature. The same filter prices an activated ability's
+`mana_reduction` (Towashi Guide-Bot).
+
 ### A reduction that counts an *or* of characteristics
 
 ```jsonc
@@ -4005,7 +4088,7 @@ The other keys, each a copiable value the copy carries until it ends:
 | key | meaning |
 |---|---|
 | `add_keywords` | keywords added to the copied face |
-| `add_abilities` | positions in the card's `grantable_abilities`, each a quoted ability the copy has, on `copying_add_abilities`; `GameState.card_of` appends them after the copied face's abilities, so the copied indices keep their meaning. Machine God's Effigy's "…and it has "{T}: Add {U}."" is the mana ability written once under `grantable_abilities` and `[0]` here. The near miss is a `grant_ability` after the copy, a layer-6 grant rather than part of the copy; `add_keywords` is the key for a keyword ability |
+| `add_abilities` | positions in the card's `grantable_abilities`, each a quoted ability the copy has, on `copying_add_abilities`; `GameState.card_of` appends them after the copied face's abilities, so the copied indices keep their meaning. Machine God's Effigy's "…and it has "{T}: Add {U}."" is the mana ability written once under `grantable_abilities` and `[0]` here. Imposter Mech's unquoted "…a Vehicle artifact with crew 3" is the same key: the Crew 3 written once under `grantable_abilities` and named here, and the verifier holds each printed "with crew N" to one position whose ability is a crew whose text is "Crew N". The near miss is a `grant_ability` after the copy, a layer-6 grant rather than part of the copy; `add_keywords` is the key for a keyword ability that is a word alone |
 | `add_types` | `copy_permanent`'s key of the same name: card types the copy has in addition to the copied ones, on `copying_add_types` — Phyrexian Metamorph's `["Artifact"]` |
 | `set_types` | the card types the copy has *instead of* the copied ones, on `copying_set_types`; every subtype of a type it no longer has goes with it (205.1b), so Machine God's Effigy's "…except it's an artifact" (`["Artifact"]`) makes the copy of a Bear a bare Artifact. The near miss is `add_types`, which is right only when the card prints "in addition to its other types"; the two are refused together |
 | `add_subtypes` | `copy_permanent`'s key of the same name: subtypes the copy has in addition to the copied ones, on `copying_add_subtypes` — Deceptive Frostkite's `["Dragon"]` |
@@ -5445,6 +5528,30 @@ and [#card-level-costs](card-dsl-reference.md#card-level-costs):
                  "zone": "exile", "exiled_with": "self" } } } }      //  of that card"
 ```
 
+### `mana_grant` that counts command-zone casts — Opal Palace
+
+```jsonc
+{ "kind": "activated", "is_mana_ability": true,
+  "text": "{1}, {T}: Add one mana of any color in your commander's color identity. If you spend this mana to cast your commander, it enters with a number of additional +1/+1 counters on it equal to the number of times it's been cast from the command zone this game.",
+  "cost": { "mana": "{1}", "tap": true },
+  "mana_grant": { "commander_only": true, "enters_with_command_zone_casts": "+1/+1" },
+  "effects": [ … ] }
+```
+
+`commander_only` narrows any `mana_grant` to a spell that is a commander the
+payer owns, asked as the mana is spent. `enters_with_command_zone_casts` names a
+counter kind; the permanent enters with that many more of them as its 903.8
+tally reads (614.1c, one placement with the rest, 122.6). Staged on the spell by
+`costs.pay_mana` and counted by `zones._enter_battlefield`, because `Game` bumps
+the tally after payment: counted at spend time, the first cast would be 0.
+`keywords` may be left out beside it; the loader refuses the key without
+`commander_only`, where the count would always be 0.
+
+| Near miss | Why not |
+|---|---|
+| `mana_spent_trigger` with `add_counters` | resolves with the spell still on the stack, so the counters land on nothing |
+| `enters_with_additional_counters` on the land | a standing replacement of the land's, so the `{C}` would grant it too |
+
 ### `exert` — the keyword as a cost
 
 "{R}, {T}, **Exert this land**: Add {R}{R}" — Arena of Glory.
@@ -6072,9 +6179,9 @@ sized by the effect that made it -- crews with `"keep_pt": true` in place of
 `power` and `toughness`: "becomes an artifact creature" (702.122a) and keeps its
 own base size, so a second crew or a +1/+1 counter does not move it. `keep_pt`
 is refused beside `power` or `toughness`, and on any pool but `objects`
-`self_only` or a `{"target": …}` narrowed to `"subtypes": ["Vehicle"]`; a
-`self_only` one is refused on a card with no printed power and toughness. An
-animation into a creature without it still needs both.
+`self_only` or a target or selector narrowed to `"subtypes": ["Vehicle"]` (never
+a binding); a `self_only` one is refused on a card with no printed power and
+toughness. An animation into a creature without it still needs both.
 
 The targeted form is Tezzeret, Betrayer of Flesh's "target artifact becomes an
 artifact creature. If it isn't a Vehicle, it has base power and toughness 4/4":
@@ -6086,6 +6193,16 @@ two animations over the one target, each narrowed so exactly one applies.
 { "op": "animate", "objects": { "target": "t1", "not_subtypes": ["Vehicle"] },
   "types": ["Artifact", "Creature"], "duration": "permanent",
   "power": { "const": 4 }, "toughness": { "const": 4 } }
+```
+
+The mass form is Armed and Armored's "Vehicles you control become artifact
+creatures until end of turn": one animation over a selector, every Vehicle it
+finds at its own size.
+
+```jsonc
+{ "op": "animate",
+  "objects": { "zone": "battlefield", "controller": "you", "subtypes": ["Vehicle"] },
+  "types": ["Artifact", "Creature"], "keep_pt": true }
 ```
 
 The near miss is `power_of`/`toughness_of` the target, which snapshots the

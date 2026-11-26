@@ -103,9 +103,9 @@ each heading; this table is generated from them.
 | [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) | L | high | Divided damage that may hit players, Divided damage from a triggered or activated ability, A land that sacrifices itself on entering | 0 |
 | [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) | L | high | A land that sacrifices itself on entering | 0 |
 | [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) | L | high | A fixed target count is exact, not a ceiling, A land that sacrifices itself on entering | 0 |
-| [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) | L | high | nothing | 0 |
 | [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) | L | high | nothing | 0 |
-| [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) | M | high | nothing | 0 |
+| [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) | L | high | A type-setting static ordered against later animations | 0 |
+| [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) | M | high | A fixed target count is exact, not a ceiling | 0 |
 | [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) | L | high | nothing | 0 |
 | [The Ring tempts you](#the-ring-tempts-you) | M | high | nothing | 3 |
 | [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) | L, continuous | high | nothing | 0 |
@@ -125,11 +125,12 @@ each heading; this table is generated from them.
 | [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) | M | medium | nothing | 4 |
 | [Secret choices](#secret-choices) | M | medium | nothing | 4 |
 | [Experience counters](#experience-counters) | M | medium | nothing | 3 |
+| [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) | M | medium | nothing | 2 |
 | [Distributing counters from a spell](#distributing-counters-from-a-spell) | M | medium | nothing | 2 |
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
 | [Rad counters](#rad-counters) | M | medium | nothing | 2 |
 | [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) | M | medium | nothing | 2 |
-| [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) | M | medium | nothing | 1 |
+| [A type-setting static ordered against later animations](#a-type-setting-static-ordered-against-later-animations) | M | medium | nothing | 1 |
 | [Brackets, derived from the list](#brackets-derived-from-the-list) | M | medium | nothing | 1 |
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | nothing | 1 |
 | [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) | M | medium | nothing | 1 |
@@ -163,49 +164,48 @@ same list, and `/extend-roadmap` starts at the top of it.
 3. [Landing Party (Star Trek Commander)](#landing-party-star-trek-commander) — L, high
 4. [We Are the Borg (Star Trek Commander)](#we-are-the-borg-star-trek-commander) — L, high
 5. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
-6. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
-7. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-8. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
-9. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-10. [The Ring tempts you](#the-ring-tempts-you) — M, high
-11. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-12. [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) — S, medium
-13. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
-14. [Difficulty](#difficulty) — S, medium
-15. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-16. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
-17. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
-18. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-19. [Why a press is refused](#why-a-press-is-refused) — S, medium
-20. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-21. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
-22. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-23. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
-24. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
-25. [Secret choices](#secret-choices) — M, medium
-26. [Experience counters](#experience-counters) — M, medium
-27. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-28. [Outcomes as data](#outcomes-as-data) — M, medium
-29. [Rad counters](#rad-counters) — M, medium
-30. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-31. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
-32. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-33. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-34. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
-35. [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) — M, medium
-36. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
-37. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
-38. [Replays and sharing](#replays-and-sharing) — M, medium
-39. [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) — M, medium
-40. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-41. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-42. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-43. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-44. [Archidekt import](#archidekt-import) — S, low
-45. [Sound](#sound) — S, low
-46. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
-47. [A draw replaced by something other than more draws](#a-draw-replaced-by-something-other-than-more-draws) — M, low
-48. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
+6. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
+7. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
+8. [The Ring tempts you](#the-ring-tempts-you) — M, high
+9. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+10. [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) — S, medium
+11. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
+12. [Difficulty](#difficulty) — S, medium
+13. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+14. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
+15. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
+16. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+17. [Why a press is refused](#why-a-press-is-refused) — S, medium
+18. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+19. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
+20. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
+21. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+22. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+23. [Secret choices](#secret-choices) — M, medium
+24. [Experience counters](#experience-counters) — M, medium
+25. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
+26. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
+27. [Outcomes as data](#outcomes-as-data) — M, medium
+28. [Rad counters](#rad-counters) — M, medium
+29. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+30. [A type-setting static ordered against later animations](#a-type-setting-static-ordered-against-later-animations) — M, medium
+31. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+32. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+33. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
+34. [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) — M, medium
+35. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
+36. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
+37. [Replays and sharing](#replays-and-sharing) — M, medium
+38. [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) — M, medium
+39. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+40. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+41. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+42. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+43. [Archidekt import](#archidekt-import) — S, low
+44. [Sound](#sound) — S, low
+45. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
+46. [A draw replaced by something other than more draws](#a-draw-replaced-by-something-other-than-more-draws) — M, low
+47. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
 
 **Blocked, and by what:**
 
@@ -257,6 +257,8 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — [Divided damage that may hit players](#divided-damage-that-may-hit-players), [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability), [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering)
 - [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering)
 - [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling), [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering)
+- [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — [A type-setting static ordered against later animations](#a-type-setting-static-ordered-against-later-animations)
+- [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -1441,6 +1443,72 @@ gates.
 - **Scope of the harvest.** The two precon cards only, or every Spacecraft
   the template tier and one wave reach? Recommended: one template-tier
   `--retry` and one `/author-cards` wave, the precon items' convention.
+
+### A type-setting static ordered against later animations
+
+Effort **M** · Impact **medium**, Swift Reconfiguration's crewed permanent never becomes a creature, and it alone keeps Buckle Up off the shelf · Depends on nothing · ADR first · Awaiting decisions.
+
+#### Today
+
+Swift Reconfiguration prints "Enchanted permanent is a Vehicle artifact with
+crew 5 and it loses all other card types. (It's not a creature unless it's
+crewed.)". The DSL has every word of it: a `set_types` static to
+`["Artifact"]`, an `add_subtype` static for Vehicle and a `grant_ability`
+static handing over a crew whose `animate` adds Creature. What it lacks is
+the order. `characteristics._compute` applies every animation, timed and
+indefinite, in timestamp order first (step -1), and only then every
+`set_types` static (step 0), which replaces the type set outright. So a
+crew animation that began after the Aura arrived is always erased: the
+enchanted permanent can be crewed and never becomes a creature, a silently
+wrong card. Under 613.7 the later animation applies over the earlier static.
+
+That order is [ADR 0001](adr/0001-layers-lite.md)'s: continuous effects
+in a fixed order rather than by timestamp. The engine already bends it
+inside layer 4 where a rule names a timestamp: the animations sort among
+themselves, and impending and a Duplicant's imprint sit ahead of them as the
+permanent's own arrival. A `set_types` static has a timestamp too, its
+source's (`static_timestamp`), and nothing reads it there. The gap record
+is `data/authoring/gaps/swift_reconfiguration.json`, under
+`type_setting_in_timestamp_order`. `tests/unit/statics/test_conditional_types.py`
+and `tests/unit/copies/test_enters_as_copy_set_types.py` hold what
+`set_types` does today.
+
+#### The change
+
+1. An amendment to ADR 0001 recording that `set_types` statics apply in
+   layer 4 in timestamp order with the animations, each against the others,
+   and why a fixed order was wrong for this one pair.
+2. `characteristics._compute` reads the `set_types` statics into the same
+   sorted pass as the animations, keyed on `static_timestamp` of their
+   source, so whichever began later wins. Nothing else in the fixed order
+   moves: the creature-type replacement, the subtype grants and every layer
+   after 4 stay where they are.
+3. Harvest: Swift Reconfiguration through `/author-cards`, its gap record
+   retired, and the precon item that waits on it unblocked.
+
+It does not order any other static by timestamp, and it does not add
+dependency analysis.
+
+#### Gate
+
+A unit test under `tests/unit/statics/` that an Aura setting a creature's
+types to Artifact, crewed afterwards, is an artifact creature until end of
+turn and an artifact again after cleanup; that an animation older than the
+`set_types` static is still overwritten by it (Imprisoned in the Moon on an
+already-animated land); and the existing `set_types` tests unchanged and
+green. Swift Reconfiguration's six gates.
+
+#### Open questions
+
+- **May `set_types` statics join the timestamp-ordered pass, amending ADR
+  0001?** Recommended: yes, for `set_types` alone. The animations already
+  sort by timestamp in the same layer, so this extends an existing exception
+  rather than starting the layer system, and the alternative, leaving the
+  card unauthored, keeps Buckle Up off the shelf for one card.
+- **Is a crew animation a timed animation for this ordering, whatever the
+  Aura's timestamp?** Recommended: yes. The crew effect always begins after
+  the Aura that granted the crew, so the plain timestamp comparison gives
+  the printed reminder text, "It's not a creature unless it's crewed".
 
 ### Cycling granted to cards in hand
 
@@ -4839,9 +4907,75 @@ whole-game test able to draw the deck.
   this item back to `proposed`, and opens the pull request with the cards and
   capabilities done so far. This item stays until the deck is whole.
 
+### Upgrades Unleashed (Neon Dynasty Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Upgrades Unleashed, the Neon Dynasty Commander precon released 2022-02-18, is a
+coming-soon shell on the shelf: its row `nec_upgrades_unleashed` is in
+`data/decks/sources.json` and there is no `data/decks/nec_upgrades_unleashed.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+Every card on its list is native: `python scripts/sync_precons.py --missing
+nec_upgrades_unleashed` prints nothing. What stops `--write-deck` from shipping
+is the list itself: the published list its `source` names carries
+**Mossfire Valley twice** in its 99, so the deck file it writes fails
+`tests/cards/test_deck_legality.py` (a nonbasic land over its copy limit of
+one, 903.5b), and `sync_precons.py` has no per-precon correction to apply.
+
+#### The change
+
+Upgrades Unleashed ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck nec_upgrades_unleashed`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+#### Open questions
+
+- **The doubled Mossfire Valley.** The published list carries two copies of a
+  nonbasic land, which no legal Commander deck may (903.5b), and the run will
+  not ship a deck that fails `test_deck_legality.py` or loosen that test. Which
+  list ships? Recommended: check Wizards' own decklist for the product; if it
+  prints one Mossfire Valley, the second copy is a source error and the run
+  puts the card Wizards lists in its place. If the product really shipped two,
+  replace the second with a basic Mountain, since Chishiro's deck is
+  Gruul and a basic is the one change that alters no card's interaction. Either
+  way the correction lives in `data/decks/sources.json` as a per-row override
+  `sync_precons.py --write-deck` applies, so a re-sync cannot bring the
+  duplicate back, and the deck's `notes` say what was changed and why.
+
 ### Buckle Up (Neon Dynasty Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [A type-setting static ordered against later animations](#a-type-setting-static-ordered-against-later-animations).
 
 #### Today
 
@@ -4888,58 +5022,9 @@ whole-game test able to draw the deck.
   this item back to `proposed`, and opens the pull request with the cards and
   capabilities done so far. This item stays until the deck is whole.
 
-### Upgrades Unleashed (Neon Dynasty Commander)
-
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
-
-#### Today
-
-Upgrades Unleashed, the Neon Dynasty Commander precon released 2022-02-18, is a
-coming-soon shell on the shelf: its row `nec_upgrades_unleashed` is in
-`data/decks/sources.json` and there is no `data/decks/nec_upgrades_unleashed.deck.json`, so
-`GET /api/precons/upcoming` serves it.
-`python scripts/sync_precons.py --missing nec_upgrades_unleashed` lists the cards the engine
-lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
-
-#### The change
-
-Upgrades Unleashed ships native, card for card, as one batch of
-[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
-
-1. `/author-cards` by name over the `--missing` list.
-2. One `/extend-dsl` run per capability the gap records name, in the order
-   the most cards elsewhere in the catalog wait on it.
-3. Re-author until `--missing` is empty, then `--write-deck nec_upgrades_unleashed`, the
-   dossier and the archetype, and the deck joins `PRECONS` in
-   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
-4. One `/author-cards` wave over the pending cards the new capabilities reach.
-
-It does not touch another precon's deck.
-
-#### Gate
-
-`tests/cards/test_precon_imports.py` over the new deck; one unit test under
-`tests/unit/` per capability; the manifest test and
-`tests/server/test_upcoming_precons.py` still green; and the sampled
-whole-game test able to draw the deck.
-
-#### Decisions
-
-- **Scope:** this precon only, taken to 100% in one pull request titled
-  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
-- **The editorial fields:** the run writes the dossier and picks the closest
-  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
-  archetype that visibly misplays the deck is a new item.
-- **A capability that needs a rules subsystem the engine does not have**
-  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
-  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
-  this item back to `proposed`, and opens the pull request with the cards and
-  capabilities done so far. This item stays until the deck is whole.
-
 ### Vampiric Bloodline (Crimson Vow Commander)
 
-Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) · Awaiting decisions.
 
 #### Today
 
@@ -4949,7 +5034,24 @@ coming-soon shell on the shelf: its row `voc_vampiric_bloodline` is in
 `GET /api/precons/upcoming` serves it.
 `python scripts/sync_precons.py --missing voc_vampiric_bloodline` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
+waits on. They fall into three groups:
+
+- **Madness.** `replacements._madness` leaves a madness card its owner declines
+  to cast in exile, and `docs/rules-coverage.md` and the cookbook's "madness
+  exiles either way" row record that as the engine's reading. 702.35a and the
+  printed reminder text put it into the graveyard instead. Anje's Ravager,
+  Stensia Masquerade and Stromkirk Occultist wait on that alone. Avacyn's
+  Judgment also needs an `{X}` madness cost and an "if this spell's madness
+  cost was paid" condition; Shadowgrange Archfiend a madness cost with
+  `pay_life` in it and the greatest last-known power among sacrificed
+  creatures; Falkenrath Gorger a static that grants madness.
+- **Exact target counts.** Sinister Waltz's "three target creature cards"
+  needs `targeting._spec_options` to refuse a short set
+  ([exact-target-count](#a-fixed-target-count-is-exact-not-a-ceiling)), and
+  then the authoring sandbox (`cards/authoring/verify.py`,
+  `graveyard_target_props`) to put a third creature card in its own graveyard
+  so the playable gate can cast it.
+- Nothing else: every other card on the list is native.
 
 #### The change
 
@@ -4985,6 +5087,20 @@ whole-game test able to draw the deck.
   own item through `/plan-feature`, adds it to this item's `depends_on`, sets
   this item back to `proposed`, and opens the pull request with the cards and
   capabilities done so far. This item stays until the deck is whole.
+
+#### Open questions
+
+- **A declined madness card.** The engine's madness exiles the card whether or
+  not it is cast, and that reading is written into `rules-coverage.md`, the
+  cookbook and `tests/unit/replacement/test_draw_and_discard_replacements.py`,
+  so changing it reverses a recorded rules decision, which the run will not do
+  unattended. Should a declined (or uncastable) madness card go to its owner's
+  graveyard? Recommended: yes, as 702.35a and every printed reminder text say
+  ("cast it for its madness cost or put it into your graveyard"); the move is
+  one line in `replacements._madness` after `_offer_cast` returns false, the
+  tests that pin the exile are rewritten to pin the graveyard, and the two doc
+  rows are rewritten to match. Then the other madness needs above are one
+  `/extend-dsl` run each.
 
 ### Spirit Squadron (Crimson Vow Commander)
 

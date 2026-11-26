@@ -412,6 +412,18 @@ class GameObject:
     #: battlefield -- and added to the arrival's one placement by
     #: `zones._enter_battlefield`, which empties it.
     cast_enters_with: dict[str, int] = field(default_factory=dict)
+    #: Opal Palace's "…enters with a number of additional +1/+1 counters on it
+    #: equal to the number of times it's been cast from the command zone this
+    #: game": the counter kinds a `mana_grant` promised the spell, staged and
+    #: carried like `cast_enters_with` and counted only as it arrives, off
+    #: `Player.commander_tax`, which by then holds this cast.
+    cast_enters_with_command_casts: tuple[str, ...] = ()
+    #: "Whenever you cast a Vampire creature spell, it gains **bloodthirst 3**"
+    #: (Bloodlord of Vaasgoth): the bloodthirst a `grant_bloodthirst` gave the
+    #: spell, staged and carried like `cast_enters_with` and judged only as it
+    #: arrives (702.54a) -- an opponent dealt damage after the trigger resolved
+    #: and before the spell did still counts. Instances add (702.54c).
+    cast_bloodthirst: int = 0
     #: Rebound **granted to a spell that does not print it** -- Ojer Pakpatiq's
     #: "whenever you cast an instant spell from your hand, it gains rebound".
     #: Read beside `card.rebound` in `_place_after_resolution`, exactly as
@@ -1549,6 +1561,8 @@ class GameObject:
         self.mana_spent_origins = ()
         self.cast_rider = None
         self.cast_enters_with = {}
+        self.cast_enters_with_command_casts = ()
+        self.cast_bloodthirst = 0
         self.granted_abilities_permanent = []
         # 400.7: a new object's exhaust abilities are fresh (702.177).
         self.exhausted = set()

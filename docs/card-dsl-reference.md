@@ -10,13 +10,13 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 190 |
-| [Selectors](#selectors) | 83 |
+| [Effect ops](#effect-ops) | 191 |
+| [Selectors](#selectors) | 84 |
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 80 |
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 68 |
-| [Trigger filters](#trigger-filters) | 40 |
+| [Trigger filters](#trigger-filters) | 41 |
 | [Static effects](#static-effects) | 116 |
 | [Player-wide statics](#player-wide-statics) | 54 |
 | [Grantable statics](#grantable-statics) | 52 |
@@ -32,7 +32,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Static values](#static-values) | 27 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
 | [Spell cost-reduction filter keys](#spell-cost-reduction-filter-keys) | 5 |
-| [Cost-reduction filter keys](#cost-reduction-filter-keys) | 2 |
+| [Cost-reduction filter keys](#cost-reduction-filter-keys) | 3 |
 | [Mana rider ops](#mana-rider-ops) | 7 |
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
@@ -74,12 +74,12 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `reveal_until` | Cards | yes | Reveal from the top until `amount` cards match (default one), move them together (under `controller: you` if named), or offer one onto the battlefield with `destination` as the fallback (`may_destination`); bottom or shuffle the rest; `revealed_as` binds every card revealed. | [Cascade, ripple and reveal_until — walking a library](card-dsl-cookbook.md#cascade-ripple-and-reveal_until--walking-a-library) |
 | `ripple` | Cards |  | Ripple N: reveal the top N, cast any with the same name free. | [Cascade, ripple and reveal_until — walking a library](card-dsl-cookbook.md#cascade-ripple-and-reveal_until--walking-a-library) |
 | `scry` | Cards |  | Scry N; `chooser` separate from `player` is fateseal. | [Effect ops](card-dsl.md#effect-ops) |
-| `search_library` | Cards | yes | Search a library for cards matching a selector, then shuffle; `may_destination` (gated by `may_destination_if`) offers the found card onto the battlefield. | [Effect ops](card-dsl.md#effect-ops) |
+| `search_library` | Cards | yes | Search a library for cards matching a selector, then shuffle; `may_destination` (gated by `may_destination_if`) offers the found card onto the battlefield; `searcher: "you"` has the resolving player search another player's library. | [Effect ops](card-dsl.md#effect-ops) |
 | `search_zones` | Cards | yes | One search over the union of two or more of your own zones. | [Effect ops](card-dsl.md#effect-ops) |
 | `shuffle` | Cards |  | Shuffle a library. | [Effect ops](card-dsl.md#effect-ops) |
 | `surveil` | Cards |  | Surveil N: look at the top cards, graveyard any of them; each surveiling player fires `surveils` once. | [Surveil — the surveil op and the surveils trigger](card-dsl-cookbook.md#surveil--the-surveil-op-and-the-surveils-trigger) |
 | `suspend` | Cards |  | Exile a card (if it is not already in exile) with N time counters; it is suspended, its owner's to tick and cast. | ["It gains suspend" — suspending a card from an effect](card-dsl-cookbook.md#it-gains-suspend--suspending-a-card-from-an-effect) |
-| `two_piles` | Cards |  | Separate cards into two piles; an opponent chooses one. | [Two piles](card-dsl-cookbook.md#two-piles) |
+| `two_piles` | Cards |  | Separate cards into two piles; an opponent chooses one. `to`/`other` name where each pile goes; `any_order` lets the owner arrange a bottomed pile. | [Two piles](card-dsl-cookbook.md#two-piles) |
 | `add_counters` | Board |  | Put N counters of a kind on permanents (`objects`), or of a bound kind on players (`player`); `counter: {"binding": "counter"}` on a `counter_placed` trigger is the kind that placement put, and any other `{"binding": …}` a kind `choose_counter_kind` or `for_each_counter_kind` bound. | [Effect ops](card-dsl.md#effect-ops) |
 | `airbend` | Board | yes | Airbend: exile and let owners cast for {2}; `as` records the pool. | [Airbend — "exile them, and their owners may cast them for {2}"](card-dsl-cookbook.md#airbend--exile-them-and-their-owners-may-cast-them-for-2) |
 | `amass` | Board | yes | Amass [subtype] N: N +1/+1 counters on an Army creature you control, creating a 0/0 black Army token first if none; it becomes that subtype too. | [amass — "Amass Zombies N"](card-dsl-cookbook.md#amass--amass-zombies-n) |
@@ -154,7 +154,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `untap` | Board |  | Untap permanents. | [Untapping on somebody else's turn](card-dsl-cookbook.md#untapping-on-somebody-elses-turn) |
 | `add_color` | Modify |  | Permanents gain a colour in addition to their others, for as long as they stay on the battlefield; no duration, no type or size. | ["It's a black Zombie in addition to its other colors and types"](card-dsl-cookbook.md#its-a-black-zombie-in-addition-to-its-other-colors-and-types) |
 | `add_subtype` | Modify |  | Permanents gain a subtype in addition to their others, for good, for a duration, or `while_counter` (with `counter`) for as long as a counter of that kind stays on it. | ["It becomes a Vampire in addition to its other types"](card-dsl-cookbook.md#it-becomes-a-vampire-in-addition-to-its-other-types) |
-| `animate` | Modify |  | A permanent becomes a creature, or another type (types, P/T, colors), for a duration; `exact` replaces, `keep_colors` keeps the colours, a non-creature animation may omit P/T, `keep_pt` keeps a Vehicle's own size (on itself, or on a target narrowed to Vehicles). | [Creature-lands](card-dsl-cookbook.md#creature-lands) |
+| `animate` | Modify |  | A permanent becomes a creature, or another type (types, P/T, colors), for a duration; `exact` replaces, `keep_colors` keeps the colours, a non-creature animation may omit P/T, `keep_pt` keeps a Vehicle's own size (on itself, or on a target or selector narrowed to Vehicles). | [Creature-lands](card-dsl-cookbook.md#creature-lands) |
 | `become_level` | Modify |  | A Class becomes level N. | [Classes](card-dsl-cookbook.md#classes) |
 | `change_text` | Modify |  | Replace one creature type or color word with another in its text. | [change_text — "replacing all instances of one creature type"](card-dsl-cookbook.md#change_text--replacing-all-instances-of-one-creature-type) |
 | `grant_keyword` | Modify |  | Permanents gain keywords for a duration; `as_long_as_you_control_source` lasts while you control the source. `player` gives players hexproof until end of turn. | [How long a granted keyword lasts](card-dsl-cookbook.md#how-long-a-granted-keyword-lasts) |
@@ -202,6 +202,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `copy_spell` | Stack |  | Copy a spell, or with `spells` each spell in a pool, or with `this_spell` the spell resolving; `new_targets` lets the copy be re-aimed. | ["You may choose new targets for the copy"](card-dsl-cookbook.md#you-may-choose-new-targets-for-the-copy) |
 | `counter` | Stack | yes | Counter a spell or ability; `exiles` sends a spell it countered to exile instead of its owner's graveyard, `as` binds the cards it countered. | ["If that spell is countered this way, exile it instead"](card-dsl.md#if-that-spell-is-countered-this-way-exile-it-instead) |
 | `exile_spell_on_resolution` | Stack |  | A spell is exiled as it resolves instead of binned, linked to this source. | [Plot](card-dsl.md#plot) |
+| `grant_bloodthirst` | Stack |  | Give a spell bloodthirst N, judged as its permanent enters. | [Granting bloodthirst to a spell](card-dsl.md#granting-bloodthirst-to-a-spell) |
 | `grant_plot` | Stack |  | Plot a card: exile it, castable free on a later turn. | [Plot](card-dsl.md#plot) |
 | `grant_rebound` | Stack |  | Give a spell rebound as it resolves. | [Granting rebound to a spell that does not print it](card-dsl.md#granting-rebound-to-a-spell-that-does-not-print-it) |
 | `next_spell_gains_cascade` | Stack |  | The `player`'s (default you) next spell this turn matching `affects_spells` has cascade: the rules' cascade trigger, on the spell itself. | [A spell given cascade — next_spell_gains_cascade](card-dsl-cookbook.md#a-spell-given-cascade--next_spell_gains_cascade) |
@@ -279,6 +280,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `granter` | The permanent that granted the resolving ability (`self` there is the recipient); true only, and only in a granted trigger's or activated ability's effects. | ["…fight Grothama" — granter](card-dsl-cookbook.md#fight-grothama--granter) |
 | `graveyard_arrival_this_turn` | Cards that reached a graveyard this turn in one of a list of ways: `discarded`, `milled`, `from_<zone>`. | [Cards in a graveyard by how they arrived this turn](card-dsl.md#cards-in-a-graveyard-by-how-they-arrived-this-turn) |
 | `has_counters` | Has counters on it: `true` any kind, or one named kind. | [has_counters — "with counters on them"](card-dsl.md#has_counters--with-counters-on-them) |
+| `has_mana_ability` | Has (or has no) mana ability right now, granted ones included and lost ones not (605.1a). | ["Artifacts without mana abilities" — has_mana_ability: false](card-dsl-cookbook.md#artifacts-without-mana-abilities--has_mana_ability-false) |
 | `haunted_by` | Haunted by the named card. | [Haunt — the exile link pointing the other way](card-dsl-cookbook.md#haunt--the-exile-link-pointing-the-other-way) |
 | `is_commander` | Is (or is not) a commander. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `is_token` | Is (or is not) a token. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
@@ -580,6 +582,7 @@ The subset of the selector language a trigger's `filter` may use. The loader ref
 | `mana_cost` | Printed mana cost is one of these. | [Triggers](card-dsl.md#triggers) |
 | `mana_value` | A comparison on mana value, or its `parity`. | [Odd or even — parity](card-dsl-cookbook.md#odd-or-even--parity) |
 | `min_colors` | Has at least N colors ("multicolored"). | ["Multicolored" — min_colors](card-dsl.md#multicolored--min_colors) |
+| `modified` | Is modified (equipped, enchanted by you, or has counters). | [Triggers](card-dsl.md#triggers) |
 | `not_supertypes` | Has none of these supertypes ("nonbasic"). | [Triggers](card-dsl.md#triggers) |
 | `not_types` | Has none of these card types ("noncreature"). | [Triggers](card-dsl.md#triggers) |
 | `or_planeswalkers` | With `attacking_player`: also a creature attacking a planeswalker that player controls (never a battle). | ["Attacks you" is not "attacks you and/or your planeswalkers"](card-dsl-cookbook.md#attacks-you-is-not-attacks-you-andor-your-planeswalkers) |
@@ -1185,6 +1188,7 @@ Keys a cost-reduction filter accepts beyond the static filter. Refused there: `a
 | Name | Description | Defined in |
 |---|---|---|
 | `any_of` | Count an *or* of characteristics. | [A reduction that counts an or of characteristics](card-dsl.md#a-reduction-that-counts-an-or-of-characteristics) |
+| `modified` | A counter, an Equipment, or an Aura you control on it (700.9). | [A reduction that counts modified creatures](card-dsl.md#a-reduction-that-counts-modified-creatures) |
 | `zone` | Count in a zone other than the battlefield. | [Counting filters, and the zone key](card-dsl.md#counting-filters-and-the-zone-key) |
 
 ## Mana rider ops

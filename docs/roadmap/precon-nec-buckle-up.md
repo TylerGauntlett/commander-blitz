@@ -5,9 +5,9 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
+depends_on: [type-setting-in-timestamp-order]
 status: proposed
-rank: 54
+rank: 55
 ---
 
 ## Today
