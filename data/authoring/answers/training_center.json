@@ -1,0 +1,38 @@
+{
+  "card": {
+    "id": "training_center",
+    "name": "Training Center",
+    "oracle_text": "This land enters tapped unless you have two or more opponents.\n{T}: Add {U} or {R}.",
+    "types": ["Land"],
+    "colors": [],
+    "color_identity": ["R", "U"],
+    "replacements": [
+      {
+        "condition": {
+          "cmp": "<",
+          "left": {"player_count": "each_opponent"},
+          "right": {"const": 2}
+        },
+        "event": "self_enters_tapped"
+      }
+    ],
+    "abilities": [
+      {
+        "cost": {"tap": true},
+        "effects": [
+          {
+            "modes": [
+              {"effects": [{"mana": "{U}", "op": "add_mana"}], "label": "U"},
+              {"effects": [{"mana": "{R}", "op": "add_mana"}], "label": "R"}
+            ],
+            "op": "choose_mode"
+          }
+        ],
+        "is_mana_ability": true,
+        "kind": "activated",
+        "text": "{T}: Add {U} or {R}."
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

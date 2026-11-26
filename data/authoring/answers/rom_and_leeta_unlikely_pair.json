@@ -1,0 +1,32 @@
+{
+  "card": {
+    "id": "rom_and_leeta_unlikely_pair",
+    "name": "Rom and Leeta, Unlikely Pair",
+    "oracle_text": "Seek out — Whenever you draw your second card each turn, create two tapped Treasure tokens.",
+    "mana_cost": "{3}{R}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Ferengi", "Bajoran"],
+    "power": 4,
+    "toughness": 3,
+    "colors": ["R"],
+    "color_identity": ["R"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Seek out — Whenever you draw your second card each turn, create two tapped Treasure tokens.",
+        "trigger": {"event": "draw", "controller": "you", "nth": 2},
+        "effects": [
+          {
+            "op": "create_token",
+            "token": "treasure_token",
+            "amount": {"const": 2},
+            "controller": "you",
+            "tapped": true
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
