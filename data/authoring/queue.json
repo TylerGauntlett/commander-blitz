@@ -8512,12 +8512,12 @@
     },
     "Angel of Flight Alabaster": {
       "edhrec_rank": 13986,
-      "gate": "template",
+      "gate": null,
       "name": "Angel of Flight Alabaster",
-      "reason": "no template for: At the beginning of your upkeep, return target Spirit card from your graveyard to your han",
+      "reason": "",
       "scryfall_id": "dd39a1e1-9784-4cb0-b8ed-98e659b32edd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Angel of Fury": {
@@ -18522,12 +18522,12 @@
     },
     "Azorius Locket": {
       "edhrec_rank": 9268,
-      "gate": "template",
+      "gate": null,
       "name": "Azorius Locket",
-      "reason": "no template for: {W/U}{W/U}{W/U}{W/U}, {T}, Sacrifice this artifact: Draw two cards",
+      "reason": "",
       "scryfall_id": "f893f1e9-1d19-4220-9e0d-3f9c85d33837",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Azorius Ploy": {
@@ -23862,12 +23862,12 @@
     },
     "Benevolent Offering": {
       "edhrec_rank": 6584,
-      "gate": "template",
+      "gate": null,
       "name": "Benevolent Offering",
-      "reason": "no template for: Choose an opponent. You and that player each create three 1/1 white Spirit creature tokens",
+      "reason": "",
       "scryfall_id": "d080c35d-f2c6-4f4e-8f7c-305b319d4cde",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Benevolent River Spirit": {
@@ -33842,12 +33842,12 @@
     },
     "Breath of the Sleepless": {
       "edhrec_rank": 14443,
-      "gate": "template",
+      "gate": null,
       "name": "Breath of the Sleepless",
-      "reason": "no template for: You may cast Spirit spells as though they had flash",
+      "reason": "",
       "scryfall_id": "30fb3567-f473-4131-a849-0cc0ec7be53e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Breathe Your Last": {
@@ -59192,12 +59192,12 @@
     },
     "Custodi Soulbinders": {
       "edhrec_rank": 13819,
-      "gate": "template",
+      "gate": null,
       "name": "Custodi Soulbinders",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it, where X is the number of other creatures",
+      "reason": "",
       "scryfall_id": "6a0dd7ba-673e-4f69-8cd3-806784501dc2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Custodi Soulcaller": {

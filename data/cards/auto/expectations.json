@@ -892,6 +892,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "angel_of_flight_alabaster": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "angel_of_glory_s_rise": {
     "battlefield_count": 34,
     "graveyard_size": {
@@ -1965,6 +1972,13 @@
   "aysen_abbey": {
     "zone": "battlefield"
   },
+  "azorius_locket": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "azorius_ploy": {
     "zone": "graveyard"
   },
@@ -2433,6 +2447,18 @@
   "benevolent_hydra": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "benevolent_offering": {
+    "battlefield_count": 35,
+    "life": {
+      "0": 50
+    },
+    "opponent_battlefield_count": 9,
+    "tokens": {
+      "count": 3,
+      "id": "spirit_1_1_w_flying"
+    },
+    "zone": "graveyard"
   },
   "bennie_bracks_zoologist": {
     "battlefield_count": 33,
@@ -3426,6 +3452,13 @@
       "1": 35
     },
     "zone": "graveyard"
+  },
+  "breath_of_the_sleepless": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "breath_weapon": {
     "zone": "graveyard"
@@ -5876,6 +5909,14 @@
       "0": 3
     },
     "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "custodi_soulbinders": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "+1/+1"
+    },
     "zone": "battlefield"
   },
   "custodian_of_the_trove": {
