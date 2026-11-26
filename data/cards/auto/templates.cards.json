@@ -232693,6 +232693,66 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "spirit_3_3_w_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a Spirit or Arcane spell, create a 3/3 white Spirit creature token with flying.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_of": [
+                {
+                  "subtypes": [
+                    "Spirit"
+                  ]
+                },
+                {
+                  "subtypes": [
+                    "Arcane"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "oyobi_who_split_the_heavens",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{6}{W}",
+      "name": "Oyobi, Who Split the Heavens",
+      "oracle_text": "Flying\nWhenever you cast a Spirit or Arcane spell, create a 3/3 white Spirit creature token with flying.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "any_types": [
               "Artifact",

@@ -196542,12 +196542,12 @@
     },
     "Oyobi, Who Split the Heavens": {
       "edhrec_rank": 12421,
-      "gate": "template",
+      "gate": null,
       "name": "Oyobi, Who Split the Heavens",
-      "reason": "no template for: Whenever you cast a Spirit or Arcane spell, create a 3/3 white Spirit creature token with ",
+      "reason": "",
       "scryfall_id": "8f279602-024a-44b6-9a36-465c16363cb5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ozai's Cruelty": {

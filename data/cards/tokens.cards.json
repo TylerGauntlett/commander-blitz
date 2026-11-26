@@ -4291,6 +4291,29 @@
       ]
     },
     {
+      "id": "spirit_3_3_w_flying",
+      "name": "Spirit Token",
+      "oracle_text": "3/3 white Spirit creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Spirit"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
       "id": "spirit_2_2_w",
       "name": "Spirit Token",
       "oracle_text": "2/2 white Spirit creature token.",

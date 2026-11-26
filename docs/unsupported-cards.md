@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**568 cards** blocked by **469** capabilities.
+**567 cards** blocked by **468** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -437,7 +437,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [spirit-1-1-u-flying](#spirit-1-1-u-flying) | 1 | 13814 | token |
 | [spirit-2-2-w-flying](#spirit-2-2-w-flying) | 1 | 12596 | token |
-| [spirit-3-3-w-flying](#spirit-3-3-w-flying) | 1 | 12421 | token |
 | [squad](#squad) | 1 | 13056 | engine |
 | [stack-wipe](#stack-wipe) | 1 | 8784 | op |
 | [static-count-derived-types](#static-count-derived-types) | 1 | 817 | value |
@@ -7305,20 +7304,6 @@ Blocks **1** card.
 
 - **Phantom Interference** (rank 12596) — `phantom_interference`
   - + {3} — Create a 2/2 white Spirit creature token with flying.
-
-</details>
-
-## spirit-3-3-w-flying
-
-Blocks **1** card.
-
-- **(token)** a 3/3 white Spirit creature token with flying
-  <br>Why the existing vocabulary won't do: token_ids has Spirit tokens only at 1/1, 2/2 and 3/2 (spirit_1_1_w_flying, spirit_2_2_w, spirit_3_2_rw, ...) and the only 3/3 white flier is angel_3_3_w_flying, which has the wrong creature type. The trigger itself is expressible as a spell_cast trigger with controller you and filter any_of [{subtypes: [Spirit]}, {subtypes: [Arcane]}]
-
-<details><summary>Cards waiting on this</summary>
-
-- **Oyobi, Who Split the Heavens** (rank 12421) — `oyobi_who_split_the_heavens`
-  - Whenever you cast a Spirit or Arcane spell, create a 3/3 white Spirit creature token with flying.
 
 </details>
 
