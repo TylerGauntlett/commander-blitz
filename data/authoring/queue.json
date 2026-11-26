@@ -91412,12 +91412,12 @@
     },
     "Faithful Mending": {
       "edhrec_rank": 3692,
-      "gate": "template",
+      "gate": null,
       "name": "Faithful Mending",
-      "reason": "no template for: You gain 2 life, draw two cards, then discard two cards",
+      "reason": "",
       "scryfall_id": "a9bbf20d-52eb-4a5b-8f86-ba80caf23e1f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Faithful Pikemaster": {
@@ -95372,12 +95372,12 @@
     },
     "Fevered Visions": {
       "edhrec_rank": 4413,
-      "gate": "template",
+      "gate": null,
       "name": "Fevered Visions",
-      "reason": "no template for: At the beginning of each player's end step, that player draws a card. If the player is you",
+      "reason": "",
       "scryfall_id": "4b3b0ca4-0ee2-461c-811f-ce51ea12366c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fey Steed": {
@@ -108242,12 +108242,12 @@
     },
     "Geordi La Forge, Innovator": {
       "edhrec_rank": 22836,
-      "gate": "template",
+      "gate": null,
       "name": "Geordi La Forge, Innovator",
-      "reason": "no template for: Geordi La Forge can't be blocked if you control a Spacecraft",
+      "reason": "",
       "scryfall_id": "b5b349ba-6421-487a-b4f7-f35fde7a7995",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Georgiou, Terran Emperor": {
@@ -143972,12 +143972,12 @@
     },
     "Jean-Luc Picard, Luminary": {
       "edhrec_rank": 19504,
-      "gate": "template",
+      "gate": null,
       "name": "Jean-Luc Picard, Luminary",
-      "reason": "no template for: Whenever another historic permanent you control with mana value 3 or greater enters, draw ",
+      "reason": "",
       "scryfall_id": "3221fc7e-2eed-4517-a785-3e3a1748450f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jean-Luc, Mon Capitaine": {
@@ -145892,12 +145892,12 @@
     },
     "Julian Bashir, Frontier Doctor": {
       "edhrec_rank": 22513,
-      "gate": "template",
+      "gate": null,
       "name": "Julian Bashir, Frontier Doctor",
-      "reason": "no template for: Seek out — Whenever you draw your second card each turn, put a +1/+1 counter on Julian Bas",
+      "reason": "",
       "scryfall_id": "0301c7fe-2acf-4f7b-9941-fd7e44a81e15",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jumbo Cactuar": {
@@ -149832,12 +149832,12 @@
     },
     "Kes, Evolving Telepath": {
       "edhrec_rank": 27011,
-      "gate": "template",
+      "gate": null,
       "name": "Kes, Evolving Telepath",
-      "reason": "no template for: At the beginning of your end step, put a time counter on Kes, then draw X cards, where X i",
+      "reason": "",
       "scryfall_id": "282b02ed-9bfb-4490-947f-f0cc10d50b7f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Keskit, the Flesh Sculptor": {
@@ -167952,12 +167952,12 @@
     },
     "Malfunctioning Holodeck": {
       "edhrec_rank": null,
-      "gate": "template",
+      "gate": null,
       "name": "Malfunctioning Holodeck",
-      "reason": "no template for: Ward {2}",
+      "reason": "",
       "scryfall_id": "0faeffee-bb07-4b9d-8cdd-e9731bbd2396",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Malicious Advice": {
@@ -194852,12 +194852,12 @@
     },
     "On the Shoulders of Giants": {
       "edhrec_rank": 22702,
-      "gate": "template",
+      "gate": "compile",
       "name": "On the Shoulders of Giants",
-      "reason": "no template for: Historic creatures you control have flying",
+      "reason": "on_the_shoulders_of_giants.abilities[0].affects.any_of[0]: ['types'] already appear on the outer filter, and a branch's value would replace the outer one rather than narrow it",
       "scryfall_id": "71807912-94e7-4ebd-91ca-d0b00dceae9c",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "On the Trail": {

@@ -9078,6 +9078,21 @@
   "faithbearer_paladin": {
     "zone": "battlefield"
   },
+  "faithful_mending": {
+    "graveyard_size": {
+      "0": 5
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 38
+    },
+    "life": {
+      "0": 42
+    },
+    "zone": "graveyard"
+  },
   "faithless_looting": {
     "graveyard_size": {
       "0": 5
@@ -9415,6 +9430,13 @@
     "zone": "battlefield"
   },
   "fetid_pools": {
+    "zone": "battlefield"
+  },
+  "fevered_visions": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "field_creeper": {
@@ -10656,6 +10678,13 @@
   },
   "geode_rager": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "geordi_la_forge_innovator": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "geothermal_bog": {
@@ -13873,6 +13902,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "jean_luc_picard_luminary": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "jedit_ojanen": {
     "zone": "battlefield"
   },
@@ -14046,6 +14082,10 @@
     "zone": "battlefield"
   },
   "jukai_naturalist": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "julian_bashir_frontier_doctor": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -14471,6 +14511,13 @@
     },
     "library_size": {
       "0": 39
+    },
+    "zone": "battlefield"
+  },
+  "kes_evolving_telepath": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
     },
     "zone": "battlefield"
   },
@@ -16361,6 +16408,11 @@
     "zone": "battlefield"
   },
   "malcolm_keen_eyed_navigator": {
+    "zone": "battlefield"
+  },
+  "malfunctioning_holodeck": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
   "malleable_impostor": {
