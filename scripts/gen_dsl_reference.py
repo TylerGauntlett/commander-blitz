@@ -278,6 +278,9 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                                  "`gain_activated_abilities` — every activated ability of another card"),
     "skip_untap": ("Board", "It doesn't untap during its controller's next untap step.",
                    H_UNTAP_NONE),
+    "return_at_next_untap": ("Board", "Mark this permanent: its activator's next untap step "
+                             "returns it to its owner's hand as permanents untap. A mana rider.",
+                             "…that sends the land home at your next untap step"),
     "must_attack": ("Board", "Creatures attack this turn if able.", "Attack requirements"),
     "must_attack_planeswalker": ("Board", "Creatures attack a planeswalker this turn if able.",
                                  '"…creatures that player controls attack Gideon Jura if able"'),

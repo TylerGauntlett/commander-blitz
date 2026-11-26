@@ -11091,7 +11091,8 @@ inside cost payment, so the land could never be tapped to help cast a spell,
 which is the only thing it is played for.
 
 The rider may only use `loader.MANA_RIDER_OPS` — `damage`, `lose_life`,
-`gain_life`, `add_poison`, `add_counters`, `remove_counters`, `delayed_trigger`.
+`gain_life`, `add_poison`, `add_counters`, `remove_counters`, `delayed_trigger`,
+`return_at_next_untap`.
 A mana ability is activated inside cost payment, where there is no stack to put a
 decision on and no priority window to answer it in, so an op that yields would
 hang the solver mid-tap. The whitelist makes that a card that will not load
@@ -11115,6 +11116,31 @@ The trigger fires on the next creature spell whether or not this mana paid for
 it, which is the card's ruling. A rider's trigger may not carry a `subject` or
 `recipient`: the activation has no target or binding to name one with, so the
 loader refuses it.
+
+### …that sends the land home at your next untap step
+
+"{T}: Add one mana of any color. During your next untap step, as you untap your
+permanents, return this land to its owner's hand." — Undiscovered Paradise: the
+`choose_mode` of five `add_mana`s followed by
+
+```jsonc
+{"op": "return_at_next_untap"}
+```
+
+The op takes no keys (beyond the generic `condition`) and the loader refuses any
+other: it marks **its own source** with `GameObject.returns_at_untap_of`, the
+seat that activated it — the printed "your". `turn._untap_permanents` returns
+every permanent marked for the untapping seat to its owner's hand, just ahead of
+`untap_all`, in that seat's next untap step, an additional one (Sphinx of the
+Second Sun) included; that untap step spends the mark. An opponent's untap step
+does not, and the mark is battlefield state, cleared by
+`reset_permanent_state` when the permanent changes zones (400.7).
+
+| Near miss | Why not |
+|---|---|
+| `delay` to `upkeep` around `return_to_hand` | a delayed trigger, on the stack after the land has untapped, so it can be tapped for mana again in response — a better card; and 502.3 makes the return part of the untap itself |
+| `return_to_hand` in the rider | returns the land as it is tapped |
+| `skip_untap` | the land's other kind of untap-step drawback; it stays tapped instead of leaving |
 
 ## An activated ability that gets cheaper
 

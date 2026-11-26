@@ -357,7 +357,8 @@
    "delayed_trigger",
    "gain_life",
    "lose_life",
-   "remove_counters"
+   "remove_counters",
+   "return_at_next_untap"
   ],
   "MANA_SYMBOLS": [
    "W",
@@ -1251,6 +1252,7 @@
   "repeat_while",
   "replace_deaths",
   "replace_leaves_battlefield",
+  "return_at_next_untap",
   "return_from_graveyard",
   "return_self_to_hand_on_resolution",
   "return_spell_to_hand",

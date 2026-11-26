@@ -789,6 +789,14 @@ class GameObject:
     #: which holds for as long as its source is on the battlefield.  Two
     #: different lifetimes, so two different fields.
     skip_next_untap: bool = False
+    #: "During your next untap step, as you untap your permanents, return this
+    #: land to its owner's hand" (Undiscovered Paradise): the seat whose next
+    #: untap step returns it -- the player who activated the ability, the
+    #: printed "you". Not a trigger and nothing goes on the stack (502.3): it is
+    #: read by `turn._untap_permanents` in the very breath the permanents untap,
+    #: spent by that one untap step, and cleared with the rest of the battlefield
+    #: state, because a land that left and came back is a new object (400.7).
+    returns_at_untap_of: int | None = None
     #: Seats that have been *shown* this card while it sits in a hidden zone.
     #: "Look at target player's hand" (Glasses of Urza) is private information:
     #: it is not `reveal`, which is public and tells the whole table. Recorded
@@ -1633,6 +1641,7 @@ class GameObject:
         self.flags = set()
         self.frozen_by = None
         self.skip_next_untap = False
+        self.returns_at_untap_of = None
         self.exiled_by = None
         self.returned_by = None
         self.became_aura = False
@@ -1845,6 +1854,13 @@ class GameObject:
             "granted_keywords": sorted(self.granted_keywords),
             "frozen_by": self.frozen_by,
             "skip_next_untap": self.skip_next_untap,
+            # Only while it is waiting, so every other object's snapshot is
+            # unchanged.
+            **(
+                {"returns_at_untap_of": self.returns_at_untap_of}
+                if self.returns_at_untap_of is not None
+                else {}
+            ),
             "suspended_by": self.suspended_by,
             "hasted_by_suspend": self.hasted_by_suspend,
             # Only once an exhaust ability has been used, for the emblem line's

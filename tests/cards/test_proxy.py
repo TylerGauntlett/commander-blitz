@@ -768,6 +768,44 @@ class TestAManaAbilityYouMayNotAlwaysActivate:
         assert [e["op"] for e in painful["effects"]] == ["choose_mode", "damage"]
 
 
+class TestALandThatGoesHomeAtYourNextUntapStep:
+    """Undiscovered Paradise's drawback is read, so the land keeps its mana.
+
+    Unread, the tail was a refusal and the land came through with no mana
+    ability at all; generated without it, the land would be a free five-colour
+    land. Read into `return_at_next_untap`, it is the printed card.
+    """
+
+    PARADISE = (
+        "{T}: Add one mana of any color. During your next untap step, as you untap "
+        "your permanents, return this land to its owner's hand."
+    )
+
+    def test_the_mana_ability_carries_the_rider(self):
+        result, card = built(
+            name="Undiscovered Paradise",
+            type_line="Land",
+            oracle_text=self.PARADISE,
+            produced_mana=("W", "U", "B", "R", "G"),
+        )
+        (ability,) = [a for a in card.abilities if a.is_mana_ability]
+        assert ability.mana_rider == ({"op": "return_at_next_untap"},)
+        assert len(ability.mana_options) == 5, "any colour"
+        assert result.coverage == "full"
+        assert result.notes == ()
+
+    def test_returning_something_else_is_still_refused(self):
+        """Only the source itself: "return a land you control" is another card."""
+        result, card = built(
+            name="Test Oasis",
+            type_line="Land",
+            oracle_text=self.PARADISE.replace("this land", "a land you control"),
+            produced_mana=("W", "U", "B", "R", "G"),
+        )
+        assert not any(a.is_mana_ability for a in card.abilities)
+        assert any("mana ability not generated" in n for n in result.notes)
+
+
 class TestPartiallyModelledCards:
     def test_a_planeswalker_enters_play_but_says_it_does_nothing(self):
         result, card = built(

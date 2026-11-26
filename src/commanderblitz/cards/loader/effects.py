@@ -3939,6 +3939,15 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: 'max_total_power' chooses any number under the ceiling, "
                 f"so its 'objects' needs count: \"any\""
             )
+    if op == "return_at_next_untap" and (extra := set(effect) - {"op", "condition"}):
+        # "…return **this land** to its owner's hand": the op marks its own
+        # source and nothing else. An `objects` written beside it would load and
+        # be ignored -- a card that prints "return that creature" returning the
+        # land that made the mana instead.
+        raise DslError(
+            f"{where}: return_at_next_untap returns its own source and takes no "
+            f"keys -- got {sorted(extra)}"
+        )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
     if op == "create_token" and "counters" in effect:

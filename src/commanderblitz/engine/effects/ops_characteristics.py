@@ -848,6 +848,30 @@ def op_skip_untap(ctx: EffectContext, spec: Mapping[str, Any]):
             obj.skip_next_untap = True
 
 
+@register("return_at_next_untap")
+def op_return_at_next_untap(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
+    """ "During your next untap step, as you untap your permanents, return this
+    land to its owner's hand." (Undiscovered Paradise.)
+
+    Marks the source, and that is all it does now. The return is not a trigger
+    and uses no stack: it happens as part of the untap step's untapping (502.3),
+    so `turn._untap_permanents` does it, for the marks keyed to the seat whose
+    untap step that is. Keyed to ``ctx.controller`` -- the printed "your" --
+    and not to whoever controls the land later, and spent by that seat's very
+    next untap step, an additional one (Sphinx of the Second Sun) included.
+
+    Not a `delay` to the untap step: a delayed **trigger** would go on the stack
+    in the upkeep, after the land had already untapped and been tapped again for
+    mana -- a strictly better card. And not a generator, because its home is a
+    mana ability's rider (`loader.vocabulary.MANA_RIDER_OPS`), run inside cost
+    payment where nothing may ask. It takes no keys: the printed sentence names
+    only "this land".
+    """
+    obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+    if obj is not None and obj.on_battlefield:
+        obj.returns_at_untap_of = ctx.controller
+
+
 @register("lock_abilities")
 def op_lock_abilities(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "Its activated abilities can't be activated this turn."

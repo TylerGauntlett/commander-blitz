@@ -2120,6 +2120,11 @@ FIRST_ACTIVATION_TARGETING_KEYS = frozenset({"controller", "types", "subtypes"})
 #: trigger -- Yuna, Grand Summoner's "When you next cast a creature spell this
 #: turn…". `_split_mana_rider` refuses the ``subject`` and ``recipient`` that
 #: would name an object the activation has none of.
+#:
+#: ``return_at_next_untap`` only marks the source for its controller's next
+#: untap step, which does the returning -- Undiscovered Paradise's "During your
+#: next untap step, as you untap your permanents, return this land to its
+#: owner's hand."
 MANA_RIDER_OPS = frozenset(
     {
         "damage",
@@ -2129,6 +2134,7 @@ MANA_RIDER_OPS = frozenset(
         "add_counters",
         "remove_counters",
         "delayed_trigger",
+        "return_at_next_untap",
     }
 )
 

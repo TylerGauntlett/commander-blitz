@@ -587,6 +587,32 @@ _RIDER_DAMAGE = re.compile(
 )
 
 
+#: "During your next untap step, as you untap your permanents, return this land
+#: to its owner's hand." -- Undiscovered Paradise. Anchored whole, and the
+#: returned object must be the source itself -- "this land" or the card's own
+#: name, checked by `_returns_itself_at_untap` -- because "return a land you
+#: control" is a different card, and refusing it keeps the drawback rather
+#: than dropping it.
+_RIDER_RETURN_AT_UNTAP = re.compile(
+    r"^during your next untap step, as you untap your permanents, return"
+    r" (?P<what>.+?) to its owner's hand\.$",
+    re.I,
+)
+
+
+def _returns_itself_at_untap(tail: str, name: str) -> bool:
+    match = _RIDER_RETURN_AT_UNTAP.match(tail)
+    if match is None:
+        return False
+    what = match.group("what").strip().lower()
+    return what == name.strip().lower() or what in (
+        "this land",
+        "this artifact",
+        "this permanent",
+        "this creature",
+    )
+
+
 def _mana_rider(line: str, name: str) -> tuple[list[dict], dict | None, str | None]:
     """``(rider effects, activation condition, refusal note)`` after ``Add ...``.
 
@@ -596,7 +622,7 @@ def _mana_rider(line: str, name: str) -> tuple[list[dict], dict | None, str | No
     better card than the printed one, and a free untapped dual is the one
     direction this generator must never fail in.
 
-    The two readable shapes are not the same kind of thing and cannot share a
+    The readable shapes are not all the same kind of thing and cannot share a
     slot: a painland's drawback is an **effect** the ability has, where "Activate
     only if ..." is a **condition** on activating it at all -- written into the
     effects it would be a cost paid after the fact, and written as a cost it
@@ -624,6 +650,8 @@ def _mana_rider(line: str, name: str) -> tuple[list[dict], dict | None, str | No
                 "player": "you",
             }
         ], None, None
+    if _returns_itself_at_untap(tail, name):
+        return [{"op": "return_at_next_untap"}], None, None
     if condition := _activation_condition(tail):
         return [], condition, None
     return [], None, f"mana ability not generated; its rider is {tail!r}"

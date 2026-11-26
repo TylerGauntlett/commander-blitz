@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 192 |
+| [Effect ops](#effect-ops) | 193 |
 | [Selectors](#selectors) | 84 |
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 80 |
@@ -33,7 +33,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Spell filter keys](#spell-filter-keys) | 12 |
 | [Spell cost-reduction filter keys](#spell-cost-reduction-filter-keys) | 5 |
 | [Cost-reduction filter keys](#cost-reduction-filter-keys) | 3 |
-| [Mana rider ops](#mana-rider-ops) | 7 |
+| [Mana rider ops](#mana-rider-ops) | 8 |
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
 | [Card-level rider keys](#card-level-rider-keys) | 25 |
@@ -140,6 +140,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `remove_from_combat` | Board |  | Remove creatures from combat (506.4); what they fought stays blocked or blocking. | [Removing a creature from combat — remove_from_combat](card-dsl-cookbook.md#removing-a-creature-from-combat--remove_from_combat) |
 | `replace_deaths` | Board |  | If it would die this turn, exile (or another zone) instead. | ["If it would die this turn, exile it instead"](card-dsl-cookbook.md#if-it-would-die-this-turn-exile-it-instead) |
 | `replace_leaves_battlefield` | Board |  | If it would leave the battlefield this turn, do something else. | [Effect ops](card-dsl.md#effect-ops) |
+| `return_at_next_untap` | Board |  | Mark this permanent: its activator's next untap step returns it to its owner's hand as permanents untap. A mana rider. | […that sends the land home at your next untap step](card-dsl-cookbook.md#that-sends-the-land-home-at-your-next-untap-step) |
 | `rotate_control` | Board |  | Pass permanents around the table to the left or right. | ["Choose left or right" — passing the board around the table](card-dsl-cookbook.md#choose-left-or-right--passing-the-board-around-the-table) |
 | `sacrifice` | Board | yes | A player sacrifices permanents; `snapshot` remembers what they had; `players` is "each player sacrifices", every choice made in APNAP order and then sacrificed at once, `snapshot` then a list. | ["Each player sacrifices" — sacrifice's players](card-dsl.md#each-player-sacrifices--sacrifices-players) |
 | `set_flag` | Board |  | Write a word on the source for the game (renowned, …). | ["If this creature hasn't been exerted this turn"](card-dsl-cookbook.md#if-this-creature-hasnt-been-exerted-this-turn) |
@@ -1206,6 +1207,7 @@ The ops a mana ability may carry beside `add_mana` -- the painland's drawback. D
 | `gain_life` | A player gains N life. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
 | `lose_life` | A player loses N life; `as` records how much. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
 | `remove_counters` | Remove N counters of a kind; with `any_kind`, of whichever kinds the controller picks, one at a time, and `up_to` makes N a ceiling; with `all_kinds`, every counter of every kind. `as` binds the total removed. | [Removing counters of any kind — any_kind](card-dsl.md#removing-counters-of-any-kind--any_kind) |
+| `return_at_next_untap` | Mark this permanent: its activator's next untap step returns it to its owner's hand as permanents untap. A mana rider. | […that sends the land home at your next untap step](card-dsl-cookbook.md#that-sends-the-land-home-at-your-next-untap-step) |
 
 ## Delayed-trigger keys
 

@@ -1,0 +1,34 @@
+{
+  "_comment": "Cards that exist only for tests/unit/mana/test_return_at_next_untap.py. Never part of a deck list. `t_paradise` is Undiscovered Paradise as printed: a land that taps for any colour and goes back to its owner's hand during its activator's next untap step.",
+  "cards": [
+    {
+      "id": "t_paradise",
+      "name": "Test Paradise",
+      "oracle_text": "{T}: Add one mana of any color. During your next untap step, as you untap your permanents, return this land to its owner's hand.",
+      "types": ["Land"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color. During your next untap step, as you untap your permanents, return this land to its owner's hand.",
+          "cost": { "tap": true },
+          "is_mana_ability": true,
+          "effects": [
+            {
+              "op": "choose_mode",
+              "modes": [
+                { "effects": [{ "op": "add_mana", "mana": "{W}" }] },
+                { "effects": [{ "op": "add_mana", "mana": "{U}" }] },
+                { "effects": [{ "op": "add_mana", "mana": "{B}" }] },
+                { "effects": [{ "op": "add_mana", "mana": "{R}" }] },
+                { "effects": [{ "op": "add_mana", "mana": "{G}" }] }
+              ]
+            },
+            { "op": "return_at_next_untap" }
+          ]
+        }
+      ]
+    }
+  ]
+}

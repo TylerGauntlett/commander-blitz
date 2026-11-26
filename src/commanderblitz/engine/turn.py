@@ -63,6 +63,7 @@ from .temp_effects import (
     clear_uncounterable_grants,
 )
 from .triggers import fire
+from .zones import bounce
 
 if TYPE_CHECKING:  # pragma: no cover
     from .player import PlayerState
@@ -543,6 +544,7 @@ def _untap_permanents(state: GameState, player: PlayerState) -> Generator[Any, l
     # printed wording and also the only reading that is not a different card: an
     # engine that picked for them would decide whether Winter Orb locks out the
     # Sol Ring or the Island.
+    _return_at_untap(state, player.pid)
     capped_out: set[int] = set()
     for maximum, candidates in untap_caps(state, player.pid):
         ctx = EffectContext(state=state, controller=player.pid, source_name="Untap step")
@@ -567,6 +569,32 @@ def _untap_permanents(state: GameState, player: PlayerState) -> Generator[Any, l
         obj = state.objects.get(oid)
         if obj is not None and obj.tapped and not obj.skip_next_untap:
             untap_permanent(state, oid)
+
+
+def _return_at_untap(state: GameState, pid: int) -> None:
+    """ "During your next untap step, as you untap your permanents, return this
+    land to its owner's hand." (Undiscovered Paradise, `return_at_next_untap`.)
+
+    Part of the untapping itself (502.3), not a trigger: nothing goes on the
+    stack, no player gets priority, and the land is gone before anyone could tap
+    it again. Done just ahead of `untap_all` rather than after it, which is the
+    same instant for the rules and keeps a land that is leaving out of Winter
+    Orb's question.
+
+    Every mark keyed to the untapping seat is spent here, whoever controls the
+    permanent now: the printed "your" is the activating player's. A phased-out
+    permanent is treated as though it does not exist (702.26b), so it is not
+    returned -- and its mark is spent all the same, because the effect was about
+    this one untap step and no later one.
+    """
+    for oid in list(state.battlefield):
+        obj = state.objects.get(oid)
+        if obj is None or obj.returns_at_untap_of != pid:
+            continue
+        obj.returns_at_untap_of = None
+        if obj.phased_out:
+            continue
+        bounce(state, oid, by=oid)
 
 
 def _day_night(state: GameState, pid: int) -> None:
