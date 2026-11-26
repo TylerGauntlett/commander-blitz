@@ -1,7 +1,63 @@
 {
   "window_years": 5,
-  "as_of": "2026-10-24",
+  "as_of": "2026-11-13",
   "rows": [
+    {
+      "id": "trc_federation_fleet",
+      "product": "Federation Fleet",
+      "set_code": "TRC",
+      "set_name": "Star Trek Commander",
+      "date": "2026-11-13",
+      "source": "https://mtgjson.com/api/v5/decks/FederationFleet_TRC.json",
+      "commanders": [
+        {
+          "name": "Jean-Luc Picard, Luminary",
+          "scryfall_id": "901eaed9-dbea-4a31-87b0-e17e9bcabfed"
+        }
+      ]
+    },
+    {
+      "id": "trc_klingon_fury",
+      "product": "Klingon Fury",
+      "set_code": "TRC",
+      "set_name": "Star Trek Commander",
+      "date": "2026-11-13",
+      "source": "https://mtgjson.com/api/v5/decks/KlingonFury_TRC.json",
+      "commanders": [
+        {
+          "name": "Worf, Defiant Commander",
+          "scryfall_id": "da030114-a4ee-46d7-a6fd-6c0d8e779bcf"
+        }
+      ]
+    },
+    {
+      "id": "trc_landing_party",
+      "product": "Landing Party",
+      "set_code": "TRC",
+      "set_name": "Star Trek Commander",
+      "date": "2026-11-13",
+      "source": "https://mtgjson.com/api/v5/decks/LandingParty_TRC.json",
+      "commanders": [
+        {
+          "name": "Commander Spock",
+          "scryfall_id": "cf114392-a38d-4117-aa41-911d6dc1051b"
+        }
+      ]
+    },
+    {
+      "id": "trc_we_are_the_borg",
+      "product": "We Are the Borg",
+      "set_code": "TRC",
+      "set_name": "Star Trek Commander",
+      "date": "2026-11-13",
+      "source": "https://mtgjson.com/api/v5/decks/WeAreTheBorg_TRC.json",
+      "commanders": [
+        {
+          "name": "The Borg Queen",
+          "scryfall_id": "8ed939ba-bf8d-4a68-ae9f-f8ca4eb301ab"
+        }
+      ]
+    },
     {
       "id": "fdc_calling_all_angels",
       "product": "Calling All Angels",

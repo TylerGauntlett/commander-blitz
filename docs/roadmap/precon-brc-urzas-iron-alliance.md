@@ -7,7 +7,7 @@ impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
 depends_on: [granted-encore]
 status: proposed
-rank: 79
+rank: 45
 ---
 
 ## Today

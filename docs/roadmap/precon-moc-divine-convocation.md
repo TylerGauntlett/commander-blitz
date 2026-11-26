@@ -7,7 +7,7 @@ impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
 depends_on: [planechase]
 status: proposed
-rank: 68
+rank: 43
 ---
 
 ## Today

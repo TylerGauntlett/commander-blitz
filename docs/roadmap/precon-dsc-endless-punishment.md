@@ -7,7 +7,7 @@ impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
 depends_on: [graveyard-arrival-trigger, rooms]
 status: proposed
-rank: 29
+rank: 16
 ---
 
 ## Today

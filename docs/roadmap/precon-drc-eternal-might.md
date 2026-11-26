@@ -7,7 +7,7 @@ impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
 depends_on: [granted-cycling]
 status: proposed
-rank: 27
+rank: 15
 ---
 
 ## Today
