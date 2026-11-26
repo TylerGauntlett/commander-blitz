@@ -896,11 +896,37 @@ def _mana_grant(spec: Any, is_mana_ability: bool, where: str) -> ManaKeywordGran
         raise DslError(f"{where}: 'mana_grant' needs 'is_mana_ability'")
     if not isinstance(spec, Mapping):
         raise DslError(f"{where}: 'mana_grant' is an object with 'keywords'")
-    unknown = set(spec) - {"keywords", "spell_types"}
+    unknown = set(spec) - {
+        "keywords",
+        "spell_types",
+        "commander_only",
+        "enters_with_command_zone_casts",
+    }
     if unknown:
         raise DslError(f"{where}: 'mana_grant' has unknown keys {sorted(unknown)}")
-    raw = spec.get("keywords")
-    if not isinstance(raw, list) or not raw:
+    commander_only = spec.get("commander_only", False)
+    if not isinstance(commander_only, bool):
+        raise DslError(f"{where}: 'mana_grant.commander_only' is true or false")
+    # Opal Palace: "…it enters with a number of additional +1/+1 counters on
+    # it equal to the number of times it's been cast from the command zone
+    # this game". A counter kind; the number is the rules' and not the card's.
+    by_casts = spec.get("enters_with_command_zone_casts")
+    if by_casts is not None:
+        if not isinstance(by_casts, str) or not by_casts:
+            raise DslError(
+                f"{where}: 'mana_grant.enters_with_command_zone_casts' names a "
+                f"counter kind, e.g. '+1/+1'"
+            )
+        if not commander_only:
+            # Only a commander has been cast from the command zone, so on any
+            # other spell the count is 0 and the rider is a sentence that does
+            # nothing -- the printed one asks it only of your commander.
+            raise DslError(
+                f"{where}: 'mana_grant.enters_with_command_zone_casts' needs "
+                f"'commander_only'"
+            )
+    raw = spec.get("keywords", [] if by_casts is not None else None)
+    if not isinstance(raw, list) or (not raw and by_casts is None):
         raise DslError(
             f"{where}: 'mana_grant' needs a non-empty 'keywords' list -- a rider "
             f"that grants nothing is a sentence the card does not print"
@@ -920,4 +946,9 @@ def _mana_grant(spec: Any, is_mana_ability: bool, where: str) -> ManaKeywordGran
         if str(name) not in KNOWN_TYPES:
             raise DslError(f"{where}: 'mana_grant' has unknown card type {name!r}")
         types.append(str(name))
-    return ManaKeywordGrant(keywords=tuple(keywords), spell_types=tuple(types))
+    return ManaKeywordGrant(
+        keywords=tuple(keywords),
+        spell_types=tuple(types),
+        commander_only=commander_only,
+        command_zone_cast_counters=by_casts,
+    )

@@ -16,9 +16,12 @@ Upgrades Unleashed, the Neon Dynasty Commander precon released 2022-02-18, is a
 coming-soon shell on the shelf: its row `nec_upgrades_unleashed` is in
 `data/decks/sources.json` and there is no `data/decks/nec_upgrades_unleashed.deck.json`, so
 `GET /api/precons/upcoming` serves it.
-`python scripts/sync_precons.py --missing nec_upgrades_unleashed` lists the cards the engine
-lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
+Every card on its list is native: `python scripts/sync_precons.py --missing
+nec_upgrades_unleashed` prints nothing. What stops `--write-deck` from shipping
+is the list itself: the published list its `source` names carries
+**Mossfire Valley twice** in its 99, so the deck file it writes fails
+`tests/cards/test_deck_legality.py` (a nonbasic land over its copy limit of
+one, 903.5b), and `sync_precons.py` has no per-precon correction to apply.
 
 ## The change
 
@@ -54,3 +57,17 @@ whole-game test able to draw the deck.
   own item through `/plan-feature`, adds it to this item's `depends_on`, sets
   this item back to `proposed`, and opens the pull request with the cards and
   capabilities done so far. This item stays until the deck is whole.
+
+## Open questions
+
+- **The doubled Mossfire Valley.** The published list carries two copies of a
+  nonbasic land, which no legal Commander deck may (903.5b), and the run will
+  not ship a deck that fails `test_deck_legality.py` or loosen that test. Which
+  list ships? Recommended: check Wizards' own decklist for the product; if it
+  prints one Mossfire Valley, the second copy is a source error and the run
+  puts the card Wizards lists in its place. If the product really shipped two,
+  replace the second with a basic Mountain, since Chishiro's deck is
+  Gruul and a basic is the one change that alters no card's interaction. Either
+  way the correction lives in `data/decks/sources.json` as a per-row override
+  `sync_precons.py --write-deck` applies, so a re-sync cannot bring the
+  duplicate back, and the deck's `notes` say what was changed and why.

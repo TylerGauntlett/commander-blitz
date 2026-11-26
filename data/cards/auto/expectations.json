@@ -470,6 +470,10 @@
     },
     "zone": "battlefield"
   },
+  "akki_battle_squad": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "akoum_hellkite": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -1529,6 +1533,13 @@
   },
   "aryel_knight_of_windgrace": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "ascendant_acolyte": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "ascended_lawmage": {
@@ -3082,6 +3093,14 @@
   "bonebreaker_giant": {
     "zone": "battlefield"
   },
+  "bonehoard": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "germ_0_0_b"
+    },
+    "zone": "battlefield"
+  },
   "bonehoard_dracosaur": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4473,6 +4492,10 @@
     },
     "zone": "battlefield"
   },
+  "chishiro_the_shattered_blade": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "chitinous_cloak": {
     "zone": "battlefield"
   },
@@ -4877,6 +4900,14 @@
     },
     "zone": "graveyard"
   },
+  "collision_of_realms": {
+    "battlefield_count": 31,
+    "library_size": {
+      "0": 41,
+      "1": 21
+    },
+    "zone": "graveyard"
+  },
   "colorful_feiyi_sparrow": {
     "zone": "battlefield"
   },
@@ -5071,6 +5102,13 @@
   "conclave_tribunal": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
+  "concord_with_the_kami": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "concordia_pegasus": {
@@ -7805,6 +7843,10 @@
       "id": "dragon_elemental_4_4_r_flying_prowess"
     },
     "zone": "graveyard"
+  },
+  "elemental_mastery": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "elemental_spectacle": {
     "battlefield_count": 33,
@@ -10973,6 +11015,10 @@
   "goblin_piker": {
     "zone": "battlefield"
   },
+  "goblin_razerunners": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "goblin_roughrider": {
     "zone": "battlefield"
   },
@@ -13299,6 +13345,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "invigorating_hot_spring": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "invisible_force_field": {
     "granted": {
       "count": 4,
@@ -13846,6 +13900,10 @@
     },
     "zone": "battlefield"
   },
+  "kaima_the_fractured_calm": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "kalakscion_hunger_tyrant": {
     "zone": "battlefield"
   },
@@ -13880,6 +13938,13 @@
   "kami_of_ancient_law": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "kami_of_celebration": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "kami_of_old_stone": {
@@ -14578,6 +14643,13 @@
   "koma_cosmos_serpent": {
     "zone": "battlefield"
   },
+  "komainu_battle_armor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "komodo_rhino": {
     "zone": "battlefield"
   },
@@ -14612,6 +14684,13 @@
     },
     "library_size": {
       "0": 39
+    },
+    "zone": "battlefield"
+  },
+  "kosei_penitent_warlord": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
     },
     "zone": "battlefield"
   },
@@ -15859,6 +15938,10 @@
       "0": 40
     },
     "zone": "graveyard"
+  },
+  "mage_slayer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "magefire_wings": {
     "zone": [
@@ -18680,6 +18763,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "one_with_the_kami": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "one_with_the_machine": {
     "hand_size": {
       "0": 1
@@ -18708,6 +18795,10 @@
     "zone": "battlefield"
   },
   "oona_s_gatewarden": {
+    "zone": "battlefield"
+  },
+  "opal_palace": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "opaline_unicorn": {
@@ -18784,6 +18875,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ordeal_of_nylea": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "order_of_midnight_alter_fate": {
     "battlefield_count": 33,
     "hand_size": {
@@ -18815,6 +18910,10 @@
     "zone": "battlefield"
   },
   "ornithopter_of_paradise": {
+    "zone": "battlefield"
+  },
+  "orochi_merge_keeper": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "orochi_soul_reaver": {
@@ -19050,6 +19149,19 @@
       "0": 39
     },
     "opponent_battlefield_count": 7,
+    "zone": "battlefield"
+  },
+  "ox_of_agonas": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 37
+    },
     "zone": "battlefield"
   },
   "ozolith_the_shattered_spire": {
@@ -20021,6 +20133,13 @@
     "zone": "battlefield"
   },
   "primeval_herald": {
+    "zone": "battlefield"
+  },
+  "primeval_protector": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "primeval_titan": {
@@ -23413,6 +23532,16 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "shifting_shadow": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "haste"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "shifting_woodland": {
     "battlefield_count": 33,
     "hand_size": {
@@ -24284,6 +24413,15 @@
     },
     "zone": "battlefield"
   },
+  "smoke_spirits_aid": {
+    "battlefield_count": 36,
+    "opponent_battlefield_count": 6,
+    "tokens": {
+      "count": 4,
+      "id": "smoke_blessing"
+    },
+    "zone": "graveyard"
+  },
   "smokebraider": {
     "battlefield_count": 33,
     "hand_size": {
@@ -24577,6 +24715,9 @@
     },
     "zone": "battlefield"
   },
+  "soul_s_majesty": {
+    "zone": "graveyard"
+  },
   "soul_shatter": {
     "battlefield_count": 32,
     "opponent_battlefield_count": 5,
@@ -24650,6 +24791,16 @@
     "battlefield_count": 33,
     "life": {
       "0": 40
+    },
+    "zone": "battlefield"
+  },
+  "spearbreaker_behemoth": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "indestructible"
+      ]
     },
     "zone": "battlefield"
   },
@@ -27993,6 +28144,10 @@
       "0": 3
     }
   },
+  "towashi_guide_bot": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tower_defense": {
     "granted": {
       "count": 2,
@@ -28643,6 +28798,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ulasht_the_hate_seed": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ultimate_magic_holy": {
     "granted": {
       "count": 32,
@@ -28904,6 +29063,13 @@
       "0": 2
     },
     "zone": "graveyard"
+  },
+  "unquenchable_fury": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "unshakable_tail": {
     "battlefield_count": 33,
@@ -29213,6 +29379,13 @@
   },
   "vastwood_gorger": {
     "zone": "battlefield"
+  },
+  "vastwood_surge": {
+    "battlefield_count": 34,
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
   },
   "vat_emergence": {
     "battlefield_count": 33,
@@ -29951,6 +30124,10 @@
     "zone": "battlefield"
   },
   "walking_corpse": {
+    "zone": "battlefield"
+  },
+  "walking_skyscraper": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "wall_of_air": {

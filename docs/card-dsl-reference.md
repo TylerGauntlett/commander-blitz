@@ -16,7 +16,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Values](#values) | 80 |
 | [Conditions](#conditions) | 37 |
 | [Trigger events](#trigger-events) | 68 |
-| [Trigger filters](#trigger-filters) | 40 |
+| [Trigger filters](#trigger-filters) | 41 |
 | [Static effects](#static-effects) | 116 |
 | [Player-wide statics](#player-wide-statics) | 54 |
 | [Grantable statics](#grantable-statics) | 52 |
@@ -32,7 +32,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Static values](#static-values) | 27 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
 | [Spell cost-reduction filter keys](#spell-cost-reduction-filter-keys) | 5 |
-| [Cost-reduction filter keys](#cost-reduction-filter-keys) | 2 |
+| [Cost-reduction filter keys](#cost-reduction-filter-keys) | 3 |
 | [Mana rider ops](#mana-rider-ops) | 7 |
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
@@ -580,6 +580,7 @@ The subset of the selector language a trigger's `filter` may use. The loader ref
 | `mana_cost` | Printed mana cost is one of these. | [Triggers](card-dsl.md#triggers) |
 | `mana_value` | A comparison on mana value, or its `parity`. | [Odd or even — parity](card-dsl-cookbook.md#odd-or-even--parity) |
 | `min_colors` | Has at least N colors ("multicolored"). | ["Multicolored" — min_colors](card-dsl.md#multicolored--min_colors) |
+| `modified` | Is modified (equipped, enchanted by you, or has counters). | [Triggers](card-dsl.md#triggers) |
 | `not_supertypes` | Has none of these supertypes ("nonbasic"). | [Triggers](card-dsl.md#triggers) |
 | `not_types` | Has none of these card types ("noncreature"). | [Triggers](card-dsl.md#triggers) |
 | `or_planeswalkers` | With `attacking_player`: also a creature attacking a planeswalker that player controls (never a battle). | ["Attacks you" is not "attacks you and/or your planeswalkers"](card-dsl-cookbook.md#attacks-you-is-not-attacks-you-andor-your-planeswalkers) |
@@ -1185,6 +1186,7 @@ Keys a cost-reduction filter accepts beyond the static filter. Refused there: `a
 | Name | Description | Defined in |
 |---|---|---|
 | `any_of` | Count an *or* of characteristics. | [A reduction that counts an or of characteristics](card-dsl.md#a-reduction-that-counts-an-or-of-characteristics) |
+| `modified` | A counter, an Equipment, or an Aura you control on it (700.9). | [A reduction that counts modified creatures](card-dsl.md#a-reduction-that-counts-modified-creatures) |
 | `zone` | Count in a zone other than the battlefield. | [Counting filters, and the zone key](card-dsl.md#counting-filters-and-the-zone-key) |
 
 ## Mana rider ops

@@ -1230,6 +1230,8 @@ COST_REDUCTION: dict[str, Entry] = {
 
 COST_REDUCTION_FILTER: dict[str, Entry] = {
     "any_of": ("Count an *or* of characteristics.", "A reduction that counts an *or* of characteristics"),
+    "modified": ("A counter, an Equipment, or an Aura you control on it (700.9).",
+                 "A reduction that counts modified creatures"),
     "zone": ("Count in a zone other than the battlefield.", "Counting filters, and the `zone` key"),
 }
 

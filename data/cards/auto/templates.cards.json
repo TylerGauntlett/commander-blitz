@@ -6244,6 +6244,62 @@
         {
           "effects": [
             {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "modified": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            },
+            {
+              "op": "extra_combat"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more modified creatures you control attack, untap all modified creatures you control. After this phase, there is an additional combat phase. This ability triggers only once each turn",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "filter": {
+              "modified": true,
+              "types": [
+                "Creature"
+              ]
+            },
+            "max_per_turn": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "akki_battle_squad",
+      "mana_cost": "{5}{R}",
+      "name": "Akki Battle Squad",
+      "oracle_text": "Whenever one or more modified creatures you control attack, untap all modified creatures you control. After this phase, there is an additional combat phase. This ability triggers only once each turn. (Equipment, Auras you control, and counters are modifications.)",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Samurai"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "condition": {
                 "exists": {
                   "binding": "subject",
@@ -18003,6 +18059,74 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, double the number of +1/+1 counters on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "ascendant_acolyte",
+      "mana_cost": "{4}{G}",
+      "name": "Ascendant Acolyte",
+      "oracle_text": "This creature enters with a +1/+1 counter on it for each +1/+1 counter among other creatures you control.\nAt the beginning of your upkeep, double the number of +1/+1 counters on this creature.",
+      "power": 1,
+      "replacements": [
+        {
+          "amount": {
+            "counters_on": {
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Monk"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -36821,6 +36945,105 @@
           "effects": [
             {
               "amount": {
+                "const": 1
+              },
+              "as": "germ",
+              "controller": "you",
+              "op": "create_token",
+              "token": "germ_0_0_b"
+            },
+            {
+              "objects": {
+                "binding": "germ"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Living weapon (When this Equipment enters, create a 0/0 black Phyrexian Germ creature token, then attach this to it.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "any",
+              "types": [
+                "Creature"
+              ],
+              "zone": "graveyard"
+            }
+          },
+          "text": "Equipped creature gets +X/+X, where X is the number of creature cards in all graveyards.",
+          "toughness": {
+            "count": {
+              "controller": "any",
+              "types": [
+                "Creature"
+              ],
+              "zone": "graveyard"
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "bonehoard",
+      "mana_cost": "{4}",
+      "name": "Bonehoard",
+      "oracle_text": "Living weapon (When this Equipment enters, create a 0/0 black Phyrexian Germ creature token, then attach this to it.)\nEquipped creature gets +X/+X, where X is the number of creature cards in all graveyards.\nEquip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "const": 2
               },
               "as": "dracosaur_exiled",
@@ -54746,6 +54969,93 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "spirit_2_2_r_menace"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an Aura or Equipment you control enters, create a 2/2 red Spirit creature token with menace.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "any_of": [
+                {
+                  "subtypes": [
+                    "Aura"
+                  ]
+                },
+                {
+                  "subtypes": [
+                    "Equipment"
+                  ]
+                }
+              ],
+              "controller": "you"
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "modified": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, put a +1/+1 counter on each modified creature you control. (Equipment, Auras you control, and counters are modifications.)",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "chishiro_the_shattered_blade",
+      "mana_cost": "{2}{R}{G}",
+      "name": "Chishiro, the Shattered Blade",
+      "oracle_text": "Whenever an Aura or Equipment you control enters, create a 2/2 red Spirit creature token with menace.\nAt the beginning of your end step, put a +1/+1 counter on each modified creature you control. (Equipment, Auras you control, and counters are modifications.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Snake",
+        "Samurai"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -59944,6 +60254,83 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "collision_of_realms",
+      "mana_cost": "{6}{R}",
+      "name": "Collision of Realms",
+      "oracle_text": "Each player shuffles all creatures they own into their library. Each player who shuffled a nontoken creature into their library this way reveals cards from the top of their library until they reveal a creature card, then puts that card onto the battlefield and the rest on the bottom of their library in a random order.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "shuffled_in",
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "put_on_top"
+        },
+        {
+          "effects": [
+            {
+              "op": "shuffle",
+              "player": {
+                "binding": "each_player"
+              }
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_player"
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "binding": "shuffled_in",
+                  "is_token": false,
+                  "owner": {
+                    "binding": "each_player"
+                  }
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "destination": "battlefield",
+                  "op": "reveal_until",
+                  "player": {
+                    "binding": "each_player"
+                  },
+                  "rest_to_bottom": true,
+                  "selector": {
+                    "is_token": false,
+                    "types": [
+                      "Creature"
+                    ]
+                  }
+                }
+              ]
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_player",
+          "starting_with": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -62147,6 +62534,126 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "label": "Put a +1/+1 counter on target creature with a counter on it."
+                },
+                {
+                  "effects": [
+                    {
+                      "condition": {
+                        "exists": {
+                          "controller": "you",
+                          "enchanted_by": true,
+                          "types": [
+                            "Creature"
+                          ],
+                          "zone": "battlefield"
+                        }
+                      },
+                      "op": "if",
+                      "then": [
+                        {
+                          "amount": {
+                            "const": 1
+                          },
+                          "op": "draw",
+                          "player": "you"
+                        }
+                      ]
+                    }
+                  ],
+                  "label": "Draw a card if you control an enchanted creature."
+                },
+                {
+                  "effects": [
+                    {
+                      "condition": {
+                        "exists": {
+                          "controller": "you",
+                          "equipped": true,
+                          "types": [
+                            "Creature"
+                          ],
+                          "zone": "battlefield"
+                        }
+                      },
+                      "op": "if",
+                      "then": [
+                        {
+                          "amount": {
+                            "const": 1
+                          },
+                          "controller": "you",
+                          "op": "create_token",
+                          "token": "spirit_1_1_c"
+                        }
+                      ]
+                    }
+                  ],
+                  "label": "Create a 1/1 colorless Spirit creature token if you control an equipped creature."
+                }
+              ],
+              "op": "choose_mode",
+              "or_more": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "mode": 0,
+              "selector": {
+                "has_counters": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of your end step, choose one or more —\n• Put a +1/+1 counter on target creature with a counter on it.\n• Draw a card if you control an enchanted creature.\n• Create a 1/1 colorless Spirit creature token if you control an equipped creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "concord_with_the_kami",
+      "mana_cost": "{3}{G}",
+      "name": "Concord with the Kami",
+      "oracle_text": "At the beginning of your end step, choose one or more —\n• Put a +1/+1 counter on target creature with a counter on it.\n• Draw a card if you control an enchanted creature.\n• Create a 1/1 colorless Spirit creature token if you control an equipped creature.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -94037,6 +94544,84 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted creature has \"{T}: Create X 1/1 red Elemental creature tokens with haste, where X is this creature's power. Exile them at the beginning of the next end step.\""
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "self": true
+                }
+              },
+              "as": "mastery_elementals",
+              "controller": "you",
+              "op": "create_token",
+              "token": "elemental_1_1_r_haste"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "mastery_elementals",
+                    "count": "all"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Exile them at the beginning of the next end step."
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Create X 1/1 red Elemental creature tokens with haste, where X is this creature's power. Exile them at the beginning of the next end step."
+        }
+      ],
+      "id": "elemental_mastery",
+      "mana_cost": "{3}{R}",
+      "name": "Elemental Mastery",
+      "oracle_text": "Enchant creature\nEnchanted creature has \"{T}: Create X 1/1 red Elemental creature tokens with haste, where X is this creature's power. Exile them at the beginning of the next end step.\"",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -129303,6 +129888,98 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}{R}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Land"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{R}, Sacrifice a land: Put a +1/+1 counter on this creature."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "counters_on": {
+                      "counter": "+1/+1",
+                      "objects": {
+                        "self_only": true
+                      }
+                    }
+                  },
+                  "op": "damage",
+                  "target": "t1"
+                }
+              ],
+              "op": "may",
+              "prompt": "Have Goblin Razerunners deal damage equal to its +1/+1 counters to the target?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "types": [
+                  "Planeswalker"
+                ]
+              }
+            }
+          ],
+          "text": "At the beginning of your end step, you may have this creature deal damage equal to the number of +1/+1 counters on it to target player or planeswalker.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "goblin_razerunners",
+      "mana_cost": "{2}{R}{R}",
+      "name": "Goblin Razerunners",
+      "oracle_text": "{1}{R}, Sacrifice a land: Put a +1/+1 counter on this creature.\nAt the beginning of your end step, you may have this creature deal damage equal to the number of +1/+1 counters on it to target player or planeswalker.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Warrior"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -158227,6 +158904,86 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "modified": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Modified creatures you control have haste. (Equipment, Auras you control, and counters are modifications.)"
+        },
+        {
+          "cost": {
+            "remove_counters": {
+              "amount": 1,
+              "counter": "+1/+1"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "once_each_turn": true,
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Remove a +1/+1 counter from this enchantment: Put a +1/+1 counter on target creature you control. Activate only as a sorcery and only once each turn."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "invigorating_hot_spring",
+      "mana_cost": "{1}{R}{G}",
+      "name": "Invigorating Hot Spring",
+      "oracle_text": "This enchantment enters with four +1/+1 counters on it.\nModified creatures you control have haste. (Equipment, Auras you control, and counters are modifications.)\nRemove a +1/+1 counter from this enchantment: Put a +1/+1 counter on target creature you control. Activate only as a sorcery and only once each turn.",
+      "replacements": [
+        {
+          "amount": 4,
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -165510,6 +166267,76 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "opponent",
+                "enchanted_by": {
+                  "controller": "you"
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "goad"
+            },
+            {
+              "amount": {
+                "count": {
+                  "controller": "opponent",
+                  "enchanted_by": {
+                    "controller": "you"
+                  },
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, goad each creature your opponents control that's enchanted by an Aura you control. Put a +1/+1 counter on Kaima for each creature goaded this way",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "kaima_the_fractured_calm",
+      "mana_cost": "{2}{R}{G}",
+      "name": "Kaima, the Fractured Calm",
+      "oracle_text": "At the beginning of your end step, goad each creature your opponents control that's enchanted by an Aura you control. Put a +1/+1 counter on Kaima for each creature goaded this way. (Until your next turn, the goaded creatures attack each combat if able and attack a player other than you if able.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -165921,6 +166748,99 @@
         "Spirit"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "playable_this_turn": true,
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a modified creature you control attacks, exile the top card of your library. You may play that card this turn.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "binding": "subject",
+                "modified": true
+              }
+            },
+            "controller": "you",
+            "event": "attacks",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            },
+            "recheck": false
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever you cast a spell from exile, put a +1/+1 counter on target creature you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "from_zones": [
+              "exile"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "kami_of_celebration",
+      "mana_cost": "{4}{R}",
+      "name": "Kami of Celebration",
+      "oracle_text": "Whenever a modified creature you control attacks, exile the top card of your library. You may play that card this turn. (Equipment, Auras you control, and counters are modifications.)\nWhenever you cast a spell from exile, put a +1/+1 counter on target creature you control.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -174931,6 +175851,171 @@
       "uncounterable": true
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Equipped creature gets +2/+2 and has menace.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "menace"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +2/+2 and has menace."
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": {
+                  "binding": "event_player"
+                },
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "goad"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature or equipped creature deals combat damage to a player, goad each creature that player controls.",
+          "trigger": {
+            "controller": "you",
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": {
+                  "binding": "event_player"
+                },
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "goad"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature or equipped creature deals combat damage to a player, goad each creature that player controls.",
+          "trigger": {
+            "controller": "any",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "is_attached": true
+          },
+          "effect": "set_types",
+          "kind": "static",
+          "text": "Reconfigure {4}",
+          "types": [
+            "Artifact"
+          ]
+        },
+        {
+          "cost": {
+            "mana": "{4}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "reconfigure_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "reconfigure_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Reconfigure {4}"
+        },
+        {
+          "cost": {
+            "mana": "{4}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "unattach"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Reconfigure {4}"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "komainu_battle_armor",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Komainu Battle Armor",
+      "oracle_text": "Menace\nEquipped creature gets +2/+2 and has menace.\nWhenever this creature or equipped creature deals combat damage to a player, goad each creature that player controls.\nReconfigure {4} ({4}: Attach to target creature you control; or unattach from a creature. Reconfigure only as a sorcery. While attached, this isn't a creature.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Equipment",
+        "Dog"
+      ],
+      "toughness": 2,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -175315,6 +176400,114 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "ability": 0,
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "all": [
+              {
+                "exists": {
+                  "enchanted_by": true,
+                  "self_only": true
+                }
+              },
+              {
+                "exists": {
+                  "attached_to": {
+                    "self_only": true
+                  },
+                  "controller": "any",
+                  "subtypes": [
+                    "Equipment"
+                  ]
+                }
+              },
+              {
+                "exists": {
+                  "has_counters": true,
+                  "self_only": true
+                }
+              }
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "As long as Kosei is enchanted, equipped, and has a counter on it, Kosei has \"Whenever Kosei deals combat damage to an opponent, you draw that many cards and Kosei deals that much damage to each other opponent.\""
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "damage",
+              "player": {
+                "except": "you",
+                "not": {
+                  "binding": "defender"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Kosei deals combat damage to an opponent, you draw that many cards and Kosei deals that much damage to each other opponent.",
+          "trigger": {
+            "condition": {
+              "cmp": "<",
+              "left": {
+                "player_count": {
+                  "except": "you",
+                  "not": {
+                    "binding": "defender"
+                  }
+                }
+              },
+              "right": {
+                "player_count": "each_opponent"
+              }
+            },
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "kosei_penitent_warlord",
+      "mana_cost": "{1}{G}{G}",
+      "name": "Kosei, Penitent Warlord",
+      "oracle_text": "As long as Kosei is enchanted, equipped, and has a counter on it, Kosei has \"Whenever Kosei deals combat damage to an opponent, you draw that many cards and Kosei deals that much damage to each other opponent.\"",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Ogre",
+        "Samurai"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -191002,6 +192195,86 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "binding": "subject"
+                }
+              },
+              "defender_of": {
+                "binding": "subject"
+              },
+              "op": "damage",
+              "source_object": {
+                "binding": "subject"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever equipped creature attacks, it deals damage equal to its power to the player or planeswalker it's attacking.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {3}"
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "mage_slayer",
+      "mana_cost": "{1}{R}{G}",
+      "name": "Mage Slayer",
+      "oracle_text": "Whenever equipped creature attacks, it deals damage equal to its power to the player or planeswalker it's attacking.\nEquip {3}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -224530,6 +225803,71 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_had": true
+              },
+              "op": "create_token",
+              "token": "spirit_1_1_c"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever enchanted creature or another modified creature you control dies, create X 1/1 colorless Spirit creature tokens, where X is that creature's power. (Equipment, Auras you control, and counters are modifications.)",
+          "trigger": {
+            "controller": "any",
+            "event": "creature_dies",
+            "filter": {
+              "any_of": [
+                {
+                  "attached": true
+                },
+                {
+                  "controller": "you",
+                  "modified": true
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "one_with_the_kami",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{3}{G}",
+      "name": "One with the Kami",
+      "oracle_text": "Flash\nEnchant creature you control\nWhenever enchanted creature or another modified creature you control dies, create X 1/1 colorless Spirit creature tokens, where X is that creature's power. (Equipment, Auras you control, and counters are modifications.)",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -224995,6 +226333,52 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "in_commander_identity": true,
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "mana_grant": {
+            "commander_only": true,
+            "enters_with_command_zone_casts": "+1/+1"
+          },
+          "text": "{1}, {T}: Add one mana of any color in your commander's color identity. If you spend this mana to cast your commander, it enters with a number of additional +1/+1 counters on it equal to the number of times it's been cast from the command zone this game."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "opal_palace",
+      "name": "Opal Palace",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}: Add one mana of any color in your commander's color identity. If you spend this mana to cast your commander, it enters with a number of additional +1/+1 counters on it equal to the number of times it's been cast from the command zone this game.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -225850,6 +227234,112 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "add_counters"
+            },
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "counters_on": {
+                    "counter": "+1/+1",
+                    "objects": {
+                      "binding": "subject"
+                    }
+                  }
+                },
+                "right": {
+                  "const": 3
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever enchanted creature attacks, put a +1/+1 counter on it. Then if it has three or more +1/+1 counters on it, sacrifice this Aura.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "count": 2,
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When you sacrifice this Aura, search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle.",
+          "trigger": {
+            "event": "sacrificed",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "ordeal_of_nylea",
+      "mana_cost": "{1}{G}",
+      "name": "Ordeal of Nylea",
+      "oracle_text": "Enchant creature\nWhenever enchanted creature attacks, put a +1/+1 counter on it. Then if it has three or more +1/+1 counters on it, sacrifice this Aura.\nWhen you sacrifice this Aura, search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -226124,6 +227614,70 @@
       "toughness": 2,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}."
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "modified": true,
+            "self_only": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "As long as this creature is modified, it has \"{T}: Add {G}{G}.\" (Equipment, Auras you control, and counters are modifications.)"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}{G}."
+        }
+      ],
+      "id": "orochi_merge_keeper",
+      "mana_cost": "{1}{G}",
+      "name": "Orochi Merge-Keeper",
+      "oracle_text": "{T}: Add {G}.\nAs long as this creature is modified, it has \"{T}: Add {G}{G}.\" (Equipment, Auras you control, and counters are modifications.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Snake",
+        "Druid"
+      ],
+      "toughness": 1,
+      "types": [
         "Creature"
       ]
     },
@@ -228983,6 +230537,69 @@
         "Peasant"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "discard",
+              "player": "you",
+              "whole_hand": true
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, discard your hand, then draw three cards.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "graveyard_cast": "graveyard",
+      "graveyard_cost": {
+        "exile_from_graveyard": {
+          "count": 8,
+          "exclude_self": true
+        },
+        "mana": "{R}{R}"
+      },
+      "id": "ox_of_agonas",
+      "mana_cost": "{3}{R}{R}",
+      "name": "Ox of Agonas",
+      "oracle_text": "When this creature enters, discard your hand, then draw three cards.\nEscape—{R}{R}, Exile eight other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)\nThis creature escapes with a +1/+1 counter on it.",
+      "power": 4,
+      "replacements": [
+        {
+          "amount": 1,
+          "condition": {
+            "escaped": true
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Ox"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -241084,6 +242701,64 @@
         "Scout"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, put a +1/+1 counter on each other creature you control",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "cost_reduction": {
+        "count": {
+          "controller": "opponent",
+          "types": [
+            "Creature"
+          ],
+          "zone": "battlefield"
+        }
+      },
+      "id": "primeval_protector",
+      "mana_cost": "{10}{G}",
+      "name": "Primeval Protector",
+      "oracle_text": "This spell costs {1} less to cast for each creature your opponents control.\nWhen this creature enters, put a +1/+1 counter on each other creature you control.",
+      "power": 10,
+      "source": "auto",
+      "subtypes": [
+        "Avatar"
+      ],
+      "toughness": 10,
       "types": [
         "Creature"
       ]
@@ -280486,6 +282161,98 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature has haste and \"At the beginning of your upkeep, destroy this creature. Reveal cards from the top of your library until you reveal a creature card. Put that card onto the battlefield and attach Shifting Shadow to it, then put all other cards revealed this way on the bottom of your library in a random order.\""
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted creature has haste and \"At the beginning of your upkeep, destroy this creature. Reveal cards from the top of your library until you reveal a creature card. Put that card onto the battlefield and attach Shifting Shadow to it, then put all other cards revealed this way on the bottom of your library in a random order.\""
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "destroy"
+            },
+            {
+              "as": "shadowed",
+              "destination": "battlefield",
+              "objects": {
+                "types": [
+                  "Creature"
+                ]
+              },
+              "op": "reveal_until",
+              "player": "you",
+              "rest_to_bottom": true
+            },
+            {
+              "attachment": {
+                "granter": true
+              },
+              "objects": {
+                "binding": "shadowed"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, destroy this creature. Reveal cards from the top of your library until you reveal a creature card. Put that card onto the battlefield and attach Shifting Shadow to it, then put all other cards revealed this way on the bottom of your library in a random order.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "id": "shifting_shadow",
+      "mana_cost": "{2}{R}",
+      "name": "Shifting Shadow",
+      "oracle_text": "Enchant creature\nEnchanted creature has haste and \"At the beginning of your upkeep, destroy this creature. Reveal cards from the top of your library until you reveal a creature card. Put that card onto the battlefield and attach Shifting Shadow to it, then put all other cards revealed this way on the bottom of your library in a random order.\"",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -290566,6 +292333,58 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "smoke_spirits_aid",
+      "mana_cost": "{X}{R}",
+      "name": "Smoke Spirits' Aid",
+      "oracle_text": "For each of up to X target creatures, create a red Aura enchantment token named Smoke Blessing attached to that creature. Those tokens have enchant creature and \"When enchanted creature dies, it deals 1 damage to its controller and you create a Treasure token.\"",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "attached_to": {
+                "binding": "each"
+              },
+              "op": "create_token",
+              "token": "smoke_blessing"
+            }
+          ],
+          "objects": {
+            "target": "t1"
+          },
+          "op": "for_each"
+        }
+      ],
+      "targets": [
+        {
+          "count": {
+            "x": true
+          },
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -294319,6 +296138,47 @@
     },
     {
       "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "soul_s_majesty",
+      "mana_cost": "{4}{G}",
+      "name": "Soul's Majesty",
+      "oracle_text": "Draw cards equal to the power of target creature you control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "power_of": {
+              "target": "t1"
+            }
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "B"
       ],
       "colors": [
@@ -295255,6 +297115,68 @@
         "Cleric"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "keyword": "indestructible",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "power": {
+                  "op": ">=",
+                  "value": {
+                    "const": 5
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}: Target creature with power 5 or greater gains indestructible until end of turn."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "spearbreaker_behemoth",
+      "keywords": [
+        "indestructible"
+      ],
+      "mana_cost": "{5}{G}{G}",
+      "name": "Spearbreaker Behemoth",
+      "oracle_text": "Indestructible\n{1}: Target creature with power 5 or greater gains indestructible until end of turn.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Beast"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -337525,6 +339447,86 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, put a +1/+1 counter on target creature you control.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{4}",
+            "mana_reduction": {
+              "count": {
+                "controller": "you",
+                "modified": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}, {T}: Draw a card. This ability costs {1} less to activate for each modified creature you control."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "towashi_guide_bot",
+      "mana_cost": "{4}",
+      "name": "Towashi Guide-Bot",
+      "oracle_text": "When this creature enters, put a +1/+1 counter on target creature you control.\n{4}, {T}: Draw a card. This ability costs {1} less to activate for each modified creature you control. (Equipment, Auras you control, and counters are modifications.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -344720,6 +346722,126 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}",
+            "remove_counters": {
+              "amount": 1,
+              "counter": "+1/+1"
+            }
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "damage",
+                      "target": "t1"
+                    }
+                  ],
+                  "label": "Ulasht deals 1 damage to target creature."
+                },
+                {
+                  "effects": [
+                    {
+                      "op": "create_token",
+                      "player": "you",
+                      "token": "saproling_1_1_g"
+                    }
+                  ],
+                  "label": "Create a 1/1 green Saproling creature token."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "mode": 0,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}, Remove a +1/+1 counter from Ulasht: Choose one —\n• Ulasht deals 1 damage to target creature.\n• Create a 1/1 green Saproling creature token."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "ulasht_the_hate_seed",
+      "mana_cost": "{2}{R}{G}",
+      "name": "Ulasht, the Hate Seed",
+      "oracle_text": "Ulasht enters with a +1/+1 counter on it for each other red creature you control and a +1/+1 counter on it for each other green creature you control.\n{1}, Remove a +1/+1 counter from Ulasht: Choose one —\n• Ulasht deals 1 damage to target creature.\n• Create a 1/1 green Saproling creature token.",
+      "power": 0,
+      "replacements": [
+        {
+          "amount": {
+            "sum": [
+              {
+                "count": {
+                  "colors": [
+                    "R"
+                  ],
+                  "controller": "you",
+                  "exclude_self": true,
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              {
+                "count": {
+                  "colors": [
+                    "G"
+                  ],
+                  "controller": "you",
+                  "exclude_self": true,
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            ]
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Hellion",
+        "Hydra"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -347647,6 +349769,89 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted creature has \"Whenever this creature attacks, it deals X damage to defending player, where X is the number of cards in their hand.\""
+        },
+        {
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Aura is put into your graveyard from the battlefield, return it to your hand.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "cards_in_hand": {
+                  "binding": "defender"
+                }
+              },
+              "op": "damage",
+              "player": {
+                "binding": "defender"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, it deals X damage to defending player, where X is the number of cards in their hand.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "unquenchable_fury",
+      "mana_cost": "{2}{R}",
+      "name": "Unquenchable Fury",
+      "oracle_text": "Enchant creature\nEnchanted creature has \"Whenever this creature attacks, it deals X damage to defending player, where X is the number of cards in their hand.\"\nWhen this Aura is put into your graveyard from the battlefield, return it to your hand.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -351299,6 +353504,63 @@
       "toughness": 6,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "vastwood_surge",
+      "kicker": "{4}",
+      "mana_cost": "{3}{G}",
+      "name": "Vastwood Surge",
+      "oracle_text": "Kicker {4} (You may pay an additional {4} as you cast this spell.)\nSearch your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle. If this spell was kicked, put two +1/+1 counters on each creature you control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 2,
+          "destination": "battlefield",
+          "op": "search_library",
+          "player": "you",
+          "selector": {
+            "supertypes": [
+              "Basic"
+            ],
+            "types": [
+              "Land"
+            ]
+          },
+          "tapped": true
+        },
+        {
+          "condition": {
+            "kicked": true
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -359721,6 +361983,50 @@
       ],
       "toughness": 2,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true,
+            "tapped": false
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "hexproof"
+          ],
+          "kind": "static",
+          "text": "This creature has hexproof as long as it's untapped. (It can't be the target of spells or abilities your opponents control.)"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "cost_reduction": {
+        "count": {
+          "controller": "you",
+          "modified": true,
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "id": "walking_skyscraper",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{8}",
+      "name": "Walking Skyscraper",
+      "oracle_text": "This spell costs {1} less to cast for each modified creature you control. (Equipment, Auras you control, and counters are modifications.)\nTrample\nThis creature has hexproof as long as it's untapped. (It can't be the target of spells or abilities your opponents control.)",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "toughness": 8,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },

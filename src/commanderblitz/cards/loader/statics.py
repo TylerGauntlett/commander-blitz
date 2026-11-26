@@ -173,7 +173,18 @@ def _validate_reduction_any_of(filt: Mapping[str, Any], where: str) -> None:
             raise DslError(
                 f"{where}.any_of[{i}]: unsupported filter keys {sorted(unknown)}"
             )
+        _validate_reduction_modified(branch, f"{where}.any_of[{i}]")
         _validate_reduction_any_of(branch, f"{where}.any_of[{i}]")
+
+
+def _validate_reduction_modified(filt: Any, where: str) -> None:
+    """``modified`` is ``true`` alone, as in a static's filter: the word names
+    no counter, Equipment or Aura, and ``false`` would read as no clause."""
+    if "modified" in filt and filt["modified"] is not True:
+        raise DslError(
+            f"{where}.modified: true only -- a counter, an Equipment, or an Aura "
+            f"you control on the permanent"
+        )
 
 
 def _validate_reduction_targeting(filt: Any, where: str) -> None:
@@ -337,6 +348,7 @@ def _validate_cost_reduction(
         if unknown:
             raise DslError(f"{where}.{key}: unsupported filter keys {sorted(unknown)}")
         _validate_reduction_any_of(filt, f"{where}.{key}")
+        _validate_reduction_modified(filt, f"{where}.{key}")
         refused = set(filt) & COST_REDUCTION_REFUSED_FILTER_KEYS
         if refused:
             raise DslError(

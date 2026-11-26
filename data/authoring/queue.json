@@ -5032,12 +5032,12 @@
     },
     "Akki Battle Squad": {
       "edhrec_rank": 3918,
-      "gate": "template",
+      "gate": null,
       "name": "Akki Battle Squad",
-      "reason": "no template for: Whenever one or more modified creatures you control attack, untap all modified creatures y",
+      "reason": "",
       "scryfall_id": "b2a2b1f5-bbc7-4af1-b1c8-21570b141cba",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Akki Blizzard-Herder": {
@@ -14312,12 +14312,12 @@
     },
     "Ascendant Acolyte": {
       "edhrec_rank": 10804,
-      "gate": "template",
+      "gate": null,
       "name": "Ascendant Acolyte",
-      "reason": "no template for: This creature enters with a +1/+1 counter on it for each +1/+1 counter among other creatur",
+      "reason": "",
       "scryfall_id": "918a9e38-29ec-4279-8cf6-f01141497cab",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ascendant Dustspeaker": {
@@ -31062,12 +31062,12 @@
     },
     "Bonehoard": {
       "edhrec_rank": 5002,
-      "gate": "template",
+      "gate": null,
       "name": "Bonehoard",
-      "reason": "no template for: Living weapon",
+      "reason": "",
       "scryfall_id": "57c0258f-f464-4f52-b234-ba44a76d932a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bonehoard Dracosaur": {
@@ -45652,12 +45652,12 @@
     },
     "Chishiro, the Shattered Blade": {
       "edhrec_rank": 5837,
-      "gate": "template",
+      "gate": null,
       "name": "Chishiro, the Shattered Blade",
-      "reason": "no template for: Whenever an Aura or Equipment you control enters, create a 2/2 red Spirit creature token w",
+      "reason": "",
       "scryfall_id": "3305c70f-188a-4c01-b605-d583ded84e18",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chiss-Goria, Forge Tyrant": {
@@ -50142,12 +50142,12 @@
     },
     "Collision of Realms": {
       "edhrec_rank": 15931,
-      "gate": "template",
+      "gate": null,
       "name": "Collision of Realms",
-      "reason": "no template for: Each player shuffles all creatures they own into their library. Each player who shuffled a",
+      "reason": "",
       "scryfall_id": "49618217-1bbb-498a-a6f0-f269ce7166a6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Colonel Autumn": {
@@ -51452,12 +51452,12 @@
     },
     "Concord with the Kami": {
       "edhrec_rank": 12563,
-      "gate": "template",
+      "gate": null,
       "name": "Concord with the Kami",
-      "reason": "no template for: At the beginning of your end step, choose one or more —",
+      "reason": "",
       "scryfall_id": "c3e38dec-178b-497a-bfbd-371905690a39",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Concordant Crossroads": {
@@ -80712,12 +80712,12 @@
     },
     "Elemental Mastery": {
       "edhrec_rank": 8786,
-      "gate": "template",
+      "gate": null,
       "name": "Elemental Mastery",
-      "reason": "no template for: Enchanted creature has \"{T}: Create X 1/1 red Elemental creature tokens with haste, where ",
+      "reason": "",
       "scryfall_id": "77dd1c84-0c67-41a2-aa19-ca448520ac54",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elemental Resonance": {
@@ -113422,12 +113422,12 @@
     },
     "Goblin Razerunners": {
       "edhrec_rank": 16801,
-      "gate": "template",
+      "gate": null,
       "name": "Goblin Razerunners",
-      "reason": "no template for: {1}{R}, Sacrifice a land: Put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "5c06fb09-1e64-49c7-9938-541c0433bf5a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Goblin Recruiter": {
@@ -139222,12 +139222,12 @@
     },
     "Invigorating Hot Spring": {
       "edhrec_rank": 4585,
-      "gate": "template",
+      "gate": null,
       "name": "Invigorating Hot Spring",
-      "reason": "no template for: This enchantment enters with four +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "59a118d1-30b8-42c0-ac42-6fba0778200a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Invigorating Surge": {
@@ -145122,12 +145122,12 @@
     },
     "Kaima, the Fractured Calm": {
       "edhrec_rank": 17273,
-      "gate": "template",
+      "gate": null,
       "name": "Kaima, the Fractured Calm",
-      "reason": "no template for: At the beginning of your end step, goad each creature your opponents control that's enchan",
+      "reason": "",
       "scryfall_id": "467033f7-8d59-4b80-8c2e-c36f3ad93438",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kain, Traitorous Dragoon": {
@@ -145512,12 +145512,12 @@
     },
     "Kami of Celebration": {
       "edhrec_rank": 6634,
-      "gate": "template",
+      "gate": null,
       "name": "Kami of Celebration",
-      "reason": "no template for: Whenever a modified creature you control attacks, exile the top card of your library. You ",
+      "reason": "",
       "scryfall_id": "3f969b1f-5f39-4777-b41f-5f7604595672",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kami of Empty Graves": {
@@ -151352,12 +151352,12 @@
     },
     "Komainu Battle Armor": {
       "edhrec_rank": 3453,
-      "gate": "template",
+      "gate": null,
       "name": "Komainu Battle Armor",
-      "reason": "no template for: Whenever this creature or equipped creature deals combat damage to a player, goad each cre",
+      "reason": "",
       "scryfall_id": "5f21d1d1-9500-48c6-bf26-3bcd0c2c732e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Komodo Rhino": {
@@ -151782,12 +151782,12 @@
     },
     "Kosei, Penitent Warlord": {
       "edhrec_rank": 14549,
-      "gate": "template",
+      "gate": null,
       "name": "Kosei, Penitent Warlord",
-      "reason": "no template for: As long as Kosei is enchanted, equipped, and has a counter on it, Kosei has \"Whenever Kose",
+      "reason": "",
       "scryfall_id": "49db5812-49f7-452a-8f1d-88e6fb4880f3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Koskun Falls": {
@@ -164352,12 +164352,12 @@
     },
     "Mage Slayer": {
       "edhrec_rank": 4290,
-      "gate": "template",
+      "gate": null,
       "name": "Mage Slayer",
-      "reason": "no template for: Whenever equipped creature attacks, it deals damage equal to its power to the player or pl",
+      "reason": "",
       "scryfall_id": "e3226808-493e-4df2-9446-cb7cb47aaf2c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mage Tower Referee": {
@@ -192912,12 +192912,12 @@
     },
     "One with the Kami": {
       "edhrec_rank": 9211,
-      "gate": "template",
+      "gate": null,
       "name": "One with the Kami",
-      "reason": "no template for: Whenever enchanted creature or another modified creature you control dies, create X 1/1 co",
+      "reason": "",
       "scryfall_id": "16fcc1a2-f8e0-4126-81ef-4481985cf0bf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "One with the Machine": {
@@ -193242,12 +193242,12 @@
     },
     "Opal Palace": {
       "edhrec_rank": 653,
-      "gate": "template",
+      "gate": null,
       "name": "Opal Palace",
-      "reason": "no template for: {1}, {T}: Add one mana of any color in your commander's color identity. If you spend this ",
+      "reason": "",
       "scryfall_id": "912553e7-1e67-4045-84fd-0a791754cf6c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Opal Titan": {
@@ -194192,12 +194192,12 @@
     },
     "Ordeal of Nylea": {
       "edhrec_rank": 4128,
-      "gate": "template",
+      "gate": null,
       "name": "Ordeal of Nylea",
-      "reason": "no template for: Whenever enchanted creature attacks, put a +1/+1 counter on it. Then if it has three or mo",
+      "reason": "",
       "scryfall_id": "1a70424d-86a7-44a3-acda-4463d7ac503b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ordeal of Purphoros": {
@@ -194872,12 +194872,12 @@
     },
     "Orochi Merge-Keeper": {
       "edhrec_rank": 9436,
-      "gate": "template",
+      "gate": null,
       "name": "Orochi Merge-Keeper",
-      "reason": "no template for: As long as this creature is modified, it has \"{T}: Add {G}{G}.\"",
+      "reason": "",
       "scryfall_id": "51bcdae5-8081-4d26-b5b9-571c54d7d668",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Orochi Ranger": {
@@ -196482,12 +196482,12 @@
     },
     "Ox of Agonas": {
       "edhrec_rank": 9606,
-      "gate": "template",
+      "gate": null,
       "name": "Ox of Agonas",
-      "reason": "no template for: When this creature enters, discard your hand, then draw three cards",
+      "reason": "",
       "scryfall_id": "00c46d18-064e-403a-bf39-ec655d78390a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Oxidda Daredevil": {
@@ -207222,12 +207222,12 @@
     },
     "Primeval Protector": {
       "edhrec_rank": 6888,
-      "gate": "template",
+      "gate": null,
       "name": "Primeval Protector",
-      "reason": "no template for: This spell costs {1} less to cast for each creature your opponents control",
+      "reason": "",
       "scryfall_id": "15ab4c3b-323a-47c6-b675-447d16def3d5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Primeval Shambler": {
@@ -244142,12 +244142,12 @@
     },
     "Shifting Shadow": {
       "edhrec_rank": 14865,
-      "gate": "template",
+      "gate": null,
       "name": "Shifting Shadow",
-      "reason": "no template for: Enchanted creature has haste and \"At the beginning of your upkeep, destroy this creature. ",
+      "reason": "",
       "scryfall_id": "f4c34cbe-c41f-4fcb-b1b6-720b6b214fef",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shifting Sky": {
@@ -252932,12 +252932,12 @@
     },
     "Smoke Spirits' Aid": {
       "edhrec_rank": 9855,
-      "gate": "template",
+      "gate": null,
       "name": "Smoke Spirits' Aid",
-      "reason": "no template for: For each of up to X target creatures, create a red Aura enchantment token named Smoke Bles",
+      "reason": "",
       "scryfall_id": "cbcade55-8ae3-4ac0-b2a9-f890b83ed530",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Smoke Teller": {
@@ -256132,12 +256132,12 @@
     },
     "Soul's Majesty": {
       "edhrec_rank": 3253,
-      "gate": "template",
+      "gate": null,
       "name": "Soul's Majesty",
-      "reason": "no template for: Draw cards equal to the power of target creature you control",
+      "reason": "",
       "scryfall_id": "9fe03ee0-50e4-4893-84ed-0d099be21d4e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Soul's Might": {
@@ -257322,12 +257322,12 @@
     },
     "Spearbreaker Behemoth": {
       "edhrec_rank": 7222,
-      "gate": "template",
+      "gate": null,
       "name": "Spearbreaker Behemoth",
-      "reason": "no template for: {1}: Target creature with power 5 or greater gains indestructible until end of turn",
+      "reason": "",
       "scryfall_id": "d7f5cae6-5f1d-4537-9cc5-46d727d1beb1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spearpoint Oread": {
@@ -290202,12 +290202,12 @@
     },
     "Towashi Guide-Bot": {
       "edhrec_rank": 7426,
-      "gate": "template",
+      "gate": null,
       "name": "Towashi Guide-Bot",
-      "reason": "no template for: When this creature enters, put a +1/+1 counter on target creature you control",
+      "reason": "",
       "scryfall_id": "da4ccf70-b661-46ea-bea9-4466a3a35562",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Towashi Songshaper": {
@@ -295982,12 +295982,12 @@
     },
     "Ulasht, the Hate Seed": {
       "edhrec_rank": 12598,
-      "gate": "template",
+      "gate": null,
       "name": "Ulasht, the Hate Seed",
-      "reason": "no template for: Ulasht enters with a +1/+1 counter on it for each other red creature you control and a +1/",
+      "reason": "",
       "scryfall_id": "002fe870-eae5-42cc-a44c-32906f60719e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ulcerate": {
@@ -298432,12 +298432,12 @@
     },
     "Unquenchable Fury": {
       "edhrec_rank": 8621,
-      "gate": "template",
+      "gate": null,
       "name": "Unquenchable Fury",
-      "reason": "no template for: Enchanted creature has \"Whenever this creature attacks, it deals X damage to defending pla",
+      "reason": "",
       "scryfall_id": "468864b4-d10f-4920-af05-ba107fe54a25",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Unquenchable Thirst": {
@@ -301512,12 +301512,12 @@
     },
     "Vastwood Surge": {
       "edhrec_rank": 4950,
-      "gate": "template",
+      "gate": null,
       "name": "Vastwood Surge",
-      "reason": "no template for: Kicker {4}",
+      "reason": "",
       "scryfall_id": "2a86e896-2be1-4ac0-ba68-9117761a0464",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vastwood Zendikon": {
@@ -309102,12 +309102,12 @@
     },
     "Walking Skyscraper": {
       "edhrec_rank": 13157,
-      "gate": "template",
+      "gate": null,
       "name": "Walking Skyscraper",
-      "reason": "no template for: This spell costs {1} less to cast for each modified creature you control",
+      "reason": "",
       "scryfall_id": "958af4ba-f29e-47ef-995e-3985982c75ad",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Walking Sponge": {

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**554 cards** blocked by **463** capabilities.
+**553 cards** blocked by **463** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -59,7 +59,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [encore](#encore) | 2 | 9330 | static_effect |
 | [grant-cycling-to-cards-in-hand](#grant-cycling-to-cards-in-hand) | 2 | 5169 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 2 | 3531 | static_effect |
-| [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 2 | 653 | engine, replacement |
 | [mercenary-token](#mercenary-token) | 2 | 8312 | token |
 | [multiword-subtype-time-lord](#multiword-subtype-time-lord) | 2 | 4613 | engine |
 | [must-be-blocked](#must-be-blocked) | 2 | 9914 | static_effect |
@@ -316,6 +315,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-restriction-cast-from-zone](#mana-restriction-cast-from-zone) | 1 | 9291 | engine |
 | [mana-restriction-cost-contains-x](#mana-restriction-cost-contains-x) | 1 | 5017 | engine |
 | [mana-restriction-turn-face-up](#mana-restriction-turn-face-up) | 1 | 6766 | value |
+| [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 1 | 2904 | engine |
 | [mana-spent-to-activate](#mana-spent-to-activate) | 1 | 5966 | value |
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
 | [mana-tap-trigger-damage-rider](#mana-tap-trigger-damage-rider) | 1 | 7929 | static_effect |
@@ -1742,24 +1742,6 @@ Blocks **2** cards.
   - Once during each of your turns, you may play a land from your graveyard or cast a permanent spell with mana value 3 or less from your graveyard. If you do, it gains "When this permanent is put into a graveyard from the battlefield, exile it and you gain 2 life."
 - **The Eighth Doctor** (rank 11686) — `the_eighth_doctor`
   - Once during each of your turns, you may play a historic land or cast a historic permanent spell from your graveyard. If you do, it gains "If this permanent would leave the battlefield, exile it instead of putting it anywhere else."
-
-</details>
-
-## mana-spent-enters-with-counters
-
-Blocks **2** cards.
-
-- **(engine)** a mana-ability rider (beside mana_grant / mana_uncounterable) that, when this ability's mana is spent to cast a spell of the given types, stages additional counters on that spell's object without using the stack -- e.g. "mana_grant": {"counters": {"+1/+1": 1}, "spell_types": ["Creature"]} writing GameObject.cast_enters_with at payment the way spell_enters_with_counters does at resolution
-  <br>Why the existing vocabulary won't do: mana_grant accepts only 'keywords' and 'spell_types' (cards/loader/mana.py _mana_grant refuses any other key). mana_spent_trigger + the spell_enters_with_counters op would put a triggered ability on the stack ('When you spend this mana...', Jade Orb's wording), but this card prints 'If this mana is spent...' -- a static effect of the mana that uses no stack and cannot be responded to or Stifled, so the trigger is an approximation. The shipped templates for Animal Attendant and Jade Orb of Dragonkind silently drop this rider, so they are not a model.
-- **(replacement)** a mana-ability rider (beside mana_grant / mana_spent_trigger) that, when this ability's mana is spent on a spell matching a filter (here is_commander), stages on that spell an 'enters with N additional +1/+1 counters' replacement for the permanent it becomes, with N a value read at spend time (command_zone_casts_of the spell, i.e. commander_casts_this_game for that commander)
-  <br>Why the existing vocabulary won't do: mana_grant carries only keywords to the resulting permanent, never counters; mana_spent_trigger is a triggered ability that resolves while the spell is still on the stack, so an add_counters on its subject would put counters on the spell, not make the permanent enter with them; enters_with_additional_counters / self_enters_with_counters are standing replacements on the entering card itself, not one-shots handed to a spell by the mana that paid for it. The add_mana half (in_commander_identity) and the count (command_zone_casts_of) both exist
-
-<details><summary>Cards waiting on this</summary>
-
-- **Opal Palace** (rank 653) — `opal_palace`
-  - {1}, {T}: Add one mana of any color in your commander's color identity. If you spend this mana to cast your commander, it enters with a number of additional +1/+1 counters on it equal to the number of times it's been cast from the command zone this game.
-- **Biophagus** (rank 2904) — `biophagus`
-  - If this mana is spent to cast a creature spell, that creature enters with an additional +1/+1 counter on it.
 
 </details>
 
@@ -5524,6 +5506,20 @@ Blocks **1** card.
 
 - **Overgrown Zealot** (rank 6766) — `overgrown_zealot`
   - {T}: Add two mana of any one color. Spend this mana only to turn permanents face up.
+
+</details>
+
+## mana-spent-enters-with-counters
+
+Blocks **1** card.
+
+- **(engine)** a mana-ability rider (beside mana_grant / mana_uncounterable) that, when this ability's mana is spent to cast a spell of the given types, stages additional counters on that spell's object without using the stack -- e.g. "mana_grant": {"counters": {"+1/+1": 1}, "spell_types": ["Creature"]} writing GameObject.cast_enters_with at payment the way spell_enters_with_counters does at resolution
+  <br>Why the existing vocabulary won't do: mana_grant accepts only 'keywords' and 'spell_types' (cards/loader/mana.py _mana_grant refuses any other key). mana_spent_trigger + the spell_enters_with_counters op would put a triggered ability on the stack ('When you spend this mana...', Jade Orb's wording), but this card prints 'If this mana is spent...' -- a static effect of the mana that uses no stack and cannot be responded to or Stifled, so the trigger is an approximation. The shipped templates for Animal Attendant and Jade Orb of Dragonkind silently drop this rider, so they are not a model.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Biophagus** (rank 2904) — `biophagus`
+  - If this mana is spent to cast a creature spell, that creature enters with an additional +1/+1 counter on it.
 
 </details>
 

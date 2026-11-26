@@ -361,6 +361,7 @@ def move_object(
     mana_spent_origins = obj.mana_spent_origins
     cast_rider = obj.cast_rider
     cast_enters_with = obj.cast_enters_with
+    cast_enters_with_command_casts = obj.cast_enters_with_command_casts
     # The cards a `link` exile cost took while this was being cast, owed to the
     # permanent the spell becomes and to nothing else (607.2a). See
     # `costs._link_cost_exiles`.
@@ -437,6 +438,7 @@ def move_object(
         obj.mana_spent_origins = mana_spent_origins
         obj.cast_rider = cast_rider
         obj.cast_enters_with = cast_enters_with
+        obj.cast_enters_with_command_casts = cast_enters_with_command_casts
     _add_to_zone(state, obj, to_zone, target_player, to_top=to_top, to_index=to_index)
     state.bump_chars()
     if to_zone is Zone.BATTLEFIELD:
@@ -564,6 +566,9 @@ def move_object(
             had_toughness=had_toughness,
             had_auras=had_auras,
             had_keywords=had_keywords,
+            # 1/0 for `was_attacking`'s reason; a trigger filter's `modified`
+            # answers a departure from it (`triggers.departed_modified`).
+            was_modified=1 if was_modified else 0,
             # Where it went, for a trigger's `to_zones`: "when this creature
             # dies **or is put into exile**" (Kaya the Inexorable's ghostform)
             # must not fire on a bounce or a tuck.
@@ -584,6 +589,7 @@ def move_object(
                 card=card.id,
                 was_creature=was_creature,
                 had_auras=had_auras,
+                was_modified=1 if was_modified else 0,
             )
         if to_zone is Zone.GRAVEYARD:
             fire(
@@ -2393,6 +2399,16 @@ def _enter_battlefield(
     obj.cast_enters_with = {}
     for kind, amount in promised.items():
         entering.setdefault(str(kind), []).append(int(amount))
+    # Opal Palace: the same promise, its size read now -- "the number of times
+    # it's been cast from the command zone this game", which `Game` bumped as
+    # this cast was made, after the mana that paid for it was spent.
+    by_casts = obj.cast_enters_with_command_casts
+    obj.cast_enters_with_command_casts = ()
+    if by_casts:
+        casts = state.players[obj.owner].commander_tax.get(obj.oid, 0)
+        for kind in by_casts:
+            if casts:
+                entering.setdefault(str(kind), []).append(int(casts))
 
     # Giada, Font of Hope and Oath of Gideon: more "enters with" on the same
     # placement, so the counter replacements below see them in the total.

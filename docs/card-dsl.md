@@ -2132,6 +2132,29 @@ selector is, `count` included; the loader refuses anything but a boolean.
 | `{"subtypes": ["Equipment"], "attached_to": …}` | counts the Equipment, so a creature wearing two counts twice |
 | `attached` | names the one permanent the ability's own source is attached to |
 
+### "Whenever a modified creature you control…" — `modified` in a trigger filter
+
+```jsonc
+// One with the Kami: "…or another modified creature you control dies…"
+{ "kind": "triggered",
+  "trigger": { "event": "dies", "controller": "you",
+               "filter": { "types": ["Creature"], "modified": true } },
+  "effects": [ … ] }
+```
+
+700.9 asked of the trigger's subject, with "its controller" the permanent's own:
+a counter, any Equipment, or an Aura its controller controls. Live, through
+`characteristics.is_modified_printed`, on an event about a permanent still on
+the battlefield (Akki Battle Squad's attack). On `dies`, `leaves_battlefield`
+and `sacrificed` the subject has already shed its attachments and counters, so
+the filter reads the `was_modified` snapshot `zones.move_object` puts on the
+event (`triggers.departed_modified`, 603.10a). `true` only.
+
+| Near miss | Why not |
+|---|---|
+| `{"any_of": [{"has_counters": true}, {"enchanted_by": "you"}]}` | misses the Equipment limb, and on a departure reads counters already cleared |
+| `attached` | names the one permanent the ability's own source is attached to |
+
 ### "For each Aura that was attached to it" — `auras_had`
 
 ```jsonc
@@ -3709,6 +3732,24 @@ it: the loader refuses it there, where the recipients would not be folded.
 The near misses: `deals_combat_damage` is combat only; `deals_damage_to_player`
 is the player half only and misses a fight or a blocked creature; lifelink is a
 static that gains as the damage is dealt, not a trigger on the stack.
+
+### A reduction that counts modified creatures
+
+```jsonc
+// Walking Skyscraper -- "costs {1} less to cast for each modified creature you control"
+"cost_reduction": {
+  "count": { "controller": "you", "types": ["Creature"], "modified": true }
+}
+```
+
+700.9: a counter of any kind, any Equipment attached, or an Aura its
+controller controls. `has_counters` and `enchanted_by` say two of the limbs and
+nothing in a reduction filter says the Equipment, so an `any_of` of the two
+would leave the equipped creature uncounted. The key is `true` alone, as in a
+static's filter, and is read through `characteristics.is_modified_printed`, the
+static filter's reader: every limb is board state, and a creature with all
+three is still one creature. The same filter prices an activated ability's
+`mana_reduction` (Towashi Guide-Bot).
 
 ### A reduction that counts an *or* of characteristics
 
@@ -5465,6 +5506,30 @@ and [#card-level-costs](card-dsl-reference.md#card-level-costs):
   "x_value": { "mana_value_of": { "objects": {             // "X is the mana value
                  "zone": "exile", "exiled_with": "self" } } } }      //  of that card"
 ```
+
+### `mana_grant` that counts command-zone casts — Opal Palace
+
+```jsonc
+{ "kind": "activated", "is_mana_ability": true,
+  "text": "{1}, {T}: Add one mana of any color in your commander's color identity. If you spend this mana to cast your commander, it enters with a number of additional +1/+1 counters on it equal to the number of times it's been cast from the command zone this game.",
+  "cost": { "mana": "{1}", "tap": true },
+  "mana_grant": { "commander_only": true, "enters_with_command_zone_casts": "+1/+1" },
+  "effects": [ … ] }
+```
+
+`commander_only` narrows any `mana_grant` to a spell that is a commander the
+payer owns, asked as the mana is spent. `enters_with_command_zone_casts` names a
+counter kind; the permanent enters with that many more of them as its 903.8
+tally reads (614.1c, one placement with the rest, 122.6). Staged on the spell by
+`costs.pay_mana` and counted by `zones._enter_battlefield`, because `Game` bumps
+the tally after payment: counted at spend time, the first cast would be 0.
+`keywords` may be left out beside it; the loader refuses the key without
+`commander_only`, where the count would always be 0.
+
+| Near miss | Why not |
+|---|---|
+| `mana_spent_trigger` with `add_counters` | resolves with the spell still on the stack, so the counters land on nothing |
+| `enters_with_additional_counters` on the land | a standing replacement of the land's, so the `{C}` would grant it too |
 
 ### `exert` — the keyword as a cost
 
