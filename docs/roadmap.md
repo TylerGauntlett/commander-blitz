@@ -158,56 +158,55 @@ on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
 
-**In progress:** [Federation Fleet (Star Trek Commander)](#federation-fleet-star-trek-commander).
-
 **Ready now, best first:**
 
-1. [Klingon Fury (Star Trek Commander)](#klingon-fury-star-trek-commander) — L, high
-2. [Landing Party (Star Trek Commander)](#landing-party-star-trek-commander) — L, high
-3. [We Are the Borg (Star Trek Commander)](#we-are-the-borg-star-trek-commander) — L, high
-4. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
-5. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-6. [The Ring tempts you](#the-ring-tempts-you) — M, high
-7. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-8. [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) — S, medium
-9. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
-10. [Difficulty](#difficulty) — S, medium
-11. [A step trigger scoped to its own permanent fires](#a-step-trigger-scoped-to-its-own-permanent-fires) — S, medium
-12. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-13. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
-14. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
-15. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-16. [Why a press is refused](#why-a-press-is-refused) — S, medium
-17. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-18. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
-19. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-20. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
-21. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
-22. [Secret choices](#secret-choices) — M, medium
-23. [Experience counters](#experience-counters) — M, medium
-24. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
-25. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-26. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
-27. [Outcomes as data](#outcomes-as-data) — M, medium
-28. [Rad counters](#rad-counters) — M, medium
-29. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-30. [A type-setting static ordered against later animations](#a-type-setting-static-ordered-against-later-animations) — M, medium
-31. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-32. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-33. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
-34. [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) — M, medium
-35. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
-36. [Replays and sharing](#replays-and-sharing) — M, medium
-37. [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) — M, medium
-38. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-39. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-40. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-41. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-42. [Archidekt import](#archidekt-import) — S, low
-43. [Sound](#sound) — S, low
-44. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
-45. [A draw replaced by something other than more draws](#a-draw-replaced-by-something-other-than-more-draws) — M, low
-46. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
+1. [Federation Fleet (Star Trek Commander)](#federation-fleet-star-trek-commander) — M, high
+2. [Klingon Fury (Star Trek Commander)](#klingon-fury-star-trek-commander) — L, high
+3. [Landing Party (Star Trek Commander)](#landing-party-star-trek-commander) — L, high
+4. [We Are the Borg (Star Trek Commander)](#we-are-the-borg-star-trek-commander) — L, high
+5. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
+6. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
+7. [The Ring tempts you](#the-ring-tempts-you) — M, high
+8. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+9. [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) — S, medium
+10. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
+11. [Difficulty](#difficulty) — S, medium
+12. [A step trigger scoped to its own permanent fires](#a-step-trigger-scoped-to-its-own-permanent-fires) — S, medium
+13. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+14. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
+15. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
+16. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+17. [Why a press is refused](#why-a-press-is-refused) — S, medium
+18. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+19. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
+20. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
+21. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+22. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+23. [Secret choices](#secret-choices) — M, medium
+24. [Experience counters](#experience-counters) — M, medium
+25. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
+26. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
+27. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
+28. [Outcomes as data](#outcomes-as-data) — M, medium
+29. [Rad counters](#rad-counters) — M, medium
+30. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+31. [A type-setting static ordered against later animations](#a-type-setting-static-ordered-against-later-animations) — M, medium
+32. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+33. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+34. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
+35. [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) — M, medium
+36. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
+37. [Replays and sharing](#replays-and-sharing) — M, medium
+38. [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) — M, medium
+39. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+40. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+41. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+42. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+43. [Archidekt import](#archidekt-import) — S, low
+44. [Sound](#sound) — S, low
+45. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
+46. [A draw replaced by something other than more draws](#a-draw-replaced-by-something-other-than-more-draws) — M, low
+47. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
 
 **Blocked, and by what:**
 
@@ -1992,7 +1991,7 @@ it and dredge is offered. Abundance passes the six authoring gates in
 
 ### Federation Fleet (Star Trek Commander)
 
-Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · Awaiting decisions.
 
 #### Today
 
@@ -2038,6 +2037,25 @@ whole-game test able to draw the deck.
   own item through `/plan-feature`, adds it to this item's `depends_on`, sets
   this item back to `proposed`, and opens the pull request with the cards and
   capabilities done so far. This item stays until the deck is whole.
+
+#### Open questions
+
+- **The set is newer than the card index.** `data/catalog/cards.sqlite` is
+  built from a Scryfall bundle older than this precon (its `meta` table names
+  the bundle), so of the cards `sync_precons.py --missing trc_federation_fleet`
+  lists, only the reprints are in the catalog; for every new Star Trek card
+  `author_cards.py --card` answers "no card named … in the catalog", and no
+  packet, template or gate can reach it. **Today**'s claim that the pipeline
+  can author the `--missing` list does not hold until the index is rebuilt.
+  Does a precon batch rebuild the catalog (`build_card_index.py --refresh`)
+  inside its own pull request, or does the refresh land first as its own item
+  that every `precon-trc-*` item depends on? Recommended: its own item, a
+  `chore(cards):` refresh of `cards.sqlite` and `registry_images.json` with the
+  new art, added to the `depends_on` of all four `precon-trc-*` items, because
+  a refresh moves every EDHREC rank and some oracle text across the whole
+  catalog and deserves its own review; the same question is open on
+  [precon-soc-prismari-artistry](precon-soc-prismari-artistry.md), and one
+  answer can settle both.
 
 ### Klingon Fury (Star Trek Commander)
 
