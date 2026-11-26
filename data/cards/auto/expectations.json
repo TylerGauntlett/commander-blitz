@@ -7167,6 +7167,10 @@
     },
     "zone": "battlefield"
   },
+  "donal_herald_of_wings": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "donatello_mutant_mechanic": {
     "battlefield_count": 33,
     "zone": "battlefield"

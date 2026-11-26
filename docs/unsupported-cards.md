@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**559 cards** blocked by **463** capabilities.
+**558 cards** blocked by **462** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -165,7 +165,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [control-while-has-counter](#control-while-has-counter) | 1 | 10319 | op |
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
 | [copy-from-last-known-information](#copy-from-last-known-information) | 1 | 15208 | op |
-| [copy-spell-except](#copy-spell-except) | 1 | 9762 | op |
 | [copy-spell-except-nonlegendary](#copy-spell-except-nonlegendary) | 1 | 6462 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
 | [copy-while-other-tapped](#copy-while-other-tapped) | 1 | 15174 | engine |
@@ -3401,20 +3400,6 @@ Blocks **1** card.
 
 - **Genestealer Patriarch** (rank 15208) — `genestealer_patriarch`
   - Children of the Cult — Whenever a creature with an infection counter on it dies, you create a token that's a copy of that creature, except it's a Tyranid in addition to its other types.
-
-</details>
-
-## copy-spell-except
-
-Blocks **1** card.
-
-- **(op)** an `except` modifier on copy_spell (707.9) that overrides copiable values of the spell copy: base power/toughness set to 1/1 and the Spirit subtype added in addition to its other types, carried onto the token permanent the copy resolves into
-  <br>Why the existing vocabulary won't do: copy_spell accepts only amount, controller, new_targets, sid, spells, target and this_spell; put_copy_on_stack copies the original verbatim, so there is no way to make the copy a 1/1 Spirit. copy_permanent has except/except_ but copies a permanent, not a spell on the stack, and become_copy/animate act on permanents after the fact, which would be a different card. The 'do this only once each turn' limit (the optional copy, not the trigger) is also distinct from trigger max_per_turn, which caps triggering rather than the accepted copy
-
-<details><summary>Cards waiting on this</summary>
-
-- **Donal, Herald of Wings** (rank 9762) — `donal_herald_of_wings`
-  - Whenever you cast a nonlegendary creature spell with flying, you may copy it, except the copy is a 1/1 Spirit in addition to its other types. Do this only once each turn
 
 </details>
 

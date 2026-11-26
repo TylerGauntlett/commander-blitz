@@ -138,6 +138,16 @@ def op_copy_spell(ctx: EffectContext, spec: Mapping[str, Any]):
     resolving player about a copy that is not theirs would be a different card
     in both directions: it would let you point an opponent's copy and would
     stop them pointing it themselves.
+
+    ``except_`` is "copy it, **except** the copy is a 1/1 Spirit in addition
+    to its other types" (Donal, Herald of Wings): the copiable values the
+    copy has instead of the original's (707.9b, 707.10), in `copy_permanent`'s
+    vocabulary and under its load-time checks. It is written onto the copy's
+    token object as its ``copy_overrides``, so the copy is a 1/1 Spirit while
+    it is a spell on the stack and the token it resolves into keeps the same
+    values (707.10c, 608.3f) -- the exception travels with the object rather
+    than being re-applied at resolution. A ``power``/``toughness`` value
+    expression is evaluated once, as the op resolves.
     """
 
     state = ctx.state
@@ -169,12 +179,17 @@ def _copy_one_spell(ctx: EffectContext, spec: Mapping[str, Any], original):
         ]
     else:
         controllers = [ctx.controller]
+    # Imported here: `ops_removal` reaches `turn`, which imports this module
+    # for epic's `put_copy_on_stack`.
+    from .ops_removal import _fixed_exception
+
+    exception = _fixed_exception(ctx, spec.get("except_"))
     for _ in range(max(0, times)):
         for pid in controllers:
             chosen = None
             if spec.get("new_targets"):
                 chosen = yield from _choose_new_targets(ctx, original, pid)
-            put_copy_on_stack(state, pid, original, chosen)
+            put_copy_on_stack(state, pid, original, chosen, overrides=exception)
 
 
 def _choose_new_targets(ctx: EffectContext, original, chooser: int | None = None):
@@ -250,7 +265,7 @@ def _choose_new_targets(ctx: EffectContext, original, chooser: int | None = None
     return options[picked[0]]
 
 
-def put_copy_on_stack(state, controller: int, original, targets=None):
+def put_copy_on_stack(state, controller: int, original, targets=None, overrides=None):
     """Rule 706.10 -- one copy of a spell, on top of the stack.
 
     Split out of :func:`op_copy_spell` for **epic**, which makes a copy each
@@ -258,6 +273,11 @@ def put_copy_on_stack(state, controller: int, original, targets=None):
     drift: a copy is a token object (which is what makes it vanish correctly),
     it keeps the original's targets, and it announces them so ward and heroic
     see it -- and none of that is obvious enough to write twice.
+
+    ``overrides`` is `copy_spell`'s ``except_`` (707.9b): the copy's token
+    object takes them as its ``copy_overrides`` before anything can look at
+    it, so the copy is the excepted spell on the stack, and the token it
+    resolves into is the same object and keeps them (707.10c).
     """
 
     card = state.registry.get(original.def_id)
@@ -269,6 +289,9 @@ def put_copy_on_stack(state, controller: int, original, targets=None):
         controller=controller,
         is_token=True,
     )
+    if overrides:
+        obj.copy_overrides = dict(overrides)
+        state.bump_chars()
     copy = StackItem(
         sid=state.alloc_sid(),
         kind="spell",

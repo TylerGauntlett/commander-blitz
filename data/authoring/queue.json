@@ -71802,12 +71802,12 @@
     },
     "Donal, Herald of Wings": {
       "edhrec_rank": 9762,
-      "gate": "template",
+      "gate": null,
       "name": "Donal, Herald of Wings",
-      "reason": "no template for: Whenever you cast a nonlegendary creature spell with flying, you may copy it, except the c",
+      "reason": "",
       "scryfall_id": "70cf8d2b-5220-4fe9-b39d-6700f0b27cca",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Donald Blake, Guise of Thor": {

@@ -86445,6 +86445,90 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "condition": {
+                "not": {
+                  "has_turn_flag": "donal_herald_of_wings_copied"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "effects": [
+                    {
+                      "except_": {
+                        "add_subtypes": [
+                          "Spirit"
+                        ],
+                        "power": 1,
+                        "toughness": 1
+                      },
+                      "op": "copy_spell",
+                      "sid": {
+                        "binding": "sid"
+                      }
+                    },
+                    {
+                      "flag": "donal_herald_of_wings_copied",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "set_turn_flag"
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Copy that spell?"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a nonlegendary creature spell with flying, you may copy it, except the copy is a 1/1 Spirit in addition to its other types. Do this only once each turn. (The copy becomes a token.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "keywords": [
+                "flying"
+              ],
+              "not_supertypes": [
+                "Legendary"
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "donal_herald_of_wings",
+      "mana_cost": "{2}{U}{U}",
+      "name": "Donal, Herald of Wings",
+      "oracle_text": "Whenever you cast a nonlegendary creature spell with flying, you may copy it, except the copy is a 1/1 Spirit in addition to its other types. Do this only once each turn. (The copy becomes a token.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

@@ -1142,6 +1142,135 @@ def _validate_creature_cast_gains(effect: Mapping[str, Any], where: str) -> None
     refuse_numbered_grant(keywords, f"{where}.keywords")
 
 
+def _validate_copy_except(overrides: Any, where: str) -> None:
+    """Check a copy exception (707.9b) in `copy_permanent`'s vocabulary.
+
+    Shared by `copy_permanent` and `copy_spell`, whose ``except_`` is the
+    same set of copiable values -- a spell copy's exception sticks to the
+    token it resolves into (707.10c), so it is the same object either way.
+    """
+    # "…except it's a white Zombie Angel with no mana cost." A misspelled
+    # key here would be silently dropped, and the token would come back a
+    # plain copy -- which is a different card and looks identical until
+    # somebody reads its colour.
+    if not isinstance(overrides, Mapping):
+        raise DslError(f"{where}: 'except_' must be an object")
+    unknown = set(overrides) - COPY_EXCEPT_KEYS
+    if unknown:
+        raise DslError(
+            f"{where}.except_: unsupported keys {sorted(unknown)} "
+            f"(implemented: {sorted(COPY_EXCEPT_KEYS)})"
+        )
+    for color in overrides.get("colors") or ():
+        if color not in KNOWN_COLORS:
+            raise DslError(f"{where}.except_.colors: unknown colour {color!r}")
+    if "name" in overrides:
+        # "…except its name is Mishra's Warform." A copiable value
+        # (707.9b), so a blank one would be a token with no name, which
+        # no printing makes and which the legend rule would pair with
+        # every other nameless permanent.
+        renamed = overrides["name"]
+        if not isinstance(renamed, str) or not renamed.strip():
+            raise DslError(f"{where}.except_.name: must be a non-empty string")
+    if "add_keywords" in overrides:
+        # "…except it's a 5/5 artifact creature … and has haste." Checked
+        # here because the token reads it only as it is created: a
+        # misspelt keyword would arrive as a copy without it.
+        added = overrides["add_keywords"]
+        if not isinstance(added, list) or not added:
+            raise DslError(f"{where}.except_.add_keywords: needs a non-empty list of keywords")
+        for k in added:
+            if k not in KNOWN_KEYWORDS:
+                raise DslError(f"{where}.except_.add_keywords: unknown keyword {k!r}")
+        refuse_numbered_grant(added, f"{where}.except_.add_keywords")
+    if "types" in overrides:
+        # A **replacement**, unlike `add_subtypes` beside it -- "it's an
+        # artifact and it loses all other card types". So an empty list is a
+        # copy with no card type at all, which no printing says and which
+        # nothing downstream is written to survive.
+        if not overrides["types"]:
+            raise DslError(
+                f"{where}.except_.types: replaces the copy's card types, "
+                f"so an empty list is a permanent with none"
+            )
+        for t in overrides["types"]:
+            if t not in KNOWN_TYPES:
+                raise DslError(f"{where}.except_.types: unknown card type {t!r}")
+    if "subtypes" in overrides:
+        # "…except it's a 4/4 black **Zombie**" with no "in addition to its
+        # other types": the token is a Zombie *instead of* its creature
+        # types (205.1b; The Scarab God's ruling). A replacement, the
+        # subtype twin of `types`, so an empty list is a copy stripped of
+        # every subtype by a clause that names one.
+        named = overrides["subtypes"]
+        if not isinstance(named, list) or not named or not all(
+            isinstance(n, str) and n for n in named
+        ):
+            raise DslError(
+                f"{where}.except_.subtypes: replaces the copy's subtypes, so it "
+                f"needs a non-empty list of subtype names"
+            )
+        if "add_subtypes" in overrides:
+            raise DslError(
+                f"{where}.except_: 'subtypes' replaces the subtypes and "
+                f"'add_subtypes' adds to them -- write the one the printed clause says"
+            )
+    if "types" in overrides and "add_types" in overrides:
+        # One replaces and one adds, so together they say two different
+        # printed lines at once -- the order would be a guess.
+        raise DslError(
+            f"{where}.except_: 'types' replaces the card types and 'add_types' "
+            f"adds to them -- write the one the printed clause says"
+        )
+    for key, known, noun in (
+        ("add_types", KNOWN_TYPES, "card type"),
+        ("add_supertypes", KNOWN_SUPERTYPES, "supertype"),
+        ("remove_supertypes", KNOWN_SUPERTYPES, "supertype"),
+    ):
+        if key not in overrides:
+            continue
+        added = overrides[key]
+        if not isinstance(added, list) or not added:
+            # A clause naming nothing is a clause that does nothing, and
+            # "except it's legendary" dropped is a copy the legend rule
+            # never sees -- "except it isn't legendary" dropped is one the
+            # legend rule bins, which is worse.
+            raise DslError(f"{where}.except_.{key}: must be a non-empty list")
+        for name in added:
+            if name not in known:
+                raise DslError(f"{where}.except_.{key}: unknown {noun} {name!r}")
+    if both := set(overrides.get("add_supertypes") or ()) & set(
+        overrides.get("remove_supertypes") or ()
+    ):
+        # One printed clause cannot both grant and strip the same supertype,
+        # and whichever way `chars` happened to order the two would decide a
+        # card's behaviour by accident.
+        raise DslError(
+            f"{where}.except_: {sorted(both)} is both added and removed -- "
+            f"write the one the printed clause says"
+        )
+    for key in ("power", "toughness"):
+        # "...except it's a 4/4" (eternalize) is a number; "...except their
+        # power is half that creature's power" (Saw in Half) is a value
+        # expression, which `copy_permanent` evaluates once as it resolves
+        # and stores as a number. Either way 707.9b makes it a copiable
+        # value, fixed when the copy is made, never re-read as the game
+        # goes on.
+        if key in overrides:
+            value = overrides[key]
+            if isinstance(value, Mapping):
+                validate_value(value, f"{where}.except_.{key}")
+            elif isinstance(value, bool) or not isinstance(value, int) or value < 0:
+                raise DslError(
+                    f"{where}.except_.{key}: must be a non-negative integer or a "
+                    f"value expression, got {value!r}"
+                )
+    if ("power" in overrides) != ("toughness" in overrides):
+        # Every printed exception names a size as "N/N"; half of one is a
+        # typo that would leave the copied card's other half standing.
+        raise DslError(f"{where}.except_: 'power' and 'toughness' come as a pair")
+
+
 def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -> None:
     """Recursively validate one effect dict."""
     if not isinstance(effect, Mapping):
@@ -3550,126 +3679,13 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # string would load and stamp nothing a condition could read.
         raise DslError(f"{where}.embalm: must be true -- omit it otherwise")
     if op == "copy_permanent" and (overrides := effect.get("except_") or effect.get("except")):
-        # "…except it's a white Zombie Angel with no mana cost." A misspelled
-        # key here would be silently dropped, and the token would come back a
-        # plain copy -- which is a different card and looks identical until
-        # somebody reads its colour.
-        if not isinstance(overrides, Mapping):
-            raise DslError(f"{where}: 'except_' must be an object")
-        unknown = set(overrides) - COPY_EXCEPT_KEYS
-        if unknown:
-            raise DslError(
-                f"{where}.except_: unsupported keys {sorted(unknown)} "
-                f"(implemented: {sorted(COPY_EXCEPT_KEYS)})"
-            )
-        for color in overrides.get("colors") or ():
-            if color not in KNOWN_COLORS:
-                raise DslError(f"{where}.except_.colors: unknown colour {color!r}")
-        if "name" in overrides:
-            # "…except its name is Mishra's Warform." A copiable value
-            # (707.9b), so a blank one would be a token with no name, which
-            # no printing makes and which the legend rule would pair with
-            # every other nameless permanent.
-            renamed = overrides["name"]
-            if not isinstance(renamed, str) or not renamed.strip():
-                raise DslError(f"{where}.except_.name: must be a non-empty string")
-        if "add_keywords" in overrides:
-            # "…except it's a 5/5 artifact creature … and has haste." Checked
-            # here because the token reads it only as it is created: a
-            # misspelt keyword would arrive as a copy without it.
-            added = overrides["add_keywords"]
-            if not isinstance(added, list) or not added:
-                raise DslError(f"{where}.except_.add_keywords: needs a non-empty list of keywords")
-            for k in added:
-                if k not in KNOWN_KEYWORDS:
-                    raise DslError(f"{where}.except_.add_keywords: unknown keyword {k!r}")
-            refuse_numbered_grant(added, f"{where}.except_.add_keywords")
-        if "types" in overrides:
-            # A **replacement**, unlike `add_subtypes` beside it -- "it's an
-            # artifact and it loses all other card types". So an empty list is a
-            # copy with no card type at all, which no printing says and which
-            # nothing downstream is written to survive.
-            if not overrides["types"]:
-                raise DslError(
-                    f"{where}.except_.types: replaces the copy's card types, "
-                    f"so an empty list is a permanent with none"
-                )
-            for t in overrides["types"]:
-                if t not in KNOWN_TYPES:
-                    raise DslError(f"{where}.except_.types: unknown card type {t!r}")
-        if "subtypes" in overrides:
-            # "…except it's a 4/4 black **Zombie**" with no "in addition to its
-            # other types": the token is a Zombie *instead of* its creature
-            # types (205.1b; The Scarab God's ruling). A replacement, the
-            # subtype twin of `types`, so an empty list is a copy stripped of
-            # every subtype by a clause that names one.
-            named = overrides["subtypes"]
-            if not isinstance(named, list) or not named or not all(
-                isinstance(n, str) and n for n in named
-            ):
-                raise DslError(
-                    f"{where}.except_.subtypes: replaces the copy's subtypes, so it "
-                    f"needs a non-empty list of subtype names"
-                )
-            if "add_subtypes" in overrides:
-                raise DslError(
-                    f"{where}.except_: 'subtypes' replaces the subtypes and "
-                    f"'add_subtypes' adds to them -- write the one the printed clause says"
-                )
-        if "types" in overrides and "add_types" in overrides:
-            # One replaces and one adds, so together they say two different
-            # printed lines at once -- the order would be a guess.
-            raise DslError(
-                f"{where}.except_: 'types' replaces the card types and 'add_types' "
-                f"adds to them -- write the one the printed clause says"
-            )
-        for key, known, noun in (
-            ("add_types", KNOWN_TYPES, "card type"),
-            ("add_supertypes", KNOWN_SUPERTYPES, "supertype"),
-            ("remove_supertypes", KNOWN_SUPERTYPES, "supertype"),
-        ):
-            if key not in overrides:
-                continue
-            added = overrides[key]
-            if not isinstance(added, list) or not added:
-                # A clause naming nothing is a clause that does nothing, and
-                # "except it's legendary" dropped is a copy the legend rule
-                # never sees -- "except it isn't legendary" dropped is one the
-                # legend rule bins, which is worse.
-                raise DslError(f"{where}.except_.{key}: must be a non-empty list")
-            for name in added:
-                if name not in known:
-                    raise DslError(f"{where}.except_.{key}: unknown {noun} {name!r}")
-        if both := set(overrides.get("add_supertypes") or ()) & set(
-            overrides.get("remove_supertypes") or ()
-        ):
-            # One printed clause cannot both grant and strip the same supertype,
-            # and whichever way `chars` happened to order the two would decide a
-            # card's behaviour by accident.
-            raise DslError(
-                f"{where}.except_: {sorted(both)} is both added and removed -- "
-                f"write the one the printed clause says"
-            )
-        for key in ("power", "toughness"):
-            # "...except it's a 4/4" (eternalize) is a number; "...except their
-            # power is half that creature's power" (Saw in Half) is a value
-            # expression, which `copy_permanent` evaluates once as it resolves
-            # and stores as a number. Either way 707.9b makes it a copiable
-            # value, fixed when the copy is made, never re-read as the game
-            # goes on.
-            if key in overrides:
-                value = overrides[key]
-                if isinstance(value, Mapping):
-                    validate_value(value, f"{where}.except_.{key}")
-                elif isinstance(value, bool) or not isinstance(value, int) or value < 0:
-                    raise DslError(
-                        f"{where}.except_.{key}: must be a non-negative integer or a "
-                        f"value expression, got {value!r}"
-                    )
-        if ("power" in overrides) != ("toughness" in overrides):
-            # Every printed exception names a size as "N/N"; half of one is a
-            # typo that would leave the copied card's other half standing.
-            raise DslError(f"{where}.except_: 'power' and 'toughness' come as a pair")
+        _validate_copy_except(overrides, where)
+    if op == "copy_spell" and "except_" in effect:
+        # "…you may copy it, except the copy is a 1/1 Spirit in addition to
+        # its other types" (Donal, Herald of Wings). An empty one says nothing.
+        if not effect["except_"]:
+            raise DslError(f"{where}: an empty 'except_' -- omit it instead")
+        _validate_copy_except(effect["except_"], where)
     if op == "add_subtype":
         # An op that names no subtype is a printed sentence that does nothing,
         # and it would load and resolve exactly like one that works.

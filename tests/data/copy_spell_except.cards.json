@@ -1,0 +1,41 @@
+{
+  "_comment": "Cards that exist only for the copy-spell-with-an-exception test (tests/unit/copies/test_copy_spell_except.py). Never part of a deck list. `t_wing_herald` is Donal, Herald of Wings' copy trigger on a vanilla body, without the once-each-turn limit.",
+  "cards": [
+    {
+      "id": "t_wing_herald",
+      "name": "Test Wing Herald",
+      "oracle_text": "Whenever you cast a nonlegendary creature spell with flying, you may copy it, except the copy is a 1/1 Spirit in addition to its other types. (A copy of a permanent spell becomes a token.)",
+      "mana_cost": "{2}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Wizard"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast a nonlegendary creature spell with flying, you may copy it, except the copy is a 1/1 Spirit in addition to its other types.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {"types": ["Creature"], "keywords": ["flying"], "not_supertypes": ["Legendary"]}
+          },
+          "effects": [
+            {
+              "op": "may",
+              "prompt": "Copy that spell?",
+              "effects": [
+                {
+                  "op": "copy_spell",
+                  "sid": {"binding": "sid"},
+                  "except_": {"power": 1, "toughness": 1, "add_subtypes": ["Spirit"]}
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

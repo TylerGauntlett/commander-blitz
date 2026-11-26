@@ -8355,6 +8355,33 @@ Retargeting is not a detail of one card. A copy that can only
 re-kill what the original killed is a strictly worse spell than the one printed,
 and it would look entirely normal on screen.
 
+#### "Copy it, except the copy is a 1/1 Spirit" — a spell copy with an exception
+
+```jsonc
+// Donal, Herald of Wings
+{ "op": "copy_spell", "sid": { "binding": "sid" },
+  "except_": { "power": 1, "toughness": 1, "add_subtypes": ["Spirit"] } }
+```
+
+`except_` on `copy_spell` is 707.9b for a spell: the copy's copiable values
+differ from the original's in exactly these ways. The vocabulary and every
+load-time refusal are `copy_permanent`'s `except_` (`COPY_EXCEPT_KEYS`:
+`power`/`toughness` as a pair, `add_subtypes` or `subtypes`, `add_types` or
+`types`, `colors`, `name`, `add_supertypes`, `remove_supertypes`,
+`add_keywords`, `no_mana_cost`); an empty one is refused. The values are written
+onto the copy's token object as its `copy_overrides`, so the copy is the
+excepted spell while it is on the stack and the token a copied permanent spell
+resolves into is the same object with the same values (707.10c, 608.3f). A
+`power` or `toughness` value expression is evaluated once, as the op resolves.
+
+"In addition to its other types" is `add_subtypes`; without those words it is
+`subtypes`, a replacement (205.1b). The near misses are `copy_permanent`, which
+makes a token from a permanent rather than copying a spell, and an `animate` or
+`become_copy` on the token after it enters, which is an effect on the token
+rather than its copiable values — a later copy of that token would be the full
+size. "Do this only once each turn" on the optional copy is a `set_turn_flag`
+inside the `may`, read by `has_turn_flag` before it (Cosmic Crucible).
+
 #### "You may choose new targets for target spell" — retargeting the original
 
 ```jsonc
