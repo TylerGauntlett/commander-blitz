@@ -15,11 +15,10 @@
         "keywords": ["flying"],
         "affects": {
           "controller": "you",
-          "types": ["Creature"],
           "any_of": [
-            {"types": ["Artifact"]},
-            {"supertypes": ["Legendary"]},
-            {"subtypes": ["Saga"]}
+            {"types": ["Artifact", "Creature"]},
+            {"types": ["Creature"], "supertypes": ["Legendary"]},
+            {"types": ["Creature"], "subtypes": ["Saga"]}
           ]
         }
       }
