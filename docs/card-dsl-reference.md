@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 191 |
+| [Effect ops](#effect-ops) | 192 |
 | [Selectors](#selectors) | 84 |
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 80 |
@@ -207,6 +207,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `grant_rebound` | Stack |  | Give a spell rebound as it resolves. | [Granting rebound to a spell that does not print it](card-dsl.md#granting-rebound-to-a-spell-that-does-not-print-it) |
 | `next_spell_gains_cascade` | Stack |  | The `player`'s (default you) next spell this turn matching `affects_spells` has cascade: the rules' cascade trigger, on the spell itself. | [A spell given cascade — next_spell_gains_cascade](card-dsl-cookbook.md#a-spell-given-cascade--next_spell_gains_cascade) |
 | `reflexive_trigger` | Stack |  | "When you do": queue a trigger off the preceding effect. | ["When you do" — reflexive triggered abilities](card-dsl-cookbook.md#when-you-do--reflexive-triggered-abilities) |
+| `return_self_to_hand_on_resolution` | Stack |  | The resolving instant or sorcery is put into its owner's hand as it finishes resolving instead of its graveyard. | ["Return <this card> to its owner's hand." -- return_self_to_hand_on_resolution](card-dsl-cookbook.md#return-this-card-to-its-owners-hand----return_self_to_hand_on_resolution) |
 | `return_spell_to_hand` | Stack |  | Return a spell from the stack to its owner's hand. | [Doing something to a spell that is not countering it](card-dsl.md#doing-something-to-a-spell-that-is-not-countering-it) |
 | `spell_enters_with_counters` | Stack |  | Promise a spell's permanent counters it enters with. | [Promising counters to the permanent a spell becomes](card-dsl.md#promising-counters-to-the-permanent-a-spell-becomes) |
 | `uncounterable_this_turn` | Stack |  | Until end of turn, the controller's spells matching `affects_spells` (`cast`: only ones they cast; `next_spell`: only the next one) can't be countered; outlives its source. | ["Creature spells you cast this turn can't be countered"](card-dsl-cookbook.md#creature-spells-you-cast-this-turn-cant-be-countered) |

@@ -142872,6 +142872,94 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "haunting_imitation",
+      "mana_cost": "{2}{U}",
+      "name": "Haunting Imitation",
+      "oracle_text": "Each player reveals the top card of their library. For each creature card revealed this way, create a token that's a copy of that card, except it's 1/1, it's a Spirit in addition to its other types, and it has flying. If no creature cards were revealed this way, return Haunting Imitation to its owner's hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "as": "revealed",
+              "objects": {
+                "player": {
+                  "binding": "each_player"
+                },
+                "zone": "library"
+              },
+              "op": "snapshot"
+            },
+            {
+              "objects": {
+                "binding": "revealed"
+              },
+              "op": "reveal"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "revealed",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "library"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "controller": "you",
+                  "except_": {
+                    "add_keywords": [
+                      "flying"
+                    ],
+                    "add_subtypes": [
+                      "Spirit"
+                    ],
+                    "power": 1,
+                    "toughness": 1
+                  },
+                  "objects": {
+                    "binding": "revealed",
+                    "zone": "library"
+                  },
+                  "op": "copy_permanent"
+                }
+              ]
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_player"
+        },
+        {
+          "condition": {
+            "not": {
+              "exists": {
+                "created_with": "self",
+                "zone": "battlefield"
+              }
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "op": "return_self_to_hand_on_resolution"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {

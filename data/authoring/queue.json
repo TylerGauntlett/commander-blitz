@@ -123602,12 +123602,12 @@
     },
     "Haunting Imitation": {
       "edhrec_rank": 14752,
-      "gate": "template",
+      "gate": null,
       "name": "Haunting Imitation",
-      "reason": "no template for: Each player reveals the top card of their library. For each creature card revealed this wa",
+      "reason": "",
       "scryfall_id": "8418fd80-2c92-40d4-87de-0c149f6815bc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Haunting Misery": {

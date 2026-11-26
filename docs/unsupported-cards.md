@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**560 cards** blocked by **464** capabilities.
+**559 cards** blocked by **463** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -401,7 +401,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [replace-graveyard-with-counter](#replace-graveyard-with-counter) | 1 | 386 | replacement |
 | [replicate](#replicate) | 1 | 12791 | static_effect |
 | [retrace](#retrace) | 1 | 5451 | engine |
-| [return-self-to-hand-on-resolution](#return-self-to-hand-on-resolution) | 1 | 14752 | op |
 | [return-with-new-creature-types](#return-with-new-creature-types) | 1 | 19485 | op |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
 | [reveal-secret-choice](#reveal-secret-choice) | 1 | 9335 | cost |
@@ -6765,20 +6764,6 @@ Blocks **1** card.
 
 - **Throes of Chaos** (rank 5451) — `throes_of_chaos`
   - Retrace (You may cast this card from your graveyard by discarding a land card in addition to paying its other costs.)
-
-</details>
-
-## return-self-to-hand-on-resolution
-
-Blocks **1** card.
-
-- **(op)** an op an instant or sorcery runs during its own resolution that puts the resolving spell card into its owner's hand instead of the graveyard, usable conditionally inside an `if` (here: no creature card was among the cards bound by the per-player reveals)
-  <br>Why the existing vocabulary won't do: `_place_after_resolution` sends the spell to its graveyard unconditionally after `spell_effects` run, with no check of the object's zone, so a `return_to_hand` of the spell mid-resolution would be undone; `return_spell_to_hand` reads a spell target, not the resolving spell; the self-redirect riders (`buyback`, `exiles_itself`, `tucks_itself`, `suspends_itself`, `exile_spell_on_resolution`) are either card-level and unconditional, gated on a paid cost, or send the card to exile rather than to hand. The rest of the card (for_each_player snapshot+reveal of the top card, copy_permanent of the bound card with except_ power/toughness 1, add_subtypes Spirit, add_keywords flying) is expressible
-
-<details><summary>Cards waiting on this</summary>
-
-- **Haunting Imitation** (rank 14752) — `haunting_imitation`
-  - If no creature cards were revealed this way, return Haunting Imitation to its owner's hand.
 
 </details>
 

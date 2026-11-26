@@ -15470,6 +15470,39 @@ beside it.
 card back. **Not a `suspend` op in `spell_effects`**: the spell is already off
 the stack while they run, and is then moved to the graveyard regardless.
 
+## "Return <this card> to its owner's hand." -- return_self_to_hand_on_resolution
+
+```jsonc
+{ "op": "if",
+  "condition": { "not": { "exists": { "zone": "battlefield", "created_with": "self" } } },
+  "then": [{ "op": "return_self_to_hand_on_resolution" }] }
+```
+
+An instant or sorcery's own instruction to put itself into its owner's hand
+(Haunting Imitation: "If no creature cards were revealed this way, return
+Haunting Imitation to its owner's hand.", after a `for_each_player` whose
+body copies each revealed creature card, so "no creature cards were revealed"
+is "this spell made no token"). An effect op, not a card-level
+rider, so it sits wherever the printed sentence does, inside an `if` when the
+card prints a condition. It marks the resolving spell's object
+(`GameObject.returns_to_hand_on_resolution`) and `stack._place_after_resolution`
+moves the card to its owner's hand as the last step of the same resolution
+(608.2c, 608.2n). Being the card's own instruction, it wins over every rider
+that replaces only the graveyard (buyback, rebound, plot, cipher,
+`exiles_itself`, `tucks_itself`, a Foundry's exile); a card cast with flashback,
+or under a permission that exiles it, is still exiled (702.34a), and a spell
+countered on resolution for want of targets (608.2b) never ran the op and goes
+to its graveyard. The loader refuses it outside `spell_effects` and with any
+key beside `op`; on a permanent spell it does nothing. The authoring gate
+admits the hand only when the card declares the op and its last move was that
+resolution (`verify.returned_itself`).
+
+**Not `return_to_hand` over the card itself**: the spell is already off
+`state.stack` while its effects run and is then moved to the graveyard
+regardless. **Not `buyback`**, which is the same hand gated on a paid
+additional cost. **Not `return_spell_to_hand`**, which bounces a *target*
+spell off the stack.
+
 ## Airbend — "exile them, and their owners may cast them for {2}"
 
 ```jsonc

@@ -649,6 +649,32 @@ def op_exile_spell_on_resolution(ctx: EffectContext, spec: Mapping[str, Any]):
     obj.exile_on_resolution_by = ctx.source_oid
 
 
+@register("return_self_to_hand_on_resolution")
+def op_return_self_to_hand_on_resolution(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Return Haunting Imitation to its owner's hand." -- the resolving
+    instant or sorcery's own instruction to put itself into its owner's hand.
+
+    The card is still on the stack while its effects run, and the stack list is
+    already popped, so a `return_to_hand` of it would reach nothing and
+    `_place_after_resolution` would bin it a moment later. The op marks the
+    spell's object instead, and `_place_after_resolution` carries the move out
+    as the last step of the same resolution (608.2c, 608.2n). Written inside an
+    `if` it is the printed condition, judged where the card prints it.
+
+    Only the resolving spell is reached: with no ``ctx.resolving_spell`` -- an
+    ability, or a spell copy's source gone -- the op does nothing. A spell
+    countered on resolution (608.2b) never runs its effects, so it is never
+    marked and goes to its graveyard.
+    """
+    item = ctx.resolving_spell
+    if item is None:
+        return
+    obj = ctx.state.objects.get(item.oid)
+    if obj is None or obj.zone is not Zone.STACK:
+        return
+    obj.returns_to_hand_on_resolution = True
+
+
 @register("counter")
 def op_counter(ctx: EffectContext, spec: Mapping[str, Any]):
     """Counter target spell.

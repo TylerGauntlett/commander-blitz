@@ -452,6 +452,11 @@ class GameObject:
     #: stack (`granted_plot`'s slot), read by `_place_after_resolution`, and
     #: turned into the `exiled_by` link after the move.
     exile_on_resolution_by: int | None = None
+    #: "Return Haunting Imitation to its owner's hand." The resolving instant
+    #: or sorcery's own instruction, written on its object by the
+    #: `return_self_to_hand_on_resolution` op while its effects run and carried
+    #: out by `_place_after_resolution` as the last step of that resolution.
+    returns_to_hand_on_resolution: bool = False
     #: "As an additional cost to cast this spell, you may exile a creature card
     #: from your graveyard" -- Redemptor Dreadnought, whose attack trigger reads
     #: "if a card is exiled with it". The cards a spell's `exile_from_graveyard`
@@ -1657,6 +1662,7 @@ class GameObject:
         self.granted_rebound = False
         self.granted_plot = False
         self.exile_on_resolution_by = None
+        self.returns_to_hand_on_resolution = False
         self.cast_exile_links = []
         self.playable_by = None
         self.playable_turn = -1

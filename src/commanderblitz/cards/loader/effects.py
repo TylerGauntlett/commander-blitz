@@ -2000,6 +2000,23 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: 'this_spell' names the resolving spell, so it belongs in "
                 f"spell_effects; an ability has no spell of its own to copy"
             )
+    if op == "return_self_to_hand_on_resolution":
+        # "Return <this card> to its owner's hand" said by the resolving
+        # instant or sorcery itself. Only a spell's own effects have a
+        # resolving spell to mark -- in an ability the op would find none and
+        # the printed line would silently do nothing -- and it names no other
+        # object, so a `target` or `objects` beside it would be ignored.
+        if ".spell_effects[" not in where:
+            raise DslError(
+                f"{where}: return_self_to_hand_on_resolution marks the resolving "
+                f"spell, so it belongs in spell_effects; a permanent's 'return "
+                f"<this> to its owner's hand' is return_to_hand"
+            )
+        extra = sorted(set(effect) - {"op"})
+        if extra:
+            raise DslError(
+                f"{where}: return_self_to_hand_on_resolution takes no keys, got {extra}"
+            )
     if op == "copy_spell" and "spells" in effect:
         # "Copy each of those spells": a pool, so it names the spells instead
         # of `sid` or `target` -- beside either, one of the two would be read

@@ -465,6 +465,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                    '"You may choose new targets for the copy"'),
     "grant_plot": ("Stack", "Plot a card: exile it, castable free on a later turn.", "Plot"),
     "exile_spell_on_resolution": ("Stack", "A spell is exiled as it resolves instead of binned, linked to this source.", "Plot"),
+    "return_self_to_hand_on_resolution": ("Stack", "The resolving instant or sorcery is put into its owner's hand as it finishes resolving instead of its graveyard.", '"Return <this card> to its owner\'s hand." -- return_self_to_hand_on_resolution'),
     "grant_rebound": ("Stack", "Give a spell rebound as it resolves.",
                       "Granting rebound to a spell that does not print it"),
     "spell_enters_with_counters": ("Stack", "Promise a spell's permanent counters it enters with.",

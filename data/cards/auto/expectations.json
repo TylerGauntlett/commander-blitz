@@ -12111,6 +12111,13 @@
   "haunted_ridge": {
     "zone": "battlefield"
   },
+  "haunting_imitation": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 2
+    },
+    "zone": "hand"
+  },
   "haven_of_the_spirit_dragon": {
     "battlefield_count": 33,
     "zone": "battlefield"
