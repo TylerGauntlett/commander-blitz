@@ -1,0 +1,18 @@
+{
+  "card_id": "ezri_dax_newly_joined",
+  "name": "Ezri Dax, Newly Joined",
+  "oracle_text": "Flash\nYou may have Ezri Dax enter as a copy of any creature card in your graveyard that was put there from the battlefield this turn, except her name is Ezri Dax, Newly Joined and she's a legendary Trill in addition to her other types.",
+  "blocked_sentences": [
+    "You may have Ezri Dax enter as a copy of any creature card in your graveyard that was put there from the battlefield this turn, except her name is Ezri Dax, Newly Joined and she's a legendary Trill in addition to her other types."
+  ],
+  "needs": [
+    {
+      "capability": "enters_as_copy_of_graveyard_card",
+      "kind": "replacement",
+      "what": "An optional as-enters copy replacement (the engine's `self_enters_as_copy`, offered as a 'you may' like Clone) whose `copying` pool is a standing selector over cards in your graveyard -- `{\"zone\": \"graveyard\", \"controller\": \"you\", \"types\": [\"Creature\"], \"graveyard_arrival_this_turn\": [<from battlefield>]}` -- with a copy exception that sets the name to \"Ezri Dax, Newly Joined\", adds the Legendary supertype and adds the Trill subtype as copiable values (706.9b), all exposed in the packet reference so a worker can write it",
+      "why_existing_wont_do": "The packet reference carries no as-enters copy vocabulary (no replacement events list; `self_enters_as_copy` is absent). `become_copy` is a one-shot op that a `self_enters` trigger would run after Ezri had already entered as a 2/2 Trill Advisor (614.1c), so the copied creature's own enters triggers and the legend rule would be judged wrong. In the engine, the as-enters copy exception (`ENTERS_COPY_EXCEPT_KEYS`) has `name` and `add_subtypes` but only `remove_supertypes`, nothing that adds Legendary, so 'she's a legendary Trill in addition to her other types' cannot be said even there; the `graveyard_arrival_this_turn` selector key exists and could filter the pool"
+    }
+  ],
+  "closest_existing": ["self_enters_as_copy", "become_copy", "graveyard_arrival_this_turn"],
+  "confidence": "high"
+}
