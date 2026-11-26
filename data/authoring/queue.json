@@ -90632,12 +90632,12 @@
     },
     "Ezri Dax, Newly Joined": {
       "edhrec_rank": 25727,
-      "gate": "template",
+      "gate": null,
       "name": "Ezri Dax, Newly Joined",
-      "reason": "no template for: You may have Ezri Dax enter as a copy of any creature card in your graveyard that was put ",
+      "reason": "",
       "scryfall_id": "f1e43d7f-682b-4cb6-ad3c-4dfb2b9253c6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ezrim, Agency Chief": {

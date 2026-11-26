@@ -9030,6 +9030,16 @@
   "eyeblight_s_ending": {
     "zone": "graveyard"
   },
+  "ezri_dax_newly_joined": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "ezuri_s_predation": {
     "zone": "graveyard"
   },
