@@ -10,12 +10,12 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**560 cards** blocked by **465** capabilities.
+**568 cards** blocked by **469** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [rad-counters](#rad-counters) | 22 | 2709 | engine |
-| [council-s-dilemma](#council-s-dilemma) | 17 | 3539 | decision, op, trigger_event |
+| [council-s-dilemma](#council-s-dilemma) | 18 | 3539 | decision, op, trigger_event |
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 11 | 2713 | op, replacement, static_effect |
 | [planechase](#planechase) | 10 | 5666 | engine |
@@ -70,15 +70,18 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [pay-energy-x](#pay-energy-x) | 2 | 5122 | cost |
 | [plot](#plot) | 2 | 1873 | op |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
+| [prevent-noncombat-damage](#prevent-noncombat-damage) | 2 | 2070 | static_effect |
 | [reveal-until-rest-to-graveyard](#reveal-until-rest-to-graveyard) | 2 | 1606 | op |
 | [revolt](#revolt) | 2 | 8154 | value |
 | [robot-token-3-3](#robot-token-3-3) | 2 | 5966 | token |
 | [scry-trigger](#scry-trigger) | 2 | 9218 | trigger_event |
+| [search-split-destinations](#search-split-destinations) | 2 | 1971 | op |
 | [static-greatest-power-in-graveyard](#static-greatest-power-in-graveyard) | 2 | 7077 | value |
 | [suspect](#suspect) | 2 | 4851 | op |
 | [suspend-cast-on-any-last-counter](#suspend-cast-on-any-last-counter) | 2 | 4274 | engine |
 | [switch-power-toughness](#switch-power-toughness) | 2 | 4984 | op |
 | [tapped-for-mana-trigger](#tapped-for-mana-trigger) | 2 | 1457 | trigger_event |
+| [tapped-not-by-attack-declaration](#tapped-not-by-attack-declaration) | 2 | 4324 | trigger_event |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [training](#training) | 2 | 8710 | keyword |
 | [turn-face-down](#turn-face-down) | 2 | 4820 | op |
@@ -166,6 +169,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [control-while-has-counter](#control-while-has-counter) | 1 | 10319 | op |
 | [copy-all-on-stack](#copy-all-on-stack) | 1 | 4558 | op |
 | [copy-from-last-known-information](#copy-from-last-known-information) | 1 | 15208 | op |
+| [copy-spell-except](#copy-spell-except) | 1 | 9762 | op |
 | [copy-spell-except-nonlegendary](#copy-spell-except-nonlegendary) | 1 | 6462 | op |
 | [copy-spell-forced-target](#copy-spell-forced-target) | 1 | 13586 | op |
 | [copy-while-other-tapped](#copy-while-other-tapped) | 1 | 15174 | engine |
@@ -381,7 +385,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-half-damage](#prevent-half-damage) | 1 | 1132 | static_effect |
 | [prevent-next-damage-from-chosen-source](#prevent-next-damage-from-chosen-source) | 1 | 1143 | op |
 | [prevent-next-n-damage-divided](#prevent-next-n-damage-divided) | 1 | 17017 | op |
-| [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [prevented-damage-source-binding](#prevented-damage-source-binding) | 1 | 3089 | value |
 | [prime-number](#prime-number) | 1 | 11527 | value |
 | [primo-the-indivisible](#primo-the-indivisible) | 1 | 11527 | token |
@@ -402,6 +405,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [replace-graveyard-with-counter](#replace-graveyard-with-counter) | 1 | 386 | replacement |
 | [replicate](#replicate) | 1 | 12791 | static_effect |
 | [retrace](#retrace) | 1 | 5451 | engine |
+| [return-self-to-hand-on-resolution](#return-self-to-hand-on-resolution) | 1 | 14752 | op |
 | [return-with-new-creature-types](#return-with-new-creature-types) | 1 | 19485 | op |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
 | [reveal-secret-choice](#reveal-secret-choice) | 1 | 9335 | cost |
@@ -415,7 +419,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [scavenge](#scavenge) | 1 | 11499 | static_effect |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
-| [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [secret-number-guess](#secret-number-guess) | 1 | 13375 | decision |
 | [self-bounce-playable-gate](#self-bounce-playable-gate) | 1 | 10013 | engine |
 | [separate-permanents-into-piles](#separate-permanents-into-piles) | 1 | 5426 | op |
@@ -434,6 +437,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [spirit-1-1-u-flying](#spirit-1-1-u-flying) | 1 | 13814 | token |
 | [spirit-2-2-w-flying](#spirit-2-2-w-flying) | 1 | 12596 | token |
+| [spirit-3-3-w-flying](#spirit-3-3-w-flying) | 1 | 12421 | token |
 | [squad](#squad) | 1 | 13056 | engine |
 | [stack-wipe](#stack-wipe) | 1 | 8784 | op |
 | [static-count-derived-types](#static-count-derived-types) | 1 | 817 | value |
@@ -547,12 +551,14 @@ Blocks **22** cards.
 
 ## council-s-dilemma
 
-Blocks **17** cards.
+Blocks **18** cards.
 
 - **(op)** a vote op where each player (here secretly, revealed simultaneously) votes for a player, with the tally bound so later effects can read it per player: a value 'votes received by <each_player>' for 'draws a card for each vote they received', and a condition/player filter for 'received no votes' feeding a for_each_player whose may lets that player put a permanent card from their hand onto the battlefield
   <br>Why the existing vocabulary won't do: choose_player is made by one player only and binds a single choice; for_each_player wrapping choose_player has no way to aggregate the choices into a per-player vote count, and no value_key or condition reads votes received; join_forces collects payments, not choices
 - **(op)** a vote op (rule 701.38): starting with the spell's controller and going in turn order, each player chooses one object from a selector (here nonland permanents the controller doesn't control) as a vote, without targeting; the tally is kept per candidate, and the op binds 'each candidate with the most votes or tied for most' under an `as` so a following effect (exile) can act on that set
   <br>Why the existing vocabulary won't do: for_each_player with starting_with can walk the players, but choose_permanents has no per-player chooser (only as/max_total_power/objects/prompt) and no value key counts how many players chose a given object, so neither the per-player vote nor the 'most votes or tied' tally can be said; targeting would be wrong because Council's Judgment does not target (it beats hexproof/shroud)
+- **(op)** a vote op (rule 701.38): starting with the controller and going in turn order, each player (opponents included) chooses one card from a selector as a vote, here an artifact, creature or enchantment card in the controller's graveyard, without targeting; the tally is kept per candidate and the op binds 'each candidate with the most votes or tied for most' under an `as` so a following return-to-hand effect can act on that whole set
+  <br>Why the existing vocabulary won't do: for_each_player can walk the players in order, but no choose op lets a player other than the controller pick a card from the controller's graveyard as a vote, and no value or selector key counts how many players chose a given card, so neither the per-player vote nor the 'most votes or tied for most' set can be said; a plain return of one chosen card would drop the opponents' votes and the tie rule
 - **(op)** a vote op over named options (here 'fellowship' / 'aid'), every player voting, secretly and revealed simultaneously (secret council), that binds each voter's choice so later effects can (a) run per fellowship voter, with that voter choosing a creature they control, and (b) read the count of aid votes as an amount (repeat add_counters of +1/+1 on each creature you control once per aid vote)
   <br>Why the existing vocabulary won't do: choose_mode and choose_player are one player's choice; for_each_player wrapping choose_mode has no way to bind each player's chosen option for later reading, and no value_key counts votes for an option; join_forces collects mana payments, not choices
 - **(trigger_event)** a 'players finish voting' trigger event fired after any vote (council's dilemma / will of the council) completes, which binds the vote's record: each player's chosen option(s), so an effect can select 'each opponent who voted for a choice you voted for' (a player filter for for_each_player) and a value can count 'opponents who voted for a choice you didn't vote for' (the scry amount)
@@ -628,6 +634,8 @@ Blocks **17** cards.
   - For each Redhorn Pass vote, search your library for a basic land card and put it onto the battlefield tapped.
   - If you search your library this way, shuffle.
   - For each Mines of Moria vote, return a card from your graveyard to your hand.
+- **Custodi Squire** (rank 12678) — `custodi_squire`
+  - Will of the council — When this creature enters, starting with you, each player votes for an artifact, creature, or enchantment card in your graveyard. Return each card with the most votes or tied for most votes to your hand.
 - **Fateful Tempest** (rank 15065) — `fateful_tempest`
   - Council's dilemma — Starting with you, each player votes for past or present.
   - You mill a card for each past vote, then Fateful Tempest deals damage to each opponent equal to the total mana value of cards milled this way.
@@ -1970,6 +1978,24 @@ Blocks **2** cards.
 
 </details>
 
+## prevent-noncombat-damage
+
+Blocks **2** cards.
+
+- **(static_effect)** a `noncombat_only: true` flag on the `prevent_damage` static (the mirror of `combat_only`), so `prevent_all` with affects {types: [Creature], controller: you, exclude_self: true} answers only when the damage is not combat damage
+  <br>Why the existing vocabulary won't do: The `prevent_damage` static with `prevent_all` prevents all damage, and `combat_only` narrows it to combat damage only; prevents_all_damage / prevented_damage in engine/characteristics.py read only `combat_only`, so there is no way to exempt combat damage, and plain `prevent_all` would wrongly also stop combat damage. The `prevent_damage_permanent` op is a one-shot with a duration, not a lasting static
+- **(static_effect)** a noncombat_only flag on the prevent_damage static (the mirror of combat_only): with prevent_all and affects {controller: you, subtypes: [Spirit]}, it prevents damage to matching permanents only when the damage event is not combat damage
+  <br>Why the existing vocabulary won't do: The prevent_damage static carries combat_only (prevent only combat damage) and otherwise prevents all damage; prevented_damage/prevents_all_damage in engine/characteristics.py read only combat_only, so there is no way to exempt combat damage. Omitting the qualifier would also prevent combat damage to Spirits, which the card does not do. The other two lines (melee keyword, grant_keyword static over other Spirits you control) are expressible.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Crystal Barricade** (rank 2070) — `crystal_barricade`
+  - Prevent all noncombat damage that would be dealt to other creatures you control.
+- **Drogskol Reinforcements** (rank 7802) — `drogskol_reinforcements`
+  - Prevent all noncombat damage that would be dealt to Spirits you control.
+
+</details>
+
 ## reveal-until-rest-to-graveyard
 
 Blocks **2** cards.
@@ -2041,6 +2067,25 @@ Blocks **2** cards.
 - **River Song** (rank 10400) — `river_song`
   - Meet in Reverse — You draw cards from the bottom of your library rather than the top.
   - Spoilers — Whenever an opponent scries, surveils, or searches their library, put a +1/+1 counter on River Song. Then River Song deals damage to that player equal to its power.
+
+</details>
+
+## search-split-destinations
+
+Blocks **2** cards.
+
+- **(op)** a split destination on `search_library` for the cards one search turned up: of the N found (here up to `minus[max_count_of lands over each_opponent, lands_you_control]`), exactly one chosen card goes to `destination: "battlefield"` with `tapped: true` and the rest go to a second destination (`rest_to: "hand"`), in one search with one LIBRARY_SEARCHED event and one shuffle at the end. The same shape is Cultivate, Kodama's Reach and Nissa's Pilgrimage ("put one onto the battlefield tapped and the rest into your hand")
+  <br>Why the existing vocabulary won't do: `_search` in engine/effects/ops_cards.py resolves a single `destination` (or a per-card `destination_if` that asks about the card's own characteristics, or a per-card yes/no `may_destination`), so it cannot say "one of them here, the rest there". Sequencing two `search_library` ops (battlefield count 1 with `shuffle: false`, then hand count N-1) fires LIBRARY_SEARCHED twice (Archivist of Oghma-style triggers fire twice) and lets the player take Plains to hand while putting none onto the battlefield, which the printed "put one of them onto the battlefield" forbids. Searching all N to hand then `put_onto_battlefield` one from hand moves the land hand-to-battlefield rather than library-to-battlefield and passes it through the hand. `may_destination` asks per card and could put several or none onto the battlefield. The "choose an opponent ... the difference" half is expressible as `{"minus": [{"max_count_of": {"objects": {"types": ["Land"], "zone": "battlefield"}, "player": "each_opponent"}}, {"lands_you_control": true}]}` gated by `cmp >`, since a search may always find fewer; only the split is missing
+- **(op)** a second destination on `search_library`/`search_zones` for the found-but-not-chosen cards (e.g. `destination: "hand"` plus `rest: "graveyard"`), so one search reveals N, a chosen subset goes one place and the remainder another, with the shuffle still happening once at the end
+  <br>Why the existing vocabulary won't do: `_search` resolves one `DESTINATIONS[spec.get("destination", "hand")]` and hands every picked card to `_move_found` (ops_cards.py); cards that were revealed and not taken simply stay in the library. `look_at_top` is the only lookup with a remainder key, `rest_to_bottom` (ops_cards.py), and it is a boolean hardwired to `_bottom_in_random_order` -- bottom of library, never the graveyard -- besides reading the top N rather than searching. `two_piles` does carry `to`/`other`, but only over the top of the library and only as a pile split. Sequencing two ops instead is an approximation, not the card: `search_library` to the graveyard followed by a `return_from_graveyard` would put all three cards through the graveyard, firing `leaves_graveyard` and inflating `cards_to_graveyard_this_turn` from 2 to 3, and `search_library` to hand followed by a `discard` would emit two `discard` events (madness, discard triggers) for cards the printing never discards.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Intuition** (rank 1971) — `intuition`
+  - Target opponent chooses one.
+  - Put that card into your hand and the rest into your graveyard.
+- **Boreas Charger** (rank 9811) — `boreas_charger`
+  - When this creature leaves the battlefield, choose an opponent who controls more lands than you. Search your library for a number of Plains cards equal to the difference, reveal those cards, put one of them onto the battlefield tapped and the rest into your hand, then shuffle.
 
 </details>
 
@@ -2134,6 +2179,24 @@ Blocks **2** cards.
   - Whenever an opponent taps an artifact for mana, gain control of that artifact until the end of your next turn.
 - **C.A.M.P.** (rank 13900) — `c_a_m_p`
   - Whenever fortified land is tapped for mana, put a +1/+1 counter on target creature you control. If that creature shares a color with the mana that land produced, create a Junk token.
+
+</details>
+
+## tapped-not-by-attack-declaration
+
+Blocks **2** cards.
+
+- **(trigger_event)** a `becomes_tapped` trigger that can exclude taps caused by the creature being declared as an attacker (508.1f): the TAPPED event fired by the attack declaration must carry a marker (e.g. `cause: "attack_declaration"`) and the trigger needs a key such as `not_attack_declaration: true` to filter on it
+  <br>Why the existing vocabulary won't do: `becomes_tapped` maps to EventType.TAPPED, which `primitives.tap_permanent` fires with only player/source/oid, so an attack-declaration tap is indistinguishable from a tap for mana, a tap-cost or a `tap` op; trigger_keys (`not_cause`, `cause_controller`, `filter`) and `step_is` cannot tell them apart (a creature can be tapped for other reasons during the declare-attackers step), so the unfiltered trigger would wrongly grow Rhoda whenever an opponent attacks with a non-vigilant creature
+- **(trigger_event)** a `becomes_tapped` trigger that can exclude taps caused by the creature being declared as an attacker (508.1f): the TAPPED event fired by the attack declaration must carry a marker (e.g. `cause: "attack_declaration"`) and the trigger needs a key such as `not_attack_declaration: true` to filter on it
+  <br>Why the existing vocabulary won't do: `becomes_tapped` maps to EventType.TAPPED, which `primitives.tap_permanent` fires with only player/source/oid (combat's declaration calls the same primitive), so an attack-declaration tap is indistinguishable from a tap for mana, a tap cost or a `tap` op; `not_cause` is refused by the loader on anything but enters triggers, and `step_is` cannot tell them apart since a creature can be tapped for other reasons during the declare-attackers step, so the unfiltered trigger would wrongly draw whenever an opponent attacks with a non-vigilant creature
+
+<details><summary>Cards waiting on this</summary>
+
+- **Verity Circle** (rank 4324) — `verity_circle`
+  - Whenever a creature an opponent controls becomes tapped, if it isn't being declared as an attacker, you may draw a card.
+- **Rhoda, Geist Avenger** (rank 10481) — `rhoda_geist_avenger`
+  - Whenever a creature an opponent controls becomes tapped, if it isn't being declared as an attacker, put a +1/+1 counter on Rhoda.
 
 </details>
 
@@ -3417,6 +3480,20 @@ Blocks **1** card.
 
 - **Genestealer Patriarch** (rank 15208) — `genestealer_patriarch`
   - Children of the Cult — Whenever a creature with an infection counter on it dies, you create a token that's a copy of that creature, except it's a Tyranid in addition to its other types.
+
+</details>
+
+## copy-spell-except
+
+Blocks **1** card.
+
+- **(op)** an `except` modifier on copy_spell (707.9) that overrides copiable values of the spell copy: base power/toughness set to 1/1 and the Spirit subtype added in addition to its other types, carried onto the token permanent the copy resolves into
+  <br>Why the existing vocabulary won't do: copy_spell accepts only amount, controller, new_targets, sid, spells, target and this_spell; put_copy_on_stack copies the original verbatim, so there is no way to make the copy a 1/1 Spirit. copy_permanent has except/except_ but copies a permanent, not a spell on the stack, and become_copy/animate act on permanents after the fact, which would be a different card. The 'do this only once each turn' limit (the optional copy, not the trigger) is also distinct from trigger max_per_turn, which caps triggering rather than the accepted copy
+
+<details><summary>Cards waiting on this</summary>
+
+- **Donal, Herald of Wings** (rank 9762) — `donal_herald_of_wings`
+  - Whenever you cast a nonlegendary creature spell with flying, you may copy it, except the copy is a 1/1 Spirit in addition to its other types. Do this only once each turn
 
 </details>
 
@@ -6483,20 +6560,6 @@ Blocks **1** card.
 
 </details>
 
-## prevent-noncombat-damage
-
-Blocks **1** card.
-
-- **(static_effect)** a `noncombat_only: true` flag on the `prevent_damage` static (the mirror of `combat_only`), so `prevent_all` with affects {types: [Creature], controller: you, exclude_self: true} answers only when the damage is not combat damage
-  <br>Why the existing vocabulary won't do: The `prevent_damage` static with `prevent_all` prevents all damage, and `combat_only` narrows it to combat damage only; prevents_all_damage / prevented_damage in engine/characteristics.py read only `combat_only`, so there is no way to exempt combat damage, and plain `prevent_all` would wrongly also stop combat damage. The `prevent_damage_permanent` op is a one-shot with a duration, not a lasting static
-
-<details><summary>Cards waiting on this</summary>
-
-- **Crystal Barricade** (rank 2070) — `crystal_barricade`
-  - Prevent all noncombat damage that would be dealt to other creatures you control.
-
-</details>
-
 ## prevented-damage-source-binding
 
 Blocks **1** card.
@@ -6783,6 +6846,20 @@ Blocks **1** card.
 
 </details>
 
+## return-self-to-hand-on-resolution
+
+Blocks **1** card.
+
+- **(op)** an op an instant or sorcery runs during its own resolution that puts the resolving spell card into its owner's hand instead of the graveyard, usable conditionally inside an `if` (here: no creature card was among the cards bound by the per-player reveals)
+  <br>Why the existing vocabulary won't do: `_place_after_resolution` sends the spell to its graveyard unconditionally after `spell_effects` run, with no check of the object's zone, so a `return_to_hand` of the spell mid-resolution would be undone; `return_spell_to_hand` reads a spell target, not the resolving spell; the self-redirect riders (`buyback`, `exiles_itself`, `tucks_itself`, `suspends_itself`, `exile_spell_on_resolution`) are either card-level and unconditional, gated on a paid cost, or send the card to exile rather than to hand. The rest of the card (for_each_player snapshot+reveal of the top card, copy_permanent of the bound card with except_ power/toughness 1, add_subtypes Spirit, add_keywords flying) is expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Haunting Imitation** (rank 14752) — `haunting_imitation`
+  - If no creature cards were revealed this way, return Haunting Imitation to its owner's hand.
+
+</details>
+
 ## return-with-new-creature-types
 
 Blocks **1** card.
@@ -6961,21 +7038,6 @@ Blocks **1** card.
 
 - **(decision)** a `chooser` on `search_library`/`search_zones` (a player spec, so it can be `{"target": ...}`) naming who picks from among the cards the search turned up -- the search itself is still performed and seen by the library's owner, but a *different*, targeted player makes the selection out of the revealed pool. Gifts Ungiven, Intuition and Plea for Power's kin all hang on it
   <br>Why the existing vocabulary won't do: `_search` (src/commanderblitz/engine/effects/ops_cards.py) hardcodes the asker: it iterates `select_players(ctx, spec.get("player", "you"))` and passes that same `pid` into `ask_objects(ctx, prompt, pool, 0, take, pid, "search")`, so the searcher is always the chooser. The selector's `chooser` key exists (selectors.py, and it accepts an arbitrary player spec) but a search never routes its selector through `pick_from_pool` -- the selector is only a match test via `_matches_in_zone` -- so writing `chooser` on a search's selector is silently ignored and the caster would pick their own card, which is the entire card. `two_piles` (ops_cards.py) is the only op whose first decision belongs to somebody else, and its splitter is `ctx.opponents()[0]` rather than a target, it reads `library[:amount]` off the top instead of a searched pool, and the *controller* still decides which pile is taken -- the opposite of "target opponent chooses one".
-
-<details><summary>Cards waiting on this</summary>
-
-- **Intuition** (rank 1971) — `intuition`
-  - Target opponent chooses one.
-  - Put that card into your hand and the rest into your graveyard.
-
-</details>
-
-## search-split-destinations
-
-Blocks **1** card.
-
-- **(op)** a second destination on `search_library`/`search_zones` for the found-but-not-chosen cards (e.g. `destination: "hand"` plus `rest: "graveyard"`), so one search reveals N, a chosen subset goes one place and the remainder another, with the shuffle still happening once at the end
-  <br>Why the existing vocabulary won't do: `_search` resolves one `DESTINATIONS[spec.get("destination", "hand")]` and hands every picked card to `_move_found` (ops_cards.py); cards that were revealed and not taken simply stay in the library. `look_at_top` is the only lookup with a remainder key, `rest_to_bottom` (ops_cards.py), and it is a boolean hardwired to `_bottom_in_random_order` -- bottom of library, never the graveyard -- besides reading the top N rather than searching. `two_piles` does carry `to`/`other`, but only over the top of the library and only as a pile split. Sequencing two ops instead is an approximation, not the card: `search_library` to the graveyard followed by a `return_from_graveyard` would put all three cards through the graveyard, firing `leaves_graveyard` and inflating `cards_to_graveyard_this_turn` from 2 to 3, and `search_library` to hand followed by a `discard` would emit two `discard` events (madness, discard triggers) for cards the printing never discards.
 
 <details><summary>Cards waiting on this</summary>
 
@@ -7243,6 +7305,20 @@ Blocks **1** card.
 
 - **Phantom Interference** (rank 12596) — `phantom_interference`
   - + {3} — Create a 2/2 white Spirit creature token with flying.
+
+</details>
+
+## spirit-3-3-w-flying
+
+Blocks **1** card.
+
+- **(token)** a 3/3 white Spirit creature token with flying
+  <br>Why the existing vocabulary won't do: token_ids has Spirit tokens only at 1/1, 2/2 and 3/2 (spirit_1_1_w_flying, spirit_2_2_w, spirit_3_2_rw, ...) and the only 3/3 white flier is angel_3_3_w_flying, which has the wrong creature type. The trigger itself is expressible as a spell_cast trigger with controller you and filter any_of [{subtypes: [Spirit]}, {subtypes: [Arcane]}]
+
+<details><summary>Cards waiting on this</summary>
+
+- **Oyobi, Who Split the Heavens** (rank 12421) — `oyobi_who_split_the_heavens`
+  - Whenever you cast a Spirit or Arcane spell, create a 3/3 white Spirit creature token with flying.
 
 </details>
 
