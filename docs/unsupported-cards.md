@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**562 cards** blocked by **466** capabilities.
+**561 cards** blocked by **465** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -285,7 +285,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [greatest-snapshot-power](#greatest-snapshot-power) | 1 | 4336 | value |
 | [harmonize](#harmonize) | 1 | 7442 | cost |
-| [has-mana-ability-selector](#has-mana-ability-selector) | 1 | 14386 | selector |
 | [has-suspend-selector](#has-suspend-selector) | 1 | 10715 | selector |
 | [hexproof-from](#hexproof-from) | 1 | 7920 | keyword |
 | [hidden-card-guess](#hidden-card-guess) | 1 | 10904 | decision |
@@ -5116,20 +5115,6 @@ Blocks **1** card.
 
 - **Zenith Festival** (rank 7442) — `zenith_festival`
   - Harmonize {X}{R}{R}
-
-</details>
-
-## has-mana-ability-selector
-
-Blocks **1** card.
-
-- **(selector)** a selector key (e.g. `has_mana_ability: false`) matching permanents by whether they have a mana ability, so a target spec can say "artifacts without mana abilities"; it must read the permanent's current abilities, granted ones included
-  <br>Why the existing vocabulary won't do: selector_keys has nothing that asks about an object's abilities: `ability_kind` is legal only on an `ability_on_stack` target, `not_keywords` covers keywords only, and `any_mana_ability` exists only under `tapped_permanent_keys` for mana-ability riders. The rest of the line is expressible: a self_enters trigger with a permanent target `count: {count: {controller: you, subtypes: [Vampire], zone: battlefield}}, up_to: true` (trigger target counts may be value expressions, per targeting.target_count) and a `destroy` op
-
-<details><summary>Cards waiting on this</summary>
-
-- **Midnight Arsonist** (rank 14386) — `midnight_arsonist`
-  - When this creature enters, destroy up to X target artifacts without mana abilities, where X is the number of Vampires you control.
 
 </details>
 

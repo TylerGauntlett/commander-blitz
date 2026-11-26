@@ -172682,12 +172682,12 @@
     },
     "Midnight Arsonist": {
       "edhrec_rank": 14386,
-      "gate": "template",
+      "gate": null,
       "name": "Midnight Arsonist",
-      "reason": "no template for: When this creature enters, destroy up to X target artifacts without mana abilities, where ",
+      "reason": "",
       "scryfall_id": "470ab356-71bc-44f2-a51b-dc5568edf24b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Midnight Assassin": {

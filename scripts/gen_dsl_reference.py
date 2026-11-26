@@ -595,6 +595,8 @@ SELECTORS: dict[str, Entry] = {
     "haunted_by": ("Haunted by the named card.", "Haunt — the exile link pointing the other way"),
     "is_commander": ("Is (or is not) a commander.", None),
     "is_token": ("Is (or is not) a token.", None),
+    "has_mana_ability": ("Has (or has no) mana ability right now, granted ones included and lost ones not (605.1a).",
+                         '"Artifacts without mana abilities" — `has_mana_ability: false`'),
     "keywords": ("Has all of these keywords.", None),
     "mana_cost": ("Printed mana cost is one of these.", None),
     "mana_value": ("A comparison on mana value, or its `parity`.", "Odd or even — `parity`"),

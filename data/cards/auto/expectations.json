@@ -16916,6 +16916,11 @@
     },
     "zone": "battlefield"
   },
+  "midnight_arsonist": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "midnight_assassin": {
     "zone": "battlefield"
   },

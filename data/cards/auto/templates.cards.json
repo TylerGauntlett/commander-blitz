@@ -202382,6 +202382,68 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Vampire"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "has_mana_ability": false,
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "When this creature enters, destroy up to X target artifacts without mana abilities, where X is the number of Vampires you control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "midnight_arsonist",
+      "mana_cost": "{3}{R}",
+      "name": "Midnight Arsonist",
+      "oracle_text": "When this creature enters, destroy up to X target artifacts without mana abilities, where X is the number of Vampires you control.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Vampire"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],

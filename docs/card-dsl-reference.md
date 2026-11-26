@@ -11,7 +11,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | Family | Count |
 |---|---|
 | [Effect ops](#effect-ops) | 190 |
-| [Selectors](#selectors) | 83 |
+| [Selectors](#selectors) | 84 |
 | [Player specs](#player-specs) | 10 |
 | [Values](#values) | 80 |
 | [Conditions](#conditions) | 37 |
@@ -279,6 +279,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `granter` | The permanent that granted the resolving ability (`self` there is the recipient); true only, and only in a granted trigger's or activated ability's effects. | ["…fight Grothama" — granter](card-dsl-cookbook.md#fight-grothama--granter) |
 | `graveyard_arrival_this_turn` | Cards that reached a graveyard this turn in one of a list of ways: `discarded`, `milled`, `from_<zone>`. | [Cards in a graveyard by how they arrived this turn](card-dsl.md#cards-in-a-graveyard-by-how-they-arrived-this-turn) |
 | `has_counters` | Has counters on it: `true` any kind, or one named kind. | [has_counters — "with counters on them"](card-dsl.md#has_counters--with-counters-on-them) |
+| `has_mana_ability` | Has (or has no) mana ability right now, granted ones included and lost ones not (605.1a). | ["Artifacts without mana abilities" — has_mana_ability: false](card-dsl-cookbook.md#artifacts-without-mana-abilities--has_mana_ability-false) |
 | `haunted_by` | Haunted by the named card. | [Haunt — the exile link pointing the other way](card-dsl-cookbook.md#haunt--the-exile-link-pointing-the-other-way) |
 | `is_commander` | Is (or is not) a commander. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `is_token` | Is (or is not) a token. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
