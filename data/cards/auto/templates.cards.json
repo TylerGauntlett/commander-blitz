@@ -355024,6 +355024,139 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "chapter": 1,
+          "effects": [
+            {
+              "as": "unified",
+              "op": "snapshot",
+              "target": "t1"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": {
+                "owner_of": "unified"
+              }
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "put_on_top"
+            },
+            {
+              "op": "shuffle",
+              "player": {
+                "owner_of": "unified"
+              }
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "I — The owner of up to one target creature draws two cards, then shuffles that creature into their library."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": {
+                    "const": 1
+                  },
+                  "destination": "battlefield",
+                  "op": "search_zones",
+                  "player": "you",
+                  "selector": {
+                    "subtypes": [
+                      "Spacecraft"
+                    ]
+                  },
+                  "zones": [
+                    "hand",
+                    "graveyard"
+                  ]
+                }
+              ],
+              "op": "may",
+              "prompt": "Put a Spacecraft card from your hand or graveyard onto the battlefield?"
+            }
+          ],
+          "kind": "chapter",
+          "text": "II — You may put a Spacecraft card from your hand or graveyard onto the battlefield."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": {
+                "target": "t2"
+              }
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t2",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "III — You and target opponent each draw two cards."
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "unification",
+      "mana_cost": "{3}{W}{U}",
+      "name": "Unification",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — The owner of up to one target creature draws two cards, then shuffles that creature into their library.\nII — You may put a Spacecraft card from your hand or graveyard onto the battlefield.\nIII — You and target opponent each draw two cards.",
+      "source": "auto",
+      "subtypes": [
+        "Saga"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "B",
         "G",

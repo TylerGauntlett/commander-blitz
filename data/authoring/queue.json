@@ -301682,12 +301682,12 @@
     },
     "Unification": {
       "edhrec_rank": 25679,
-      "gate": "template",
+      "gate": null,
       "name": "Unification",
-      "reason": "no template for: I — The owner of up to one target creature draws two cards, then shuffles that creature in",
+      "reason": "",
       "scryfall_id": "1c2378fb-fb29-499e-97c2-f10f97babf7b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Unified Front": {
