@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**558 cards** blocked by **462** capabilities.
+**555 cards** blocked by **462** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -29,7 +29,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [unlock-door](#unlock-door) | 5 | 4163 | trigger_event |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 4 | 2389 | engine |
 | [face-down-characteristics](#face-down-characteristics) | 4 | 5733 | op |
-| [station](#station) | 4 | 1695 | engine |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 4 | 1802 | token |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 6346 | op |
 | [crime](#crime) | 3 | 2244 | trigger_event |
@@ -274,6 +273,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [granted-alternative-cost-life-equal-to-mana-value](#granted-alternative-cost-life-equal-to-mana-value) | 1 | 3022 | static_effect |
 | [granted-miracle-from-mana-cost](#granted-miracle-from-mana-cost) | 1 | 5025 | static_effect |
 | [granted-player-wide-static](#granted-player-wide-static) | 1 | 4512 | static_effect |
+| [graveyard-cast-additional-cost](#graveyard-cast-additional-cost) | 1 | 1695 | static_effect |
 | [graveyard-cast-dynamic-mana-value-cap](#graveyard-cast-dynamic-mana-value-cap) | 1 | 11023 | static_effect |
 | [graveyard-cast-exile-on-leave](#graveyard-cast-exile-on-leave) | 1 | 11686 | static_effect |
 | [graveyard-cast-per-permanent-type](#graveyard-cast-per-permanent-type) | 1 | 1104 | static_effect |
@@ -1143,40 +1143,6 @@ Blocks **4** cards.
 - **Missy** (rank 9707) — `missy`
   - Whenever another nonartifact creature dies, return it to the battlefield under your control face down and tapped. It's a 2/2 Cyberman artifact creature
   - At the beginning of your end step, each opponent faces a villainous choice — Each artifact creature you control deals 1 damage to that opponent, or you draw a card and chaos ensues
-
-</details>
-
-## station
-
-Blocks **4** cards.
-
-- **(engine)** Station symbols (721) on a static ability (3+ additional land drop) and a keyword (8+ Flying), plus the Spacecraft rule that it is an artifact creature with its printed P/T only at 8+ and a noncreature artifact below it
-  <br>Why the existing vocabulary won't do: Ability.threshold is accepted only on activated abilities (loader _compile_threshold refuses others); a trigger `condition` or static `condition` on counters would leave the ability on the permanent, which the packet notes forbid for striations; and nothing gates the Spacecraft becoming a 5/5 artifact creature at 8+ -- a counters-conditioned set_types static would be an invented approximation of rule 721 rather than the station mechanic
-- **(engine)** Station symbols (721) on keywords: an `8+ | Flying, vigilance, haste` line the permanent HAS only at 8+ charge counters, plus the Spacecraft rule that it is an artifact creature with its printed P/T only at its highest station threshold (8+) and a noncreature artifact below it. Its 2+ activated ability is expressible with Ability.threshold today
-  <br>Why the existing vocabulary won't do: Ability.threshold is accepted only on activated abilities (loader _compile_threshold refuses others); a trigger `condition` or static `condition` on counters would leave the ability on the permanent, which the packet notes forbid for striations; and nothing gates the Spacecraft becoming a 5/5 artifact creature at 8+ -- a counters-conditioned set_types static would be an invented approximation of rule 721 rather than the station mechanic
-- **(engine)** Station symbols (721) on triggered and static/keyword abilities: a `threshold: {counter: charge, at_least: N}` that makes the permanent HAVE a triggered ability (1+ begin-combat trigger) or a keyword (8+ Flying) only at N+ charge counters, plus the Spacecraft rule that the permanent is an artifact creature with its printed P/T only at its highest station threshold (8+) and a noncreature artifact below it
-  <br>Why the existing vocabulary won't do: Ability.threshold is accepted only on activated abilities (loader _compile_threshold refuses others); a trigger `condition` or static `condition` on counters would leave the ability on the permanent, which the packet notes forbid for striations; and nothing gates the Spacecraft becoming a 5/5 artifact creature at 8+ -- a counters-conditioned set_types static would be an invented approximation of rule 721 rather than the station mechanic
-- **(engine)** Station symbols (721) on triggered and static/keyword abilities: a `threshold: {counter: charge, at_least: N}` that makes the permanent HAVE a triggered ability (3+ 'whenever you cast an artifact spell' trigger), a keyword (12+ Flying) and a static self-buff (12+ '+1/+0 for each artifact you control') only at N+ charge counters, plus the Spacecraft rule that the permanent is an artifact creature with its printed P/T (0/8) only at its highest station threshold (12+) and a noncreature artifact below it
-  <br>Why the existing vocabulary won't do: Ability.threshold is accepted only on activated abilities (the packet notes: 'Activated abilities only'); a trigger `condition` or static `condition` on counters would leave the ability on the permanent, which the notes forbid for striations; and nothing gates the Spacecraft becoming a 0/8 artifact creature at 12+ -- a counters-conditioned set_types static would approximate rule 721 rather than implement station. The Station activation itself is expressible (tap_permanents with `as` + add_counters power_of), but the card is only partly expressible
-
-<details><summary>Cards waiting on this</summary>
-
-- **Exploration Broodship** (rank 1695) — `exploration_broodship`
-  - Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)
-  - 3+ | You may play an additional land on each of your turns.
-  - 8+ | Flying
-- **Uthros Research Craft** (rank 1881) — `uthros_research_craft`
-  - Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 12+.)
-  - 3+ | Whenever you cast an artifact spell, draw a card. Put a charge counter on this Spacecraft.
-  - 12+ | Flying
-  - This Spacecraft gets +1/+0 for each artifact you control.
-- **Hearthhull, the Worldseed** (rank 3555) — `hearthhull_the_worldseed`
-  - Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)
-  - 8+ | Flying, vigilance, haste
-- **Inspirit, Flagship Vessel** (rank 3934) — `inspirit_flagship_vessel`
-  - Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)
-  - 1+ | At the beginning of combat on your turn, put your choice of a +1/+1 counter or two charge counters on up to one other target artifact.
-  - 8+ | Flying
 
 </details>
 
@@ -4951,6 +4917,20 @@ Blocks **1** card.
 
 - **Nerd Rage** (rank 4512) — `nerd_rage`
   - Enchanted creature has "You have no maximum hand size" and "Whenever this creature attacks, if you have ten or more cards in hand, it gets +10/+10 until end of turn."
+
+</details>
+
+## graveyard-cast-additional-cost
+
+Blocks **1** card.
+
+- **(static_effect)** a rider on the battlefield `cast_from_graveyard` static (beside `affects_spells` and `max_per_turn: 1`, condition `is_your_turn`) carrying an arbitrary additional cost from `cost_keys` -- here `{"sacrifice": {"types": ["Land"]}}` -- that every cast made under that permission must pay on top of the spell's printed costs, and without which the permission offers no line
+  <br>Why the existing vocabulary won't do: The static's only built-in surcharges are `grants_retrace` (discard a land CARD from hand, not sacrifice a land permanent, and unmetered), `escape` (exile other graveyard cards) and `pay_life_instead` (replaces the mana cost); `graveyard_additional_cost` is card-level and prices only the card that prints it, not other spells a permanent lets out. A plain `cast_from_graveyard` with `max_per_turn` would let the spell out for free of the sacrifice, which is strictly better than printed
+
+<details><summary>Cards waiting on this</summary>
+
+- **Exploration Broodship** (rank 1695) — `exploration_broodship`
+  - Once during each of your turns, you may cast a permanent spell from your graveyard by sacrificing a land in addition to paying its other costs.
 
 </details>
 

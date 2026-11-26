@@ -12320,6 +12320,16 @@
   "hearthfire_hobgoblin": {
     "zone": "battlefield"
   },
+  "hearthhull_the_worldseed": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "heartless_conscription": {
     "battlefield_count": 30,
     "opponent_battlefield_count": 4,
@@ -13566,6 +13576,10 @@
     "zone": "battlefield"
   },
   "inspiring_vantage": {
+    "zone": "battlefield"
+  },
+  "inspirit_flagship_vessel": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "intellectual_offering": {
@@ -29786,6 +29800,13 @@
   },
   "usher_of_the_fallen": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "uthros_research_craft": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "uthros_titanic_godcore": {

@@ -126102,12 +126102,12 @@
     },
     "Hearthhull, the Worldseed": {
       "edhrec_rank": 3555,
-      "gate": "template",
+      "gate": null,
       "name": "Hearthhull, the Worldseed",
-      "reason": "no template for: Station",
+      "reason": "",
       "scryfall_id": "6b913e79-a9f6-44d4-bb37-c4f6f66b8151",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Heartlash Cinder": {
@@ -139402,12 +139402,12 @@
     },
     "Inspirit, Flagship Vessel": {
       "edhrec_rank": 3934,
-      "gate": "template",
+      "gate": null,
       "name": "Inspirit, Flagship Vessel",
-      "reason": "no template for: Station",
+      "reason": "",
       "scryfall_id": "46900ec7-eb18-45c4-8e90-a48b665cfdee",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Inspirited Vanguard": {
@@ -303632,12 +303632,12 @@
     },
     "Uthros Research Craft": {
       "edhrec_rank": 1881,
-      "gate": "template",
+      "gate": null,
       "name": "Uthros Research Craft",
-      "reason": "no template for: Station",
+      "reason": "",
       "scryfall_id": "2063f688-ab86-4c7c-9237-bdb47f56a618",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Uthros Scanship": {
