@@ -2997,6 +2997,14 @@
     },
     "zone": "battlefield"
   },
+  "bloodtithe_harvester": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "blood_token"
+    },
+    "zone": "battlefield"
+  },
   "bloodtracker": {
     "battlefield_count": 33,
     "hand_size": {
@@ -5614,6 +5622,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "crimson_honor_guard": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "crimson_kobolds": {
     "zone": "battlefield"
   },
@@ -6095,6 +6111,10 @@
       "amount": 10,
       "kind": "ice"
     },
+    "zone": "battlefield"
+  },
+  "dark_impostor": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "dark_ritual": {
@@ -12954,6 +12974,18 @@
   "imperious_inkmage": {
     "zone": "battlefield"
   },
+  "imposing_grandeur": {
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 0
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "imposing_sovereign": {
     "zone": "battlefield"
   },
@@ -17194,6 +17226,9 @@
   },
   "moat_piranhas": {
     "zone": "battlefield"
+  },
+  "mob_rule": {
+    "zone": "graveyard"
   },
   "mobilized_district": {
     "battlefield_count": 33,

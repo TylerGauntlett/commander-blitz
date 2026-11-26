@@ -29212,12 +29212,12 @@
     },
     "Bloodtithe Harvester": {
       "edhrec_rank": 7904,
-      "gate": "template",
+      "gate": null,
       "name": "Bloodtithe Harvester",
-      "reason": "no template for: When this creature enters, create a Blood token",
+      "reason": "",
       "scryfall_id": "5d0fb1bd-5020-45b7-8046-c586e3056058",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bloodtracker": {
@@ -56102,12 +56102,12 @@
     },
     "Crimson Honor Guard": {
       "edhrec_rank": 16721,
-      "gate": "template",
+      "gate": null,
       "name": "Crimson Honor Guard",
-      "reason": "no template for: At the beginning of each player's end step, this creature deals 4 damage to that player un",
+      "reason": "",
       "scryfall_id": "7ac7b366-a967-4efb-9254-a4ec423d63a7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crimson Kobolds": {
@@ -61022,12 +61022,12 @@
     },
     "Dark Impostor": {
       "edhrec_rank": 10597,
-      "gate": "template",
+      "gate": null,
       "name": "Dark Impostor",
-      "reason": "no template for: {4}{B}{B}: Exile target creature and put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "bd9384c2-1b55-4da3-91f1-db3d65e98a85",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dark Inquiry": {
@@ -134882,12 +134882,12 @@
     },
     "Imposing Grandeur": {
       "edhrec_rank": 6498,
-      "gate": "template",
+      "gate": null,
       "name": "Imposing Grandeur",
-      "reason": "no template for: Each player may discard their hand and draw cards equal to the greatest mana value of a co",
+      "reason": "",
       "scryfall_id": "8d236055-d524-4312-9c6f-eddb34703e3e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Imposing Sovereign": {
@@ -176872,12 +176872,12 @@
     },
     "Mob Rule": {
       "edhrec_rank": 3362,
-      "gate": "template",
+      "gate": null,
       "name": "Mob Rule",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "8b04c928-9ee5-4e39-962e-4686e25b5c33",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mob Verdict": {
