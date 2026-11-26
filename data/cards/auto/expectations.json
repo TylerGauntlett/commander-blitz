@@ -19100,6 +19100,10 @@
   "omnath_locus_of_the_void": {
     "zone": "battlefield"
   },
+  "on_the_shoulders_of_giants": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "on_the_trail": {
     "battlefield_count": 33,
     "hand_size": {
@@ -21595,6 +21599,13 @@
     },
     "zone": "graveyard"
   },
+  "reg_barclay_fidgety_fantasist": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "regal_behemoth": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -22299,6 +22310,16 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ro_laren_double_agent": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "roadside_reliquary": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -22369,6 +22390,10 @@
     "zone": "battlefield"
   },
   "rolling_hamsphere": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "rom_and_leeta_unlikely_pair": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -23629,6 +23654,10 @@
       "count": 1,
       "id": "the_blackjack_3_3_c_flying_crew2"
     },
+    "zone": "battlefield"
+  },
+  "seven_of_nine_tertiary_adjunct": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "sever_the_bloodline": {
@@ -25458,6 +25487,14 @@
     },
     "zone": "battlefield"
   },
+  "spot_felis_catus": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "food_token"
+    },
+    "zone": "battlefield"
+  },
   "spotted_griffin": {
     "zone": "battlefield"
   },
@@ -25806,6 +25843,13 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "stonespeaker_crystal": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "stonework_puma": {
     "zone": "battlefield"
@@ -27087,6 +27131,10 @@
       "0": 1
     },
     "zone": "exile"
+  },
+  "temporal_tribulation": {
+    "battlefield_count": 30,
+    "zone": "graveyard"
   },
   "tempt_with_bunnies": {
     "hand_size": {
@@ -28470,6 +28518,10 @@
   "tolarian_scholar": {
     "zone": "battlefield"
   },
+  "tom_paris_risk_taker": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tomb_blade": {
     "battlefield_count": 33,
     "hand_size": {
@@ -28667,6 +28719,10 @@
     "zone": "battlefield"
   },
   "trained_orgg": {
+    "zone": "battlefield"
+  },
+  "training_center": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "tranquil_expanse": {
@@ -29052,6 +29108,13 @@
     "zone": "battlefield"
   },
   "tusked_colossodon": {
+    "zone": "battlefield"
+  },
+  "tuvok_chief_tactical_officer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "twenty_toed_toad": {
@@ -30129,6 +30192,10 @@
     "zone": "battlefield"
   },
   "vibrant_cityscape": {
+    "zone": "battlefield"
+  },
+  "vic_fontaine_one_night_only": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "vicious_conquistador": {

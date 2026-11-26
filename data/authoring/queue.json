@@ -194852,12 +194852,12 @@
     },
     "On the Shoulders of Giants": {
       "edhrec_rank": 22702,
-      "gate": "compile",
+      "gate": null,
       "name": "On the Shoulders of Giants",
-      "reason": "on_the_shoulders_of_giants.abilities[0].affects.any_of[0]: ['types'] already appear on the outer filter, and a branch's value would replace the outer one rather than narrow it",
+      "reason": "",
       "scryfall_id": "71807912-94e7-4ebd-91ca-d0b00dceae9c",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "On the Trail": {
@@ -221562,12 +221562,12 @@
     },
     "Reg Barclay, Fidgety Fantasist": {
       "edhrec_rank": 23046,
-      "gate": "template",
+      "gate": null,
       "name": "Reg Barclay, Fidgety Fantasist",
-      "reason": "no template for: Seek out — Whenever you draw your second card each turn, create a token that's a copy of a",
+      "reason": "",
       "scryfall_id": "4eb7acc5-ec39-445e-a56f-5b203d7e7a2f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Regal Behemoth": {
@@ -228422,12 +228422,12 @@
     },
     "Ro Laren, Double Agent": {
       "edhrec_rank": 22819,
-      "gate": "template",
+      "gate": null,
       "name": "Ro Laren, Double Agent",
-      "reason": "no template for: Seek out — Whenever you draw your second card each turn, Ro Laren deals 2 damage to each o",
+      "reason": "",
       "scryfall_id": "54e9ffed-d541-4760-b9ae-8e62a4364da3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Road // Ruin": {
@@ -229502,12 +229502,12 @@
     },
     "Rom and Leeta, Unlikely Pair": {
       "edhrec_rank": 21153,
-      "gate": "template",
+      "gate": null,
       "name": "Rom and Leeta, Unlikely Pair",
-      "reason": "no template for: Seek out — Whenever you draw your second card each turn, create two tapped Treasure tokens",
+      "reason": "",
       "scryfall_id": "2bba1d93-0904-464b-9797-a0f0f4b05df8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Romana II": {
@@ -244272,12 +244272,12 @@
     },
     "Seven of Nine, Tertiary Adjunct": {
       "edhrec_rank": 18109,
-      "gate": "template",
+      "gate": null,
       "name": "Seven of Nine, Tertiary Adjunct",
-      "reason": "no template for: That Is Irrelevant — {T}: Draw a card, then discard a card. When you discard a nonland car",
+      "reason": "",
       "scryfall_id": "a5566e13-727d-4f51-a7af-9724df2d56e5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Seven of Nine, Unassimilated": {
@@ -263942,12 +263942,12 @@
     },
     "Spot, Felis catus": {
       "edhrec_rank": 22903,
-      "gate": "template",
+      "gate": null,
       "name": "Spot, Felis catus",
-      "reason": "no template for: Whenever Spot or another nontoken legendary permanent you control enters, create a Food to",
+      "reason": "",
       "scryfall_id": "ccdc8c1a-68ba-4498-a336-13676d8de107",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spotcycle Scouter": {
@@ -268512,12 +268512,12 @@
     },
     "Stonespeaker Crystal": {
       "edhrec_rank": 3098,
-      "gate": "template",
+      "gate": null,
       "name": "Stonespeaker Crystal",
-      "reason": "no template for: {2}, {T}, Sacrifice this artifact: Exile any number of target players' graveyards. Draw a ",
+      "reason": "",
       "scryfall_id": "7654eb50-4ac1-4388-aea6-373aa2b361ae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stonesplitter Bolt": {
@@ -280662,12 +280662,12 @@
     },
     "Temporal Tribulation": {
       "edhrec_rank": 21730,
-      "gate": "template",
+      "gate": null,
       "name": "Temporal Tribulation",
-      "reason": "no template for: Exile two target permanents you control. Return those cards to the battlefield under their",
+      "reason": "",
       "scryfall_id": "44fc3020-1f50-4e26-a559-19a1784b0563",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Temporary Insanity": {
@@ -292242,12 +292242,12 @@
     },
     "Tom Paris, Risk-Taker": {
       "edhrec_rank": 22960,
-      "gate": "template",
+      "gate": null,
       "name": "Tom Paris, Risk-Taker",
-      "reason": "no template for: Seek out — Whenever you draw your second card each turn, creatures you control gain flying",
+      "reason": "",
       "scryfall_id": "04ea9781-885c-479b-9b96-c08ba56a6438",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tom, Bert, and William": {
@@ -294392,12 +294392,12 @@
     },
     "Training Center": {
       "edhrec_rank": 149,
-      "gate": "template",
+      "gate": null,
       "name": "Training Center",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "12e601d1-cf31-4077-b3ad-e13dfce4dac3",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Training Compound": {
@@ -298162,12 +298162,12 @@
     },
     "Tuvok, Chief Tactical Officer": {
       "edhrec_rank": 26293,
-      "gate": "template",
+      "gate": null,
       "name": "Tuvok, Chief Tactical Officer",
-      "reason": "no template for: When Tuvok enters during the declare attackers step, choose up to two target attacking cre",
+      "reason": "",
       "scryfall_id": "40f61357-37b2-45b1-8163-69f016f794ec",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tuya Bearclaw": {
@@ -307982,12 +307982,12 @@
     },
     "Vic Fontaine, One Night Only": {
       "edhrec_rank": 26300,
-      "gate": "template",
+      "gate": null,
       "name": "Vic Fontaine, One Night Only",
-      "reason": "no template for: Seek out — Whenever you draw your second card each turn, one or two target creatures each ",
+      "reason": "",
       "scryfall_id": "41887da1-5ff0-4785-a3ab-95fff12ca79e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vicious Battlerager": {

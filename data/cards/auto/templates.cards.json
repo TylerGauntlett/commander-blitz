@@ -229529,6 +229529,59 @@
     {
       "abilities": [
         {
+          "affects": {
+            "any_of": [
+              {
+                "types": [
+                  "Artifact",
+                  "Creature"
+                ]
+              },
+              {
+                "supertypes": [
+                  "Legendary"
+                ],
+                "types": [
+                  "Creature"
+                ]
+              },
+              {
+                "subtypes": [
+                  "Saga"
+                ],
+                "types": [
+                  "Creature"
+                ]
+              }
+            ],
+            "controller": "you"
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "Historic creatures you control have flying. (Artifacts, legendaries, and Sagas are historic.)"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "on_the_shoulders_of_giants",
+      "mana_cost": "{2}{U}",
+      "name": "On the Shoulders of Giants",
+      "oracle_text": "Historic creatures you control have flying. (Artifacts, legendaries, and Sagas are historic.)",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "condition": {
@@ -259336,6 +259389,97 @@
         {
           "effects": [
             {
+              "as": "reg_copy",
+              "controller": "you",
+              "except_": {
+                "add_keywords": [
+                  "haste"
+                ],
+                "add_subtypes": [
+                  "Illusion"
+                ],
+                "add_types": [
+                  "Artifact"
+                ],
+                "remove_supertypes": [
+                  "Legendary"
+                ]
+              },
+              "objects": {
+                "target": "t1"
+              },
+              "op": "copy_permanent"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "reg_copy",
+                    "count": "all"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Exile that token at the beginning of the next end step."
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Seek out — Whenever you draw your second card each turn, create a token that's a copy of another target creature you control, except it isn't legendary, it's an Illusion artifact in addition to its other types, and it has haste. Exile that token at the beginning of the next end step",
+          "trigger": {
+            "controller": "you",
+            "event": "draw",
+            "nth": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "reg_barclay_fidgety_fantasist",
+      "mana_cost": "{2}{U}{R}",
+      "name": "Reg Barclay, Fidgety Fantasist",
+      "oracle_text": "Seek out — Whenever you draw your second card each turn, create a token that's a copy of another target creature you control, except it isn't legendary, it's an Illusion artifact in addition to its other types, and it has haste. Exile that token at the beginning of the next end step.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "op": "become_monarch",
               "player": "you"
             }
@@ -266859,6 +267003,70 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Seek out — Whenever you draw your second card each turn, Ro Laren deals 2 damage to each opponent.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw",
+            "nth": 2
+          }
+        },
+        {
+          "cost": {
+            "discard": 1,
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, {T}, Discard a card: Draw a card."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "ro_laren_double_agent",
+      "mana_cost": "{2}{R}",
+      "name": "Ro Laren, Double Agent",
+      "oracle_text": "Seek out — Whenever you draw your second card each turn, Ro Laren deals 2 damage to each opponent.\n{1}, {T}, Discard a card: Draw a card.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Bajoran",
+        "Rogue",
+        "Officer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -267857,6 +268065,53 @@
       "toughness": 4,
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "controller": "you",
+              "op": "create_token",
+              "tapped": true,
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Seek out — Whenever you draw your second card each turn, create two tapped Treasure tokens.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw",
+            "nth": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "rom_and_leeta_unlikely_pair",
+      "mana_cost": "{3}{R}",
+      "name": "Rom and Leeta, Unlikely Pair",
+      "oracle_text": "Seek out — Whenever you draw your second card each turn, create two tapped Treasure tokens.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Ferengi",
+        "Bajoran"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -282995,6 +283250,106 @@
       ],
       "toughness": 2,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "seven_discarded",
+              "op": "discard",
+              "player": "you"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "seven_discarded",
+                  "not_types": [
+                    "Land"
+                  ]
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "ability": "seven_charge",
+                  "op": "reflexive_trigger"
+                }
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "That Is Irrelevant — {T}: Draw a card, then discard a card."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "counter": "charge",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "id": "seven_charge",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When you discard a nonland card this way, put two charge counters on up to one target artifact."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "seven_of_nine_tertiary_adjunct",
+      "mana_cost": "{2}{U}",
+      "name": "Seven of Nine, Tertiary Adjunct",
+      "oracle_text": "That Is Irrelevant — {T}: Draw a card, then discard a card. When you discard a nonland card this way, put two charge counters on up to one target artifact.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Borg"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },
@@ -304524,6 +304879,100 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "food_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Spot or another nontoken legendary permanent you control enters, create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "any_of": [
+                {
+                  "self_only": true
+                },
+                {
+                  "exclude_self": true,
+                  "is_token": false,
+                  "supertypes": [
+                    "Legendary"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{4}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "subtypes": [
+                "Food"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{4}, Sacrifice a Food: Destroy target artifact."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "spot_felis_catus",
+      "mana_cost": "{2}{W}",
+      "name": "Spot, Felis catus",
+      "oracle_text": "Whenever Spot or another nontoken legendary permanent you control enters, create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")\n{4}, Sacrifice a Food: Destroy target artifact.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Cat"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -308571,6 +309020,75 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}{C}."
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "count": "all",
+                "player": {
+                  "target": "t1"
+                },
+                "zone": "graveyard"
+              },
+              "op": "exile"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "player",
+              "selector": {}
+            }
+          ],
+          "text": "{2}, {T}, Sacrifice this artifact: Exile any number of target players' graveyards. Draw a card."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "stonespeaker_crystal",
+      "mana_cost": "{4}",
+      "name": "Stonespeaker Crystal",
+      "oracle_text": "{T}: Add {C}{C}.\n{2}, {T}, Sacrifice this artifact: Exile any number of target players' graveyards. Draw a card.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -325976,6 +326494,59 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "flashback": {
+        "mana": "{5}{U}"
+      },
+      "id": "temporal_tribulation",
+      "mana_cost": "{2}{U}",
+      "name": "Temporal Tribulation",
+      "oracle_text": "Exile two target permanents you control. Return those cards to the battlefield under their owner's control at the beginning of the next end step.\nFlashback {5}{U} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "exiled",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        },
+        {
+          "effects": [
+            {
+              "controller": "owner",
+              "objects": {
+                "binding": "exiled"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "op": "delay",
+          "step": "end_step",
+          "text": "Return those cards to the battlefield under their owner's control at the beginning of the next end step."
+        }
+      ],
+      "targets": [
+        {
+          "count": 2,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -343227,6 +343798,63 @@
         {
           "effects": [
             {
+              "keywords": [
+                "flying",
+                "double_strike",
+                "vigilance",
+                "haste"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Seek out — Whenever you draw your second card each turn, creatures you control gain flying, double strike, vigilance, and haste until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw",
+            "nth": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "tom_paris_risk_taker",
+      "mana_cost": "{4}{U}{R}",
+      "name": "Tom Paris, Risk-Taker",
+      "oracle_text": "Seek out — Whenever you draw your second card each turn, creatures you control gain flying, double strike, vigilance, and haste until end of turn.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pilot"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "effects": [],
               "else": [
                 {
@@ -345443,6 +346071,69 @@
       "toughness": 6,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "U"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "R"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U} or {R}."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [],
+      "id": "training_center",
+      "name": "Training Center",
+      "oracle_text": "This land enters tapped unless you have two or more opponents.\n{T}: Add {U} or {R}.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "player_count": "each_opponent"
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -349552,6 +350243,84 @@
         "Beast"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "each"
+                      },
+                      "op": "redirect_attack"
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Reselect which player or permanent this creature is attacking?"
+                }
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "for_each"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 2,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "attacking": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "When Tuvok enters during the declare attackers step, choose up to two target attacking creatures. For each of them, you may reselect which player or permanent that creature is attacking.",
+          "trigger": {
+            "condition": {
+              "step_is": "declare_attackers"
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "tuvok_chief_tactical_officer",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Tuvok, Chief Tactical Officer",
+      "oracle_text": "Flash\nWhen Tuvok enters during the declare attackers step, choose up to two target attacking creatures. For each of them, you may reselect which player or permanent that creature is attacking. (A creature can't attack its controller.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vulcan",
+        "Officer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -361961,6 +362730,85 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "const": 2
+              },
+              "toughness": {
+                "const": 0
+              }
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "lifelink"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 2,
+              "id": "t1",
+              "kind": "permanent",
+              "min_count": 1,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "Seek out — Whenever you draw your second card each turn, one or two target creatures each get +2/+0 and gain lifelink until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw",
+            "nth": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "vic_fontaine_one_night_only",
+      "mana_cost": "{1}{R}{W}",
+      "name": "Vic Fontaine, One Night Only",
+      "oracle_text": "Seek out — Whenever you draw your second card each turn, one or two target creatures each get +2/+0 and gain lifelink until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Illusion",
+        "Performer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact",
+        "Creature"
       ]
     },
     {
