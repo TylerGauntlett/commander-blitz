@@ -5,8 +5,8 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
-status: in_progress
+depends_on: [voting, changeling-every-type]
+status: proposed
 rank: 95
 ---
 
@@ -18,7 +18,15 @@ coming-soon shell on the shelf: its row `voc_spirit_squadron` is in
 `GET /api/precons/upcoming` serves it.
 `python scripts/sync_precons.py --missing voc_spirit_squadron` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
+waits on. Two remain, and each waits on an item that is not yet decided:
+
+- **Voting.** Custodi Squire's will of the council ("each player votes for an
+  artifact, creature, or enchantment card in your graveyard") needs the
+  tally [voting](#voting-will-of-the-council-and-councils-dilemma) builds.
+- **Every creature type.** Mirror Entity is a changeling and grants "all
+  creature types" until end of turn, which a closed subtype list cannot say
+  ([changeling-every-type](#every-creature-type-means-every-creature-type)).
+- Nothing else: every other card on the list is native.
 
 ## The change
 
