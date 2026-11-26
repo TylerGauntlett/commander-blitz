@@ -54,22 +54,9 @@ whole-game test able to draw the deck.
   own item through `/plan-feature`, adds it to this item's `depends_on`, sets
   this item back to `proposed`, and opens the pull request with the cards and
   capabilities done so far. This item stays until the deck is whole.
-
-## Open questions
-
-- **The set is newer than the card index.** `data/catalog/cards.sqlite` is
-  built from a Scryfall bundle older than this precon (its `meta` table names
-  the bundle), so of the cards `sync_precons.py --missing trc_federation_fleet`
-  lists, only the reprints are in the catalog; for every new Star Trek card
-  `author_cards.py --card` answers "no card named … in the catalog", and no
-  packet, template or gate can reach it. **Today**'s claim that the pipeline
-  can author the `--missing` list does not hold until the index is rebuilt.
-  Does a precon batch rebuild the catalog (`build_card_index.py --refresh`)
-  inside its own pull request, or does the refresh land first as its own item
-  that every `precon-trc-*` item depends on? Recommended: its own item, a
-  `chore(cards):` refresh of `cards.sqlite` and `registry_images.json` with the
-  new art, added to the `depends_on` of all four `precon-trc-*` items, because
-  a refresh moves every EDHREC rank and some oracle text across the whole
-  catalog and deserves its own review; the same question is open on
-  [precon-soc-prismari-artistry](precon-soc-prismari-artistry.md), and one
-  answer can settle both.
+- **The set is newer than the card index:** the owner's answer was to make
+  whatever changes the cards need, in this pull request: the catalog is
+  rebuilt with `build_card_index.py --refresh` as its own commit, and the
+  capabilities the gap records name (the Officer and Spacecraft Illusion
+  tokens, station, entering as a copy of a graveyard card, and `add_counters`
+  binding its count) are built here, one commit each.
