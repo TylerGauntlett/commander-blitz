@@ -1,0 +1,53 @@
+{
+  "card": {
+    "id": "spot_felis_catus",
+    "name": "Spot, Felis catus",
+    "oracle_text": "Whenever Spot or another nontoken legendary permanent you control enters, create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")\n{4}, Sacrifice a Food: Destroy target artifact.",
+    "mana_cost": "{2}{W}",
+    "types": ["Creature"],
+    "supertypes": ["Legendary"],
+    "subtypes": ["Cat"],
+    "power": 1,
+    "toughness": 1,
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever Spot or another nontoken legendary permanent you control enters, create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")",
+        "trigger": {
+          "event": "permanent_enters",
+          "controller": "you",
+          "filter": {
+            "any_of": [
+              {"self_only": true},
+              {"exclude_self": true, "is_token": false, "supertypes": ["Legendary"]}
+            ]
+          }
+        },
+        "effects": [
+          {"op": "create_token", "token": "food_token", "amount": {"const": 1}, "controller": "you"}
+        ]
+      },
+      {
+        "kind": "activated",
+        "text": "{4}, Sacrifice a Food: Destroy target artifact.",
+        "cost": {
+          "mana": "{4}",
+          "sacrifice": {"controller": "you", "count": 1, "subtypes": ["Food"], "zone": "battlefield"}
+        },
+        "targets": [
+          {"id": "t1", "kind": "permanent", "count": 1, "selector": {"types": ["Artifact"], "zone": "battlefield"}}
+        ],
+        "effects": [
+          {"op": "destroy", "objects": {"target": "t1"}}
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 34,
+    "tokens": {"id": "food_token", "count": 1}
+  }
+}

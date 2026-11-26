@@ -1,0 +1,22 @@
+{
+  "card_id": "u_s_s_enterprise_e_sovereign",
+  "name": "U.S.S. Enterprise-E, Sovereign",
+  "oracle_text": "When U.S.S. Enterprise-E enters, destroy all tapped creatures.\nStation (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)\n8+ | Flying, vigilance",
+  "blocked_sentences": [
+    "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)",
+    "8+ | Flying, vigilance"
+  ],
+  "needs": [
+    {
+      "capability": "station",
+      "kind": "engine",
+      "what": "Station symbols (721) on keyword abilities: a `threshold: {counter: charge, at_least: 8}` that makes the permanent HAVE flying and vigilance only at 8+ charge counters, plus the Spacecraft rule that the permanent is an artifact creature with its printed P/T (7/7) only at its highest station threshold (8+) and a noncreature artifact below it",
+      "why_existing_wont_do": "Ability.threshold is accepted only on activated abilities (the packet notes: 'Activated abilities only'); a counters-conditioned grant_keyword static would leave the ability on the permanent, which the notes forbid for striations; and nothing gates the Spacecraft becoming a 7/7 artifact creature at 8+ -- a counters-conditioned set_types static would approximate rule 721 rather than implement station. The Station activation itself (tap_permanents with `as` + add_counters power_of) and the enters trigger are expressible, but the card is only partly expressible"
+    }
+  ],
+  "closest_existing": [
+    "threshold",
+    "tap_permanents"
+  ],
+  "confidence": "high"
+}
