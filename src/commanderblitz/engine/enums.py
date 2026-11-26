@@ -595,7 +595,7 @@ class LossReason(str, Enum):
 #: "Land - Goblin" that a Goblin anthem still pumps.
 #:
 #: **Creature types are the default and are deliberately absent.** There are 321
-#: of them against 149 of everything else, the list grows with every set, and
+#: of them against 151 of everything else, the list grows with every set, and
 #: a missing entry has to fail in the safe direction: an unknown subtype read as
 #: a creature type is dropped when Creature is, which is right for every new
 #: creature type and wrong only for a new artifact or enchantment type -- which
@@ -630,6 +630,7 @@ SUBTYPE_CLASS: dict[str, str] = {
     "Class": "Enchantment",
     "Clue": "Artifact",
     "Comet": "Planeswalker",
+    "Communicator": "Artifact",
     "Curse": "Enchantment",
     "Dack": "Planeswalker",
     "Dakkon": "Planeswalker",
@@ -742,6 +743,7 @@ SUBTYPE_CLASS: dict[str, str] = {
     "Urza": "Planeswalker",
     "Urza's": "Land",
     "Vehicle": "Artifact",
+    "Vengeance": "Spell",
     "Venser": "Planeswalker",
     "Vibranium": "Artifact",
     "Vivien": "Planeswalker",
