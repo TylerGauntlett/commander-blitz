@@ -1,0 +1,32 @@
+{
+  "card": {
+    "id": "spectral_shepherd",
+    "name": "Spectral Shepherd",
+    "oracle_text": "Flying\n{1}{U}: Return target Spirit you control to its owner's hand.",
+    "mana_cost": "{2}{W}",
+    "types": ["Creature"],
+    "subtypes": ["Spirit"],
+    "power": 2,
+    "toughness": 2,
+    "colors": ["W"],
+    "color_identity": ["U", "W"],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "{1}{U}: Return target Spirit you control to its owner's hand.",
+        "cost": {"mana": "{1}{U}"},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "count": 1,
+            "selector": {"controller": "you", "subtypes": ["Spirit"], "zone": "battlefield"}
+          }
+        ],
+        "effects": [{"op": "return_to_hand", "objects": {"target": "t1"}}]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}
