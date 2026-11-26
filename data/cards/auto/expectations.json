@@ -29294,6 +29294,37 @@
     },
     "zone": "battlefield"
   },
+  "u_s_s_defiant_tough_little_ship": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
+  "u_s_s_enterprise_c_time_tossed": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
+  "u_s_s_enterprise_e_sovereign": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "u_s_s_prometheus_prototype": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "u_s_s_stargazer_here_and_there": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ugin_s_insight": {
     "hand_size": {
       "0": 4

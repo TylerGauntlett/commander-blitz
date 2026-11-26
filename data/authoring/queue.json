@@ -299202,12 +299202,12 @@
     },
     "U.S.S. Defiant, Tough Little Ship": {
       "edhrec_rank": 18848,
-      "gate": "template",
+      "gate": null,
       "name": "U.S.S. Defiant, Tough Little Ship",
-      "reason": "no template for: When U.S.S. Defiant enters, destroy up to one target artifact or enchantment",
+      "reason": "",
       "scryfall_id": "6062ec17-98bb-4cf7-853e-0b43c2ce4b26",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "U.S.S. Discovery, at Black Alert": {
@@ -299232,12 +299232,12 @@
     },
     "U.S.S. Enterprise-C, Time-Tossed": {
       "edhrec_rank": 20436,
-      "gate": "template",
+      "gate": null,
       "name": "U.S.S. Enterprise-C, Time-Tossed",
-      "reason": "no template for: When U.S.S. Enterprise-C enters or dies, you may discard your hand. If you do, draw a card",
+      "reason": "",
       "scryfall_id": "20a62007-baf3-4e1b-80e1-71b7a7efd13f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "U.S.S. Enterprise-D, Galaxy-Class": {
@@ -299252,12 +299252,12 @@
     },
     "U.S.S. Enterprise-E, Sovereign": {
       "edhrec_rank": 18716,
-      "gate": "template",
+      "gate": null,
       "name": "U.S.S. Enterprise-E, Sovereign",
-      "reason": "no template for: Station",
+      "reason": "",
       "scryfall_id": "15e74da6-477c-4ab3-8b91-40f4b2d22f94",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "U.S.S. Excelsior, Cutting Edge": {
@@ -299282,12 +299282,12 @@
     },
     "U.S.S. Prometheus, Prototype": {
       "edhrec_rank": 18465,
-      "gate": "template",
+      "gate": null,
       "name": "U.S.S. Prometheus, Prototype",
-      "reason": "no template for: Station",
+      "reason": "",
       "scryfall_id": "24981fe7-d9cd-4273-9f42-a265d7de3087",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "U.S.S. Reliant, From Hell's Heart": {
@@ -299302,12 +299302,12 @@
     },
     "U.S.S. Stargazer, Here and There": {
       "edhrec_rank": 20091,
-      "gate": "template",
+      "gate": null,
       "name": "U.S.S. Stargazer, Here and There",
-      "reason": "no template for: Station",
+      "reason": "",
       "scryfall_id": "b63286ae-127b-4eb0-870f-f105decf575a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "U.S.S. Voyager, Lone Wanderer": {

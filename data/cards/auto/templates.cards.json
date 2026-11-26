@@ -352281,6 +352281,533 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Enchantment"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When U.S.S. Defiant enters, destroy up to one target artifact or enchantment.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "as": "stationed",
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "binding": "stationed"
+                }
+              },
+              "counter": "charge",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 5+.)"
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying",
+            "hexproof"
+          ],
+          "kind": "static",
+          "text": "5+ | Flying, hexproof",
+          "threshold": {
+            "at_least": 5,
+            "counter": "charge"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "u_s_s_defiant_tough_little_ship",
+      "mana_cost": "{6}",
+      "name": "U.S.S. Defiant, Tough Little Ship",
+      "oracle_text": "When U.S.S. Defiant enters, destroy up to one target artifact or enchantment.\nStation (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 5+.)\n5+ | Flying, hexproof",
+      "power": 7,
+      "source": "auto",
+      "station": 5,
+      "subtypes": [
+        "Spacecraft"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "pitched",
+                  "op": "discard",
+                  "player": "you",
+                  "whole_hand": true
+                },
+                {
+                  "amount": {
+                    "count": {
+                      "binding": "pitched"
+                    }
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Discard your hand and draw that many cards?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When U.S.S. Enterprise-C enters or dies, you may discard your hand. If you do, draw a card for each card discarded this way.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "pitched",
+                  "op": "discard",
+                  "player": "you",
+                  "whole_hand": true
+                },
+                {
+                  "amount": {
+                    "count": {
+                      "binding": "pitched"
+                    }
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Discard your hand and draw that many cards?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When U.S.S. Enterprise-C enters or dies, you may discard your hand. If you do, draw a card for each card discarded this way.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "as": "stationed",
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "binding": "stationed"
+                }
+              },
+              "counter": "charge",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 3+.)"
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "3+ | Flying",
+          "threshold": {
+            "at_least": 3,
+            "counter": "charge"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "u_s_s_enterprise_c_time_tossed",
+      "mana_cost": "{5}",
+      "name": "U.S.S. Enterprise-C, Time-Tossed",
+      "oracle_text": "When U.S.S. Enterprise-C enters or dies, you may discard your hand. If you do, draw a card for each card discarded this way.\nStation (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 3+.)\n3+ | Flying",
+      "power": 6,
+      "source": "auto",
+      "station": 3,
+      "subtypes": [
+        "Spacecraft"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "tapped": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When U.S.S. Enterprise-E enters, destroy all tapped creatures.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "as": "stationed",
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "binding": "stationed"
+                }
+              },
+              "counter": "charge",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)"
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying",
+            "vigilance"
+          ],
+          "kind": "static",
+          "text": "8+ | Flying, vigilance",
+          "threshold": {
+            "at_least": 8,
+            "counter": "charge"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "u_s_s_enterprise_e_sovereign",
+      "mana_cost": "{3}{W}{W}",
+      "name": "U.S.S. Enterprise-E, Sovereign",
+      "oracle_text": "When U.S.S. Enterprise-E enters, destroy all tapped creatures.\nStation (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)\n8+ | Flying, vigilance",
+      "power": 7,
+      "source": "auto",
+      "station": 8,
+      "subtypes": [
+        "Spacecraft"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 7,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap_permanents": {
+              "as": "stationed",
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "binding": "stationed"
+                }
+              },
+              "counter": "charge",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 4+.)"
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "4+ | Flying",
+          "threshold": {
+            "at_least": 4,
+            "counter": "charge"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "damage",
+              "player": {
+                "except": "you",
+                "not": {
+                  "binding": "defender"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "8+ | Multivector Assault Mode — Whenever U.S.S. Prometheus deals combat damage to an opponent, it deals that much damage to each other opponent.",
+          "threshold": {
+            "at_least": 8,
+            "counter": "charge"
+          },
+          "trigger": {
+            "condition": {
+              "cmp": "<",
+              "left": {
+                "player_count": {
+                  "except": "you",
+                  "not": {
+                    "binding": "defender"
+                  }
+                }
+              },
+              "right": {
+                "player_count": "each_opponent"
+              }
+            },
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "u_s_s_prometheus_prototype",
+      "mana_cost": "{5}",
+      "name": "U.S.S. Prometheus, Prototype",
+      "oracle_text": "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 4+.)\n4+ | Flying\n8+ | Multivector Assault Mode — Whenever U.S.S. Prometheus deals combat damage to an opponent, it deals that much damage to each other opponent.",
+      "power": 6,
+      "source": "auto",
+      "station": 4,
+      "subtypes": [
+        "Spacecraft"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap_permanents": {
+              "as": "stationed",
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "binding": "stationed"
+                }
+              },
+              "counter": "charge",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 6+.)"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "picard_token",
+              "attacking": true,
+              "op": "create_token",
+              "tapped": true,
+              "token": "spacecraft_illusion_4_3_c_artifact_flying"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "picard_token"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "delay",
+              "step": "end_of_combat",
+              "text": "Exile that token at end of combat."
+            }
+          ],
+          "kind": "triggered",
+          "text": "Picard Maneuver — Whenever U.S.S. Stargazer attacks, create a tapped and attacking 4/3 colorless Spacecraft Illusion artifact creature token with flying. Exile that token at end of combat.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "6+ | Flying",
+          "threshold": {
+            "at_least": 6,
+            "counter": "charge"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "u_s_s_stargazer_here_and_there",
+      "mana_cost": "{3}",
+      "name": "U.S.S. Stargazer, Here and There",
+      "oracle_text": "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 6+.)\n6+ | Flying\nPicard Maneuver — Whenever U.S.S. Stargazer attacks, create a tapped and attacking 4/3 colorless Spacecraft Illusion artifact creature token with flying. Exile that token at end of combat.",
+      "power": 4,
+      "source": "auto",
+      "station": 6,
+      "subtypes": [
+        "Spacecraft"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
