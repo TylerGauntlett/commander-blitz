@@ -149632,12 +149632,12 @@
     },
     "Kirtar's Wrath": {
       "edhrec_rank": 13266,
-      "gate": "template",
+      "gate": null,
       "name": "Kirtar's Wrath",
-      "reason": "no template for: Destroy all creatures. They can't be regenerated",
+      "reason": "",
       "scryfall_id": "fbbbbbf7-eaae-462e-a8eb-7f6a97703600",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kishla Skimmer": {
@@ -173372,12 +173372,12 @@
     },
     "Millicent, Restless Revenant": {
       "edhrec_rank": 10707,
-      "gate": "template",
+      "gate": null,
       "name": "Millicent, Restless Revenant",
-      "reason": "no template for: Affinity for Spirits",
+      "reason": "",
       "scryfall_id": "2b86b538-0766-440d-a2cd-f5d5bfcfb010",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Millikin": {
@@ -184172,12 +184172,12 @@
     },
     "Nebelgast Herald": {
       "edhrec_rank": 11169,
-      "gate": "template",
+      "gate": null,
       "name": "Nebelgast Herald",
-      "reason": "no template for: Whenever this creature or another Spirit you control enters, tap target creature an oppone",
+      "reason": "",
       "scryfall_id": "51173564-cd0e-410f-82fc-3d071e6f4d17",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nebelgast Intruder": {
@@ -206822,12 +206822,12 @@
     },
     "Priest of the Blessed Graf": {
       "edhrec_rank": 12327,
-      "gate": "template",
+      "gate": null,
       "name": "Priest of the Blessed Graf",
-      "reason": "no template for: At the beginning of your end step, create X 1/1 white Spirit creature tokens with flying, ",
+      "reason": "",
       "scryfall_id": "5b3947c1-f497-4407-ae29-287a490cceee",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Priest of the Blood Rite": {
@@ -208312,12 +208312,12 @@
     },
     "Promise of Bunrei": {
       "edhrec_rank": 11726,
-      "gate": "template",
+      "gate": null,
       "name": "Promise of Bunrei",
-      "reason": "no template for: When a creature you control dies, sacrifice this enchantment. If you do, create four 1/1 c",
+      "reason": "",
       "scryfall_id": "a40e9071-7b27-4070-bc3a-c095c2128953",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Promise of Loyalty": {

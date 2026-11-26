@@ -14613,6 +14613,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "kirtar_s_wrath": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 5
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "kishla_skimmer": {
     "battlefield_count": 33,
     "hand_size": {
@@ -17083,6 +17091,13 @@
   "millennial_gargoyle": {
     "zone": "battlefield"
   },
+  "millicent_restless_revenant": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "millikin": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -18066,6 +18081,11 @@
   },
   "nazgul_battle_mace": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "nebelgast_herald": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "necroblossom_snarl": {
@@ -20244,6 +20264,13 @@
     },
     "zone": "battlefield"
   },
+  "priest_of_the_blessed_graf": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "priest_of_the_crossing": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -20491,6 +20518,10 @@
     "zone": "battlefield"
   },
   "promise_of_aclazotz_foul_rebirth": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "promise_of_bunrei": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
