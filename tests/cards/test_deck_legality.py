@@ -74,6 +74,7 @@ PRECONS = {
     "soc_witherbloom_pestilence",
     "tdc_abzan_armor",
     "tdc_mardu_surge",
+    "trc_federation_fleet",
     "woc_fae_dominion",
     "woc_virtue_and_valor",
 }
