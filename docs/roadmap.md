@@ -153,52 +153,53 @@ on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
 
+**In progress:** [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander).
+
 **Ready now, best first:**
 
 1. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
 2. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-3. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
-4. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-5. [The Ring tempts you](#the-ring-tempts-you) — M, high
-6. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-7. [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) — S, medium
-8. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
-9. [Difficulty](#difficulty) — S, medium
-10. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-11. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
-12. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
-13. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-14. [Why a press is refused](#why-a-press-is-refused) — S, medium
-15. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-16. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
-17. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-18. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
-19. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
-20. [Secret choices](#secret-choices) — M, medium
-21. [Experience counters](#experience-counters) — M, medium
-22. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-23. [Outcomes as data](#outcomes-as-data) — M, medium
-24. [Rad counters](#rad-counters) — M, medium
-25. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
-26. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
-27. [A type-setting static ordered against later animations](#a-type-setting-static-ordered-against-later-animations) — M, medium
-28. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-29. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-30. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
-31. [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) — M, medium
-32. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
-33. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
-34. [Replays and sharing](#replays-and-sharing) — M, medium
-35. [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) — M, medium
-36. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-37. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-38. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-39. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-40. [Archidekt import](#archidekt-import) — S, low
-41. [Sound](#sound) — S, low
-42. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
-43. [A draw replaced by something other than more draws](#a-draw-replaced-by-something-other-than-more-draws) — M, low
-44. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
+3. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
+4. [The Ring tempts you](#the-ring-tempts-you) — M, high
+5. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+6. [A land that sacrifices itself on entering](#a-land-that-sacrifices-itself-on-entering) — S, medium
+7. [Time Lord as one creature type](#time-lord-as-one-creature-type) — S, medium
+8. [Difficulty](#difficulty) — S, medium
+9. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+10. [Granted flashback permissions without a per-turn cap](#granted-flashback-permissions-without-a-per-turn-cap) — S, medium
+11. [The CPU attacks with defenders that may attack](#the-cpu-attacks-with-defenders-that-may-attack) — S, medium
+12. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+13. [Why a press is refused](#why-a-press-is-refused) — S, medium
+14. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+15. [A trigger for cards put into a graveyard](#a-trigger-for-cards-put-into-a-graveyard) — M, medium
+16. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
+17. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+18. [Rooms: two doors on one permanent, and the unlock action](#rooms-two-doors-on-one-permanent-and-the-unlock-action) — M, medium
+19. [Secret choices](#secret-choices) — M, medium
+20. [Experience counters](#experience-counters) — M, medium
+21. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
+22. [Outcomes as data](#outcomes-as-data) — M, medium
+23. [Rad counters](#rad-counters) — M, medium
+24. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+25. [A fixed target count is exact, not a ceiling](#a-fixed-target-count-is-exact-not-a-ceiling) — M, medium
+26. [A type-setting static ordered against later animations](#a-type-setting-static-ordered-against-later-animations) — M, medium
+27. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+28. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+29. [Cycling granted to cards in hand](#cycling-granted-to-cards-in-hand) — M, medium
+30. [Distributing counters from a triggered ability](#distributing-counters-from-a-triggered-ability) — M, medium
+31. [Encore, granted to cards in a graveyard](#encore-granted-to-cards-in-a-graveyard) — M, medium
+32. [Every creature type means every creature type](#every-creature-type-means-every-creature-type) — M, medium
+33. [Replays and sharing](#replays-and-sharing) — M, medium
+34. [The authoring sandbox resolves a card's own triggers](#the-authoring-sandbox-resolves-a-cards-own-triggers) — M, medium
+35. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+36. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+37. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+38. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+39. [Archidekt import](#archidekt-import) — S, low
+40. [Sound](#sound) — S, low
+41. [Target tapped creature" is not "enters tapped](#target-tapped-creature-is-not-enters-tapped) — S, low
+42. [A draw replaced by something other than more draws](#a-draw-replaced-by-something-other-than-more-draws) — M, low
+43. [Planechase: the planar deck and planeswalking](#planechase-the-planar-deck-and-planeswalking) — L, low
 
 **Blocked, and by what:**
 
@@ -4820,7 +4821,7 @@ whole-game test able to draw the deck.
 
 ### Vampiric Bloodline (Crimson Vow Commander)
 
-Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
 
 #### Today
 
