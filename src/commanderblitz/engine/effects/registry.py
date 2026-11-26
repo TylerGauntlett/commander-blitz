@@ -31,6 +31,12 @@ RECORDING_OPS = frozenset(
         #: accumulating semantics -- "airbend all other creatures" is one pool
         #: a later line may need to name.
         "airbend",
+        #: A plain **int**, like `lose_life`'s: the counters actually put,
+        #: after every replacement and zero for a forbidden placement, summed
+        #: over every recipient -- Guinan, Ancient Advisor's "if you put two or
+        #: more +1/+1 counters on creatures this way". See
+        #: `ops_counters.op_add_counters`.
+        "add_counters",
         #: The amassed Army, a list of zero or one oids -- "the
         #: amassed Army's power". See `ops_counters.op_amass`.
         "amass",

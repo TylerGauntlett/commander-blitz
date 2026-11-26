@@ -241,7 +241,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                              None),
     "create_token": ("Board", "Create N tokens by id; `as` records them; `power`/`toughness` size an X/X token; `counters` (kind to value) are what each token enters with.",
                      'An X/X token — "create an X/X blue Shark creature token"'),
-    "add_counters": ("Board", "Put N counters of a kind on permanents (`objects`), or of a bound kind on players (`player`); `counter: {\"binding\": \"counter\"}` on a `counter_placed` trigger is the kind that placement put, and any other `{\"binding\": …}` a kind `choose_counter_kind` or `for_each_counter_kind` bound.",
+    "add_counters": ("Board", "Put N counters of a kind on permanents (`objects`), or of a bound kind on players (`player`); `counter: {\"binding\": \"counter\"}` on a `counter_placed` trigger is the kind that placement put, and any other `{\"binding\": …}` a kind `choose_counter_kind` or `for_each_counter_kind` bound. `as` binds the total actually put, after replacements.",
                      None),
     "multiply_token_creation": ("Board", "Until end of turn, tokens created under a player are multiplied (twice that many); outlives its source.",
                                 'Until end of turn, "twice that many of those tokens"'),

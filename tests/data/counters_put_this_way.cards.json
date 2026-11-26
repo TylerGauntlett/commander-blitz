@@ -1,0 +1,73 @@
+{
+  "_comment": "Shapes for tests/unit/counters/test_counters_put_this_way.py. t_cptw_advisor is Guinan, Ancient Advisor's ability on a plain creature; t_cptw_ward forbids +1/+1 counters on Walls you control, and t_cptw_wall is the Wall it reaches, so one arrival can be shielded while another is not.",
+  "cards": [
+    {
+      "id": "t_cptw_advisor",
+      "name": "Test Counting Advisor",
+      "oracle_text": "{1}, {T}: Put a +1/+1 counter on each creature you control that entered this turn. If you put two or more +1/+1 counters on creatures this way, draw a card.",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 1,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, {T}: Put a +1/+1 counter on each creature you control that entered this turn. If you put two or more +1/+1 counters on creatures this way, draw a card.",
+          "cost": {"mana": "{1}", "tap": true},
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {"const": 1},
+              "objects": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": ["Creature"],
+                "entered_this_turn": true
+              },
+              "as": "put"
+            },
+            {
+              "op": "if",
+              "condition": {"cmp": ">=", "left": {"binding": "put"}, "right": {"const": 2}},
+              "then": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_cptw_ward",
+      "name": "Test Wall Ward",
+      "oracle_text": "Walls you control can't have +1/+1 counters put on them.",
+      "mana_cost": "{1}{W}",
+      "types": ["Enchantment"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Walls you control can't have +1/+1 counters put on them.",
+          "effect": "cant_have_counters",
+          "counter": "+1/+1",
+          "affects": {"controller": "you", "types": ["Creature"], "subtypes": ["Wall"]}
+        }
+      ]
+    },
+    {
+      "id": "t_cptw_wall",
+      "name": "Test Counted Wall",
+      "oracle_text": "",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Wall"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 0,
+      "toughness": 4
+    }
+  ]
+}

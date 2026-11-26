@@ -1105,7 +1105,7 @@ number**" sayable at all. `count` defaults to `"all"`.
 The ops that record are `engine.effects.RECORDING_OPS` -- among them `sacrifice`,
 `reveal`, `exile`, `destroy`, `create_token`, `copy_permanent`, `gain_control`, `snapshot`,
 `join_forces`, `roll_dice`, `search_library`, `search_zones`, `discard`, `mill`,
-`may`, `draw`, `lose_life` and `damage`. **No other op does**, and an `as` on one
+`may`, `draw`, `lose_life`, `add_counters` and `damage`. **No other op does**, and an `as` on one
 that does not is a load error — it would name a binding nothing writes, every
 read of it would be 0, and the card's second sentence would silently do nothing.
 
@@ -1205,7 +1205,31 @@ shielded creature is destroyed and counted. The near miss is a `count` or
 `snapshot` of the creatures ahead of the wrath, which gains a life for every
 survivor. The binding accumulates across a loop, as `exile`'s does.
 
+`add_counters`' is a plain **int**, like `lose_life`'s and `remove_counters`':
+the number of counters actually put, summed over every permanent (or player)
+the op reached — Guinan, Ancient Advisor's "if you put two or more +1/+1
+counters on creatures **this way**, draw a card". Actually put, after every
+counter replacement: one creature under Hardened Scales or Doubling Season
+contributes two, and one a `cant_have_counters` static protects contributes
+none. Read it as a value, `{"binding": …}`, in an `if`'s `cmp` or an `amount`;
+it is not a pool, so `{"count": {"binding": …}}` reads 0. The near miss is a
+`count` of the recipients (`entered_this_turn` creatures you control), which is
+the printed number only while nothing modifies the placement, and
+`counters_put_this_turn`, which is the whole turn's ledger. The binding is this
+op's alone and overwrites an earlier value of the same name.
+
 ```jsonc
+// Guinan, Ancient Advisor — "{1}, {T}: Put a +1/+1 counter on each creature you
+// control that entered this turn. If you put two or more +1/+1 counters on
+// creatures this way, draw a card."
+{ "op": "add_counters", "counter": "+1/+1", "amount": { "const": 1 },
+  "objects": { "zone": "battlefield", "controller": "you",
+               "types": ["Creature"], "entered_this_turn": true },
+  "as": "put" },
+{ "op": "if",
+  "condition": { "cmp": ">=", "left": { "binding": "put" }, "right": { "const": 2 } },
+  "then": [ { "op": "draw", "player": "you", "amount": { "const": 1 } } ] }
+
 // Grey Host Reinforcements — "…equal to the number of creature cards exiled this way."
 { "op": "exile", "as": "exiled",
   "objects": { "zone": "graveyard", "player": { "target": "t1" }, "count": "all" } },
