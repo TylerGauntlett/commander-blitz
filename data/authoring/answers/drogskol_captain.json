@@ -1,0 +1,33 @@
+{
+  "card": {
+    "id": "drogskol_captain",
+    "name": "Drogskol Captain",
+    "oracle_text": "Flying\nOther Spirit creatures you control get +1/+1 and have hexproof. (They can't be the targets of spells or abilities your opponents control.)",
+    "mana_cost": "{1}{W}{U}",
+    "types": ["Creature"],
+    "subtypes": ["Spirit", "Soldier"],
+    "power": 2,
+    "toughness": 2,
+    "colors": ["U", "W"],
+    "color_identity": ["U", "W"],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Other Spirit creatures you control get +1/+1 and have hexproof.",
+        "effect": "buff",
+        "affects": {"controller": "you", "exclude_self": true, "subtypes": ["Spirit"], "types": ["Creature"]},
+        "power": {"const": 1},
+        "toughness": {"const": 1}
+      },
+      {
+        "kind": "static",
+        "text": "Other Spirit creatures you control get +1/+1 and have hexproof.",
+        "effect": "grant_keyword",
+        "affects": {"controller": "you", "exclude_self": true, "subtypes": ["Spirit"], "types": ["Creature"]},
+        "keywords": ["hexproof"]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

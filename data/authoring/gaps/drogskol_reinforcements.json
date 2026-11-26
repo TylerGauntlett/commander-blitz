@@ -1,0 +1,14 @@
+{
+  "card_id": "drogskol_reinforcements",
+  "name": "Drogskol Reinforcements",
+  "oracle_text": "Melee (Whenever this creature attacks, it gets +1/+1 until end of turn for each opponent you attacked this combat.)\nOther Spirits you control have melee.\nPrevent all noncombat damage that would be dealt to Spirits you control.",
+  "blocked_sentences": ["Prevent all noncombat damage that would be dealt to Spirits you control."],
+  "needs": [{
+    "capability": "prevent_noncombat_damage",
+    "kind": "static_effect",
+    "what": "a noncombat_only flag on the prevent_damage static (the mirror of combat_only): with prevent_all and affects {controller: you, subtypes: [Spirit]}, it prevents damage to matching permanents only when the damage event is not combat damage",
+    "why_existing_wont_do": "The prevent_damage static carries combat_only (prevent only combat damage) and otherwise prevents all damage; prevented_damage/prevents_all_damage in engine/characteristics.py read only combat_only, so there is no way to exempt combat damage. Omitting the qualifier would also prevent combat damage to Spirits, which the card does not do. The other two lines (melee keyword, grant_keyword static over other Spirits you control) are expressible."
+  }],
+  "closest_existing": ["prevent_damage"],
+  "confidence": "high"
+}
