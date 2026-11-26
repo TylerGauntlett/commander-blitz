@@ -1,0 +1,53 @@
+{
+  "card": {
+    "id": "malfunctioning_holodeck",
+    "name": "Malfunctioning Holodeck",
+    "oracle_text": "Ward {2} (Whenever this artifact becomes the target of a spell or ability an opponent controls, counter it unless that player pays {2}.)\nWhen this artifact enters, exile target nonland permanent an opponent controls until this artifact leaves the battlefield.",
+    "mana_cost": "{2}{W}",
+    "types": ["Artifact"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "abilities": [
+      {
+        "kind": "static",
+        "effect": "ward",
+        "affects": {"self_only": true},
+        "cost": {"mana": "{2}"},
+        "text": "Ward {2} (Whenever this artifact becomes the target of a spell or ability an opponent controls, counter it unless that player pays {2}.)"
+      },
+      {
+        "kind": "triggered",
+        "text": "When this artifact enters, exile target nonland permanent an opponent controls until this artifact leaves the battlefield.",
+        "trigger": {"event": "self_enters", "source": "self"},
+        "targets": [
+          {
+            "id": "t1",
+            "kind": "permanent",
+            "selector": {"zone": "battlefield", "controller": "opponent", "not_types": ["Land"]},
+            "count": 1
+          }
+        ],
+        "effects": [
+          {"op": "exile", "objects": {"target": "t1"}, "until_leaves": true}
+        ]
+      },
+      {
+        "kind": "triggered",
+        "text": "When this artifact enters, exile target nonland permanent an opponent controls until this artifact leaves the battlefield.",
+        "trigger": {"event": "leaves_battlefield", "source": "self"},
+        "effects": [
+          {
+            "op": "put_onto_battlefield",
+            "objects": {"zone": "exile", "controller": "any", "exiled_with": "self"},
+            "controller": "owner"
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "card": {
+    "id": "on_the_shoulders_of_giants",
+    "name": "On the Shoulders of Giants",
+    "oracle_text": "Historic creatures you control have flying. (Artifacts, legendaries, and Sagas are historic.)",
+    "mana_cost": "{2}{U}",
+    "types": ["Enchantment"],
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "abilities": [
+      {
+        "kind": "static",
+        "text": "Historic creatures you control have flying. (Artifacts, legendaries, and Sagas are historic.)",
+        "effect": "grant_keyword",
+        "keywords": ["flying"],
+        "affects": {
+          "controller": "you",
+          "types": ["Creature"],
+          "any_of": [
+            {"types": ["Artifact"]},
+            {"supertypes": ["Legendary"]},
+            {"subtypes": ["Saga"]}
+          ]
+        }
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33
+  }
+}
