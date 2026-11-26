@@ -1,0 +1,71 @@
+{
+  "card": {
+    "id": "uthros_research_craft",
+    "name": "Uthros Research Craft",
+    "oracle_text": "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 12+.)\n3+ | Whenever you cast an artifact spell, draw a card. Put a charge counter on this Spacecraft.\n12+ | Flying\nThis Spacecraft gets +1/+0 for each artifact you control.",
+    "mana_cost": "{2}{U}",
+    "types": ["Artifact"],
+    "subtypes": ["Spacecraft"],
+    "colors": ["U"],
+    "color_identity": ["U"],
+    "power": 0,
+    "toughness": 8,
+    "station": 12,
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 12+.)",
+        "cost": {"tap_permanents": {"types": ["Creature"], "exclude_self": true, "as": "stationed"}},
+        "sorcery_speed_only": true,
+        "effects": [
+          {
+            "op": "add_counters",
+            "counter": "charge",
+            "amount": {"power_of": {"binding": "stationed"}},
+            "objects": {"self_only": true}
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "text": "This Spacecraft gets +1/+0 for each artifact you control.",
+        "effect": "buff",
+        "affects": {"self_only": true},
+        "power": {"count": {"controller": "you", "types": ["Artifact"], "zone": "battlefield"}},
+        "toughness": {"const": 0}
+      },
+      {
+        "kind": "triggered",
+        "text": "3+ | Whenever you cast an artifact spell, draw a card. Put a charge counter on this Spacecraft.",
+        "threshold": {"counter": "charge", "at_least": 3},
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "you",
+          "filter": {"types": ["Artifact"]}
+        },
+        "effects": [
+          {"op": "draw", "player": "you", "amount": {"const": 1}},
+          {
+            "op": "add_counters",
+            "counter": "charge",
+            "amount": {"const": 1},
+            "objects": {"self_only": true}
+          }
+        ]
+      },
+      {
+        "kind": "static",
+        "text": "12+ | Flying",
+        "threshold": {"counter": "charge", "at_least": 12},
+        "effect": "grant_keyword",
+        "keywords": ["flying"],
+        "affects": {"self_only": true}
+      }
+    ]
+  },
+  "expectation": {
+    "zone": "battlefield",
+    "battlefield_count": 33,
+    "hand_size": {"0": 1}
+  }
+}

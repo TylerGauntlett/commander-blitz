@@ -1,0 +1,50 @@
+{
+  "card": {
+    "id": "hearthhull_the_worldseed",
+    "name": "Hearthhull, the Worldseed",
+    "oracle_text": "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)\n2+ | {1}, {T}, Sacrifice a land: Draw two cards. You may play an additional land this turn.\n8+ | Flying, vigilance, haste\nWhenever you sacrifice a land, each opponent loses 2 life.",
+    "mana_cost": "{1}{B}{R}{G}",
+    "colors": ["B", "G", "R"],
+    "color_identity": ["B", "G", "R"],
+    "supertypes": ["Legendary"],
+    "types": ["Artifact"],
+    "subtypes": ["Spacecraft"],
+    "power": 6,
+    "toughness": 7,
+    "station": 8,
+    "abilities": [
+      {
+        "kind": "activated",
+        "text": "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)",
+        "cost": {"tap_permanents": {"types": ["Creature"], "exclude_self": true, "as": "stationed"}},
+        "sorcery_speed_only": true,
+        "effects": [{"op": "add_counters", "counter": "charge", "amount": {"power_of": {"binding": "stationed"}}, "objects": {"self_only": true}}]
+      },
+      {
+        "kind": "triggered",
+        "text": "Whenever you sacrifice a land, each opponent loses 2 life.",
+        "trigger": {"event": "sacrificed", "controller": "you", "filter": {"types": ["Land"]}},
+        "effects": [{"op": "lose_life", "player": "each_opponent", "amount": {"const": 2}}]
+      },
+      {
+        "kind": "activated",
+        "text": "2+ | {1}, {T}, Sacrifice a land: Draw two cards. You may play an additional land this turn.",
+        "threshold": {"counter": "charge", "at_least": 2},
+        "cost": {"mana": "{1}", "tap": true, "sacrifice": {"controller": "you", "count": 1, "types": ["Land"], "zone": "battlefield"}},
+        "effects": [
+          {"op": "draw", "player": "you", "amount": {"const": 2}},
+          {"op": "extra_land_drop", "player": "you", "amount": {"const": 1}}
+        ]
+      },
+      {
+        "kind": "static",
+        "text": "8+ | Flying, vigilance, haste",
+        "threshold": {"counter": "charge", "at_least": 8},
+        "effect": "grant_keyword",
+        "keywords": ["flying", "vigilance", "haste"],
+        "affects": {"self_only": true}
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33, "hand_size": {"0": 1}, "life": {"1": 40}}
+}
