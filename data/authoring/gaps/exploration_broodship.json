@@ -1,0 +1,18 @@
+{
+  "card_id": "exploration_broodship",
+  "name": "Exploration Broodship",
+  "oracle_text": "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)\n3+ | You may play an additional land on each of your turns.\n8+ | Flying\nOnce during each of your turns, you may cast a permanent spell from your graveyard by sacrificing a land in addition to paying its other costs.",
+  "blocked_sentences": [
+    "Once during each of your turns, you may cast a permanent spell from your graveyard by sacrificing a land in addition to paying its other costs."
+  ],
+  "needs": [
+    {
+      "capability": "graveyard_cast_additional_cost",
+      "kind": "static_effect",
+      "what": "a rider on the battlefield `cast_from_graveyard` static (beside `affects_spells` and `max_per_turn: 1`, condition `is_your_turn`) carrying an arbitrary additional cost from `cost_keys` -- here `{\"sacrifice\": {\"types\": [\"Land\"]}}` -- that every cast made under that permission must pay on top of the spell's printed costs, and without which the permission offers no line",
+      "why_existing_wont_do": "The static's only built-in surcharges are `grants_retrace` (discard a land CARD from hand, not sacrifice a land permanent, and unmetered), `escape` (exile other graveyard cards) and `pay_life_instead` (replaces the mana cost); `graveyard_additional_cost` is card-level and prices only the card that prints it, not other spells a permanent lets out. A plain `cast_from_graveyard` with `max_per_turn` would let the spell out for free of the sacrifice, which is strictly better than printed"
+    }
+  ],
+  "closest_existing": ["cast_from_graveyard", "grants_retrace", "graveyard_additional_cost"],
+  "confidence": "high"
+}
