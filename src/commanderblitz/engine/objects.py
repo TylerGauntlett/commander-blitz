@@ -32,6 +32,9 @@ ANY_COUNTER_KIND = "any"
 #: impending permanent enters with (702.176a). Named like the printed one so a
 #: UI that shows counters shows the right word.
 TIME_COUNTER = "time"
+#: A **charge counter**, the one station counts (702.184a): what a Spacecraft's
+#: P/T box (721.2b, `CardDef.station`) is measured in.
+STATION_COUNTER = "charge"
 #: A **shield counter** (122.1c): "If this permanent would be dealt damage or
 #: destroyed, remove a shield counter from it instead."
 #:

@@ -103,7 +103,14 @@ from .carddef import (
 from .enums import KEYWORD_COUNTERS, SUBTYPE_CLASS, Keyword, Zone
 from .errors import DslError
 from .mana import ManaCost, ManaOrigin, printed_cost_is
-from .objects import ANY_COUNTER_KIND, PLUS_ONE, TIME_COUNTER, GameObject, pt_counter
+from .objects import (
+    ANY_COUNTER_KIND,
+    PLUS_ONE,
+    STATION_COUNTER,
+    TIME_COUNTER,
+    GameObject,
+    pt_counter,
+)
 from .structs import (
     PROTECTION_COLORLESS,
     PROTECTION_EVERYTHING,
@@ -354,6 +361,9 @@ def printed_creature_types(card: CardDef) -> frozenset[str]:
         static = ability.static if ability.is_static else None
         if not static or static.get("condition") or static.get("effect") != "add_subtype":
             continue
+        if ability.threshold is not None:
+            # A station striation is a conditional static (721), not a CDA.
+            continue
         if dict(static.get("affects") or {}) != {"self_only": True}:
             continue
         types.update(
@@ -386,7 +396,8 @@ def card_in_exile_characteristics(
         card = dataclasses.replace(card, controller=card.owner)
     for ability in state.card_of(card).abilities:
         static = ability.static if ability.is_static else None
-        if not static or static.get("condition"):
+        if not static or static.get("condition") or ability.threshold is not None:
+            # A station striation is conditional (721), and so no CDA either.
             continue
         if dict(static.get("affects") or {}) != {"self_only": True}:
             continue
@@ -570,6 +581,12 @@ def _base_pt(state: GameState, obj: GameObject) -> tuple[int, int]:
         # to change; the conditions are written identically in both so that they
         # cannot part company.
         power = toughness = 0
+    if station_creature(card, obj) is False:
+        # A Spacecraft below its P/T box's number (721.2b) is a noncreature
+        # artifact, and a noncreature permanent has no power or toughness
+        # (208.3). Here beside bestow's 0/0 and for its reason: `_compute`
+        # takes the type line away under the identical condition.
+        power = toughness = 0
     return power, toughness
 
 
@@ -730,6 +747,20 @@ def _compute(state: GameState, oid: int) -> Characteristics:
     if obj.cast_impending and obj.on_battlefield and obj.counter(TIME_COUNTER) > 0:
         types.discard("Creature")
         subtypes = {sub for sub in subtypes if subtype_survives(sub, types)}
+
+    # Station's P/T box (721.2b): "as long as this permanent has N or more
+    # charge counters on it, it's an artifact creature with base power and
+    # toughness P/T." A layer-4 type change and a 7b base size, placed beside
+    # impending's for its reasons: it is the permanent's own static, so its
+    # timestamp is the permanent's arrival and an animation or `set_types` that
+    # began later layers on top; and counters are a pipeline input, so nothing
+    # here can come to depend on another static's output. The printed type
+    # line is the noncreature artifact (the loader refuses a Creature one), so
+    # at the number the type is added; below it the base size is `_base_pt`'s
+    # 0/0. Not undone by a "loses all abilities" effect -- the box is read as
+    # the card's printed characteristic, the same simplification impending's is.
+    if station_creature(card, obj):
+        types.add("Creature")
 
     if not obj.on_battlefield and not obj.face_down:
         # Layer 4 for a card that is not a permanent: "the same is true for
@@ -1283,7 +1314,8 @@ def _ability_statics(state: GameState) -> list[tuple[GameObject, Mapping[str, An
                     continue
                 # A Class's level-3 "loses all abilities" or "have …" is not
                 # there at level 2 (716.2b), nor a Case's "Solved —" one while
-                # it is unsolved (719.3c). Read off the printed face for the
+                # it is unsolved (719.3c), nor a station striation below its
+                # number (721). Read off the printed face for the
                 # regress this function's callers document, so the gates
                 # `present_printed_abilities` applies have to be applied here too.
                 if not ability.present_on(obj):
@@ -1393,17 +1425,25 @@ def printed_abilities(state: GameState, obj: GameObject) -> tuple[Ability, ...]:
 def threshold_met(obj: GameObject, ability: Ability) -> bool:
     """Has this object the counters a station symbol asks for? (721)
 
-    "As long as this permanent has N or more charge counters on it, it has
-    [abilities]." Anywhere but the battlefield nothing is a permanent and a
-    card carries no counters, so the answer there is no -- a Planet in hand
-    has only its unstriated abilities, which is also what it prints.
+    `Ability.threshold_met_on`, which holds the rule, under the name
+    `legality` and `present_printed_abilities` ask it by.
     """
-    if ability.threshold is None:
-        return True
-    if not obj.on_battlefield:
-        return False
-    counter, at_least = ability.threshold
-    return obj.counter(counter) >= at_least
+    return ability.threshold_met_on(obj)
+
+
+def station_creature(card: CardDef, obj: GameObject) -> bool | None:
+    """Is this Spacecraft at its P/T box's number? (721.2b) ``None`` if it has none.
+
+    "As long as this permanent has N or more charge counters on it, it's an
+    artifact creature with base power and toughness P/T." ``CardDef.station``
+    is the N; the loader holds it to one of the card's own charge thresholds,
+    so the box switches on with the striation printed beside it. Off the
+    battlefield a card carries no counters, so a Spacecraft in a hand, a
+    graveyard or on the stack is a noncreature artifact card.
+    """
+    if not card.station:
+        return None
+    return obj.on_battlefield and obj.counter(STATION_COUNTER) >= card.station
 
 
 def present_printed_abilities(
@@ -1434,9 +1474,12 @@ def present_printed_abilities(
     - **A Case's solved designation (719.3c)** swaps a "Solved —" ability on
       an unsolved Case the same way and for the same reason, and reads
       `GameObject.solved` the way the level reads `class_level`.
-    - **A station threshold (721)** drops the ability. The loader holds those to
-      the end of the list and to rising order, so below its number the list only
-      ever loses a tail.
+    - **A station threshold (721)** drops the ability, activated, triggered or
+      static alike. The loader holds those to the end of the list and to rising
+      order, so below its number the list only ever loses a tail. A gated
+      trigger below its number is therefore never collected, and a gated static
+      never reaches `_battlefield_statics` -- a gated ``grant_keyword`` on
+      ``self_only`` is how "8+ | Flying" is written.
 
     The seat-keeping pass runs first, so it never changes the length the
     tail-dropping pass relies on.
@@ -1449,9 +1492,9 @@ def present_printed_abilities(
     Class, a Case or a Planet -- at the cost of one gate check per ability and
     one attribute read.
     """
-    if not all(ability.present_on(obj) for ability in printed):
+    if not all(ability.designated_on(obj) for ability in printed):
         printed = tuple(
-            ability if ability.present_on(obj) else ability.latent() for ability in printed
+            ability if ability.designated_on(obj) else ability.latent() for ability in printed
         )
     if not printed or printed[-1].threshold is None:
         return printed

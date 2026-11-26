@@ -227,6 +227,10 @@ CARD_LEVEL_RIDER_KEYS = (
     # int; "Vanishing N" -- the N. The time counters, the upkeep tick and the
     # sacrifice are the rule's, lowered by the loader; write no ability for them.
     "vanishing",
+    # int; Station's "It's an artifact creature at N+." -- the N of a
+    # Spacecraft's P/T box, one of its own charge thresholds; types stay the
+    # printed ["Artifact"] and power/toughness the printed box.
+    "station",
     "morph_counter",  # bool; megamorph -- turns face up with a +1/+1 counter, beside `morph`
     # {name: value}; "…where X is … as you cast this spell" -- each value fixed
     # as the spell goes on the stack, read back by spell_effects as {"binding": name}
@@ -797,12 +801,20 @@ def reference() -> dict:
             " `{\"power_of\": {\"binding\": \"stationed\"}}`. Never a `count`"
             " above 1 or a `total_power` beside it.",
             "A station striation -- \"12+ | {U}, {T}: Add {U} for each artifact"
-            " you control.\" -- is an activated ability with `threshold:"
+            " you control.\" -- is the ability with `threshold:"
             " {\"counter\": \"charge\", \"at_least\": 12}` whose `text` is the"
             " whole printed line, prefix included. The permanent HAS it only at"
-            " that many counters. Activated abilities only; gated abilities go"
-            " after every ungated one, in rising order. Not `condition`, which"
-            " leaves the ability on the permanent.",
+            " that many counters. Activated, triggered or static (not a"
+            " leaves-the-battlefield trigger on itself); gated abilities go"
+            " after every ungated one, in rising order. A keyword line"
+            " (\"8+ | Flying, vigilance\") is a gated `grant_keyword` static on"
+            " `affects: {\"self_only\": true}`, not `keywords`. Not `condition`,"
+            " which leaves the ability on the permanent.",
+            "A Spacecraft's \"It's an artifact creature at N+\" is the card-level"
+            " `station: N`, with `types` its printed noncreature line"
+            " (`[\"Artifact\"]`) and its printed `power`/`toughness`: below N it is"
+            " a noncreature artifact with no P/T, at N an artifact creature. N must"
+            " be one of the card's own charge thresholds.",
             "`condition_keys` and `value_keys` are what an `if` can ask and what"
             " an amount can be. `counters_on` reads a counter count off an"
             " object, so \"if this has no +1/+1 counters on it\" is a `cmp`"

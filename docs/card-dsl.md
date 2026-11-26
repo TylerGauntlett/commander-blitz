@@ -6549,32 +6549,99 @@ card, and so cannot give "the power of the exiled card".
 ```
 
 Rule 721: a station symbol means "As long as this permanent has N or more charge
-counters on it, it has [abilities]." Below N the ability **does not exist**:
-`characteristics.abilities_of` leaves it out, so legality does not offer it, the
-payment solver and the by-hand mana path do not have it, and neither the AI nor
-the client's action list sees it. Off the battlefield a card has no counters and
-so no striations. An ability already on the stack resolves if the counters go
-(113.7a). The station ability itself is ungated and may be activated past the
-last number.
+counters on it, it has [abilities]." `threshold` goes on an **activated**,
+**triggered** or **static** ability, and below N the ability **does not
+exist**: `characteristics.abilities_of` leaves it out, so legality does not
+offer it, the payment solver and the by-hand mana path do not have it, the
+trigger collectors do not collect it, `_battlefield_statics` does not apply it,
+and neither the AI nor the client's action list sees it. The walks that read
+printed faces (`_ability_statics`, the player statics) ask
+`Ability.present_on`, which applies the same gate. Off the battlefield a card
+has no counters and so no striations. An ability already on the stack resolves
+if the counters go (113.7a), whether it was activated or triggered. The station
+ability itself is ungated and may be activated past the last number.
+
+A keyword line is a gated `grant_keyword` static on `self_only`, not an entry
+in `keywords`, which has no gate:
+
+```jsonc
+{ "kind": "static", "text": "5+ | Flying, hexproof",
+  "threshold": { "counter": "charge", "at_least": 5 },
+  "effect": "grant_keyword", "keywords": ["flying", "hexproof"],
+  "affects": { "self_only": true } }
+```
+
+A gated trigger is an ordinary trigger with the key beside it (U.S.S.
+Prometheus's "8+ | … Whenever U.S.S. Prometheus deals combat damage to an
+opponent, …"), and a gated static any static ("3+ | You may play an additional
+land on each of your turns." is `extra_land_drops` with a `threshold`).
 
 Not `condition`: "activate only if…" refuses the activation of an ability the
 permanent still *has*, and a mana ability never goes through that check — so
-Uthros would tap for blue on turn one.
+Uthros would tap for blue on turn one. A static `condition` on a counter count
+leaves the ability on the permanent the same way.
 
-The loader holds three rules. `threshold` goes on **activated** abilities only
-(a gated static or trigger would also have to reach the printed-face readers, so
-it is refused rather than loading always-on). Gated abilities come **after every
-ungated one**, in **rising order** on **one counter** — abilities are addressed
-by position, so an absent ability may only ever drop a tail. And a threshold is a
-printed striation, so it is refused on `grantable_abilities`.
+The loader holds these rules. Gated abilities come **after every ungated one**,
+in **rising order** on **one counter** — abilities are addressed by position,
+so an absent ability may only ever drop a tail. A threshold is a printed
+striation, so it is refused on `grantable_abilities`. It is refused on an
+ability whose `active_zones` is anything but the battlefield, where no card has
+counters, and on a leaves-the-battlefield trigger of the permanent itself
+(`dies`, `leaves_battlefield`, `sacrificed`, `becomes_unattached` with
+`source: "self"`), which would have to look back at the counters it left with
+(603.10a).
 
 The residual gate claims a `N+ | …` line only through an ability gated at that N
 whose whole `text` is the line: an ungated "{U}, {T}: Add {U} …" does not claim
 "12+ | {U}, {T}: Add {U} …".
 
-**Not built:** a Spacecraft's striated P/T box ("It's an artifact creature at
-12+"), and gated keywords, statics and triggers ("12+ | Flying", "8+ |
-Whenever…"). The two Planets need neither.
+### Spacecraft — `station`, the artifact creature at its number
+
+```jsonc
+{ "id": "u_s_s_defiant_tough_little_ship",
+  "types": ["Artifact"], "subtypes": ["Spacecraft"],
+  "power": 7, "toughness": 4,
+  "station": 5,
+  "abilities": [
+    { "kind": "triggered", "text": "When U.S.S. Defiant enters, …", … },
+    { "kind": "activated",
+      "text": "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 5+.)",
+      "cost": { "tap_permanents": { "types": ["Creature"], "exclude_self": true,
+                                    "as": "stationed" } },
+      "sorcery_speed_only": true,
+      "effects": [ { "op": "add_counters", "counter": "charge",
+                     "amount": { "power_of": { "binding": "stationed" } },
+                     "objects": { "self_only": true } } ] },
+    { "kind": "static", "text": "5+ | Flying, hexproof",
+      "threshold": { "counter": "charge", "at_least": 5 },
+      "effect": "grant_keyword", "keywords": ["flying", "hexproof"],
+      "affects": { "self_only": true } } ] }
+```
+
+Rule 721.2b: a station symbol with a P/T box means "as long as this permanent
+has N or more charge counters on it, it's an artifact creature with base power
+and toughness P/T." The card-level `station` is that N — the number in the
+reminder's "It's an artifact creature at N+", which is not always the highest
+striation (U.S.S. Prometheus's box is at 4+, its last line at 8+). `types` is
+the printed noncreature line and `power`/`toughness` the printed box.
+
+`characteristics.station_creature` reads it. With N or more charge counters on
+the battlefield the Spacecraft is an artifact creature of its printed size; below
+N, and in every other zone, it is a noncreature artifact with no power or
+toughness (208.3) — it cannot attack or block and creature removal does not
+reach it. The type is added in the type-changing layer beside impending's, so an
+animation or a `set_types` that began later layers on top, and the 0/0 is
+`_base_pt`'s, so a static filter reads the same size.
+
+The loader requires `station` to be a whole number of at least 1 on a
+noncreature Artifact that prints both `power` and `toughness`, and to equal the
+`at_least` of one of the card's own `charge` thresholds. A noncreature card with
+printed P/T and thresholds but no `station` is refused: it would load as an
+artifact that never becomes the creature it prints. A Spacecraft with no P/T box
+(The Eternity Elevator) writes no `station`. The residual gate claims the Station
+line's "It's an artifact creature at N+" only when `station` is that N.
+
+Stationing with toughness (Tapestry Warden) is not built.
 
 All three take a selector over the battlefield defaulting to `controller: "you"`,
 and all three make the ability **unavailable** when too little matches rather

@@ -2202,6 +2202,9 @@ _SELF_REFERENCE = re.compile(
 #: A station symbol at the head of a printed line: "12+ | …".
 _STRIATION = re.compile(r"^(\d+)\+\s*\|")
 
+#: Station's reminder of a Spacecraft's P/T box: "It's an artifact creature at 8+."
+_STATION_BOX = re.compile(r"it's an artifact creature at (\d+)\+", re.IGNORECASE)
+
 
 #: The printed ordinals of a `cant_cast_first_turns` line, by how many turns
 #: it names.
@@ -3127,6 +3130,14 @@ def _covered(card: CardDef, line: str) -> bool:
     # and only by its whole text. The loose substring match below would let an
     # ungated "{U}, {T}: Add {U} …" claim the line -- a Planet that makes the
     # mana from turn one, wearing the printed words.
+    # "Station (… It's an artifact creature at 8+.)" The reminder names the
+    # Spacecraft's P/T box (721.2b), which is `CardDef.station` and not the
+    # station ability's: claimed only when the field holds that very number,
+    # or the Station line would wave through a Spacecraft that never becomes
+    # a creature, or becomes one at the wrong count.
+    box = _STATION_BOX.search(stripped)
+    if box is not None and card.station != int(box.group(1)):
+        return False
     striation = _STRIATION.match(stripped)
     if striation is not None:
         wanted = int(striation.group(1))

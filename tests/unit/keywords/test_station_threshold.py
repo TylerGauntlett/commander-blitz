@@ -219,7 +219,8 @@ class TestLoadTimeGuards:
         with pytest.raises(DslError, match="unsupported keys"):
             _load(card)
 
-    def test_a_gated_trigger_is_refused_rather_than_always_on(self):
+    def test_a_gated_trigger_loads_gated(self):
+        """Its collection is gated too -- see `tests/unit/keywords/test_spacecraft.py`."""
         card = _planet()
         card["abilities"][1] = {
             "kind": "triggered",
@@ -228,8 +229,7 @@ class TestLoadTimeGuards:
             "trigger": {"event": "upkeep"},
             "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}],
         }
-        with pytest.raises(DslError, match="only an activated ability"):
-            _load(card)
+        assert _load(card).abilities[1].threshold == ("charge", 4)
 
 
 class TestTheResidualGate:

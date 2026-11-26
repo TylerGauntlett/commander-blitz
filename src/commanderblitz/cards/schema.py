@@ -2224,6 +2224,16 @@ class CardModel(BaseModel):
     #: sacrifice -- so the card writes none of them. A whole number of at least
     #: 1, on a permanent card.
     vanishing: Any = None
+    #: **Station's P/T box** (721.2b): "It's an artifact creature at N+." The N,
+    #: on a Spacecraft whose printed P/T sits beside one of its station
+    #: striations: on the battlefield with N or more charge counters it is an
+    #: artifact creature with its printed ``power`` and ``toughness``, and
+    #: otherwise a noncreature artifact with neither. The card's ``types`` are
+    #: its printed noncreature line (``["Artifact"]``). The loader requires an
+    #: ability gated on ``{"counter": "charge", "at_least": N}`` -- the line the
+    #: box is printed beside -- and refuses a noncreature card that prints P/T
+    #: beside thresholds without this field. A whole number of at least 1.
+    station: Any = None
     #: **Madness** (702.35a): "If you would discard this card, exile it instead.
     #: Then you may cast it for its madness cost." The exile happens whether or
     #: not the cast is taken.

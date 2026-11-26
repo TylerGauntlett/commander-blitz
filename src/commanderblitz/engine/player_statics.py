@@ -94,8 +94,10 @@ def _active_player_statics(
                 continue
             # Druid Class's "You may play an additional land on each of your
             # turns" is a level-2 ability: at level 1 the Class does not have it
-            # (716.2b), and a Case's "Solved —" one is not there unsolved
-            # (719.3c). Asked here because this walk reads the printed face.
+            # (716.2b), a Case's "Solved —" one is not there unsolved (719.3c),
+            # and Exploration Broodship's "3+ |" one is not there below three
+            # charge counters (721). Asked here because this walk reads the
+            # printed face.
             if not ability.present_on(obj):
                 continue
             if Zone.BATTLEFIELD not in ability.active_zones:
@@ -1792,6 +1794,7 @@ def _spell_power(state: GameState, pid: int, card: CardDef) -> int:
         and (static := ability.static)
         and static.get("effect") == "set_pt"
         and not static.get("condition")
+        and ability.threshold is None
         and dict(static.get("affects") or {}) == {"self_only": True}
         for ability in card.abilities
     )
